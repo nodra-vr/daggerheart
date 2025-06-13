@@ -492,9 +492,10 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
         // Parse dice notation including modifiers (e.g., "1d8", "d8", "2d10", "1d12+2", "d6-1")
         const diceMatch = diceInput.match(/^(\d*)d(\d+)(.*)$/i);
         if (diceMatch) {
+            const diceCount = diceMatch[1] || proficiency; // e.g., "1" from "1d8"
             const dieType = diceMatch[2]; // e.g., "8" from "d8"
             const modifier = diceMatch[3] || ""; // e.g., "+2" from "1d12+2"
-            rollValue = `${proficiency}d${dieType}${modifier}`;
+            rollValue = `${diceCount}d${dieType}${modifier}`;
         } else {
             // If it's not standard dice notation, fall back to original logic
             rollValue = rollProfInput + diceInput;
