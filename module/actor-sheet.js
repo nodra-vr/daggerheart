@@ -387,11 +387,30 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     const rollValueInput = rollableGroup.querySelector(".basic-rollable-value");
     const tergetForm = rollableElement.closest("form");
     
-    // if the sheet is an actor, gets its proficiency value. If it's an adversary, rollValueInput already
-    // contains all the info
     const rollProfInput = tergetForm.querySelector("#prof")?.value || "";
     const rollName = rollNameInput.value;
-    const rollValue = rollProfInput + rollValueInput.value;
+    
+    let rollValue;
+    
+    // Check if this is a weapon damage roll
+    if (rollValueInput && rollValueInput.classList.contains("weapon-damage")) {
+        const proficiency = Math.max(1, parseInt(rollProfInput) || 1);
+        const diceInput = rollValueInput.value.trim();
+        
+        // Parse dice notation including modifiers (e.g., "1d8", "d8", "2d10", "1d12+2", "d6-1")
+        const diceMatch = diceInput.match(/^(\d*)d(\d+)(.*)$/i);
+        if (diceMatch) {
+            const dieType = diceMatch[2]; // e.g., "8" from "d8"
+            const modifier = diceMatch[3] || ""; // e.g., "+2" from "1d12+2"
+            rollValue = `${proficiency}d${dieType}${modifier}`;
+        } else {
+            // If it's not standard dice notation, fall back to original logic
+            rollValue = rollProfInput + diceInput;
+        }
+    } else {
+        // Original logic for non-weapon damage rolls
+        rollValue = rollProfInput + rollValueInput.value;
+    }
 
     console.log("Current value: ", rollValue);
     
