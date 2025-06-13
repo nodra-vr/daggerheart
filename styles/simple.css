@@ -1662,11 +1662,11 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
 }
 
 .resource-control {
-    color: var(--dh-color-off-white);
-    text-decoration: none;
-    font-size: 1.2em;
-    padding: 0 5px;
-    cursor: pointer;
+	color: var(--dh-color-off-white);
+	text-decoration: none;
+	font-size: .75em;
+	padding: 0 5px;
+	cursor: pointer;
 }
 
 .armor-controls {
