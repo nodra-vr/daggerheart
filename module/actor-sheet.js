@@ -385,10 +385,15 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     const rollableGroup = rollableElement.closest(".basic-rollable-group");
     const rollNameInput = rollableGroup.querySelector(".basic-rollable-name");
     const rollValueInput = rollableGroup.querySelector(".basic-rollable-value");
-    console.log("Current value: ", rollableGroup.querySelector(".basic-rollable-value"));
+    const tergetForm = rollableElement.closest("form");
     
+    // if the sheet is an actor, gets its proficiency value. If it's an adversary, rollValueInput already
+    // contains all the info
+    const rollProfInput = tergetForm.querySelector("#prof")?.value || "";
     const rollName = rollNameInput.value;
-    const rollValue = rollValueInput.value;
+    const rollValue = rollProfInput + rollValueInput.value;
+
+    console.log("Current value: ", rollValue);
     
     await this._rollBasic(rollName, rollValue);
   }
