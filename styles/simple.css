@@ -161,6 +161,25 @@
   background-color: rgba(0,0,0,0.1);
 }
 
+/* Vault animation styles */
+.worldbuilding .item-list[data-item-type="vault"] {
+  max-height: 500px;
+  opacity: 1;
+  transform: scaleY(1);
+  transform-origin: top;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out, transform 0.3s ease-out;
+  overflow: hidden;
+}
+
+.worldbuilding .item-list[data-item-type="vault"].vault-collapsed {
+  max-height: 0;
+  opacity: 0;
+  transform: scaleY(0);
+  margin: 0 .5em;
+  padding: 0;
+  border: none;
+}
+
 .worldbuilding .item-list .item {
   display: flex;
   flex-direction: column;
@@ -191,9 +210,12 @@
 }
 
 .worldbuilding .item-list .item .item-description {
-  height: 0;
+  max-height: 0;
+  opacity: 0;
   overflow: hidden;
-  transition: height 150ms ease-in-out;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out, transform 0.3s ease-out;
   margin: 0 0.5em;
   min-width: 100%;
   border-left: solid 2px var(--dh-color-gold);
@@ -201,10 +223,13 @@
 
 .worldbuilding .item-list .item .item-description > * {
   opacity: 0;
-  transition: opacity 150ms ease-in-out;
+  transition: opacity 0.2s ease-out 0.1s;
 }
 
 .worldbuilding .item-list .item.expanded .item-description {
+  max-height: 500px;
+  opacity: 1;
+  transform: scaleY(1);
   padding-top: 0.5em;
 }
 

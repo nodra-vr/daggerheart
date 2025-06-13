@@ -688,7 +688,7 @@
                         <a class="item-control vault-toggle" title="Toggle Vault"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list" data-item-type="vault" style="display: none;">
+                <ol class="item-list vault-collapsed" data-item-type="vault">
                     {{#each data.items as |item id|}}
                     {{#if (eq item.type "vault")}}
                     <li class="item" data-item-id="{{item._id}}">

@@ -67,11 +67,15 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     super.activateListeners(html);
     
     // Restore vault state on re-render
+    const vaultList = html.find('.item-list[data-item-type="vault"]');
+    const icon = html.find('.vault-toggle i');
+    
     if (this._vaultOpen) {
-      const vaultList = html.find('.item-list[data-item-type="vault"]');
-      const icon = html.find('.vault-toggle i');
-      vaultList.show();
+      vaultList.removeClass('vault-collapsed');
       icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+    } else {
+      vaultList.addClass('vault-collapsed');
+      icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
     }
     
     // Everything below here is only needed if the sheet is editable
@@ -652,14 +656,16 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     const icon = button.find('i');
     const vaultList = this.element.find('.item-list[data-item-type="vault"]');
 
-    if (vaultList.is(':visible')) {
-        vaultList.slideUp();
-        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-        this._vaultOpen = false;
-    } else {
-        vaultList.slideDown();
+    if (vaultList.hasClass('vault-collapsed')) {
+        // Expanding
+        vaultList.removeClass('vault-collapsed');
         icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
         this._vaultOpen = true;
+    } else {
+        // Collapsing
+        vaultList.addClass('vault-collapsed');
+        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        this._vaultOpen = false;
     }
   }
 
@@ -670,20 +676,8 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     if (!descriptionDiv) return;
     
-    if (li.classList.contains("expanded")) {
-      descriptionDiv.style.height = descriptionDiv.scrollHeight + "px";
-      descriptionDiv.offsetHeight;
-      descriptionDiv.style.height = "0px";
-      li.classList.remove("expanded");
-    } else {
-      li.classList.add("expanded");
-      descriptionDiv.style.height = descriptionDiv.scrollHeight + "px";
-      setTimeout(() => {
-        if (li.classList.contains("expanded")) {
-          descriptionDiv.style.height = "auto";
-        }
-      }, 150);
-    }
+    // Simple class toggle - CSS handles the animation
+    li.classList.toggle("expanded");
   }
 
   async _onResourceControl(event) {
