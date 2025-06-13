@@ -1780,17 +1780,17 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
 
 /* Treasure Tracker Styles */
 .treasure-tracker {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.3em;
-  padding: 0em .5em;
-  border: none;
-  border-radius: 8px;
-  margin: .5em;
-  max-width: 100%;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 0.3em;
+	padding: 0em .5em 1em .5em;
+	border: none;
+	border-radius: 8px;
+	margin: .5em;
+	max-width: 100%;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .treasure-item {

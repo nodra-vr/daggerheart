@@ -24,17 +24,17 @@ Hooks.once("init", async function() {
   CONFIG.statusEffects.push({
     id: "hidden",
     label: "Hidden",
-    icon: "styles/icons/ninja-mask.svg"
+    icon: "systems/worldbuilding/styles/icons/ninja-mask.svg"
   });
   CONFIG.statusEffects.push({
     id: "restrained",
     label: "Restrained",
-    icon: "styles/icons/quicksand.svg"
+    icon: "systems/worldbuilding/styles/icons/quicksand.svg"
   });
   CONFIG.statusEffects.push({
     id: "vulnerable",
     label: "Vulnerable",
-    icon: "styles/icons/cracked-shield.svg"
+    icon: "systems/worldbuilding/styles/icons/cracked-shield.svg"
   });
 
   /**
