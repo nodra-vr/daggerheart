@@ -78,8 +78,14 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
     }
     
+    // Mark empty item lists
+    this._markEmptyItemLists(html);
+    
     // Everything below here is only needed if the sheet is editable
     if ( !this.isEditable ) return;
+
+    // Setup drag and drop visual feedback
+    this._setupDragDropListeners(html);
     
     // Resource Management
     html.find(".resource-control").click(this._onResourceControl.bind(this));
@@ -135,6 +141,82 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     let textarea = html.find(".resize-ta");
     textarea.on("keyup", () => {
       textarea.css("height", calcHeight(textarea.val()) + "px");
+    });
+  }
+  
+  /* -------------------------------------------- */
+  
+  /**
+   * Setup drag and drop visual feedback
+   * @param {jQuery} html The rendered HTML
+   * @private
+   */
+  _setupDragDropListeners(html) {
+    const form = html[0];
+    
+    // Add drag start listener to set dragging state
+    form.addEventListener('dragstart', (event) => {
+      if (event.target.closest('.item')) {
+        form.classList.add('dragging');
+      }
+    });
+    
+    // Add drag end listener to remove dragging state
+    form.addEventListener('dragend', (event) => {
+      form.classList.remove('dragging');
+      // Remove all drag-over states
+      form.querySelectorAll('.drag-over').forEach(el => {
+        el.classList.remove('drag-over');
+      });
+    });
+    
+    // Add drag over listeners for item lists
+    html.find('.item-list').on('dragover', (event) => {
+      event.preventDefault();
+      event.currentTarget.classList.add('drag-over');
+    });
+    
+    html.find('.item-list').on('dragleave', (event) => {
+      // Only remove if we're leaving the element, not entering a child
+      if (!event.currentTarget.contains(event.relatedTarget)) {
+        event.currentTarget.classList.remove('drag-over');
+      }
+    });
+    
+    // Add drag over listeners for section headers
+    html.find('.tab-category').on('dragover', (event) => {
+      event.preventDefault();
+      event.currentTarget.classList.add('drag-over');
+    });
+    
+    html.find('.tab-category').on('dragleave', (event) => {
+      if (!event.currentTarget.contains(event.relatedTarget)) {
+        event.currentTarget.classList.remove('drag-over');
+      }
+    });
+
+    // Add drop listeners for section headers
+    html.find('.tab-category').on('drop', (event) => {
+      event.preventDefault();
+      const category = event.currentTarget;
+      
+      // Look for the associated item list - it might not be the immediate next sibling
+      let itemList = category.nextElementSibling;
+      while (itemList && !itemList.classList.contains('item-list')) {
+        itemList = itemList.nextElementSibling;
+      }
+      
+      if (itemList && itemList.classList.contains('item-list')) {
+        // Trigger the drop on the associated item list
+        const dropEvent = new DragEvent('drop', {
+          dataTransfer: event.originalEvent.dataTransfer,
+          bubbles: true,
+          cancelable: true
+        });
+        itemList.dispatchEvent(dropEvent);
+      }
+      
+      category.classList.remove('drag-over');
     });
   }
   
@@ -293,6 +375,12 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     if (!newType) return false;
 
     const item = await Item.implementation.fromDropData(data);
+    
+    // Clean up drag states
+    this.element[0].classList.remove('dragging');
+    this.element[0].querySelectorAll('.drag-over').forEach(el => {
+      el.classList.remove('drag-over');
+    });
     
     // If the item comes from the same actor, it's a move.
     if (this.actor.items.has(item.id)) {
@@ -700,6 +788,24 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
         [`system.${field}`]: updateValue
       });
     }
+  }
+
+  /**
+   * Mark empty item lists with a CSS class for styling
+   * @param {jQuery} html The rendered HTML
+   * @private
+   */
+  _markEmptyItemLists(html) {
+    html.find('.item-list').each((index, element) => {
+      const $list = $(element);
+      const hasItems = $list.find('.item').length > 0;
+      
+      if (hasItems) {
+        $list.removeClass('is-empty');
+      } else {
+        $list.addClass('is-empty');
+      }
+    });
   }
 }
 

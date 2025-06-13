@@ -155,10 +155,57 @@
   transition: all 0.2s ease-in-out;
 }
 
+/* Hide empty item lists by default */
+.worldbuilding .item-list.is-empty {
+  display: none;
+  min-height: 0;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Show empty item lists during drag operations */
+.worldbuilding .item-list.is-empty.drag-over,
+.worldbuilding .dragging .item-list.is-empty {
+  display: flex;
+  min-height: 100px;
+  border: 1px dashed var(--dh-color-gold);
+  border-radius: 5px;
+  background-color: rgba(243, 194, 103, 0.1);
+  margin: .5em;
+  opacity: 0.8;
+}
+
+/* Visual feedback for populated item lists during drag */
+.worldbuilding .item-list:not(.is-empty).drag-over {
+  border-color: var(--dh-color-gold);
+  border-radius: 5px;
+  background-color: rgba(243, 194, 103, 0.05);
+  box-shadow: 0 0 10px rgba(243, 194, 103, 0.3);
+}
+
+/* General drag-over styles (fallback) */
 .worldbuilding .item-list.drag-over {
   min-height: 100px;
   border-color: var(--dh-color-gold);
   background-color: rgba(0,0,0,0.1);
+}
+
+/* Make section headers droppable during drag operations */
+.worldbuilding .dragging .tab-category {
+  position: relative;
+  transition: all 0.2s ease-in-out;
+  border-radius: .5em;
+  padding: 0.5em;
+  margin: 0.5em 0;
+}
+
+.worldbuilding .tab-category.drag-over {
+  background-color: rgba(243, 194, 103, 0.2);
+  border: 1px dashed var(--dh-color-gold);
+  border-radius: 1em;
+  color: var(--dh-color-gold);
+  font-weight: bold;
 }
 
 /* Vault animation styles */
