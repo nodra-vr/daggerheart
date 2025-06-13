@@ -44,19 +44,19 @@ export class SimpleActor extends Actor {
     const formulaAttributes = [];
     const itemAttributes = [];
 
-    // Handle formula attributes when the short syntax is disabled.
+    // shorthand formulas
     this._applyShorthand(data, formulaAttributes, shorthand);
 
-    // Map all item data using their slugified names
+    // item data mapping
     this._applyItems(data, itemAttributes, shorthand);
 
-    // Evaluate formula replacements on items.
+    // item formula replacements
     this._applyItemsFormulaReplacements(data, itemAttributes, shorthand);
 
-    // Evaluate formula attributes after all other attributes have been handled, including items.
+    // formula replacements
     this._applyFormulaReplacements(data, formulaAttributes, shorthand);
 
-    // Remove the attributes if necessary.
+    // cleanup attributes
     if ( !!shorthand ) {
       delete data.attributes;
       delete data.attr;
@@ -74,18 +74,18 @@ export class SimpleActor extends Actor {
    * @param {Boolean} shorthand Whether or not the shorthand syntax is used.
    */
   _applyShorthand(data, formulaAttributes, shorthand) {
-    // Handle formula attributes when the short syntax is disabled.
+    // formula attrs processing
     for ( let [k, v] of Object.entries(data.attributes || {}) ) {
-      // Make an array of formula attributes for later reference.
+      // formula array
       if ( v.dtype === "Formula" ) formulaAttributes.push(k);
-      // Add shortened version of the attributes.
+      // shorthand attrs
       if ( !!shorthand ) {
         if ( !(k in data) ) {
-          // Non-grouped attributes.
+          // non-grouped
           if ( v.dtype ) {
             data[k] = v.value;
           }
-          // Grouped attributes.
+          // grouped
           else {
             data[k] = {};
             for ( let [gk, gv] of Object.entries(v) ) {
@@ -113,18 +113,18 @@ export class SimpleActor extends Actor {
       const key = item.name.slugify({strict: true});
       const itemData = item.toObject(false).system;
 
-      // Add items to shorthand and note which ones are formula attributes.
+      // item attrs & formulas
       for ( let [k, v] of Object.entries(itemData.attributes) ) {
-        // When building the attribute list, prepend the item name for later use.
+        // prepend item name
         if ( v.dtype === "Formula" ) itemAttributes.push(`${key}..${k}`);
-        // Add shortened version of the attributes.
+        // shorthand attrs
         if ( !!shorthand ) {
           if ( !(k in itemData) ) {
-            // Non-grouped item attributes.
+            // non-grouped item
             if ( v.dtype ) {
               itemData[k] = v.value;
             }
-            // Grouped item attributes.
+            // grouped item
             else {
               if ( !itemData[k] ) itemData[k] = {};
               for ( let [gk, gv] of Object.entries(v) ) {
@@ -134,7 +134,7 @@ export class SimpleActor extends Actor {
             }
           }
         }
-        // Handle non-shorthand version of grouped attributes.
+        // non-shorthand grouped
         else {
           if ( !v.dtype ) {
             if ( !itemData[k] ) itemData[k] = {};
@@ -146,7 +146,7 @@ export class SimpleActor extends Actor {
         }
       }
 
-      // Delete the original attributes key if using the shorthand syntax.
+      // cleanup shorthand
       if ( !!shorthand ) {
         delete itemData.attributes;
       }
@@ -159,13 +159,13 @@ export class SimpleActor extends Actor {
 
   _applyItemsFormulaReplacements(data, itemAttributes, shorthand) {
     for ( let k of itemAttributes ) {
-      // Get the item name and separate the key.
+      // parse item & key
       let item = null;
       let itemKey = k.split('..');
       item = itemKey[0];
       k = itemKey[1];
 
-      // Handle group keys.
+      // group keys
       let gk = null;
       if ( k.includes('.') ) {
         let attrKey = k.split('.');
@@ -175,24 +175,24 @@ export class SimpleActor extends Actor {
 
       let formula = '';
       if ( !!shorthand ) {
-        // Handle grouped attributes first.
+        // grouped first
         if ( data.items[item][k][gk] ) {
           formula = data.items[item][k][gk].replace('@item.', `@items.${item}.`);
           data.items[item][k][gk] = Roll.replaceFormulaData(formula, data);
         }
-        // Handle non-grouped attributes.
+        // non-grouped
         else if ( data.items[item][k] ) {
           formula = data.items[item][k].replace('@item.', `@items.${item}.`);
           data.items[item][k] = Roll.replaceFormulaData(formula, data);
         }
       }
       else {
-        // Handle grouped attributes first.
+        // grouped first
         if ( data.items[item]['attributes'][k][gk] ) {
           formula = data.items[item]['attributes'][k][gk]['value'].replace('@item.', `@items.${item}.attributes.`);
           data.items[item]['attributes'][k][gk]['value'] = Roll.replaceFormulaData(formula, data);
         }
-        // Handle non-grouped attributes.
+        // non-grouped
         else if ( data.items[item]['attributes'][k]['value'] ) {
           formula = data.items[item]['attributes'][k]['value'].replace('@item.', `@items.${item}.attributes.`);
           data.items[item]['attributes'][k]['value'] = Roll.replaceFormulaData(formula, data);
@@ -210,34 +210,34 @@ export class SimpleActor extends Actor {
    * @param {Boolean} shorthand Whether or not the shorthand syntax is used.
    */
   _applyFormulaReplacements(data, formulaAttributes, shorthand) {
-    // Evaluate formula attributes after all other attributes have been handled, including items.
+    // eval formula attrs
     for ( let k of formulaAttributes ) {
-      // Grouped attributes are included as `group.attr`, so we need to split them into new keys.
+      // split group.attr
       let attr = null;
       if ( k.includes('.') ) {
         let attrKey = k.split('.');
         k = attrKey[0];
         attr = attrKey[1];
       }
-      // Non-grouped attributes.
+      // non-grouped
       if ( data.attributes[k]?.value ) {
         data.attributes[k].value = Roll.replaceFormulaData(String(data.attributes[k].value), data);
       }
-      // Grouped attributes.
+      // grouped
       else if ( attr ) {
         data.attributes[k][attr].value = Roll.replaceFormulaData(String(data.attributes[k][attr].value), data);
       }
 
-      // Duplicate values to shorthand.
+      // shorthand values
       if ( !!shorthand ) {
-        // Non-grouped attributes.
+        // non-grouped
         if ( data.attributes[k]?.value ) {
           data[k] = data.attributes[k].value;
         }
-        // Grouped attributes.
+        // grouped
         else {
           if ( attr ) {
-            // Initialize a group key in case it doesn't exist.
+            // init group key
             if ( !data[k] ) {
               data[k] = {};
             }

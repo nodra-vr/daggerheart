@@ -41,8 +41,8 @@ export class SimpleTokenDocument extends TokenDocument {
 export class SimpleToken extends foundry.canvas.placeables.Token {
   _drawBar(number, bar, data) {
     if ( "min" in data ) {
-      // Copy the data to avoid mutating what the caller gave us.
-      data = {...data};
+          // copy data
+    data = {...data};
       // Shift the value and max by the min to draw the bar percentage accurately for a non-zero min
       data.value -= data.min;
       data.max -= data.min;

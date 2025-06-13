@@ -39,7 +39,7 @@ export class CounterUI {
    * Render the counter UI element
    */
   async render() {
-    // Check if the user can modify the counter (GM or Assistant GM)
+    // modify permissions
     const canModify = game.user.isGM || game.user.hasRole("ASSISTANT");
     
     // Create the counter HTML with inline styles for z-index
@@ -113,7 +113,7 @@ export class CounterUI {
         if (e.target.closest("#counter-ui .counter-plus")) {
           e.preventDefault();
           e.stopPropagation();
-          // console.log(`Plus button ${eventType}`);
+          // plus btn
           if (eventType === "click") { // Only process on click to avoid multiple triggers
             await this.increase();
           }
@@ -122,7 +122,7 @@ export class CounterUI {
         else if (e.target.closest("#counter-ui .counter-minus")) {
           e.preventDefault();
           e.stopPropagation();
-          // console.log(`Minus button ${eventType}`);
+          // minus btn
           if (eventType === "click") { // Only process on click to avoid multiple triggers
             await this.decrease();
           }

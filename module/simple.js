@@ -110,7 +110,7 @@ Hooks.once("init", async function() {
     config: false // Don't show in settings menu
   });
 
-  // Register initiative setting.
+  // init setting
   game.settings.register("worldbuilding", "initFormula", {
     name: "SETTINGS.SimpleInitFormulaN",
     hint: "SETTINGS.SimpleInitFormulaL",
@@ -121,7 +121,7 @@ Hooks.once("init", async function() {
     onChange: formula => _simpleUpdateInit(formula, true)
   });
 
-  // Retrieve and assign the initiative formula setting.
+  // init formula
   const initFormula = game.settings.get("worldbuilding", "initFormula");
   _simpleUpdateInit(initFormula);
 
@@ -175,7 +175,7 @@ Hooks.once("ready", async function() {
  */
 Hooks.on("getActorDirectoryEntryContext", (html, options) => {
 
-  // Define an actor as a template.
+  // set template
   options.push({
     name: game.i18n.localize("SIMPLE.DefineTemplate"),
     icon: '<i class="fas fa-stamp"></i>',
@@ -189,7 +189,7 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
     }
   });
 
-  // Undefine an actor as a template.
+  // unset template
   options.push({
     name: game.i18n.localize("SIMPLE.UnsetTemplate"),
     icon: '<i class="fas fa-times"></i>',
@@ -209,7 +209,7 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
  */
 Hooks.on("getItemDirectoryEntryContext", (html, options) => {
 
-  // Define an item as a template.
+  // set template
   options.push({
     name: game.i18n.localize("SIMPLE.DefineTemplate"),
     icon: '<i class="fas fa-stamp"></i>',
@@ -223,7 +223,7 @@ Hooks.on("getItemDirectoryEntryContext", (html, options) => {
     }
   });
 
-  // Undefine an item as a template.
+  // unset template
   options.push({
     name: game.i18n.localize("SIMPLE.UnsetTemplate"),
     icon: '<i class="fas fa-times"></i>',

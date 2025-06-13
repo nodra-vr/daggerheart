@@ -15,15 +15,15 @@ export class TokenCounterUI {
    * Initialize the token counter UI
    */
   async initialize() {
-    // Render the counter (initially hidden)
+    // render counter
     await this.render();
     
-    // Listen for control token changes
+    // control token hook
     Hooks.on("controlToken", (token, controlled) => {
       if (controlled) {
         this.setSelectedToken(token);
       } else {
-        // Check if any tokens are still controlled
+        // check controlled tokens
         const controlledTokens = canvas.tokens?.controlled || [];
         if (controlledTokens.length === 0) {
           this.setSelectedToken(null);
@@ -31,21 +31,21 @@ export class TokenCounterUI {
       }
     });
 
-    // Listen for token updates
+    // token update hook
     Hooks.on("updateToken", (token, change, options, userId) => {
       if (token === this.selectedToken?.document) {
         this.updateFromToken(token.object);
       }
     });
 
-    // Listen for actor updates
+    // actor update hook
     Hooks.on("updateActor", (actor, change, options, userId) => {
       if (this.selectedToken && this.selectedToken.document.actorId === actor.id) {
         this.updateFromToken(this.selectedToken);
       }
     });
 
-    // Listen for canvas ready to clear selection
+    // canvas ready hook
     Hooks.on("canvasReady", () => {
       this.setSelectedToken(null);
     });
@@ -92,29 +92,29 @@ export class TokenCounterUI {
     const system = actor.system;
     this.actorType = actor.type;
     
-    // Initialize missing data for NPCs if needed
+    // npc data init
     if (this.actorType === 'npc') {
-      // Ensure health exists
+      // health check
       if (!system.health) {
         system.health = { value: 0, max: 0 };
       }
-      // Ensure stress exists
+      // stress check
       if (!system.stress) {
         system.stress = { value: 0, max: 0 };
       }
     }
     
-    // Get HP values
+    // hp values
     if (system.health) {
       this.hp.current = parseInt(system.health.value) || 0;
       this.hp.max = parseInt(system.health.max) || 0;
     } else {
-      // Default to 0 if not defined
+      // default hp
       this.hp.current = 0;
       this.hp.max = 0;
     }
     
-    // For characters, get Hope values
+    // character hope
     if (this.actorType === 'character') {
       if (system.hope) {
         this.hope.current = parseInt(system.hope.value) || 0;
@@ -123,11 +123,11 @@ export class TokenCounterUI {
         this.hope.current = 0;
         this.hope.max = 0;
       }
-      // Clear stress for characters
+      // clear stress
       this.stress.current = 0;
       this.stress.max = 0;
     }
-    // For NPCs (Adversaries), get Stress values
+    // npc stress
     else if (this.actorType === 'npc') {
       if (system.stress) {
         this.stress.current = parseInt(system.stress.value) || 0;
@@ -136,7 +136,7 @@ export class TokenCounterUI {
         this.stress.current = 0;
         this.stress.max = 0;
       }
-      // Clear hope for NPCs
+      // clear hope
       this.hope.current = 0;
       this.hope.max = 0;
     }
@@ -148,7 +148,7 @@ export class TokenCounterUI {
    * Render the token counter UI element
    */
   async render() {
-    // Create HP counter HTML (to go before Fear)
+    // hp counter html
     const hpHtml = `
       <div id="token-hp-counter" class="faded-ui counter-ui token-counter" style="position: relative; z-index: 9998; display: none;">
         <button type="button" class="counter-minus hp-minus" title="Decrease HP" style="position: relative; z-index: 10000; pointer-events: all;">
@@ -164,8 +164,7 @@ export class TokenCounterUI {
       </div>
     `;
     
-    // Create Hope/Stress counter HTML (to go after Fear)
-    // Will display Hope for characters, Stress for NPCs/Adversaries
+    // hope/stress html
     const hopeStressHtml = `
       <div id="token-hope-counter" class="faded-ui counter-ui token-counter" style="position: relative; z-index: 9998; display: none;">
         <button type="button" class="counter-minus hope-stress-minus" title="Decrease" style="position: relative; z-index: 10000; pointer-events: all;">
@@ -181,10 +180,10 @@ export class TokenCounterUI {
       </div>
     `;
     
-    // Find or create the counters wrapper
+    // find/create wrapper
     let countersWrapper = document.getElementById("counters-wrapper");
     if (!countersWrapper) {
-      // Create wrapper if it doesn't exist
+      // create wrapper
       const wrapperHtml = '<div id="counters-wrapper" class="counters-wrapper"></div>';
       
       const hotbar = document.getElementById("hotbar");
@@ -200,25 +199,25 @@ export class TokenCounterUI {
       countersWrapper = document.getElementById("counters-wrapper");
     }
     
-    // Find the Fear counter to position our counters around it
+    // position around fear counter
     const counterUI = document.getElementById("counter-ui");
     if (counterUI) {
-      // Insert HP before Fear counter
+      // hp before fear
       counterUI.insertAdjacentHTML("beforebegin", hpHtml);
-      // Insert Hope/Stress after Fear counter
+      // hope/stress after fear
       counterUI.insertAdjacentHTML("afterend", hopeStressHtml);
     } else {
-      // If no Fear counter exists, just add to the wrapper
+      // no fear counter
       countersWrapper.insertAdjacentHTML("afterbegin", hpHtml);
       countersWrapper.insertAdjacentHTML("beforeend", hopeStressHtml);
     }
     
-    // Store references to both elements
+    // store element refs
     this.hpElement = document.getElementById("token-hp-counter");
     this.hopeElement = document.getElementById("token-hope-counter");
     this.element = { hp: this.hpElement, hope: this.hopeElement };
     
-    // Activate listeners with a small delay to ensure DOM is ready
+    // activate listeners
     setTimeout(() => {
       this.activateListeners();
     }, 100);
@@ -228,10 +227,10 @@ export class TokenCounterUI {
    * Activate event listeners
    */
   activateListeners() {
-    // Add event listeners for HP and Hope buttons
+    // event listeners
     ["click", "mousedown", "pointerdown"].forEach(eventType => {
       document.body.addEventListener(eventType, async (e) => {
-        // HP buttons
+        // hp buttons
         if (e.target.closest("#token-hp-counter .hp-plus")) {
           e.preventDefault();
           e.stopPropagation();
@@ -245,7 +244,7 @@ export class TokenCounterUI {
             await this.modifyHP(-1);
           }
         }
-        // Hope/Stress buttons
+        // hope/stress buttons
         else if (e.target.closest("#token-hope-counter .hope-stress-plus")) {
           e.preventDefault();
           e.stopPropagation();
@@ -259,7 +258,7 @@ export class TokenCounterUI {
             await this.modifyHopeOrStress(-1);
           }
         }
-      }, true); // Use capture phase
+      }, true); // capture phase
     });
   }
 
@@ -272,14 +271,14 @@ export class TokenCounterUI {
     const actor = this.selectedToken.actor;
     const canModify = game.user.isGM || game.user.hasRole("ASSISTANT") || actor.isOwner;
 
-    // Check permissions
+    // permission check
     if (!canModify) {
       console.warn("User does not have permission to modify token values");
       ui.notifications.warn("You do not have permission to modify this token's values.");
       return;
     }
     
-    // Check if actor has health data
+    // health data check
     if (!actor.system.health) {
       console.warn("This actor does not have health data");
       return;
@@ -303,16 +302,16 @@ export class TokenCounterUI {
     const actor = this.selectedToken.actor;
     const canModify = game.user.isGM || game.user.hasRole("ASSISTANT") || actor.isOwner;
 
-    // Check permissions
+    // permission check
     if (!canModify) {
       console.warn("User does not have permission to modify token values");
       ui.notifications.warn("You do not have permission to modify this token's values.");
       return;
     }
     
-    // For characters, modify Hope
+    // character hope
     if (this.actorType === 'character') {
-      // Check if actor has hope data
+      // hope data check
       if (!actor.system.hope) {
         console.warn("This actor does not have hope data");
         return;
@@ -326,9 +325,9 @@ export class TokenCounterUI {
         "system.hope.value": newHope
       });
     }
-    // For NPCs (Adversaries), modify Stress
+    // npc stress
     else if (this.actorType === 'npc') {
-      // Check if actor has stress data
+      // stress data check
       if (!actor.system.stress) {
         console.warn("This actor does not have stress data");
         return;
@@ -350,13 +349,13 @@ export class TokenCounterUI {
   updateDisplay() {
     if (!this.hpElement || !this.hopeElement) return;
     
-    // Update HP display
+    // hp display
     const hpValue = this.hpElement.querySelector(".hp-value");
     if (hpValue) {
       hpValue.textContent = `${this.hp.current}/${this.hp.max}`;
     }
     
-    // Update Hope/Stress display
+    // hope/stress display
     const hopeStressValue = this.hopeElement.querySelector(".hope-stress-value");
     const hopeStressLabel = this.hopeElement.querySelector(".hope-stress-label");
     

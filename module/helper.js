@@ -2,7 +2,7 @@ export class EntitySheetHelper {
 
   static getAttributeData(data) {
 
-    // Determine attribute type.
+    // attr types
     for ( let attr of Object.values(data.system.attributes) ) {
       if ( attr.dtype ) {
         attr.isCheckbox = attr.dtype === "Boolean";
@@ -11,10 +11,10 @@ export class EntitySheetHelper {
       }
     }
 
-    // Initialize ungrouped attributes for later.
+    // ungrouped init
     data.system.ungroupedAttributes = {};
 
-    // Build an array of sorted group keys.
+    // sorted groups
     const groups = data.system.groups || {};
     let groupKeys = Object.keys(groups).sort((a, b) => {
       let aSort = groups[a].label ?? a;
@@ -22,18 +22,18 @@ export class EntitySheetHelper {
       return aSort.localeCompare(bSort);
     });
 
-    // Iterate over the sorted groups to add their attributes.
+    // group attrs
     for ( let key of groupKeys ) {
       let group = data.system.attributes[key] || {};
 
-      // Initialize the attributes container for this group.
+      // attr container
       if ( !data.system.groups[key]['attributes'] ) data.system.groups[key]['attributes'] = {};
 
-      // Sort the attributes within the group, and then iterate over them.
+      // sort & process
       Object.keys(group).sort((a, b) => a.localeCompare(b)).forEach(attr => {
-        // Avoid errors if this is an invalid group.
+        // invalid check
         if ( typeof group[attr] != "object" || !group[attr]) return;
-        // For each attribute, determine whether it's a checkbox or resource, and then add it to the group's attributes list.
+        // attr types
         group[attr]['isCheckbox'] = group[attr]['dtype'] === 'Boolean';
         group[attr]['isResource'] = group[attr]['dtype'] === 'Resource';
         group[attr]['isFormula'] = group[attr]['dtype'] === 'Formula';
@@ -41,23 +41,23 @@ export class EntitySheetHelper {
       });
     }
 
-    // Sort the remaining attributes.
+    // remaining attrs
     const keys = Object.keys(data.system.attributes).filter(a => !groupKeys.includes(a));
     keys.sort((a, b) => a.localeCompare(b));
     for ( const key of keys ) data.system.ungroupedAttributes[key] = data.system.attributes[key];
 
-    // Modify attributes on items.
+    // item attrs
     if ( data.items ) {
       data.items.forEach(item => {
-        // Iterate over attributes.
+        // process attrs
         for ( let [k, v] of Object.entries(item.system.attributes) ) {
-          // Grouped attributes.
+          // grouped
           if ( !v.dtype ) {
             for ( let [gk, gv] of Object.entries(v) ) {
               if ( gv.dtype ) {
-                // Add label fallback.
+                // label fallback
                 if ( !gv.label ) gv.label = gk;
-                // Add formula bool.
+                // formula flag
                 if ( gv.dtype === "Formula" ) {
                   gv.isFormula = true;
                 }
@@ -67,11 +67,11 @@ export class EntitySheetHelper {
               }
             }
           }
-          // Ungrouped attributes.
+          // ungrouped
           else {
-            // Add label fallback.
+            // label fallback
             if ( !v.label ) v.label = k;
-            // Add formula bool.
+            // formula flag
             if ( v.dtype === "Formula" ) {
               v.isFormula = true;
             }
@@ -88,21 +88,21 @@ export class EntitySheetHelper {
 
   /** @override */
   static onSubmit(event) {
-    // Closing the form/sheet will also trigger a submit, so only evaluate if this is an event.
+    // event check
     if ( event.currentTarget ) {
-      // Exit early if this isn't a named attribute.
+      // named attr check
       if ( (event.currentTarget.tagName.toLowerCase() === 'input') && !event.currentTarget.hasAttribute('name')) {
         return false;
       }
 
       let attr = false;
-      // If this is the attribute key, we need to make a note of it so that we can restore focus when its recreated.
+      // attr key focus
       const el = event.currentTarget;
       if ( el.classList.contains("attribute-key") ) {
         let val = el.value;
         let oldVal = el.closest(".attribute").dataset.attribute;
         let attrError = false;
-        // Prevent attributes that already exist as groups.
+        // duplicate check
         let groups = document.querySelectorAll('.group-key');
         for ( let i = 0; i < groups.length; i++ ) {
           if (groups[i].value === val) {
@@ -112,14 +112,14 @@ export class EntitySheetHelper {
             break;
           }
         }
-        // Handle value and name replacement otherwise.
+        // value replacement
         if ( !attrError ) {
           oldVal = oldVal.includes('.') ? oldVal.split('.')[1] : oldVal;
           attr = $(el).attr('name').replace(oldVal, val);
         }
       }
 
-      // Return the attribute key if set, or true to confirm the submission should be triggered.
+      // return key or confirm
       return attr ? attr : true;
     }
   }
@@ -173,20 +173,20 @@ export class EntitySheetHelper {
     const chatLabel = label ?? button.parentElement.querySelector(".attribute-key").value;
     const shorthand = game.settings.get("worldbuilding", "macroShorthand");
 
-    // Use the actor for rollData so that formulas are always in reference to the parent actor.
+    // actor rollData
     const rollData = this.actor.getRollData();
     let formula = button.closest(".attribute").querySelector(".attribute-value")?.value;
 
-    // If there's a formula, attempt to roll it.
+    // roll formula
     if ( formula ) {
       let replacement = null;
       if ( formula.includes('@item.') && this.item ) {
-        let itemName = this.item.name.slugify({strict: true}); // Get the machine safe version of the item name.
+        let itemName = this.item.name.slugify({strict: true}); // item slug
         replacement = !!shorthand ? `@items.${itemName}.` : `@items.${itemName}.attributes.`;
         formula = formula.replace('@item.', replacement);
       }
 
-      // Create the roll and the corresponding message
+      // roll & message
       let r = new Roll(formula, rollData);
       return r.toMessage({
         user: game.user.id,
@@ -208,13 +208,13 @@ export class EntitySheetHelper {
    * @returns {string} Html string.
    */
   static getAttributeHtml(items, index, group = false) {
-    // Initialize the HTML.
+    // html init
     let result = '<div style="display: none;">';
-    // Iterate over the supplied keys and build their inputs (including whether they need a group key).
+    // build inputs
     for (let [key, item] of Object.entries(items)) {
       result = result + `<input type="${item.type}" name="system.attributes${group ? '.' + group : '' }.attr${index}.${key}" value="${item.value}"/>`;
     }
-    // Close the HTML and return.
+    // close & return
     return result + '</div>';
   }
 
@@ -230,25 +230,25 @@ export class EntitySheetHelper {
     let groups = Object.keys(document.system.groups || {});
     let attributes = Object.keys(document.system.attributes).filter(a => !groups.includes(a));
 
-    // Check for duplicate group keys.
+    // duplicate check
     if ( groups.includes(groupName) ) {
       ui.notifications.error(game.i18n.localize("SIMPLE.NotifyGroupDuplicate") + ` (${groupName})`);
       return false;
     }
 
-    // Check for group keys that match attribute keys.
+    // attr conflict
     if ( attributes.includes(groupName) ) {
       ui.notifications.error(game.i18n.localize("SIMPLE.NotifyGroupAttrDuplicate") + ` (${groupName})`);
       return false;
     }
 
-    // Check for reserved group names.
+    // reserved names
     if ( ["attr", "attributes"].includes(groupName) ) {
       ui.notifications.error(game.i18n.format("SIMPLE.NotifyGroupReserved", {key: groupName}));
       return false;
     }
 
-    // Check for whitespace or periods.
+    // invalid chars
     if ( groupName.match(/[\s|\.]/i) ) {
       ui.notifications.error(game.i18n.localize("SIMPLE.NotifyGroupAlphanumeric"));
       return false;
@@ -272,7 +272,7 @@ export class EntitySheetHelper {
     const groups = app.object.system.groups;
     const form = app.form;
 
-    // Determine the new attribute key for ungrouped attributes.
+    // new attr key
     let objKeys = Object.keys(attrs).filter(k => !Object.keys(groups).includes(k));
     let nk = Object.keys(attrs).length + 1;
     let newValue = `attr${nk}`;
@@ -282,7 +282,7 @@ export class EntitySheetHelper {
       newValue = `attr${nk}`;
     }
 
-    // Build options for construction HTML inputs.
+    // html options
     let htmlItems = {
       key: {
         type: "text",
@@ -290,7 +290,7 @@ export class EntitySheetHelper {
       }
     };
 
-    // Grouped attributes.
+    // grouped
     if ( group ) {
       objKeys = attrs[group] ? Object.keys(attrs[group]) : [];
       nk = objKeys.length + 1;
@@ -300,7 +300,7 @@ export class EntitySheetHelper {
         newValue =  `attr${nk}`;
       }
 
-      // Update the HTML options used to build the new input.
+      // update options
       htmlItems.key.value = newValue;
       htmlItems.group = {
         type: "hidden",
@@ -311,9 +311,9 @@ export class EntitySheetHelper {
         value: dtype
       };
     }
-    // Ungrouped attributes.
+    // ungrouped
     else {
-      // Choose a default dtype based on the last attribute, fall back to "String".
+      // default dtype
       if (!dtype) {
         let lastAttr = document.querySelector('.attributes > .attributes-group .attribute:last-child .attribute-dtype')?.value;
         dtype = lastAttr ? lastAttr : "String";
@@ -324,10 +324,10 @@ export class EntitySheetHelper {
       }
     }
 
-    // Build the form elements used to create the new grouped attribute.
+    // build form elements
     newKey.innerHTML = EntitySheetHelper.getAttributeHtml(htmlItems, nk, group);
 
-    // Append the form element and submit the form.
+    // append & submit
     newKey = newKey.children[0];
     form.appendChild(newKey);
     await app._onSubmit(event);
@@ -360,11 +360,11 @@ export class EntitySheetHelper {
     const a = event.currentTarget;
     const form = app.form;
     let newValue = $(a).siblings('.group-prefix').val();
-    // Verify the new group key is valid, and use it to create the group.
+    // validate & create
     if ( newValue.length > 0 && EntitySheetHelper.validateGroup(newValue, app.object) ) {
       let newKey = document.createElement("div");
       newKey.innerHTML = `<input type="text" name="system.groups.${newValue}.key" value="${newValue}"/>`;
-      // Append the form element and submit the form.
+      // append & submit
       newKey = newKey.children[0];
       form.appendChild(newKey);
       await app._onSubmit(event);
@@ -384,7 +384,7 @@ export class EntitySheetHelper {
     let groupHeader = a.closest(".group-header");
     let groupContainer = groupHeader.closest(".group");
     let group = $(groupHeader).find('.group-key');
-    // Create a dialog to confirm group deletion.
+    // confirm deletion
     new Dialog({
       title: game.i18n.localize("SIMPLE.DeleteGroup"),
       content: `${game.i18n.localize("SIMPLE.DeleteGroupContent")} <strong>${group.val()}</strong>`,
@@ -421,7 +421,7 @@ export class EntitySheetHelper {
     const attributes = Object.values(formAttrs).reduce((obj, v) => {
       let attrs = [];
       let group = null;
-      // Handle attribute keys for grouped attributes.
+      // grouped attrs
       if ( !v["key"] ) {
         attrs = Object.keys(v);
         attrs.forEach(attrKey => {
@@ -430,18 +430,18 @@ export class EntitySheetHelper {
           let attr = v[attrKey];
           const k = this.cleanKey(v[attrKey]["key"] ? v[attrKey]["key"].trim() : attrKey.trim());
           delete attr["key"];
-          // Add the new attribute if it's grouped, but we need to build the nested structure first.
+          // nested structure
           if ( !obj[group] ) {
             obj[group] = {};
           }
           obj[group][k] = attr;
         });
       }
-      // Handle attribute keys for ungrouped attributes.
+      // ungrouped attrs
       else {
         const k = this.cleanKey(v["key"].trim());
         delete v["key"];
-        // Add the new attribute only if it's ungrouped.
+        // ungrouped only
         if ( !group ) {
           obj[k] = v;
         }
@@ -454,7 +454,7 @@ export class EntitySheetHelper {
       if ( !attributes.hasOwnProperty(k) ) attributes[`-=${k}`] = null;
     }
 
-    // Remove grouped attributes which are no longer used.
+    // remove unused grouped
     for ( let group of groupKeys) {
       if ( document.system.attributes[group] ) {
         for ( let k of Object.keys(document.system.attributes[group]) ) {

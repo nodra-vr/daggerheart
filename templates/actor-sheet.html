@@ -376,6 +376,42 @@
                     </div>
                 </div>
             </div>
+                
+            {{!-- Treasure Tracking Section --}}
+            <div class="treasure-tracker">
+                <div class="treasure-item">
+                    <input type="number" name="system.treasure.coins.value" value="{{systemData.treasure.coins.value}}" 
+                           title="{{systemData.treasure.coins.tooltip}}" min="0" />
+                    <div class="treasure-icon">
+                        <i class="fas fa-coins"></i>
+                        <label>Coins</label>
+                    </div>
+                </div>
+                <div class="treasure-item">
+                    <input type="number" name="system.treasure.handfuls.value" value="{{systemData.treasure.handfuls.value}}" 
+                           title="{{systemData.treasure.handfuls.tooltip}}" min="0" />
+                    <div class="treasure-icon">
+                        <i class="fas fa-hand-holding"></i>
+                        <label>Handfuls</label>
+                    </div>
+                </div>
+                <div class="treasure-item">
+                    <input type="number" name="system.treasure.bags.value" value="{{systemData.treasure.bags.value}}" 
+                           title="{{systemData.treasure.bags.tooltip}}" min="0" />
+                    <div class="treasure-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                        <label>Bags</label>
+                    </div>
+                </div>
+                <div class="treasure-item">
+                    <input type="number" name="system.treasure.chests.value" value="{{systemData.treasure.chests.value}}" 
+                           title="{{systemData.treasure.chests.tooltip}}" min="0" />
+                    <div class="treasure-icon">
+                        <i class="fas fa-treasure-chest"></i>
+                        <label>Chests</label>
+                    </div>
+                </div>
+            </div>
 
             {{!-- Owned Inventory Tab --}}
             <div class="inventory">
@@ -413,42 +449,6 @@
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                         data-type="inventory">
                         <i class="fas fa-plus"></i></a>
-                </div>
-
-                {{!-- Treasure Tracking Section --}}
-                <div class="treasure-tracker">
-                    <div class="treasure-item">
-                        <input type="number" name="system.treasure.coins.value" value="{{systemData.treasure.coins.value}}" 
-                               title="{{systemData.treasure.coins.tooltip}}" min="0" />
-                        <div class="treasure-icon">
-                            <i class="fas fa-coins"></i>
-                            <label>Coins</label>
-                        </div>
-                    </div>
-                    <div class="treasure-item">
-                        <input type="number" name="system.treasure.handfuls.value" value="{{systemData.treasure.handfuls.value}}" 
-                               title="{{systemData.treasure.handfuls.tooltip}}" min="0" />
-                        <div class="treasure-icon">
-                            <i class="fas fa-hand-holding"></i>
-                            <label>Handfuls</label>
-                        </div>
-                    </div>
-                    <div class="treasure-item">
-                        <input type="number" name="system.treasure.bags.value" value="{{systemData.treasure.bags.value}}" 
-                               title="{{systemData.treasure.bags.tooltip}}" min="0" />
-                        <div class="treasure-icon">
-                            <i class="fas fa-shopping-bag"></i>
-                            <label>Bags</label>
-                        </div>
-                    </div>
-                    <div class="treasure-item">
-                        <input type="number" name="system.treasure.chests.value" value="{{systemData.treasure.chests.value}}" 
-                               title="{{systemData.treasure.chests.tooltip}}" min="0" />
-                        <div class="treasure-icon">
-                            <i class="fas fa-treasure-chest"></i>
-                            <label>Chests</label>
-                        </div>
-                    </div>
                 </div>
 
                 <ol class="item-list" data-item-type="inventory">
@@ -515,6 +515,69 @@
                     {{/each}}
                 </ol>-->
 
+                <div class="tab-category">Class
+                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-class"
+                        data-type="class">
+                        <i class="fas fa-plus"></i></a>
+                </div>
+                <ol class="item-list" data-item-type="class">
+                    {{#each data.items as |item id|}}
+                    {{#if (eq item.type "class")}}
+                    <li class="item" data-item-id="{{item._id}}">
+                        <div class="item-main-row">
+                             <div class="item-top-row">
+                                <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
+                                    width="30" height="30" />
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                            </div>
+                            <div class="item-controls">
+                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
+                                        class="fas fa-arrow-right"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
+                                        class="fas fa-edit"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
+                                        class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                        <div class="item-description">
+                            {{{item.system.enrichedDescription}}}
+                        </div>
+                    </li>
+                    {{/if}}
+                    {{/each}}
+                </ol>
+                <div class="tab-category">Subclass
+                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-subclass"
+                        data-type="subclass">
+                        <i class="fas fa-plus"></i></a>
+                </div>
+                <ol class="item-list" data-item-type="subclass">
+                    {{#each data.items as |item id|}}
+                    {{#if (eq item.type "subclass")}}
+                    <li class="item" data-item-id="{{item._id}}">
+                        <div class="item-main-row">
+                             <div class="item-top-row">
+                                <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
+                                    width="30" height="30" />
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                            </div>
+                            <div class="item-controls">
+                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
+                                        class="fas fa-arrow-right"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
+                                        class="fas fa-edit"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
+                                        class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                        <div class="item-description">
+                            {{{item.system.enrichedDescription}}}
+                        </div>
+                    </li>
+                    {{/if}}
+                    {{/each}}
+                </ol>
+
                 <div class="tab-category">Ancestry
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-ancestry"
                         data-type="ancestry">
@@ -579,69 +642,6 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category">Class
-                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-class"
-                        data-type="class">
-                        <i class="fas fa-plus"></i></a>
-                </div>
-                <ol class="item-list" data-item-type="class">
-                    {{#each data.items as |item id|}}
-                    {{#if (eq item.type "class")}}
-                    <li class="item" data-item-id="{{item._id}}">
-                        <div class="item-main-row">
-                             <div class="item-top-row">
-                                <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
-                                    width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
-                            </div>
-                            <div class="item-controls">
-                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
-                                        class="fas fa-arrow-right"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
-                                        class="fas fa-edit"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
-                                        class="fas fa-trash"></i></a>
-                            </div>
-                        </div>
-                        <div class="item-description">
-                            {{{item.system.enrichedDescription}}}
-                        </div>
-                    </li>
-                    {{/if}}
-                    {{/each}}
-                </ol>
-                <div class="tab-category">Subclass
-                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-subclass"
-                        data-type="subclass">
-                        <i class="fas fa-plus"></i></a>
-                </div>
-                <ol class="item-list" data-item-type="subclass">
-                    {{#each data.items as |item id|}}
-                    {{#if (eq item.type "subclass")}}
-                    <li class="item" data-item-id="{{item._id}}">
-                        <div class="item-main-row">
-                             <div class="item-top-row">
-                                <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
-                                    width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
-                            </div>
-                            <div class="item-controls">
-                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
-                                        class="fas fa-arrow-right"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
-                                        class="fas fa-edit"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
-                                        class="fas fa-trash"></i></a>
-                            </div>
-                        </div>
-                        <div class="item-description">
-                            {{{item.system.enrichedDescription}}}
-                        </div>
-                    </li>
-                    {{/if}}
-                    {{/each}}
-                </ol>
-
                 <div class="tab-category">Abilities
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create"
                         data-type="item">
@@ -658,6 +658,8 @@
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
                             </div>
                             <div class="item-controls">
+                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
+                                        class="fas fa-arrow-right"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i

@@ -200,7 +200,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       event.preventDefault();
       const category = event.currentTarget;
       
-      // Look for the associated item list - it might not be the immediate next sibling
+      // find item list
       let itemList = category.nextElementSibling;
       while (itemList && !itemList.classList.contains('item-list')) {
         itemList = itemList.nextElementSibling;
@@ -290,7 +290,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       case "create-subclass":
       const clssc = getDocumentClass("Item");
       return clssc.create({name: "New Subclass", type: type}, {parent: this.actor}); // Use the type variable here
-      case "edit": // This will now only be reached if the image wasn't clicked (e.g., edit icon was clicked)
+      case "edit": // edit icon
         if (item) return item.sheet.render(true);
         break;
       case "delete":
@@ -382,13 +382,13 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       el.classList.remove('drag-over');
     });
     
-    // If the item comes from the same actor, it's a move.
+    // same actor move
     if (this.actor.items.has(item.id)) {
         const existingItem = this.actor.items.get(item.id);
-        // If it's the same type do nothing
+        // same type check
         if (existingItem.type === newType) return;
 
-        // Create a new item of the correct type with the old item's data.
+        // new item with data
         const newItemData = existingItem.toObject();
         newItemData.type = newType;
         
@@ -489,15 +489,15 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
         const proficiency = Math.max(1, parseInt(rollProfInput) || 1);
         const diceInput = rollValueInput.value.trim();
         
-        // Parse dice notation including modifiers (e.g., "1d8", "d8", "2d10", "1d12+2", "d6-1")
+        // parse dice notation
         const diceMatch = diceInput.match(/^(\d*)d(\d+)(.*)$/i);
         if (diceMatch) {
-            const diceCount = diceMatch[1] || proficiency; // e.g., "1" from "1d8"
-            const dieType = diceMatch[2]; // e.g., "8" from "d8"
-            const modifier = diceMatch[3] || ""; // e.g., "+2" from "1d12+2"
+            const diceCount = diceMatch[1] || proficiency; // count
+            const dieType = diceMatch[2]; // type
+            const modifier = diceMatch[3] || ""; // modifier
             rollValue = `${diceCount}d${dieType}${modifier}`;
         } else {
-            // If it's not standard dice notation, fall back to original logic
+            // fallback logic
             rollValue = rollProfInput + diceInput;
         }
     } else {
