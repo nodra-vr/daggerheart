@@ -720,17 +720,17 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     const isHope = hopeDieValue > fearDieValue;
     const isFear = hopeDieValue < fearDieValue;
 
-    let finalFlavor = `${traitNamePrint}${flavorSuffix}`;
+    let finalFlavor = `<p><b>${traitNamePrint}</b>${flavorSuffix}`;
     if (modifier !== 0) {
         finalFlavor += modifier > 0 ? ` +${modifier}` : ` ${modifier}`;
     }
 
     if (isCrit) {
-      finalFlavor += ` Critical Success!`;
+      finalFlavor += ` <b>Critical</b> Success!</p><p>You gain 1 Hope and clear 1 Stress</P>`;
     } else if (isHope) {
-      finalFlavor += ` Rolled with Hope!`;
+      finalFlavor += ` Rolled with <b>Hope</b>!</p><p>You gain 1 Hope</p>`;
     } else if (isFear) {
-      finalFlavor += ` Rolled with Fear!`;
+      finalFlavor += ` Rolled with <b>Fear</b>!</p><p>The GM gains 1 Fear</p>`;
     }
     
     await roll.toMessage({
