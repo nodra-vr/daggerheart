@@ -145,6 +145,9 @@
                             <label for="system.agility.value">Agility</label>
                         </div>
                         <input type="number" name="system.agility.value" value="{{systemData.agility.value}}" />
+                        <div class="trait-toggle">
+                            <input type="checkbox" name="system.agility.levelled" {{#if systemData.agility.levelled}}checked{{/if}} />
+                        </div>
                         <div class="trait-effects">
                             <a>Sprint</a>
                             <a>Dodge</a>
@@ -156,6 +159,9 @@
                             <label for="system.strength.value">Strength</label>
                         </div>
                         <input type="number" name="system.strength.value" value="{{systemData.strength.value}}" />
+                        <div class="trait-toggle">
+                            <input type="checkbox" name="system.strength.levelled" {{#if systemData.strength.levelled}}checked{{/if}} />
+                        </div>
                         <div class="trait-effects">
                             <a>Lift</a>
                             <a>Smash</a>
@@ -167,6 +173,9 @@
                             <label for="system.finesse.value">Finesse</label>
                         </div>
                         <input type="number" name="system.finesse.value" value="{{systemData.finesse.value}}" />
+                        <div class="trait-toggle">
+                            <input type="checkbox" name="system.finesse.levelled" {{#if systemData.finesse.levelled}}checked{{/if}} />
+                        </div>
                         <div class="trait-effects">
                             <a>Control</a>
                             <a>Hide</a>
@@ -178,6 +187,9 @@
                             <label for="system.instinct.value">Instinct</label>
                         </div>
                         <input type="number" name="system.instinct.value" value="{{systemData.instinct.value}}" />
+                        <div class="trait-toggle">
+                            <input type="checkbox" name="system.instinct.levelled" {{#if systemData.instinct.levelled}}checked{{/if}} />
+                        </div>
                         <div class="trait-effects">
                             <a>Perceive</a>
                             <a>Sense</a>
@@ -189,6 +201,9 @@
                             <label for="system.presence.value">Presence</label>
                         </div>
                         <input type="number" name="system.presence.value" value="{{systemData.presence.value}}" />
+                        <div class="trait-toggle">
+                            <input type="checkbox" name="system.presence.levelled" {{#if systemData.presence.levelled}}checked{{/if}} />
+                        </div>
                         <div class="trait-effects">
                             <a>Charm</a>
                             <a>Perform</a>
@@ -200,6 +215,9 @@
                             <label for="system.knowledge.value">Knowledge</label>
                         </div>
                         <input type="number" name="system.knowledge.value" value="{{systemData.knowledge.value}}" />
+                        <div class="trait-toggle">
+                            <input type="checkbox" name="system.knowledge.levelled" {{#if systemData.knowledge.levelled}}checked{{/if}} />
+                        </div>
                         <div class="trait-effects">
                             <a>Recall</a>
                             <a>Analyze</a>

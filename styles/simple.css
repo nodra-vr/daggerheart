@@ -802,6 +802,53 @@
   padding-bottom: 8px;
 }
 
+.trait-toggle {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -1.5em;
+  margin-bottom: 0;
+  z-index: 2;
+}
+
+.trait-toggle input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--dh-color-gold);
+  background: rgb(11, 10, 19);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.trait-toggle input[type="checkbox"]:hover {
+  border-color: var(--dh-color-gold-light);
+  background: rgba(11, 10, 19, 1);
+  transform: scale(1.1);
+}
+
+.trait-toggle input[type="checkbox"]:checked {
+  background: var(--dh-color-gold);
+  border-color: var(--dh-color-gold-light);
+}
+
+.trait-toggle input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--dh-color-off-black);
+  font-size: 12px;
+  font-weight: bold;
+}
+
 .trait-effects {
   font-size: 12px;
   display: flex;
