@@ -171,6 +171,21 @@ Hooks.once("ready", async function() {
 });
 
 /**
+ * Hook to set default prototype token settings for actors
+ */
+Hooks.on("preCreateActor", function(document, data, options, userId) {
+  // Set default prototype token settings
+  const prototypeToken = {
+    actorLink: true
+  };
+  
+  // Merge with any existing prototype token data
+  document.updateSource({
+    "prototypeToken": foundry.utils.mergeObject(document.prototypeToken?.toObject() || {}, prototypeToken)
+  });
+});
+
+/**
  * Adds the actor template context menu.
  */
 Hooks.on("getActorDirectoryEntryContext", (html, options) => {
