@@ -217,9 +217,13 @@ Hooks.on("renderChatMessage", (message, html, data) => {
     const hasHopeFear = flavor.includes("Hope") || flavor.includes("Fear");
     
     if (hasHopeFear) {
+      // Check if this was a critical success
+      const isCritical = flavor.includes("Critical") && flavor.includes("Success");
+      
       // Add damage button to the message
-      const damageButton = `<button class="damage-roll-button" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" style="margin-top: 0.5em; width: 100%;">
-        <i class="fas fa-dice-d20"></i> Damage
+      const buttonText = isCritical ? "Critical Damage" : "Damage";
+      const damageButton = `<button class="damage-roll-button ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+        <i class="fas fa-dice-d20"></i> ${buttonText}
       </button>`;
       
       html.find(".message-content").append(damageButton);
@@ -232,6 +236,7 @@ Hooks.on("renderChatMessage", (message, html, data) => {
         const weaponType = button.dataset.weaponType;
         const weaponName = button.dataset.weaponName;
         const weaponDamage = button.dataset.weaponDamage;
+        const isCritical = button.dataset.isCritical === "true";
         
         const actor = game.actors.get(actorId);
         if (!actor) return;
@@ -242,21 +247,33 @@ Hooks.on("renderChatMessage", (message, html, data) => {
         // Parse dice notation
         const diceMatch = weaponDamage.match(/^(\d*)d(\d+)(.*)$/i);
         let rollValue;
+        let flavorText = `${weaponName} - Damage`;
         
         if (diceMatch) {
-          const diceCount = diceMatch[1] || proficiency; // Use proficiency if no count specified
-          const dieType = diceMatch[2];
+          const diceCount = parseInt(diceMatch[1]) || proficiency; // Use proficiency if no count specified
+          const dieType = parseInt(diceMatch[2]);
           const modifier = diceMatch[3] || "";
-          rollValue = `${diceCount}d${dieType}${modifier}`;
+          
+          if (isCritical) {
+            // Critical damage: max value + normal roll
+            const maxDamage = diceCount * dieType;
+            rollValue = `${maxDamage} + ${diceCount}d${dieType}${modifier}`;
+            flavorText = `${weaponName} - Critical Damage!`;
+          } else {
+            // Normal damage
+            rollValue = `${diceCount}d${dieType}${modifier}`;
+          }
         } else {
+          // Fallback for non-standard notation
           rollValue = weaponDamage;
         }
         
         // Create and send the damage roll
         const roll = new Roll(rollValue);
+        await roll.evaluate({async: true});
         
         await roll.toMessage({
-          flavor: `${weaponName} - Damage`,
+          flavor: flavorText,
           user: game.user.id,
           speaker: ChatMessage.getSpeaker({ actor: actor }),
           rollMode: "roll"
@@ -294,13 +311,16 @@ Hooks.on("preCreateChatMessage", (message, data, options, userId) => {
   
   // If this is a weapon attack, store weapon data in message flags
   if (weaponData && (flavor.includes("Hope") || flavor.includes("Fear"))) {
+    const isCritical = flavor.includes("Critical") && flavor.includes("Success");
+    
     message.updateSource({
       flags: {
         daggerheart: {
           weaponAttack: true,
           weaponType: weaponType,
           weaponData: weaponData,
-          proficiency: actor.system.proficiency?.value || 1
+          proficiency: actor.system.proficiency?.value || 1,
+          isCritical: isCritical
         }
       }
     });

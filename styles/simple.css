@@ -1768,6 +1768,33 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
     color: #f3c267;
 }
 
+/* Critical Damage Button Styling */
+.damage-roll-button.critical {
+    background: rgba(35, 10, 10, 0.85);
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    animation: criticalGlow 2s ease-in-out infinite;
+}
+
+.damage-roll-button.critical:hover {
+    background: rgba(55, 15, 15, 0.9);
+    border-color: #ff9999;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
+}
+
+.damage-roll-button.critical i {
+    color: #ff6b6b;
+}
+
+@keyframes criticalGlow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 10px rgba(255, 107, 107, 0.8), 0 0 20px rgba(255, 107, 107, 0.4);
+    }
+}
+
 /* Remove padding and default styling from chat messages that contain an item card */
 .chat-message:has(.item-card-chat) {
   padding: 0;
