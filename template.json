@@ -44,8 +44,8 @@
         "severe": 0
       },
       "chosenDomains": {
-        "domain-one": "Ancestry",
-        "domain-two": "Class"
+        "domain-one": "Domain1",
+        "domain-two": "Domain2"
       },
       "experience": {
         "1Name": "",
