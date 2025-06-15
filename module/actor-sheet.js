@@ -727,16 +727,82 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     if (isCrit) {
       finalFlavor += ` <b>Critical</b> Success!</p><p>You gain 1 Hope and clear 1 Stress</P>`;
+      
+      // Apply mechanical effects for critical success
+      await this._applyCriticalSuccess();
     } else if (isHope) {
       finalFlavor += ` Rolled with <b>Hope</b>!</p><p>You gain 1 Hope</p>`;
+      
+      // Apply mechanical effects for hope result
+      await this._applyHopeGain();
     } else if (isFear) {
       finalFlavor += ` Rolled with <b>Fear</b>!</p><p>The GM gains 1 Fear</p>`;
+      
+      // Apply mechanical effects for fear result
+      await this._applyFearGain();
     }
     
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ token: this.actor }),
       flavor: finalFlavor
     });
+  }
+
+  /**
+   * Apply mechanical effects for critical success: gain 1 Hope and clear 1 Stress
+   * @private
+   */
+  async _applyCriticalSuccess() {
+    const updateData = {};
+    
+    if (this.actor.type === "character") {
+      // Gain 1 Hope (up to max)
+      const currentHope = parseInt(this.actor.system.hope?.value) || 0;
+      const maxHope = parseInt(this.actor.system.hope?.max) || 0;
+      const newHope = Math.min(maxHope, currentHope + 1);
+      updateData["system.hope.value"] = newHope;
+      
+      // Clear 1 Stress (minimum 0)
+      const currentStress = parseInt(this.actor.system.stress?.value) || 0;
+      const newStress = Math.max(0, currentStress - 1);
+      updateData["system.stress.value"] = newStress;
+    } else if (this.actor.type === "npc") {
+      // NPCs don't have Hope, but we can still clear Stress
+      const currentStress = parseInt(this.actor.system.stress?.value) || 0;
+      const newStress = Math.max(0, currentStress - 1);
+      updateData["system.stress.value"] = newStress;
+    }
+    
+    if (Object.keys(updateData).length > 0) {
+      await this.actor.update(updateData);
+    }
+  }
+
+  /**
+   * Apply mechanical effects for hope result: gain 1 Hope
+   * @private
+   */
+  async _applyHopeGain() {
+    if (this.actor.type === "character") {
+      const currentHope = parseInt(this.actor.system.hope?.value) || 0;
+      const maxHope = parseInt(this.actor.system.hope?.max) || 0;
+      const newHope = Math.min(maxHope, currentHope + 1);
+      
+      await this.actor.update({
+        "system.hope.value": newHope
+      });
+    }
+  }
+
+  /**
+   * Apply mechanical effects for fear result: GM gains 1 Fear
+   * @private
+   */
+  async _applyFearGain() {
+    // Increase the global fear counter
+    if (game.daggerheart?.counter) {
+      await game.daggerheart.counter.increase();
+    }
   }
 
   async _onToggleVault(event) {
@@ -1011,6 +1077,9 @@ export class NPCActorSheet extends SimpleActorSheet {
     let flavor = `${traitNamePrint}`;
     if (d20result === 20) {
       flavor += ` - Critical Success!`;
+      
+      // Apply mechanical effects for critical success (clear 1 stress for NPCs)
+      await this._applyCriticalSuccess();
     }
   
     await roll.toMessage({
