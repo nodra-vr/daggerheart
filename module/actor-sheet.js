@@ -743,7 +743,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     }
     
     await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ token: this.actor }),
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       flavor: finalFlavor
     });
   }
@@ -1083,7 +1083,7 @@ export class NPCActorSheet extends SimpleActorSheet {
     }
   
     await roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ token: this.actor }),
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: flavor
     });
   }

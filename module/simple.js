@@ -192,9 +192,41 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   const content = message.content;
   const flavor = message.flavor || '';
   
-  // Check if this is a weapon attack roll
-  const actor = game.actors.get(message.speaker?.actor);
-  if (!actor) return;
+  // Try to find the actor from multiple sources
+  let actor = null;
+  
+  // First try: speaker.actor (when rolling from sheet without token)
+  if (message.speaker?.actor) {
+    actor = game.actors.get(message.speaker.actor);
+  }
+  
+  // Second try: through token (when a token is selected)
+  if (!actor && message.speaker?.token) {
+    const token = canvas.tokens?.get(message.speaker.token);
+    if (token) {
+      actor = token.actor;
+    }
+  }
+  
+  // Third try: through scene and token (for linked tokens)
+  if (!actor && message.speaker?.scene && message.speaker?.token) {
+    const scene = game.scenes.get(message.speaker.scene);
+    if (scene) {
+      const tokenDoc = scene.tokens.get(message.speaker.token);
+      if (tokenDoc) {
+        actor = tokenDoc.actor;
+      }
+    }
+  }
+  
+  // Fourth try: from message flags (if we stored it)
+  if (!actor && message.flags?.daggerheart?.actorId) {
+    actor = game.actors.get(message.flags.daggerheart.actorId);
+  }
+  
+  if (!actor) {
+    return;
+  }
   
   let weaponData = null;
   let weaponType = null;
@@ -211,8 +243,11 @@ Hooks.on("renderChatMessage", (message, html, data) => {
     weaponType = "secondary";
   }
   
+  // Check for existing button
+  const existingButton = html.find(".damage-roll-button").length;
+  
   // If we found a matching weapon and it has damage defined
-  if (weaponData && weaponData.damage && !html.find(".damage-roll-button").length) {
+  if (weaponData && weaponData.damage && !existingButton) {
     // Check if this appears to be an attack roll (has Hope/Fear dice)
     const hasHopeFear = flavor.includes("Hope") || flavor.includes("Fear");
     
@@ -226,7 +261,9 @@ Hooks.on("renderChatMessage", (message, html, data) => {
         <i class="fas fa-dice-d20"></i> ${buttonText}
       </button>`;
       
-      html.find(".message-content").append(damageButton);
+      // Find message content and append button
+      const messageContent = html.find(".message-content");
+      messageContent.append(damageButton);
       
       // Add click handler
       html.find(".damage-roll-button").click(async (event) => {
@@ -239,7 +276,10 @@ Hooks.on("renderChatMessage", (message, html, data) => {
         const isCritical = button.dataset.isCritical === "true";
         
         const actor = game.actors.get(actorId);
-        if (!actor) return;
+        if (!actor) {
+          console.error("Daggerheart | Actor not found for damage roll");
+          return;
+        }
         
         // Get proficiency value
         const proficiency = Math.max(1, parseInt(actor.system.proficiency?.value) || 1);
@@ -288,10 +328,13 @@ Hooks.on("renderChatMessage", (message, html, data) => {
  */
 Hooks.on("preCreateChatMessage", (message, data, options, userId) => {
   // Only process messages from the current user
-  if (userId !== game.user.id) return;
+  if (userId !== game.user.id) {
+    return;
+  }
   
   const flavor = data.flavor || '';
   const actor = game.actors.get(data.speaker?.actor);
+  
   if (!actor) return;
   
   // Check if this is a weapon attack roll by looking for weapon names
@@ -320,7 +363,8 @@ Hooks.on("preCreateChatMessage", (message, data, options, userId) => {
           weaponType: weaponType,
           weaponData: weaponData,
           proficiency: actor.system.proficiency?.value || 1,
-          isCritical: isCritical
+          isCritical: isCritical,
+          actorId: actor.id  // Store actor ID as backup
         }
       }
     });
