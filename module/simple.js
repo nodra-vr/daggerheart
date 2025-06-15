@@ -186,6 +186,128 @@ Hooks.on("preCreateActor", function(document, data, options, userId) {
 });
 
 /**
+ * Hook to add damage button to attack roll chat messages
+ */
+Hooks.on("renderChatMessage", (message, html, data) => {
+  const content = message.content;
+  const flavor = message.flavor || '';
+  
+  // Check if this is a weapon attack roll
+  const actor = game.actors.get(message.speaker?.actor);
+  if (!actor) return;
+  
+  let weaponData = null;
+  let weaponType = null;
+  
+  // Check if the flavor contains a weapon name that matches actor's weapons
+  const primaryWeapon = actor.system["weapon-main"];
+  const secondaryWeapon = actor.system["weapon-off"];
+  
+  if (primaryWeapon?.name && flavor.includes(primaryWeapon.name)) {
+    weaponData = primaryWeapon;
+    weaponType = "primary";
+  } else if (secondaryWeapon?.name && flavor.includes(secondaryWeapon.name)) {
+    weaponData = secondaryWeapon;
+    weaponType = "secondary";
+  }
+  
+  // If we found a matching weapon and it has damage defined
+  if (weaponData && weaponData.damage && !html.find(".damage-roll-button").length) {
+    // Check if this appears to be an attack roll (has Hope/Fear dice)
+    const hasHopeFear = flavor.includes("Hope") || flavor.includes("Fear");
+    
+    if (hasHopeFear) {
+      // Add damage button to the message
+      const damageButton = `<button class="damage-roll-button" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" style="margin-top: 0.5em; width: 100%;">
+        <i class="fas fa-dice-d20"></i> Damage
+      </button>`;
+      
+      html.find(".message-content").append(damageButton);
+      
+      // Add click handler
+      html.find(".damage-roll-button").click(async (event) => {
+        event.preventDefault();
+        const button = event.currentTarget;
+        const actorId = button.dataset.actorId;
+        const weaponType = button.dataset.weaponType;
+        const weaponName = button.dataset.weaponName;
+        const weaponDamage = button.dataset.weaponDamage;
+        
+        const actor = game.actors.get(actorId);
+        if (!actor) return;
+        
+        // Get proficiency value
+        const proficiency = Math.max(1, parseInt(actor.system.proficiency?.value) || 1);
+        
+        // Parse dice notation
+        const diceMatch = weaponDamage.match(/^(\d*)d(\d+)(.*)$/i);
+        let rollValue;
+        
+        if (diceMatch) {
+          const diceCount = diceMatch[1] || proficiency; // Use proficiency if no count specified
+          const dieType = diceMatch[2];
+          const modifier = diceMatch[3] || "";
+          rollValue = `${diceCount}d${dieType}${modifier}`;
+        } else {
+          rollValue = weaponDamage;
+        }
+        
+        // Create and send the damage roll
+        const roll = new Roll(rollValue);
+        
+        await roll.toMessage({
+          flavor: `${weaponName} - Damage`,
+          user: game.user.id,
+          speaker: ChatMessage.getSpeaker({ actor: actor }),
+          rollMode: "roll"
+        });
+      });
+    }
+  }
+});
+
+/**
+ * Hook to store weapon data in attack roll messages for later use
+ */
+Hooks.on("preCreateChatMessage", (message, data, options, userId) => {
+  // Only process messages from the current user
+  if (userId !== game.user.id) return;
+  
+  const flavor = data.flavor || '';
+  const actor = game.actors.get(data.speaker?.actor);
+  if (!actor) return;
+  
+  // Check if this is a weapon attack roll by looking for weapon names
+  const primaryWeapon = actor.system["weapon-main"];
+  const secondaryWeapon = actor.system["weapon-off"];
+  
+  let weaponData = null;
+  let weaponType = null;
+  
+  if (primaryWeapon?.name && flavor.includes(primaryWeapon.name)) {
+    weaponData = primaryWeapon;
+    weaponType = "primary";
+  } else if (secondaryWeapon?.name && flavor.includes(secondaryWeapon.name)) {
+    weaponData = secondaryWeapon;
+    weaponType = "secondary";
+  }
+  
+  // If this is a weapon attack, store weapon data in message flags
+  if (weaponData && (flavor.includes("Hope") || flavor.includes("Fear"))) {
+    message.updateSource({
+      flags: {
+        daggerheart: {
+          weaponAttack: true,
+          weaponType: weaponType,
+          weaponData: weaponData,
+          proficiency: actor.system.proficiency?.value || 1
+        }
+      }
+    });
+  }
+});
+
+/**
  * Adds the actor template context menu.
  */
 Hooks.on("getActorDirectoryEntryContext", (html, options) => {
