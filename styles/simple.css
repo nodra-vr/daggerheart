@@ -1629,6 +1629,11 @@ input.trait-effects.resize-ta {
   color: var(--dh-color-off-white);
 }
 
+.daggerheart-roll-dialog select option:hover {
+  background: rgba(67, 63, 100, 0.9);
+  color: var(--dh-color-gold);
+}
+
 .daggerheart-roll-dialog select option:checked {
   background: #433f64;
   color: var(--dh-color-gold);
