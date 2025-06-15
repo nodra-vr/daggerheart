@@ -4,7 +4,7 @@ import { SimpleItem } from "./item.js";
 import { SimpleItemSheet } from "./item-sheet.js";
 import { SimpleActorSheet, NPCActorSheet } from "./actor-sheet.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
-import { createWorldbuildingMacro } from "./macro.js";
+import { createDaggerheartMacro } from "./macro.js";
 import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
@@ -17,7 +17,7 @@ import { TokenCounterUI } from "./token-counter-ui.js";
  * Init hook.
  */
 Hooks.once("init", async function() {
-  console.log(`Initializing Simple Worldbuilding System`);
+  console.log(`Initializing Simple Daggerheart System`);
 
   CONFIG.statusEffects = [];
 
@@ -46,9 +46,9 @@ Hooks.once("init", async function() {
     decimals: 2
   };
 
-  game.worldbuilding = {
+  game.daggerheart = {
     SimpleActor,
-    createWorldbuildingMacro
+    createDaggerheartMacro
   };
 
   // Define custom Document classes
@@ -74,24 +74,24 @@ Hooks.once("init", async function() {
 
   // Register sheet application classes
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.applications.sheets.ActorSheetV2);
-  foundry.documents.collections.Actors.registerSheet("worldbuilding", SimpleActorSheet, {
+  foundry.documents.collections.Actors.registerSheet("daggerheart", SimpleActorSheet, {
     types: ["character"],
     makeDefault: true,
     label: "SHEET.Actor.character"
   });
-  foundry.documents.collections.Actors.registerSheet("worldbuilding", NPCActorSheet, {
+  foundry.documents.collections.Actors.registerSheet("daggerheart", NPCActorSheet, {
     types: ["npc"],
     makeDefault: true,
     label: "SHEET.Actor.npc"
   });
   foundry.documents.collections.Items.unregisterSheet("core", foundry.applications.sheets.ItemSheetV2);
-  foundry.documents.collections.Items.registerSheet("worldbuilding", SimpleItemSheet, {
+  foundry.documents.collections.Items.registerSheet("daggerheart", SimpleItemSheet, {
     makeDefault: true,
     label: "SHEET.Item.default"
   });
 
   // Register system settings
-  game.settings.register("worldbuilding", "macroShorthand", {
+  game.settings.register("daggerheart", "macroShorthand", {
     name: "SETTINGS.SimpleMacroShorthandN",
     hint: "SETTINGS.SimpleMacroShorthandL",
     scope: "world",
@@ -101,7 +101,7 @@ Hooks.once("init", async function() {
   });
 
   // Register counter value setting
-  game.settings.register("worldbuilding", "counterValue", {
+  game.settings.register("daggerheart", "counterValue", {
     name: "Counter Value",
     hint: "The current value of the counter",
     scope: "world",
@@ -111,7 +111,7 @@ Hooks.once("init", async function() {
   });
 
   // init setting
-  game.settings.register("worldbuilding", "initFormula", {
+  game.settings.register("daggerheart", "initFormula", {
     name: "SETTINGS.SimpleInitFormulaN",
     hint: "SETTINGS.SimpleInitFormulaL",
     scope: "world",
@@ -122,7 +122,7 @@ Hooks.once("init", async function() {
   });
 
   // init formula
-  const initFormula = game.settings.get("worldbuilding", "initFormula");
+  const initFormula = game.settings.get("daggerheart", "initFormula");
   _simpleUpdateInit(initFormula);
 
   /**
@@ -153,19 +153,19 @@ Hooks.once("init", async function() {
 /**
  * Macrobar hook.
  */
-Hooks.on("hotbarDrop", (bar, data, slot) => createWorldbuildingMacro(data, slot));
+Hooks.on("hotbarDrop", (bar, data, slot) => createDaggerheartMacro(data, slot));
 
 /**
  * Ready hook to initialize the counter UI
  */
 Hooks.once("ready", async function() {
   // Initialize the counter UI
-  game.worldbuilding.counter = new CounterUI();
-  await game.worldbuilding.counter.initialize();
+  game.daggerheart.counter = new CounterUI();
+  await game.daggerheart.counter.initialize();
   
   // Initialize the token counter UI
-  game.worldbuilding.tokenCounter = new TokenCounterUI();
-  await game.worldbuilding.tokenCounter.initialize();
+  game.daggerheart.tokenCounter = new TokenCounterUI();
+  await game.daggerheart.tokenCounter.initialize();
   
   console.log("Counter UI initialized and displayed above the hotbar.");
 });
@@ -200,7 +200,7 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
     },
     callback: li => {
       const actor = game.actors.get(li.data("documentId"));
-      actor.setFlag("worldbuilding", "isTemplate", true);
+      actor.setFlag("daggerheart", "isTemplate", true);
     }
   });
 
@@ -214,7 +214,7 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
     },
     callback: li => {
       const actor = game.actors.get(li.data("documentId"));
-      actor.setFlag("worldbuilding", "isTemplate", false);
+      actor.setFlag("daggerheart", "isTemplate", false);
     }
   });
 });
@@ -234,7 +234,7 @@ Hooks.on("getItemDirectoryEntryContext", (html, options) => {
     },
     callback: li => {
       const item = game.items.get(li.data("documentId"));
-      item.setFlag("worldbuilding", "isTemplate", true);
+      item.setFlag("daggerheart", "isTemplate", true);
     }
   });
 
@@ -248,7 +248,7 @@ Hooks.on("getItemDirectoryEntryContext", (html, options) => {
     },
     callback: li => {
       const item = game.items.get(li.data("documentId"));
-      item.setFlag("worldbuilding", "isTemplate", false);
+      item.setFlag("daggerheart", "isTemplate", false);
     }
   });
 });

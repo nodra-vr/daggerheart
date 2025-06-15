@@ -171,7 +171,7 @@ export class EntitySheetHelper {
     const button = event.currentTarget;
     const label = button.closest(".attribute").querySelector(".attribute-label")?.value;
     const chatLabel = label ?? button.parentElement.querySelector(".attribute-key").value;
-    const shorthand = game.settings.get("worldbuilding", "macroShorthand");
+    const shorthand = game.settings.get("daggerheart", "macroShorthand");
 
     // actor rollData
     const rollData = this.actor.getRollData();
@@ -528,7 +528,7 @@ export class EntitySheetHelper {
 
     // Identify the template Actor types
     const collection = game.collections.get(this.documentName);
-    const templates = collection.filter(a => a.getFlag("worldbuilding", "isTemplate"));
+    const templates = collection.filter(a => a.getFlag("daggerheart", "isTemplate"));
     if ( templates.length > 0 ) {
       if ( Object.keys(types).length > 0 ) {
         types["---"] = {label: "--- Templates ---", disabled: true};
@@ -567,7 +567,7 @@ export class EntitySheetHelper {
         if ( template ) {
           createData = foundry.utils.mergeObject(template.toObject(), createData);
           createData.type = template.type;
-          delete createData.flags.worldbuilding.isTemplate;
+          delete createData.flags.daggerheart.isTemplate;
         } else {
           createData.type = form.type.value;
         }

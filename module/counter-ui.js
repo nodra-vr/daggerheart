@@ -12,12 +12,12 @@ export class CounterUI {
    */
   async initialize() {
     // Get the saved counter value and validate it
-    this.count = game.settings.get("worldbuilding", "counterValue");
+    this.count = game.settings.get("daggerheart", "counterValue");
     
     // Ensure count is a valid number between 0 and 12
     if (isNaN(this.count) || this.count === null || this.count === undefined) {
       this.count = 0;
-      await game.settings.set("worldbuilding", "counterValue", 0);
+      await game.settings.set("daggerheart", "counterValue", 0);
     } else {
       this.count = Math.max(0, Math.min(12, parseInt(this.count)));
     }
@@ -27,7 +27,7 @@ export class CounterUI {
     
     // Listen for setting changes
     Hooks.on("updateSetting", (setting, value) => {
-      if (setting.key === "worldbuilding.counterValue") {
+      if (setting.key === "daggerheart.counterValue") {
         this.count = parseInt(value.value) || 0;
         this.count = Math.max(0, Math.min(12, this.count));
         this.updateDisplay();
@@ -144,7 +144,7 @@ export class CounterUI {
     // Maximum value is 12
     if (this.count < 12) {
       this.count += 1;
-      await game.settings.set("worldbuilding", "counterValue", this.count);
+      await game.settings.set("daggerheart", "counterValue", this.count);
       this.updateDisplay();
     }
   }
@@ -162,7 +162,7 @@ export class CounterUI {
     // Minimum value is 0
     if (this.count > 0) {
       this.count -= 1;
-      await game.settings.set("worldbuilding", "counterValue", this.count);
+      await game.settings.set("daggerheart", "counterValue", this.count);
       this.updateDisplay();
     }
   }

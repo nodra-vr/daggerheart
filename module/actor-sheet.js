@@ -10,8 +10,8 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   /** @inheritdoc */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["worldbuilding", "sheet", "actor"],
-      template: "systems/worldbuilding/templates/actor-sheet.html",
+          classes: ["daggerheart", "sheet", "actor"],
+    template: "systems/daggerheart/templates/actor-sheet.html",
       width: 560,
       height: 980,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
@@ -29,7 +29,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   async getData(options) {
     const context = await super.getData(options);
     EntitySheetHelper.getAttributeData(context.data);
-    context.shorthand = !!game.settings.get("worldbuilding", "macroShorthand");
+    context.shorthand = !!game.settings.get("daggerheart", "macroShorthand");
     context.systemData = context.data.system;
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;
@@ -713,7 +713,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
         roll.dice[2].options.flavor = "Modifier";
       }
     } else {
-      console.error(`Worldbuilding | Critical error during ${traitNamePrint} roll: Less than two primary dice terms found. Roll object:`, roll);
+      console.error(`Daggerheart | Critical error during ${traitNamePrint} roll: Less than two primary dice terms found. Roll object:`, roll);
       return;
     }
 
@@ -820,8 +820,8 @@ export class NPCActorSheet extends SimpleActorSheet {
   /** @inheritdoc */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["worldbuilding", "sheet", "npc"],
-      template: "systems/worldbuilding/templates/actor-sheet-npc.html",
+      classes: ["daggerheart", "sheet", "npc"],
+      template: "systems/daggerheart/templates/actor-sheet-npc.html",
       width: 650,
       height: 840,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "experience"}],
@@ -839,7 +839,7 @@ export class NPCActorSheet extends SimpleActorSheet {
   async getData(options) {
     const context = await super.getData(options);
     EntitySheetHelper.getAttributeData(context.data);
-    context.shorthand = !!game.settings.get("worldbuilding", "macroShorthand");
+    context.shorthand = !!game.settings.get("daggerheart", "macroShorthand");
     context.systemData = context.data.system;
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;

@@ -52,11 +52,11 @@
   height: 5px !important;
 }
 
-.worldbuilding a:hover{
+.daggerheart a:hover{
   text-shadow: none;
 }
 
-.worldbuilding a{
+.daggerheart a{
   cursor: auto;
   text-shadow: none;
 }
@@ -68,15 +68,15 @@
   user-select: text;
 }
 
-.worldbuilding input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus, input[type="date"]:focus, input[type="time"]:focus, input[type="search"]:focus {
+.daggerheart input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus, input[type="date"]:focus, input[type="time"]:focus, input[type="search"]:focus {
   box-shadow: none !important;
 }
 
-.worldbuilding input[type=text], input[type=number], input[type=password], input[type=date], input[type=time], input[type=datetime-local], input[type=search], input[type=file], select {
+.daggerheart input[type=text], input[type=number], input[type=password], input[type=date], input[type=time], input[type=datetime-local], input[type=search], input[type=file], select {
   box-shadow: none !important;
 }
 
-.worldbuilding h1 {
+.daggerheart h1 {
   font-size: 1.2em;
   border-bottom: initial;
   text-transform: uppercase;
@@ -86,7 +86,7 @@
   margin-top: .75em;
 }
 
-.worldbuilding p {
+.daggerheart p {
   font-size: 12px;
   margin: 0.25em 1.75em;
   margin-bottom: 1em;
@@ -100,24 +100,24 @@
 .prosemirror menu button.active {
   color: #0b0a13;
 }
-.worldbuilding .window-content {
+.daggerheart .window-content {
   height: 100%;
   padding: 5px;
   overflow-y: hidden;
 }
-.worldbuilding form {
+.daggerheart form {
   height: 100%;
 }
 
 /* Base styles */
-.worldbuilding .sheet-body {
+.daggerheart .sheet-body {
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-content: center;
   align-items: center;
 }
-.worldbuilding .sheet-body .tab {
+.daggerheart .sheet-body .tab {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -125,21 +125,21 @@
   width: 100%;
   padding: 0.5em 5em;
 }
-.worldbuilding .editor,
-.worldbuilding .editor-content {
+.daggerheart .editor,
+.daggerheart .editor-content {
   height: 100%;
   width:95%;
   margin: auto;
 }
 
-.worldbuilding .editor {
+.daggerheart .editor {
   border: 1px solid #6d6795;
   border-radius: 25px;
   padding: 1em;
 }
 
 /* Item list */
-.worldbuilding .item-list {
+.daggerheart .item-list {
   list-style: none;
   margin: .5em;
   padding: 0em;
@@ -153,7 +153,7 @@
 }
 
 /* Hide empty item lists by default */
-.worldbuilding .item-list.is-empty {
+.daggerheart .item-list.is-empty {
   display: none;
   min-height: 0;
   border: none;
@@ -162,8 +162,8 @@
 }
 
 /* Show empty item lists during drag operations */
-.worldbuilding .item-list.is-empty.drag-over,
-.worldbuilding .dragging .item-list.is-empty {
+.daggerheart .item-list.is-empty.drag-over,
+.daggerheart .dragging .item-list.is-empty {
   display: flex;
   min-height: 100px;
   border: 1px dashed var(--dh-color-gold);
@@ -174,7 +174,7 @@
 }
 
 /* Visual feedback for populated item lists during drag */
-.worldbuilding .item-list:not(.is-empty).drag-over {
+.daggerheart .item-list:not(.is-empty).drag-over {
   border-color: var(--dh-color-gold);
   border-radius: 5px;
   background-color: rgba(243, 194, 103, 0.05);
@@ -182,14 +182,14 @@
 }
 
 /* General drag-over styles (fallback) */
-.worldbuilding .item-list.drag-over {
+.daggerheart .item-list.drag-over {
   min-height: 100px;
   border-color: var(--dh-color-gold);
   background-color: rgba(0,0,0,0.1);
 }
 
 /* Make section headers droppable during drag operations */
-.worldbuilding .dragging .tab-category {
+.daggerheart .dragging .tab-category {
   position: relative;
   transition: all 0.2s ease-in-out;
   border-radius: .5em;
@@ -197,7 +197,7 @@
   margin: 0.5em 0;
 }
 
-.worldbuilding .tab-category.drag-over {
+.daggerheart .tab-category.drag-over {
   background-color: rgba(243, 194, 103, 0.2);
   border: 1px dashed var(--dh-color-gold);
   border-radius: 1em;
@@ -206,7 +206,7 @@
 }
 
 /* Vault animation styles */
-.worldbuilding .item-list[data-item-type="vault"] {
+.daggerheart .item-list[data-item-type="vault"] {
   max-height: 500px;
   opacity: 1;
   transform: scaleY(1);
@@ -215,7 +215,7 @@
   overflow: hidden;
 }
 
-.worldbuilding .item-list[data-item-type="vault"].vault-collapsed {
+.daggerheart .item-list[data-item-type="vault"].vault-collapsed {
   max-height: 0;
   opacity: 0;
   transform: scaleY(0);
@@ -224,7 +224,7 @@
   border: none;
 }
 
-.worldbuilding .item-list .item {
+.daggerheart .item-list .item {
   display: flex;
   flex-direction: column;
   gap: 0.25em;
@@ -236,11 +236,11 @@
   background: rgba(0,0,0,0.2);
 }
 
-.worldbuilding .item-list .item.expanded {
+.daggerheart .item-list .item.expanded {
   padding-bottom: 0.5em;
 }
 
-.worldbuilding .item-list .item .item-main-row {
+.daggerheart .item-list .item .item-main-row {
   display: flex;
   align-items: center;
   width: 100%;
@@ -249,11 +249,11 @@
   min-height: 3em;
 }
 
-.worldbuilding .item-list .item:nth-child(even) {
+.daggerheart .item-list .item:nth-child(even) {
     background: rgb(141 120 151 / 7%);
 }
 
-.worldbuilding .item-list .item .item-description {
+.daggerheart .item-list .item .item-description {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
@@ -265,29 +265,29 @@
   border-left: solid 2px var(--dh-color-gold);
 }
 
-.worldbuilding .item-list .item .item-description > * {
+.daggerheart .item-list .item .item-description > * {
   opacity: 0;
   transition: opacity 0.2s ease-out 0.1s;
 }
 
-.worldbuilding .item-list .item.expanded .item-description {
+.daggerheart .item-list .item.expanded .item-description {
   max-height: 500px;
   opacity: 1;
   transform: scaleY(1);
   padding-top: 0.5em;
 }
 
-.worldbuilding .item-list .item.expanded .item-description > * {
+.daggerheart .item-list .item.expanded .item-description > * {
   opacity: 1;
 }
 
-.worldbuilding .item-list .item .item-top-row {
+.daggerheart .item-list .item .item-top-row {
   display: flex;
   align-items: center;
   flex-grow: 1;
 }
 
-.worldbuilding .item-list .item .item-name {
+.daggerheart .item-list .item .item-name {
   padding-left: 0.5em;
   font-size: 0.9em;
   font-weight: normal;
@@ -296,11 +296,11 @@
   cursor: pointer;
 }
 
-.worldbuilding .item-list .item .item-name:hover {
+.daggerheart .item-list .item .item-name:hover {
   color: var(--dh-color-gold);
 }
 
-.worldbuilding .item-list .item img {
+.daggerheart .item-list .item img {
   flex: 0 0 24px;
   margin-right: 5px;
   border: 1px solid var(--dh-color-gold);
@@ -309,22 +309,22 @@
   height: 25px;
 }
 
-.worldbuilding .item-list .item-controls {
+.daggerheart .item-list .item-controls {
   flex: 0 0 36px;
   display: flex;
   gap: 5px;
 }
 
-.worldbuilding .item-control{
+.daggerheart .item-control{
   cursor: pointer;
 }
 
-.worldbuilding .vault-content .item-control {
+.daggerheart .vault-content .item-control {
   display: flex;
 }
 
 /* General Sheet styling */
-.worldbuilding.sheet.actor, .worldbuilding.sheet.npc {
+.daggerheart.sheet.actor, .daggerheart.sheet.npc {
   min-width: 700px;
   min-height: 800px;
 }
@@ -361,8 +361,8 @@
   background: transparent;
 }
 
-.worldbuilding .actor input[type="text"], .worldbuilding .actor input[type="number"], .worldbuilding .actor input[type="password"], 
-.worldbuilding .actor input[type="date"], .worldbuilding .actor input[type="time"], .worldbuilding .actor input[type="search"] {
+.daggerheart .actor input[type="text"], .daggerheart .actor input[type="number"], .daggerheart .actor input[type="password"], 
+.daggerheart .actor input[type="date"], .daggerheart .actor input[type="time"], .daggerheart .actor input[type="search"] {
   color: #f0f0e0;
 }
 
@@ -868,7 +868,7 @@ input.trait-effects.resize-ta {
   word-wrap: normal;
 }
 
-.worldbuilding .trait-label-wrapper {
+.daggerheart .trait-label-wrapper {
   margin-bottom: -.75em;
   z-index: 1;
 }
@@ -1201,7 +1201,7 @@ input.trait-effects.resize-ta {
   border: 1px solid var(--dh-color-purple-light);
 }
 
-.worldbuilding.chat-card.item-card {
+.daggerheart.chat-card.item-card {
   display: flex;
   flex-direction: row-reverse;
   padding: 0px;
@@ -1215,13 +1215,13 @@ input.trait-effects.resize-ta {
   margin-bottom: .5em;
 }
 
-.worldbuilding.chat-card.item-card h3 {
+.daggerheart.chat-card.item-card h3 {
   border-bottom: none;
   padding: 0px;
   margin: 0px;
 }
 
-.worldbuilding.chat-card.item-card img {
+.daggerheart.chat-card.item-card img {
   box-sizing: border-box;
   border-radius: 10px;
   width: 50px;
@@ -1232,7 +1232,7 @@ input.trait-effects.resize-ta {
 }
 
 
-.worldbuilding.chat-card.item-card .flexrow {
+.daggerheart.chat-card.item-card .flexrow {
   display: flex;
   width: 100%;
 }
@@ -1242,18 +1242,18 @@ input.trait-effects.resize-ta {
 }
 
 
-.worldbuilding .click-rollable:hover, .worldbuilding .basic-rollable:hover {
+.daggerheart .click-rollable:hover, .daggerheart .basic-rollable:hover {
     cursor: pointer;
     filter: brightness(0.8);
     color: var(--dh-color-gold);
 }
 
-.worldbuilding.sheet.item, .worldbuilding.sheet.npc {
+.daggerheart.sheet.item, .daggerheart.sheet.npc {
   min-width: 560px;
   min-height: 420px;
 }
 
-.worldbuilding.sheet.item{
+.daggerheart.sheet.item{
   min-width: 350px;
   min-height: 500px;
 }
@@ -1262,8 +1262,8 @@ input.trait-effects.resize-ta {
   background: transparent;
 }
 
-.worldbuilding .npc input[type="text"], .worldbuilding .npc input[type="number"], .worldbuilding .npc input[type="password"], 
-.worldbuilding .npc input[type="date"], .worldbuilding .npc input[type="time"], .worldbuilding .npc input[type="search"] {
+.daggerheart .npc input[type="text"], .daggerheart .npc input[type="number"], .daggerheart .npc input[type="password"], 
+.daggerheart .npc input[type="date"], .daggerheart .npc input[type="time"], .daggerheart .npc input[type="search"] {
   color: #f0f0e0;
 }
 
@@ -1346,7 +1346,7 @@ input.trait-effects.resize-ta {
   justify-content: center;
 }
 
-.worldbuilding.sheet.item {
+.daggerheart.sheet.item {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
