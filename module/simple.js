@@ -189,45 +189,95 @@ Hooks.on("preCreateActor", function(document, data, options, userId) {
  * Hook to add damage button to attack roll chat messages
  */
 Hooks.on("renderChatMessage", (message, html, data) => {
-  const content = message.content;
+  // Get roll type and actor information from message flags
+  const flags = message.flags?.daggerheart;
+  if (!flags) return;
+  
+  const rollType = flags.rollType;
+  const actorId = flags.actorId;
+  const actorType = flags.actorType;
+  const weaponName = flags.weaponName;
+  
+  // Only add damage buttons to attack rolls, not damage rolls
+  if (rollType !== "attack") return;
+  
+  // Check for existing button
+  const existingButton = html.find(".damage-roll-button").length;
+  if (existingButton > 0) return;
+  
+  // Get the actor
+  const actor = game.actors.get(actorId);
+  if (!actor) return;
+  
+  // Get weapon data
+  let weaponData = null;
+  let weaponType = null;
+  
+  const primaryWeapon = actor.system["weapon-main"];
+  const secondaryWeapon = actor.system["weapon-off"];
+  
+  if (primaryWeapon?.name === weaponName) {
+    weaponData = primaryWeapon;
+    weaponType = "primary";
+  } else if (secondaryWeapon?.name === weaponName) {
+    weaponData = secondaryWeapon;
+    weaponType = "secondary";
+  }
+  
+  if (!weaponData || !weaponData.damage) return;
+  
+  // Check if this was a critical success
   const flavor = message.flavor || '';
+  const isCritical = flavor.includes("Critical") && flavor.includes("Success");
   
-  // Try to find the actor from multiple sources
-  let actor = null;
-  
-  // First try: speaker.actor (when rolling from sheet without token)
-  if (message.speaker?.actor) {
-    actor = game.actors.get(message.speaker.actor);
+  // Add damage button based on actor type
+  if (actorType === "character") {
+    _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritical);
+  } else if (actorType === "npc") {
+    _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritical);
   }
+});
+
+/**
+ * Add damage button for character attack rolls
+ */
+function _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritical) {
+  const buttonText = isCritical ? "Critical Damage" : "Damage";
+  const damageButton = `<button class="damage-roll-button character ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+    <i class="fas fa-dice-d20"></i> ${buttonText}
+  </button>`;
   
-  // Second try: through token (when a token is selected)
-  if (!actor && message.speaker?.token) {
-    const token = canvas.tokens?.get(message.speaker.token);
-    if (token) {
-      actor = token.actor;
-    }
-  }
+  html.find(".message-content").append(damageButton);
   
-  // Third try: through scene and token (for linked tokens)
-  if (!actor && message.speaker?.scene && message.speaker?.token) {
-    const scene = game.scenes.get(message.speaker.scene);
-    if (scene) {
-      const tokenDoc = scene.tokens.get(message.speaker.token);
-      if (tokenDoc) {
-        actor = tokenDoc.actor;
-      }
-    }
-  }
+  // Add click handler for character damage
+  html.find(".damage-roll-button.character").click(async (event) => {
+    event.preventDefault();
+    await _rollCharacterDamage(event);
+  });
+}
+
+/**
+ * Add damage button for adversary attack rolls
+ */
+function _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritical) {
+  const buttonText = isCritical ? "Critical Damage" : "Damage";
+  const damageButton = `<button class="damage-roll-button adversary ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+    <i class="fas fa-dice-d20"></i> ${buttonText}
+  </button>`;
   
-  // Fourth try: from message flags (if we stored it)
-  if (!actor && message.flags?.daggerheart?.actorId) {
-    actor = game.actors.get(message.flags.daggerheart.actorId);
-  }
+  html.find(".message-content").append(damageButton);
   
-  if (!actor) {
-    return;
-  }
-  
+  // Add click handler for adversary damage
+  html.find(".damage-roll-button.adversary").click(async (event) => {
+    event.preventDefault();
+    await _rollAdversaryDamage(event);
+  });
+}
+
+/**
+ * Handle damage button creation for player characters
+ */
+function _handleCharacterDamageButton(message, html, actor, flavor) {
   let weaponData = null;
   let weaponType = null;
   
@@ -248,16 +298,23 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   
   // If we found a matching weapon and it has damage defined
   if (weaponData && weaponData.damage && !existingButton) {
-    // Check if this appears to be an attack roll (has Hope/Fear dice)
+    // Check if this appears to be a damage roll (exclude damage rolls)
+    const isDamageRoll = flavor.includes("Damage") || 
+                        flavor.includes("damage") || 
+                        flavor.toLowerCase().includes("- damage") ||
+                        flavor.includes("Critical Damage") ||
+                        flavor.includes("critical damage");
+    
+    // Check if this appears to be an attack roll (has Hope/Fear dice) but NOT a damage roll
     const hasHopeFear = flavor.includes("Hope") || flavor.includes("Fear");
     
-    if (hasHopeFear) {
+    if (hasHopeFear && !isDamageRoll) {
       // Check if this was a critical success
       const isCritical = flavor.includes("Critical") && flavor.includes("Success");
       
       // Add damage button to the message
       const buttonText = isCritical ? "Critical Damage" : "Damage";
-      const damageButton = `<button class="damage-roll-button ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+      const damageButton = `<button class="damage-roll-button character ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
         <i class="fas fa-dice-d20"></i> ${buttonText}
       </button>`;
       
@@ -265,110 +322,203 @@ Hooks.on("renderChatMessage", (message, html, data) => {
       const messageContent = html.find(".message-content");
       messageContent.append(damageButton);
       
-      // Add click handler
-      html.find(".damage-roll-button").click(async (event) => {
+      // Add click handler for character damage
+      html.find(".damage-roll-button.character").click(async (event) => {
         event.preventDefault();
-        const button = event.currentTarget;
-        const actorId = button.dataset.actorId;
-        const weaponType = button.dataset.weaponType;
-        const weaponName = button.dataset.weaponName;
-        const weaponDamage = button.dataset.weaponDamage;
-        const isCritical = button.dataset.isCritical === "true";
-        
-        const actor = game.actors.get(actorId);
-        if (!actor) {
-          console.error("Daggerheart | Actor not found for damage roll");
-          return;
-        }
-        
-        // Get proficiency value
-        const proficiency = Math.max(1, parseInt(actor.system.proficiency?.value) || 1);
-        
-        // Parse dice notation
-        const diceMatch = weaponDamage.match(/^(\d*)d(\d+)(.*)$/i);
-        let rollValue;
-        let flavorText = `${weaponName} - Damage`;
-        
-        if (diceMatch) {
-          const diceCount = parseInt(diceMatch[1]) || proficiency; // Use proficiency if no count specified
-          const dieType = parseInt(diceMatch[2]);
-          const modifier = diceMatch[3] || "";
-          
-          if (isCritical) {
-            // Critical damage: max value + normal roll
-            const maxDamage = diceCount * dieType;
-            rollValue = `${maxDamage} + ${diceCount}d${dieType}${modifier}`;
-            flavorText = `${weaponName} - Critical Damage!`;
-          } else {
-            // Normal damage
-            rollValue = `${diceCount}d${dieType}${modifier}`;
-          }
-        } else {
-          // Fallback for non-standard notation
-          rollValue = weaponDamage;
-        }
-        
-        // Create and send the damage roll
-        const roll = new Roll(rollValue);
-        await roll.evaluate({async: true});
-        
-        await roll.toMessage({
-          flavor: flavorText,
-          user: game.user.id,
-          speaker: ChatMessage.getSpeaker({ actor: actor }),
-          rollMode: "roll"
-        });
+        await _rollCharacterDamage(event);
       });
     }
   }
-});
+}
+
+/**
+ * Handle damage button creation for adversaries (NPCs)
+ */
+function _handleAdversaryDamageButton(message, html, actor, flavor) {
+  let weaponData = null;
+  let weaponType = null;
+  
+  // Check if the flavor contains a weapon name that matches actor's attacks
+  const primaryAttack = actor.system["weapon-main"];
+  const secondaryAttack = actor.system["weapon-off"];
+  
+  if (primaryAttack?.name && flavor.includes(primaryAttack.name)) {
+    weaponData = primaryAttack;
+    weaponType = "primary";
+  } else if (secondaryAttack?.name && flavor.includes(secondaryAttack.name)) {
+    weaponData = secondaryAttack;
+    weaponType = "secondary";
+  }
+  
+  // Check for existing button
+  const existingButton = html.find(".damage-roll-button").length;
+  
+  // If we found a matching attack and it has damage defined
+  if (weaponData && weaponData.damage && !existingButton) {
+    // Check if this appears to be a damage roll (exclude damage rolls)
+    const isDamageRoll = flavor.includes("Damage") || 
+                        flavor.includes("damage") || 
+                        flavor.toLowerCase().includes("- damage") ||
+                        flavor.includes("Critical Damage") ||
+                        flavor.includes("critical damage");
+    
+    // Check if this appears to be an attack roll (NOT a damage roll)
+    const isAttackRoll = flavor.includes(weaponData.name) && !isDamageRoll;
+    
+    if (isAttackRoll) {
+      // Check if this was a critical success (NPCs crit on natural 20)
+      const isCritical = flavor.includes("Critical Success");
+      
+      // Add damage button to the message
+      const buttonText = isCritical ? "Critical Damage" : "Damage";
+      const damageButton = `<button class="damage-roll-button adversary ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+        <i class="fas fa-dice-d20"></i> ${buttonText}
+      </button>`;
+      
+      // Find message content and append button
+      const messageContent = html.find(".message-content");
+      messageContent.append(damageButton);
+      
+      // Add click handler for adversary damage
+      html.find(".damage-roll-button.adversary").click(async (event) => {
+        event.preventDefault();
+        await _rollAdversaryDamage(event);
+      });
+    }
+  }
+}
+
+/**
+ * Roll damage for player characters (uses proficiency)
+ */
+async function _rollCharacterDamage(event) {
+  const button = event.currentTarget;
+  const actorId = button.dataset.actorId;
+  const weaponType = button.dataset.weaponType;
+  const weaponName = button.dataset.weaponName;
+  const weaponDamage = button.dataset.weaponDamage;
+  const isCritical = button.dataset.isCritical === "true";
+  
+  const actor = game.actors.get(actorId);
+  if (!actor) {
+    console.error("Daggerheart | Actor not found for character damage roll");
+    return;
+  }
+  
+  // Get proficiency value
+  const proficiency = Math.max(1, parseInt(actor.system.proficiency?.value) || 1);
+  
+  // Parse dice notation
+  const diceMatch = weaponDamage.match(/^(\d*)d(\d+)(.*)$/i);
+  let rollValue;
+  let flavorText = `${weaponName} - Damage`;
+  
+  if (diceMatch) {
+    const diceCount = parseInt(diceMatch[1]) || proficiency; // Use proficiency if no count specified
+    const dieType = parseInt(diceMatch[2]);
+    const modifier = diceMatch[3] || "";
+    
+    if (isCritical) {
+      // Critical damage: max value + normal roll
+      const maxDamage = diceCount * dieType;
+      rollValue = `${maxDamage} + ${diceCount}d${dieType}${modifier}`;
+      flavorText = `${weaponName} - Critical Damage!`;
+    } else {
+      // Normal damage
+      rollValue = `${diceCount}d${dieType}${modifier}`;
+    }
+  } else {
+    // Fallback for non-standard notation
+    rollValue = weaponDamage;
+  }
+  
+  // Create and send the damage roll
+  const roll = new Roll(rollValue);
+  await roll.evaluate({async: true});
+  
+  await roll.toMessage({
+    flavor: flavorText,
+    user: game.user.id,
+    speaker: ChatMessage.getSpeaker({ actor: actor }),
+    rollMode: "roll"
+  });
+}
+
+/**
+ * Roll damage for adversaries (uses raw damage formula, no proficiency)
+ */
+async function _rollAdversaryDamage(event) {
+  const button = event.currentTarget;
+  const actorId = button.dataset.actorId;
+  const weaponType = button.dataset.weaponType;
+  const weaponName = button.dataset.weaponName;
+  const weaponDamage = button.dataset.weaponDamage;
+  const isCritical = button.dataset.isCritical === "true";
+  
+  const actor = game.actors.get(actorId);
+  if (!actor) {
+    console.error("Daggerheart | Actor not found for adversary damage roll");
+    return;
+  }
+  
+  let rollValue;
+  let flavorText = `${weaponName} - Damage`;
+  
+  if (isCritical) {
+    // Parse the damage formula to calculate critical damage
+    rollValue = _calculateAdversaryCriticalDamage(weaponDamage);
+    flavorText = `${weaponName} - Critical Damage!`;
+  } else {
+    // Normal damage - use the formula as-is
+    rollValue = weaponDamage;
+  }
+  
+  // Create and send the damage roll
+  const roll = new Roll(rollValue);
+  await roll.evaluate({async: true});
+  
+  await roll.toMessage({
+    flavor: flavorText,
+    user: game.user.id,
+    speaker: ChatMessage.getSpeaker({ actor: actor }),
+    rollMode: "roll"
+  });
+}
+
+/**
+ * Calculate critical damage for adversaries
+ * Example: "3d12+10" becomes "36 + 3d12+10" (36 is max of 3d12)
+ */
+function _calculateAdversaryCriticalDamage(damageFormula) {
+  // Find all dice terms in the formula
+  const dicePattern = /(\d*)d(\d+)/gi;
+  let criticalFormula = damageFormula;
+  let maxDamageTotal = 0;
+  
+  // Replace each dice term with its maximum value
+  criticalFormula = criticalFormula.replace(dicePattern, (match, count, sides) => {
+    const diceCount = parseInt(count) || 1;
+    const dieSides = parseInt(sides);
+    const maxValue = diceCount * dieSides;
+    maxDamageTotal += maxValue;
+    return match; // Keep original for the normal roll part
+  });
+  
+  // If we found dice in the formula, create critical damage
+  if (maxDamageTotal > 0) {
+    return `${maxDamageTotal} + ${damageFormula}`;
+  } else {
+    // No dice found, just return the original formula
+    return damageFormula;
+  }
+}
 
 /**
  * Hook to store weapon data in attack roll messages for later use
  */
 Hooks.on("preCreateChatMessage", (message, data, options, userId) => {
-  // Only process messages from the current user
-  if (userId !== game.user.id) {
-    return;
-  }
-  
-  const flavor = data.flavor || '';
-  const actor = game.actors.get(data.speaker?.actor);
-  
-  if (!actor) return;
-  
-  // Check if this is a weapon attack roll by looking for weapon names
-  const primaryWeapon = actor.system["weapon-main"];
-  const secondaryWeapon = actor.system["weapon-off"];
-  
-  let weaponData = null;
-  let weaponType = null;
-  
-  if (primaryWeapon?.name && flavor.includes(primaryWeapon.name)) {
-    weaponData = primaryWeapon;
-    weaponType = "primary";
-  } else if (secondaryWeapon?.name && flavor.includes(secondaryWeapon.name)) {
-    weaponData = secondaryWeapon;
-    weaponType = "secondary";
-  }
-  
-  // If this is a weapon attack, store weapon data in message flags
-  if (weaponData && (flavor.includes("Hope") || flavor.includes("Fear"))) {
-    const isCritical = flavor.includes("Critical") && flavor.includes("Success");
-    
-    message.updateSource({
-      flags: {
-        daggerheart: {
-          weaponAttack: true,
-          weaponType: weaponType,
-          weaponData: weaponData,
-          proficiency: actor.system.proficiency?.value || 1,
-          isCritical: isCritical,
-          actorId: actor.id  // Store actor ID as backup
-        }
-      }
-    });
-  }
+  // This hook is no longer needed since we're storing roll type data in the message flags
+  // in the roll methods themselves. Keeping it for potential future use.
 });
 
 /**

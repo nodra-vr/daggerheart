@@ -465,6 +465,11 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     
     const rollName = rollNameInput ? rollNameInput.value.trim() : "";
     const rollModifier = rollModifierElement ? parseInt(rollModifierElement.value) || 0 : 0;
+    const rollType = rollableElement.dataset.rollType || "unknown";
+    
+    // Store roll type for later use
+    this._pendingRollType = rollType;
+    this._pendingWeaponName = rollName;
     
     // Assuming _rollTrait is a method to handle the trait roll
     await this._rollTrait(rollName, rollModifier);
@@ -481,6 +486,11 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     
     const rollProfInput = tergetForm.querySelector("#prof")?.value || "";
     const rollName = rollNameInput.value;
+    const rollType = rollableElement.dataset.rollType || "unknown";
+    
+    // Store roll type for later use
+    this._pendingRollType = rollType;
+    this._pendingWeaponName = rollName;
     
     let rollValue;
     
@@ -521,8 +531,20 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       flavor: basicName,
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      rollMode: "roll"
+      rollMode: "roll",
+      flags: {
+        daggerheart: {
+          rollType: this._pendingRollType || "unknown",
+          weaponName: this._pendingWeaponName || "",
+          actorId: this.actor.id,
+          actorType: this.actor.type
+        }
+      }
     });
+    
+    // Clear pending roll data
+    this._pendingRollType = null;
+    this._pendingWeaponName = null;
   }
   
   async _rollTrait(traitName, traitValue) {
@@ -695,7 +717,8 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     }
 
     const fullRollFormula = `${coreFormula} + ${traitValue + modifier}`;
-    const roll = await new Roll(fullRollFormula).roll();
+    const roll = new Roll(fullRollFormula);
+    await roll.evaluate();
 
     let hopeDieValue, fearDieValue;
     let isCrit = false;
@@ -720,32 +743,49 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     const isHope = hopeDieValue > fearDieValue;
     const isFear = hopeDieValue < fearDieValue;
 
-    let finalFlavor = `<p><b>${traitNamePrint}</b>${flavorSuffix}`;
+    let finalFlavor = `<p class="roll-flavor-line"><b>${traitNamePrint}</b>${flavorSuffix}`;
     if (modifier !== 0) {
         finalFlavor += modifier > 0 ? ` +${modifier}` : ` ${modifier}`;
     }
 
     if (isCrit) {
-      finalFlavor += ` <b>Critical</b> Success!</p><p>You gain 1 Hope and clear 1 Stress</P>`;
+      finalFlavor += ` <b>Critical</b> Success!</p><p class="roll-effect">You gain 1 Hope and clear 1 Stress</p>`;
       
       // Apply mechanical effects for critical success
       await this._applyCriticalSuccess();
     } else if (isHope) {
-      finalFlavor += ` Rolled with <b>Hope</b>!</p><p>You gain 1 Hope</p>`;
+      finalFlavor += ` Rolled with <b>Hope</b>!</p><p class="roll-effect">You gain 1 Hope</p>`;
       
       // Apply mechanical effects for hope result
       await this._applyHopeGain();
     } else if (isFear) {
-      finalFlavor += ` Rolled with <b>Fear</b>!</p><p>The GM gains 1 Fear</p>`;
+      finalFlavor += ` Rolled with <b>Fear</b>!</p><p class="roll-effect">The GM gains 1 Fear</p>`;
       
       // Apply mechanical effects for fear result
       await this._applyFearGain();
     }
     
+    // Check for targeting if this is an attack roll
+    if (this._pendingRollType === "attack") {
+      finalFlavor += this._getTargetingResults(roll.total);
+    }
+    
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: finalFlavor
+      flavor: finalFlavor,
+      flags: {
+        daggerheart: {
+          rollType: this._pendingRollType || "unknown",
+          weaponName: this._pendingWeaponName || "",
+          actorId: this.actor.id,
+          actorType: this.actor.type
+        }
+      }
     });
+    
+    // Clear pending roll data
+    this._pendingRollType = null;
+    this._pendingWeaponName = null;
   }
 
   /**
@@ -803,6 +843,52 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     if (game.daggerheart?.counter) {
       await game.daggerheart.counter.increase();
     }
+  }
+
+  /**
+   * Get targeting results for attack rolls
+   * @param {number} attackTotal - The total of the attack roll
+   * @returns {string} - Additional flavor text for targeting results
+   * @private
+   */
+  _getTargetingResults(attackTotal) {
+    // Check if there are any targeted tokens
+    if (!game.user.targets || game.user.targets.size === 0) {
+      return ""; // No targets, return empty string
+    }
+
+    let targetingText = "";
+    
+    // Process each targeted token
+    for (let target of game.user.targets) {
+      const targetActor = target.actor;
+      if (!targetActor) continue;
+      
+      let defenseValue;
+      let defenseName;
+      
+      // Determine defense value based on target type
+      if (targetActor.type === "character") {
+        defenseValue = parseInt(targetActor.system.defenses?.evasion?.value) || 0;
+        defenseName = "Evasion";
+      } else if (targetActor.type === "npc") {
+        defenseValue = parseInt(targetActor.system.defenses?.evasion?.value) || 0;
+        defenseName = "Difficulty";
+      } else {
+        continue; // Unknown actor type
+      }
+      
+      // Compare attack total to defense
+      const hit = attackTotal >= defenseValue;
+      
+      if (hit) {
+        targetingText += `</p><p><b class="roll-outcome success">Success!</b></p>`;
+      } else {
+        targetingText += `</p><p><b class="roll-outcome failure">Failure!</b></p>`;
+      }
+    }
+    
+    return targetingText;
   }
 
   async _onToggleVault(event) {
@@ -1069,7 +1155,7 @@ export class NPCActorSheet extends SimpleActorSheet {
   async _rollTrait(traitName, traitValue) {
     const traitNamePrint = traitName.charAt(0).toUpperCase() + traitName.slice(1);
     const roll = new Roll(`1d20 + @mod`, {mod: traitValue});
-    await roll.evaluate({async: true});
+    await roll.evaluate();
   
     const d20Term = roll.terms.find(t => t.faces === 20);
     const d20result = d20Term.results[0].result;
@@ -1081,11 +1167,28 @@ export class NPCActorSheet extends SimpleActorSheet {
       // Apply mechanical effects for critical success (clear 1 stress for NPCs)
       await this._applyCriticalSuccess();
     }
+    
+    // Check for targeting if this is an attack roll
+    if (this._pendingRollType === "attack") {
+      flavor += this._getTargetingResults(roll.total);
+    }
   
     await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: flavor
+        flavor: flavor,
+        flags: {
+          daggerheart: {
+            rollType: this._pendingRollType || "unknown",
+            weaponName: this._pendingWeaponName || "",
+            actorId: this.actor.id,
+            actorType: this.actor.type
+          }
+        }
     });
+    
+    // Clear pending roll data
+    this._pendingRollType = null;
+    this._pendingWeaponName = null;
   }
   
   /** @inheritdoc */
