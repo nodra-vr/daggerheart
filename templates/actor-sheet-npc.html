@@ -9,7 +9,7 @@
                     <span class="sep">/</span>
                     <input type="text" name="system.health.max" value="{{systemData.health.max}}" />
                 </div>
-                <label>Health</label>
+                <label>{{localize "DH.Health"}}</label>
             </div>
 
             <div class="portrait-container">
@@ -22,26 +22,26 @@
                     <span class="sep">/</span>
                     <input type="text" name="system.stress.max" value="{{systemData.stress.max}}" />
                 </div>
-                <label>Stress</label>
+                <label>{{localize "DH.Stress"}}</label>
             </div>
         </div>
 
         <div class="header-bottom-container">
             <h1 class="charname">
-                <input name="name" type="text" value="{{data.name}}" placeholder="Name" />
+                <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
             </h1>
             <div class="header-domain">
                 <input type="text" name="system.chosenDomains.domain-one" value="{{systemData.chosenDomains.domain-one}}"
-                    placeholder="Tier X" />
+                    placeholder="{{localize "DH.TierX"}}" />
                 <input type="text" name="system.chosenDomains.domain-two" value="{{systemData.chosenDomains.domain-two}}"
-                    placeholder="Solo" />
+                    placeholder="{{localize "DH.Solo"}}" />
             </div>
         </div>
     </header>
 
     {{!-- Sheet Tab Navigation --}}
     <nav class="sheet-tabs tabs" data-group="primary">
-        <a class="item" data-tab="description">Description</a>
+        <a class="item" data-tab="description">{{localize "DH.Description"}}</a>
     </nav>
 
     {{!-- Sheet Body --}}
@@ -50,16 +50,16 @@
             <div class="defenses">
                 <div class="weapon-group">
                     <div class="weapon-row">
-                        <label class="weapon-label">Primary Attack</label>
+                        <label class="weapon-label">{{localize "DH.PrimaryAttack"}}</label>
                         <div class="weapon-box click-rollable-group basic-rollable-group">
                             <div class="weapon-box-inner">
                                 <div class="weapon-infobox-first">
                                     <input class="weapon-field basic-rollable-name click-rollable-name"
                                         name="system.weapon-main.name" type="text"
-                                        value="{{systemData.weapon-main.name}}" placeholder="Attack" />
+                                        value="{{systemData.weapon-main.name}}" placeholder="{{localize "DH.Attack"}}" />
                                         <div class="textarea-container">
                                             <input class="trait-effects resize-ta" name="system.weapon-main.description"
-                                                placeholder="Attack Traits Here"
+                                                placeholder="{{localize "DH.AttackTraitsHere"}}"
                                                 value="{{systemData.weapon-main.description}}" />
                                         </div>
                                 </div>
@@ -68,13 +68,13 @@
                                         <input class="weapon-to-hit click-rollable-modifier"
                                             name="system.weapon-main.to-hit" type="number"
                                             value="{{systemData.weapon-main.to-hit}}" placeholder="2" />
-                                        <a class="trait-effects click-rollable" data-roll-type="attack">Modifier</a>
+                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
                                     </div>
                                     <div class="weapon-infobox">
                                         <input class="weapon-damage basic-rollable-value"
                                             name="system.weapon-main.damage" type="text"
                                             value="{{systemData.weapon-main.damage}}" placeholder="1d8" />
-                                        <a class="trait-effects basic-rollable" data-roll-type="damage">Damage</a>
+                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
                                     </div>
                                 </div>
                             </div>
@@ -105,21 +105,21 @@
                 <div class="defense" data-trait="evasion">
                     <input type="number" name="system.defenses.evasion.value"
                         value="{{systemData.defenses.evasion.value}}" />
-                    <label for="system.defenses.evasion.value">Difficulty</label>
+                    <label for="system.defenses.evasion.value">{{localize "DH.Difficulty"}}</label>
                 </div>
                 <div class="armorslots">
                     <!-- Reusing armorslots for threshold for styling -->
-                    <label>threshold</label>
+                    <label>{{localize "DH.threshold"}}</label>
                     <div class="values">
                         <div class="resource-group">
                             <input type="number" name="system.threshold.major"
                                 value="{{systemData.threshold.major}}" />
-                            <a class="trait-effects">Major</a>
+                            <a class="trait-effects">{{localize "DH.Major"}}</a>
                         </div>
                         <div class="resource-group">
                             <input type="number" name="system.threshold.severe"
                                 value="{{systemData.threshold.severe}}" />
-                            <a class="trait-effects">Severe</a>
+                            <a class="trait-effects">{{localize "DH.Severe"}}</a>
                         </div>
                     </div>
                 </div>

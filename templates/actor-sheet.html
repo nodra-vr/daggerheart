@@ -6,11 +6,11 @@
         <div class="header-top-container">
             <div class="charlevel">
                 <input type="number" name="system.level.value" value="{{systemData.level.value}}" />
-                <a>Level</a>
+                <a>{{localize "DH.Level"}}</a>
             </div>
             <div class="charlevel">
                            <input id="prof" type="number" name="system.proficiency.value" value="{{systemData.proficiency.value}}" />
-<a>Prof.</a>
+<a>{{localize "DH.Prof"}}</a>
             </div>
         </div>
 
@@ -25,7 +25,7 @@
                     </div>
                     <a class="resource-control" data-action="increment" data-field="health.value"><i class="fas fa-plus"></i></a>
                 </div>
-                <label>Hit Points</label>
+                <label>{{localize "DH.HitPoints"}}</label>
             </div>
 
             <div class="portrait-container">
@@ -40,7 +40,7 @@
                         </div>
                         <a class="resource-control" data-action="increment" data-field="hope.value"><i class="fas fa-plus"></i></a>
                     </div>
-                    <label>Hope</label>
+                    <label>{{localize "DH.Hope"}}</label>
                 </div>
             </div>
 
@@ -54,19 +54,19 @@
                     </div>
                     <a class="resource-control" data-action="increment" data-field="stress.value"><i class="fas fa-plus"></i></a>
                 </div>
-                <label>Stress</label>
+                <label>{{localize "DH.Stress"}}</label>
             </div>
         </div>
 
         <div class="header-bottom-container">
             <h1 class="charname">
-                <input name="name" type="text" value="{{data.name}}" placeholder="Name" />
+                <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
             </h1>
             <div class="header-domain">
                 <input type="text" name="system.chosenDomains.domain-one" value="{{systemData.chosenDomains.domain-one}}"
-                    placeholder="Domain One" />
+                    placeholder="{{localize "DH.DomainOne"}}" />
                 <input type="text" name="system.chosenDomains.domain-two" value="{{systemData.chosenDomains.domain-two}}"
-                    placeholder="Domain Two" />
+                    placeholder="{{localize "DH.DomainTwo"}}" />
             </div>
         </div>
     </header>
@@ -74,11 +74,11 @@
     {{!-- Sheet Tab Navigation --}}
     <!-- CASE SENSITIVE! -->
     <nav class="sheet-tabs tabs" data-group="primary">
-        <a class="item active" data-tab="character">Character</a>
-        <a class="item" data-tab="equipment">Equipment</a>
+        <a class="item active" data-tab="character">{{localize "DH.Character"}}</a>
+        <a class="item" data-tab="equipment">{{localize "DH.Equipment"}}</a>
         <div class="nav-gem"></div>
-        <a class="item" data-tab="loadout">Loadout</a>
-        <a class="item" data-tab="biography">Biography</a>
+        <a class="item" data-tab="loadout">{{localize "DH.Loadout"}}</a>
+        <a class="item" data-tab="biography">{{localize "DH.Biography"}}</a>
     </nav>
     
     {{!-- Sheet Body --}}
@@ -89,12 +89,12 @@
 
                 <section class="defenses">
                     <div class="armorslots">
-                        <label>Armor Slots</label>
+                        <label>{{localize "DH.ArmorSlots"}}</label>
                         <div class="values">
                             <div class="resource-group">
                                 <input type="number" name="system.defenses.armor-slots.value"
                                     value="{{systemData.defenses.armor-slots.value}}" />
-                                <a class="trait-effects">Used</a>
+                                <a class="trait-effects">{{localize "DH.Used"}}</a>
                             </div>
                             <!-- <div class="resource-group">
                                 <input type="number" name="system.defenses.armor-slots.max"
@@ -108,30 +108,30 @@
                             value="{{systemData.defenses.armor.value}}" />
                         <div class="armor-controls">
                             <!-- <a class="resource-control" data-action="decrement" data-field="defenses.armor.value"><i class="fas fa-minus"></i></a> -->
-                            <label for="system.defenses.armor.value">Armor</label>
+                            <label for="system.defenses.armor.value">{{localize "DH.Armor"}}</label>
                             <!-- <a class="resource-control" data-action="increment" data-field="defenses.armor.value"><i class="fas fa-plus"></i></a> -->  
                         </div>
                     </div>
                     <div class="defense" data-trait="evasion">
                         <input type="number" name="system.defenses.evasion.value"
                             value="{{systemData.defenses.evasion.value}}" />
-                        <label for="system.defenses.evasion.value">Evasion</label>
+                        <label for="system.defenses.evasion.value">{{localize "DH.Evasion"}}</label>
                     </div>
                     <div class="armorslots">
                         <!-- Reusing armorslots for threshold for styling -->
-                        <label>Threshold</label>
+                        <label>{{localize "DH.Threshold"}}</label>
                         <div class="values">
                             <!-- <span class="threshold-text">Mark<br>1 HP</span> -->
                             <div class="resource-group">
                                 <input type="number" name="system.threshold.major"
                                     value="{{systemData.threshold.major}}" />
-                                <a class="trait-effects">Major</a>
+                                <a class="trait-effects">{{localize "DH.Major"}}</a>
                             </div>
                             <!-- <span class="threshold-text">Mark<br>2 HP</span> -->
                             <div class="resource-group">
                                 <input type="number" name="system.threshold.severe"
                                     value="{{systemData.threshold.severe}}" />
-                                <a class="trait-effects">Severe</a>
+                                <a class="trait-effects">{{localize "DH.Severe"}}</a>
                             </div>
                             <!-- <span class="threshold-text">Mark<br>3 HP</span> -->
                         </div>
@@ -142,86 +142,86 @@
                 <section class="traits">
                     <div class="trait" data-trait="agility">
                         <div class="trait-label-wrapper">
-                            <label for="system.agility.value">Agility</label>
+                            <label for="system.agility.value">{{localize "DH.Agility"}}</label>
                         </div>
                         <input type="number" name="system.agility.value" value="{{systemData.agility.value}}" />
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.agility.levelled" {{#if systemData.agility.levelled}}checked{{/if}} />
                         </div>
                         <div class="trait-effects">
-                            <a>Sprint</a>
-                            <a>Dodge</a>
-                            <a>Leap</a>
+                            <a>{{localize "DH.Sprint"}}</a>
+                            <a>{{localize "DH.Dodge"}}</a>
+                            <a>{{localize "DH.Leap"}}</a>
                         </div>
                     </div>
                     <div class="trait" data-trait="strength">
                         <div class="trait-label-wrapper">
-                            <label for="system.strength.value">Strength</label>
+                            <label for="system.strength.value">{{localize "DH.Strength"}}</label>
                         </div>
                         <input type="number" name="system.strength.value" value="{{systemData.strength.value}}" />
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.strength.levelled" {{#if systemData.strength.levelled}}checked{{/if}} />
                         </div>
                         <div class="trait-effects">
-                            <a>Lift</a>
-                            <a>Smash</a>
-                            <a>Grapple</a>
+                            <a>{{localize "DH.Lift"}}</a>
+                            <a>{{localize "DH.Smash"}}</a>
+                            <a>{{localize "DH.Grapple"}}</a>
                         </div>
                     </div>
                     <div class="trait" data-trait="finesse">
                         <div class="trait-label-wrapper">
-                            <label for="system.finesse.value">Finesse</label>
+                            <label for="system.finesse.value">{{localize "DH.Finesse"}}</label>
                         </div>
                         <input type="number" name="system.finesse.value" value="{{systemData.finesse.value}}" />
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.finesse.levelled" {{#if systemData.finesse.levelled}}checked{{/if}} />
                         </div>
                         <div class="trait-effects">
-                            <a>Control</a>
-                            <a>Hide</a>
-                            <a>Tinker</a>
+                            <a>{{localize "DH.Control"}}</a>
+                            <a>{{localize "DH.Hide"}}</a>
+                            <a>{{localize "DH.Tinker"}}</a>
                         </div>
                     </div>
                     <div class="trait" data-trait="instinct">
                         <div class="trait-label-wrapper">
-                            <label for="system.instinct.value">Instinct</label>
+                            <label for="system.instinct.value">{{localize "DH.Instinct"}}</label>
                         </div>
                         <input type="number" name="system.instinct.value" value="{{systemData.instinct.value}}" />
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.instinct.levelled" {{#if systemData.instinct.levelled}}checked{{/if}} />
                         </div>
                         <div class="trait-effects">
-                            <a>Perceive</a>
-                            <a>Sense</a>
-                            <a>Navigate</a>
+                            <a>{{localize "DH.Perceive"}}</a>
+                            <a>{{localize "DH.Sense"}}</a>
+                            <a>{{localize "DH.Navigate"}}</a>
                         </div>
                     </div>
                     <div class="trait" data-trait="presence">
                         <div class="trait-label-wrapper">
-                            <label for="system.presence.value">Presence</label>
+                            <label for="system.presence.value">{{localize "DH.Presence"}}</label>
                         </div>
                         <input type="number" name="system.presence.value" value="{{systemData.presence.value}}" />
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.presence.levelled" {{#if systemData.presence.levelled}}checked{{/if}} />
                         </div>
                         <div class="trait-effects">
-                            <a>Charm</a>
-                            <a>Perform</a>
-                            <a>Deceive</a>
+                            <a>{{localize "DH.Charm"}}</a>
+                            <a>{{localize "DH.Perform"}}</a>
+                            <a>{{localize "DH.Deceive"}}</a>
                         </div>
                     </div>
                     <div class="trait" data-trait="knowledge">
                         <div class="trait-label-wrapper">
-                            <label for="system.knowledge.value">Knowledge</label>
+                            <label for="system.knowledge.value">{{localize "DH.Knowledge"}}</label>
                         </div>
                         <input type="number" name="system.knowledge.value" value="{{systemData.knowledge.value}}" />
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.knowledge.levelled" {{#if systemData.knowledge.levelled}}checked{{/if}} />
                         </div>
                         <div class="trait-effects">
-                            <a>Recall</a>
-                            <a>Analyze</a>
-                            <a>Comprehend</a>
+                            <a>{{localize "DH.Recall"}}</a>
+                            <a>{{localize "DH.Analyze"}}</a>
+                            <a>{{localize "DH.Comprehend"}}</a>
                         </div>
                     </div>
                 </section>
@@ -230,11 +230,11 @@
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
                             <div class="exp-level"><input type="number" name="system.experience.1level" value="{{systemData.experience.1level}}" placeholder="1" /></div>
-                            <a class="trait-effects">Level</a>  
+                            <a class="trait-effects">{{localize "DH.Level"}}</a>  
                         </div>
                         <div class="experience-row-column-2">
                             <input class="click-rollable-name" name="system.experience.1Name" type="text"
-                                value="{{systemData.experience.1Name}}" placeholder="Experience" />
+                                value="{{systemData.experience.1Name}}" placeholder="{{localize "DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier" type="number" name="system.experience.1Mod"
@@ -244,10 +244,10 @@
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
                             <div class="exp-level"><input type="number" name="system.experience.2level" value="{{systemData.experience.2level}}" placeholder="1"/></div>
-                            <a class="trait-effects">Level</a>
+                            <a class="trait-effects">{{localize "DH.Level"}}</a>
                         </div>
                         <div class="experience-row-column-2">
-                            <input class="click-rollable-name" name="system.experience.2Name" type="text" value="{{systemData.experience.2Name}}" placeholder="Experience"/>
+                            <input class="click-rollable-name" name="system.experience.2Name" type="text" value="{{systemData.experience.2Name}}" placeholder="{{localize "DH.Experience"}}"/>
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier"type="number" name="system.experience.2Mod" value="{{systemData.experience.2Mod}}"/>
@@ -256,10 +256,10 @@
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
                             <div class="exp-level"><input type="number" name="system.experience.5level" value="{{systemData.experience.5level}}" placeholder="2"/></div>
-                            <a class="trait-effects">Level</a>
+                            <a class="trait-effects">{{localize "DH.Level"}}</a>
                         </div>
                         <div class="experience-row-column-2">
-                            <input class="click-rollable-name" name="system.experience.5Name" type="text" value="{{systemData.experience.5Name}}" placeholder="Experience"/>
+                            <input class="click-rollable-name" name="system.experience.5Name" type="text" value="{{systemData.experience.5Name}}" placeholder="{{localize "DH.Experience"}}"/>
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier"type="number" name="system.experience.5Mod" value="{{systemData.experience.5Mod}}"/>
@@ -268,10 +268,10 @@
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
                             <div class="exp-level"><input type="number" name="system.experience.8level" value="{{systemData.experience.8level}}" placeholder="5"/></div>
-                            <a class="trait-effects">Level</a>
+                            <a class="trait-effects">{{localize "DH.Level"}}</a>
                         </div>
                         <div class="experience-row-column-2">
-                            <input class="click-rollable-name" name="system.experience.8Name" type="text" value="{{systemData.experience.8Name}}" placeholder="Experience"/>
+                            <input class="click-rollable-name" name="system.experience.8Name" type="text" value="{{systemData.experience.8Name}}" placeholder="{{localize "DH.Experience"}}"/>
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier"type="number" name="system.experience.8Mod" value="{{systemData.experience.8Mod}}"/>
@@ -280,11 +280,11 @@
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
                             <div class="exp-level"><input type="number" name="system.experience.11level" value="{{systemData.experience.11level}}" placeholder="8"/></div>
-                            <a class="trait-effects">Level</a>
+                            <a class="trait-effects">{{localize "DH.Level"}}</a>
                         </div>
                         <div class="experience-row-column-2">
                             <input class="click-rollable-name" name="system.experience.1Name2" type="text"
-                                value="{{systemData.experience.1Name2}}" placeholder="Experience" />
+                                value="{{systemData.experience.1Name2}}" placeholder="{{localize "DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier" type="number" name="system.experience.1Mod2"
@@ -296,24 +296,24 @@
         </div>
 
         <div class="tab biography" data-group="primary" data-tab="biography">
-            <div class="tab-title">Biography</div>
+            <div class="tab-title">{{localize "DH.Biography"}}</div>
 
             <section class="character-main-section">                
                 <div class="character-details">
                     <div class="char-detail-item">
-                        <label>Age</label>
+                        <label>{{localize "DH.Age"}}</label>
                         <input type="text" name="system.age" value="{{systemData.age}}" />
                     </div>
                     <div class="char-detail-item">
-                        <label>Pronouns</label>
+                        <label>{{localize "DH.Pronouns"}}</label>
                         <input type="text" name="system.pronouns" value="{{systemData.pronouns}}" />
                     </div>
                     <div class="char-detail-item">
-                        <label>Residence</label>
+                        <label>{{localize "DH.Residence"}}</label>
                         <input type="text" name="system.residence" value="{{systemData.residence}}" />
                     </div>
                     <div class="char-detail-item">
-                        <label>Nationality</label>
+                        <label>{{localize "DH.Nationality"}}</label>
                         <input type="text" name="system.nationality" value="{{systemData.nationality}}" />
                     </div>
                 </div>
@@ -323,22 +323,22 @@
         </div>
 
         <div class="tab equipment" data-group="primary" data-tab="equipment">
-            <div class="tab-title">Equipment</div>
+            <div class="tab-title">{{localize "DH.Equipment"}}</div>
 
             {{!-- Weapon Tab --}}
             <div class="weapons">
                 <div class="weapon-group">
                     <div class="weapon-row">
-                        <label class="weapon-label">Primary Weapon</label>
+                        <label class="weapon-label">{{localize "DH.PrimaryWeapon"}}</label>
                         <div class="weapon-box click-rollable-group basic-rollable-group">
                             <div class="weapon-box-inner">
                                 <div class="weapon-infobox-first">
                                     <input class="weapon-field basic-rollable-name click-rollable-name"
                                         name="system.weapon-main.name" type="text"
-                                        value="{{systemData.weapon-main.name}}" placeholder="Weapon" />
+                                        value="{{systemData.weapon-main.name}}" placeholder="{{localize "DH.Weapon"}}" />
                                         <div class="textarea-container">
                                             <input class="trait-effects resize-ta" name="system.weapon-main.description"
-                                                placeholder="Weapon Traits Here"
+                                                placeholder="{{localize "DH.WeaponTraitsHere"}}"
                                                 value="{{systemData.weapon-main.description}}" />
                                         </div>
                                 </div>
@@ -347,13 +347,13 @@
                                         <input class="weapon-to-hit click-rollable-modifier"
                                             name="system.weapon-main.to-hit" type="number"
                                             value="{{systemData.weapon-main.to-hit}}" placeholder="2" />
-                                        <a class="trait-effects click-rollable" data-roll-type="attack">Modifier</a>
+                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
                                     </div>
                                     <div class="weapon-infobox">
                                         <input class="weapon-damage basic-rollable-value"
                                             name="system.weapon-main.damage" type="text"
                                             value="{{systemData.weapon-main.damage}}" placeholder="1d8" />
-                                        <a class="trait-effects basic-rollable" data-roll-type="damage">Damage</a>
+                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
                                     </div>
                                 </div>
                             </div>
@@ -362,16 +362,16 @@
                     </div>
 
                     <div class="weapon-row">
-                        <label class="weapon-label">Secondary Weapon</label>
+                        <label class="weapon-label">{{localize "DH.SecondaryWeapon"}}</label>
                         <div class="weapon-box click-rollable-group basic-rollable-group">
                             <div class="weapon-box-inner">
                                 <div class="weapon-infobox-first">
                                     <input class="weapon-field basic-rollable-name click-rollable-name"
                                         name="system.weapon-off.name" type="text"
-                                        value="{{systemData.weapon-off.name}}" placeholder="Weapon" />
+                                        value="{{systemData.weapon-off.name}}" placeholder="{{localize "DH.Weapon"}}" />
                                         <div class="textarea-container">
                                             <input class="trait-effects resize-ta" name="system.weapon-off.description"
-                                                placeholder="Weapon Traits Here"
+                                                placeholder="{{localize "DH.WeaponTraitsHere"}}"
                                                 value="{{systemData.weapon-off.description}}" />
                                         </div>
                                 </div>
@@ -380,13 +380,13 @@
                                         <input class="weapon-to-hit click-rollable-modifier"
                                             name="system.weapon-off.to-hit" type="number"
                                             value="{{systemData.weapon-off.to-hit}}" placeholder="2" />
-                                        <a class="trait-effects click-rollable" data-roll-type="attack">Modifier</a>
+                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
                                     </div>
                                     <div class="weapon-infobox">
                                         <input class="weapon-damage basic-rollable-value"
                                             name="system.weapon-off.damage" type="text"
                                             value="{{systemData.weapon-off.damage}}" placeholder="1d8" />
-                                        <a class="trait-effects basic-rollable" data-roll-type="damage">Damage</a>
+                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
                                     </div>
                                 </div>
                             </div>
@@ -402,7 +402,7 @@
                            title="{{systemData.treasure.coins.tooltip}}" min="0" />
                     <div class="treasure-icon">
                         <i class="fas fa-coins"></i>
-                        <label>Coins</label>
+                        <label>{{localize "DH.Coins"}}</label>
                     </div>
                 </div>
                 <div class="treasure-item">
@@ -410,7 +410,7 @@
                            title="{{systemData.treasure.handfuls.tooltip}}" min="0" />
                     <div class="treasure-icon">
                         <i class="fas fa-hand-holding"></i>
-                        <label>Handfuls</label>
+                        <label>{{localize "DH.Handfuls"}}</label>
                     </div>
                 </div>
                 <div class="treasure-item">
@@ -418,7 +418,7 @@
                            title="{{systemData.treasure.bags.tooltip}}" min="0" />
                     <div class="treasure-icon">
                         <i class="fas fa-shopping-bag"></i>
-                        <label>Bags</label>
+                        <label>{{localize "DH.Bags"}}</label>
                     </div>
                 </div>
                 <div class="treasure-item">
@@ -426,14 +426,14 @@
                            title="{{systemData.treasure.chests.tooltip}}" min="0" />
                     <div class="treasure-icon">
                         <i class="fas fa-treasure-chest"></i>
-                        <label>Chests</label>
+                        <label>{{localize "DH.Chests"}}</label>
                     </div>
                 </div>
             </div>
 
             {{!-- Owned Inventory Tab --}}
             <div class="inventory">
-                <div class="tab-category">Worn
+                <div class="tab-category">{{localize "DH.Worn"}}
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                         data-type="worn">
                         <i class="fas fa-plus"></i></a>
@@ -463,7 +463,7 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category">Backpack
+                <div class="tab-category">{{localize "DH.Backpack"}}
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                         data-type="inventory">
                         <i class="fas fa-plus"></i></a>
@@ -499,7 +499,7 @@
         <div class="tab loadout" data-group="primary" data-tab="loadout">
             {{!-- Owned Items Tab --}}
             <div class="features">
-                <div class="tab-title">Loadout</div>
+                <div class="tab-title">{{localize "DH.Loadout"}}</div>
                 <!--<div class="tab-category">Domains
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-domain"
                         data-type="domain">
@@ -533,7 +533,7 @@
                     {{/each}}
                 </ol>-->
 
-                <div class="tab-category">Class
+                <div class="tab-category">{{localize "DH.Class"}}
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-class"
                         data-type="class">
                         <i class="fas fa-plus"></i></a>
@@ -549,7 +549,7 @@
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
                             </div>
                             <div class="item-controls">
-                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
+                                <a class="item-control" title="{{localize "DH.SendToVault"}}" data-action="send-to-vault"><i
                                         class="fas fa-arrow-right"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
@@ -564,7 +564,7 @@
                     {{/if}}
                     {{/each}}
                 </ol>
-                <div class="tab-category">Subclass
+                <div class="tab-category">{{localize "DH.Subclass"}}
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-subclass"
                         data-type="subclass">
                         <i class="fas fa-plus"></i></a>
@@ -596,7 +596,7 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category">Ancestry
+                <div class="tab-category">{{localize "DH.Ancestry"}}
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-ancestry"
                         data-type="ancestry">
                         <i class="fas fa-plus"></i></a>
@@ -628,7 +628,7 @@
                     {{/each}}
                 </ol>
                 
-                <div class="tab-category">Community
+                <div class="tab-category">{{localize "DH.Community"}}
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-community"
                         data-type="community">
                         <i class="fas fa-plus"></i></a>
@@ -660,7 +660,7 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category">Abilities
+                <div class="tab-category">{{localize "DH.Abilities"}}
                     <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create"
                         data-type="item">
                         <i class="fas fa-plus"></i></a>
@@ -692,12 +692,12 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category">Vault
+                <div class="tab-category">{{localize "DH.Vault"}}
                     <div class="vault-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                             data-type="vault">
                             <i class="fas fa-plus"></i></a>
-                        <a class="item-control vault-toggle" title="Toggle Vault"><i class="fas fa-chevron-down"></i></a>
+                        <a class="item-control vault-toggle" title="{{localize "DH.ToggleVault"}}"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
                 <ol class="item-list vault-collapsed" data-item-type="vault">
