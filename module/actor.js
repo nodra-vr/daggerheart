@@ -9,24 +9,37 @@ export class SimpleActor extends Actor {
   /** @inheritdoc */
   prepareDerivedData() {
     super.prepareDerivedData();
-    this.system.barHealth = {
-      max: this.system.health.max,
-      min: 0,
-      value: this.system.health.max - this.system.health.value
+    
+    // Initialize missing properties with defaults
+    this.system.health = this.system.health || { value: 6, min: 0, max: 6 };
+    this.system.stress = this.system.stress || { value: 0, min: 0, max: 6 };
+    this.system.defenses = this.system.defenses || { 
+      armor: { value: 0 }, 
+      'armor-slots': { value: 0 } 
     };
-    this.system.barStress = {
-      max: this.system.stress.max,
-      min: 0,
-      value: this.system.stress.max - this.system.stress.value
-    };
-    this.system.barArmor = {
-      max: this.system.defenses.armor.value,
-      min: 0,
-      value: this.system.defenses.armor.value - this.system.defenses['armor-slots'].value
-    }
     this.system.groups = this.system.groups || {};
     this.system.attributes = this.system.attributes || {};
-    console.log('fgsfds',this.system)
+    
+    // Ensure nested properties exist
+    if (!this.system.defenses.armor) this.system.defenses.armor = { value: 0 };
+    if (!this.system.defenses['armor-slots']) this.system.defenses['armor-slots'] = { value: 0 };
+    
+    this.system.barHealth = {
+      max: this.system.health.max || 6,
+      min: 0,
+      value: (this.system.health.max || 6) - (this.system.health.value || 0)
+    };
+    this.system.barStress = {
+      max: this.system.stress.max || 6,
+      min: 0,
+      value: (this.system.stress.max || 6) - (this.system.stress.value || 0)
+    };
+    this.system.barArmor = {
+      max: this.system.defenses.armor.value || 0,
+      min: 0,
+      value: (this.system.defenses.armor.value || 0) - (this.system.defenses['armor-slots'].value || 0)
+    }
+    
     EntitySheetHelper.clampResourceValues(this.system.attributes);
   }
 

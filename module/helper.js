@@ -2,6 +2,14 @@ export class EntitySheetHelper {
 
   static getAttributeData(data) {
 
+    // Ensure attributes and groups exist
+    if (!data.system.attributes) {
+      data.system.attributes = {};
+    }
+    if (!data.system.groups) {
+      data.system.groups = {};
+    }
+
     // attr types
     for ( let attr of Object.values(data.system.attributes) ) {
       if ( attr.dtype ) {
