@@ -37,7 +37,7 @@
     "minimum": "13",
     "verified": "13"
   },
-  "primaryTokenAttribute": "health",
+  "primaryTokenAttribute": "barHealth",
   "secondaryTokenAttribute": "hope",
   "manifest": "https://raw.githubusercontent.com/featureJosh/daggerheart-swb/master/system.json",
   "download"  : "https://github.com/featureJosh/daggerheart-swb/archive/refs/tags/v2.0.8.zip"
