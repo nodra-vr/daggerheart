@@ -20,6 +20,10 @@ export class SimpleTokenDocument extends TokenDocument {
   static getTrackedAttributes(data, _path=[]) {
     if ( data || _path.length ) return super.getTrackedAttributes(data, _path);
     data = {};
+    // Bail if no actor is assigned
+    if (!game?.system?.model?.Actor) {
+      return super.getTrackedAttributes(data);
+    }
     for ( const model of Object.values(game.system.model.Actor) ) {
       foundry.utils.mergeObject(data, model);
     }
