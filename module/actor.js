@@ -9,8 +9,24 @@ export class SimpleActor extends Actor {
   /** @inheritdoc */
   prepareDerivedData() {
     super.prepareDerivedData();
+    this.system.barHealth = {
+      max: this.system.health.max,
+      min: 0,
+      value: this.system.health.max - this.system.health.value
+    };
+    this.system.barStress = {
+      max: this.system.stress.max,
+      min: 0,
+      value: this.system.stress.max - this.system.stress.value
+    };
+    this.system.barArmor = {
+      max: this.system.defenses.armor.value,
+      min: 0,
+      value: this.system.defenses.armor.value - this.system.defenses['armor-slots'].value
+    }
     this.system.groups = this.system.groups || {};
     this.system.attributes = this.system.attributes || {};
+    console.log('fgsfds',this.system)
     EntitySheetHelper.clampResourceValues(this.system.attributes);
   }
 
