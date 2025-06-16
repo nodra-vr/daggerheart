@@ -434,7 +434,7 @@ async function _rollCharacterDamage(event) {
   
   // Create and send the damage roll
   const roll = new Roll(rollValue);
-  await roll.evaluate({async: true});
+  await roll.evaluate();
   
   await roll.toMessage({
     flavor: flavorText,
@@ -475,7 +475,7 @@ async function _rollAdversaryDamage(event) {
   
   // Create and send the damage roll
   const roll = new Roll(rollValue);
-  await roll.evaluate({async: true});
+  await roll.evaluate();
   
   await roll.toMessage({
     flavor: flavorText,
