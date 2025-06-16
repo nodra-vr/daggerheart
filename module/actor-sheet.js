@@ -761,10 +761,13 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     }
 
     if (isCrit) {
-      finalFlavor += ` <b>Critical</b> Success!</p><p class="roll-effect">You gain 1 Hope and clear 1 Stress</p>`;
-      
-      // Apply mechanical effects for critical success
-      await this._applyCriticalSuccess();
+      finalFlavor += ` <b>Critical</b> Success!</p>`;
+      if (!reaction) {
+        finalFlavor += `<p class="roll-effect">You gain 1 Hope and clear 1 Stress</p>`;
+        
+        // Apply mechanical effects for critical success
+        await this._applyCriticalSuccess();
+      }
     } else if (isHope) {
       finalFlavor += ` Rolled with <b>Hope</b>!</p><p class="roll-effect">You gain 1 Hope</p>`;
       
