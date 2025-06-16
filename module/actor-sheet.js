@@ -657,6 +657,18 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
                         resolve({ advantage, disadvantage, modifier, hopeDieSize, fearDieSize });
                     }
                 },
+                rollReaction: {
+                    label: "Reaction",
+                    icon: "<i class='fas fa-dice-d12'></i>",
+                    callback: (html) => {
+                        const advantage = parseInt(html.find('#dualityDiceAdvantageInput').val()) || 0;
+                        const disadvantage = parseInt(html.find('#dualityDiceDisadvantageInput').val()) || 0;
+                        const modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
+                        const hopeDieSize = html.find('#hopeDieSize').val();
+                        const fearDieSize = html.find('#fearDieSize').val();
+                        resolve({ advantage, disadvantage, modifier, hopeDieSize, fearDieSize, reaction: true });
+                    }
+                },
                 cancel: {
                     label: "Cancel",
                     callback: () => resolve(null)
@@ -699,7 +711,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     if (!dialogChoice) { return; }
 
-    const { advantage, disadvantage, modifier, hopeDieSize, fearDieSize } = dialogChoice;
+    const { advantage, disadvantage, modifier, hopeDieSize, fearDieSize, reaction } = dialogChoice;
     const totalAdvantage = advantage - disadvantage;
 
     let rollType = "Normal";
@@ -740,8 +752,8 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       return;
     }
 
-    const isHope = hopeDieValue > fearDieValue;
-    const isFear = hopeDieValue < fearDieValue;
+    const isHope = !reaction && hopeDieValue > fearDieValue;
+    const isFear = !reaction && hopeDieValue < fearDieValue;
 
     let finalFlavor = `<p class="roll-flavor-line"><b>${traitNamePrint}</b>${flavorSuffix}`;
     if (modifier !== 0) {
