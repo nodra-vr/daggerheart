@@ -617,12 +617,17 @@
   flex-direction: column;
   align-items: center;
   gap: 2.5em;
-  padding-bottom: 3em;
+  padding-bottom: 1em;
   padding-top: 1em;
+  height: 100%;
 }
 
 .tab.character {
     padding: 20px;
+}
+
+.tab.biography .character-main-section {
+  height: 100%;
 }
 
 .character-details {
@@ -962,7 +967,7 @@ input.trait-effects.resize-ta {
   font-size: var(--font-size-14);
   font-weight: 100;
   text-transform: capitalize;
-  margin: 0.6rem 0em;
+  margin: 1.25rem 0em;
   justify-content: space-between;
   align-items: center;
   text-shadow: none;
