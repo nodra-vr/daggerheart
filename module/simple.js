@@ -19,7 +19,7 @@ import { TokenCounterUI } from "./token-counter-ui.js";
 Hooks.once("init", async function() {
   console.log(`Initializing Simple Daggerheart System`);
 
-  CONFIG.statusEffects = [];
+  // CONFIG.statusEffects = [];
 
   CONFIG.statusEffects.push({
     id: "hidden",
