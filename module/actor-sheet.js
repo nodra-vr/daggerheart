@@ -583,6 +583,11 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     const modifiersList = overlay.find('.modifiers-list');
     modifiersList.empty();
     
+    // Ensure modifiers is an array
+    if (!Array.isArray(modifiers)) {
+      modifiers = [];
+    }
+    
     modifiers.forEach((modifier, index) => {
       this._createModifierRow(overlay, modifier, index);
     });
