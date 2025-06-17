@@ -25,7 +25,7 @@
                     </div>
                     <a class="resource-control" data-action="increment" data-field="health.value"><i class="fas fa-plus"></i></a>
                 </div>
-                <label>{{localize "DH.HitPoints"}}</label>
+                <label data-trait-tooltip="{{systemData.health.tooltip}}">{{localize "DH.HitPoints"}}</label>
             </div>
 
             <div class="portrait-container">
@@ -40,7 +40,7 @@
                         </div>
                         <a class="resource-control" data-action="increment" data-field="hope.value"><i class="fas fa-plus"></i></a>
                     </div>
-                    <label>{{localize "DH.Hope"}}</label>
+                    <label data-trait-tooltip="{{systemData.hope.tooltip}}">{{localize "DH.Hope"}}</label>
                 </div>
             </div>
 
@@ -54,7 +54,7 @@
                     </div>
                     <a class="resource-control" data-action="increment" data-field="stress.value"><i class="fas fa-plus"></i></a>
                 </div>
-                <label>{{localize "DH.Stress"}}</label>
+                <label data-trait-tooltip="{{systemData.stress.tooltip}}">{{localize "DH.Stress"}}</label>
             </div>
         </div>
 
@@ -108,14 +108,14 @@
                             value="{{systemData.defenses.armor.value}}" />
                         <div class="armor-controls">
                             <!-- <a class="resource-control" data-action="decrement" data-field="defenses.armor.value"><i class="fas fa-minus"></i></a> -->
-                            <label for="system.defenses.armor.value">{{localize "DH.Armor"}}</label>
+                            <label for="system.defenses.armor.value" data-trait-tooltip="{{systemData.defenses.armor.tooltip}}">{{localize "DH.Armor"}}</label>
                             <!-- <a class="resource-control" data-action="increment" data-field="defenses.armor.value"><i class="fas fa-plus"></i></a> -->  
                         </div>
                     </div>
                     <div class="defense" data-trait="evasion">
                         <input type="number" name="system.defenses.evasion.value"
                             value="{{systemData.defenses.evasion.value}}" />
-                        <label for="system.defenses.evasion.value">{{localize "DH.Evasion"}}</label>
+                        <label for="system.defenses.evasion.value" data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize "DH.Evasion"}}</label>
                     </div>
                     <div class="armorslots">
                         <!-- Reusing armorslots for threshold for styling -->
@@ -142,9 +142,9 @@
                 <section class="traits">
                     <div class="trait" data-trait="agility">
                         <div class="trait-label-wrapper">
-                            <label for="system.agility.value">{{localize "DH.Agility"}}</label>
+                            <label for="system.agility.value" data-trait-tooltip="{{systemData.agility.tooltip}}">{{localize "DH.Agility"}}</label>
                         </div>
-                        <input type="number" name="system.agility.value" value="{{systemData.agility.value}}" />
+                        <div class="trait-value-display" data-field="system.agility.value">{{systemData.agility.value}}</div>
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.agility.levelled" {{#if systemData.agility.levelled}}checked{{/if}} />
                         </div>
@@ -156,9 +156,9 @@
                     </div>
                     <div class="trait" data-trait="strength">
                         <div class="trait-label-wrapper">
-                            <label for="system.strength.value">{{localize "DH.Strength"}}</label>
+                            <label for="system.strength.value" data-trait-tooltip="{{systemData.strength.tooltip}}">{{localize "DH.Strength"}}</label>
                         </div>
-                        <input type="number" name="system.strength.value" value="{{systemData.strength.value}}" />
+                        <div class="trait-value-display" data-field="system.strength.value">{{systemData.strength.value}}</div>
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.strength.levelled" {{#if systemData.strength.levelled}}checked{{/if}} />
                         </div>
@@ -170,9 +170,9 @@
                     </div>
                     <div class="trait" data-trait="finesse">
                         <div class="trait-label-wrapper">
-                            <label for="system.finesse.value">{{localize "DH.Finesse"}}</label>
+                            <label for="system.finesse.value" data-trait-tooltip="{{systemData.finesse.tooltip}}">{{localize "DH.Finesse"}}</label>
                         </div>
-                        <input type="number" name="system.finesse.value" value="{{systemData.finesse.value}}" />
+                        <div class="trait-value-display" data-field="system.finesse.value">{{systemData.finesse.value}}</div>
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.finesse.levelled" {{#if systemData.finesse.levelled}}checked{{/if}} />
                         </div>
@@ -184,9 +184,9 @@
                     </div>
                     <div class="trait" data-trait="instinct">
                         <div class="trait-label-wrapper">
-                            <label for="system.instinct.value">{{localize "DH.Instinct"}}</label>
+                            <label for="system.instinct.value" data-trait-tooltip="{{systemData.instinct.tooltip}}">{{localize "DH.Instinct"}}</label>
                         </div>
-                        <input type="number" name="system.instinct.value" value="{{systemData.instinct.value}}" />
+                        <div class="trait-value-display" data-field="system.instinct.value">{{systemData.instinct.value}}</div>
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.instinct.levelled" {{#if systemData.instinct.levelled}}checked{{/if}} />
                         </div>
@@ -198,9 +198,9 @@
                     </div>
                     <div class="trait" data-trait="presence">
                         <div class="trait-label-wrapper">
-                            <label for="system.presence.value">{{localize "DH.Presence"}}</label>
+                            <label for="system.presence.value" data-trait-tooltip="{{systemData.presence.tooltip}}">{{localize "DH.Presence"}}</label>
                         </div>
-                        <input type="number" name="system.presence.value" value="{{systemData.presence.value}}" />
+                        <div class="trait-value-display" data-field="system.presence.value">{{systemData.presence.value}}</div>
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.presence.levelled" {{#if systemData.presence.levelled}}checked{{/if}} />
                         </div>
@@ -212,9 +212,9 @@
                     </div>
                     <div class="trait" data-trait="knowledge">
                         <div class="trait-label-wrapper">
-                            <label for="system.knowledge.value">{{localize "DH.Knowledge"}}</label>
+                            <label for="system.knowledge.value" data-trait-tooltip="{{systemData.knowledge.tooltip}}">{{localize "DH.Knowledge"}}</label>
                         </div>
-                        <input type="number" name="system.knowledge.value" value="{{systemData.knowledge.value}}" />
+                        <div class="trait-value-display" data-field="system.knowledge.value">{{systemData.knowledge.value}}</div>
                         <div class="trait-toggle">
                             <input type="checkbox" name="system.knowledge.levelled" {{#if systemData.knowledge.levelled}}checked{{/if}} />
                         </div>
@@ -729,5 +729,36 @@
             </div>        
         </div>
     </section>
+
+    <!-- Popup overlay for editing trait values -->
+    <div class="trait-edit-popup-overlay" style="display: none;">
+        <div class="trait-edit-popup">
+            <div class="trait-edit-header">
+                <span class="trait-edit-label"></span>
+                <button type="button" class="trait-edit-close">×</button>
+            </div>
+            <div class="trait-edit-content">
+                <div class="trait-base-value">
+                    <label>Base Value:</label>
+                    <input type="number" class="trait-base-input" />
+                </div>
+                
+                <div class="trait-modifiers-section">
+                    <div class="modifiers-header">
+                        <span>Additional Modifiers:</span>
+                        <button type="button" class="add-modifier-btn">+</button>
+                    </div>
+                    <div class="modifiers-table">
+                        <div class="modifiers-list"></div>
+                    </div>
+                </div>
+                
+                <div class="trait-total">
+                    <label>Total Value:</label>
+                    <span class="trait-total-value">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
     

@@ -1912,17 +1912,17 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
 
 /* Treasure Tracker Styles */
 .treasure-tracker {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: 0.3em;
-	padding: 0em .5em 1em .5em;
-	border: none;
-	border-radius: 8px;
-	margin: .5em;
-	max-width: 100%;
-	width: 100%;
-	margin-left: auto;
-	margin-right: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.3em;
+  padding: 0em 0em 1em 0em;
+  border: none;
+  border-radius: 8px;
+  margin: .5em;
+  max-width: 100%;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .treasure-item {
@@ -2020,4 +2020,368 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
     width: 50px;
     padding: 0.25em 0.4em;
   }
+}
+
+/* Tooltip Styles */
+.daggerheart [data-trait-tooltip] {
+  position: relative;
+}
+
+/* Clickable tooltip elements (traits that have click handlers) */
+.daggerheart .trait-label-wrapper [data-trait-tooltip],
+.daggerheart .defense [data-trait-tooltip] {
+  cursor: pointer;
+}
+
+/* Non-clickable tooltip elements (resources like HP, Hope, Stress) */
+.daggerheart .resource [data-trait-tooltip],
+.daggerheart .header-main-container [data-trait-tooltip] {
+  cursor: help;
+}
+
+.daggerheart [data-trait-tooltip]::after {
+  content: attr(data-trait-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(11, 10, 19, 0.95);
+  color: var(--dh-color-off-white);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 11px;
+  line-height: 1.4;
+  text-transform: none !important;
+  white-space: nowrap;
+  max-width: 250px;
+  white-space: normal;
+  width: max-content;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(-4px);
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, visibility 0.2s ease-in-out;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-family: inherit;
+}
+
+.daggerheart [data-trait-tooltip]::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--dh-color-gold);
+  z-index: 10001;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+.daggerheart [data-trait-tooltip].show-tooltip::after,
+.daggerheart [data-trait-tooltip].show-tooltip::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.daggerheart [data-trait-tooltip=""]:not(.show-tooltip)::after,
+.daggerheart [data-trait-tooltip=""]:not(.show-tooltip)::before {
+  display: none;
+}
+
+/* Trait value display styles */
+.trait-value-display {
+  width: 80px;
+  height: 64px;
+  background: url("icons/Stats BG-2.png") no-repeat;
+  background-size: contain;
+  background-position: center center;
+  border: none;
+  color: black;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  padding-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trait-value-display:hover {
+  transform: scale(1.05);
+}
+
+/* Popup overlay styles */
+.trait-edit-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trait-edit-popup {
+  background: rgba(11, 10, 19, 0.84);
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 10px;
+  padding: 1rem;
+  min-width: 200px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  transform: scale(0.8);
+  opacity: 0;
+  position: relative;
+}
+
+.trait-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.trait-edit-label {
+  color: var(--dh-color-gold);
+  font-weight: bold;
+  font-size: 1.1rem;
+  flex: 1;
+  text-align: center;
+}
+
+.trait-edit-close {
+  background: rgba(11, 10, 19, 0.95);
+  border: 1px solid var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  position: absolute;
+  right: -10px;
+  top: -10px;
+}
+
+.trait-edit-close:hover {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-dark-blue);
+  transform: scale(1.1);
+}
+
+.trait-edit-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 300px;
+  position: relative;
+}
+
+.trait-base-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trait-base-value label {
+  color: var(--dh-color-gold);
+  font-weight: bold;
+  min-width: 80px;
+}
+
+.trait-base-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 5px;
+  padding: 0.5rem;
+  text-align: center;
+  color: var(--dh-color-off-white);
+  font-size: 1.2rem;
+  font-weight: bold;
+  width: 80px;
+  transition: all 0.2s ease;
+}
+
+.trait-base-input:focus {
+  outline: none;
+  border-color: var(--dh-color-gold-light);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(243, 194, 103, 0.3);
+}
+
+.trait-modifiers-section {
+  border-top: 1px solid rgba(243, 194, 103, 0.3);
+  padding-top: 0.75rem;
+}
+
+.modifiers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.modifiers-header span {
+  color: var(--dh-color-gold);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.add-modifier-btn {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: 16px;
+}
+
+.add-modifier-btn:hover {
+  background: var(--dh-color-gold-light);
+  transform: scale(1.1);
+}
+
+.modifiers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modifier-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+  border: 1px solid rgba(243, 194, 103, 0.2);
+  position: relative;
+}
+
+.modifier-name {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(243, 194, 103, 0.3);
+  border-radius: 3px;
+  padding: 0.25rem 0.5rem;
+  color: var(--dh-color-off-white);
+  font-size: 0.9rem;
+}
+
+.modifier-value {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(243, 194, 103, 0.3);
+  border-radius: 3px;
+  padding: 0.25rem;
+  text-align: center;
+  color: var(--dh-color-off-white);
+  font-size: 0.9rem;
+  width: 50px;
+}
+
+.modifier-toggle {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--dh-color-gold);
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+.modifier-delete {
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.modifier-delete:hover {
+  background: #ff6666;
+  transform: scale(1.1);
+}
+
+.modifier-row.disabled {
+  pointer-events: auto;
+}
+
+.modifier-row.disabled .modifier-name,
+.modifier-row.disabled .modifier-value {
+  opacity: 0.5;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(242, 243, 244, 0.5);
+}
+
+/* Ensure all controls are interactive */
+.modifier-row input,
+.modifier-row button {
+  position: relative;
+  z-index: 2;
+}
+
+/* Keep toggle and delete always interactive */
+.modifier-row.disabled .modifier-toggle,
+.modifier-row.disabled .modifier-delete {
+  pointer-events: auto;
+  opacity: 1;
+  cursor: pointer;
+}
+
+.trait-total {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-top: 1px solid rgba(243, 194, 103, 0.3);
+  padding-top: 0.75rem;
+  font-weight: bold;
+}
+
+.trait-total label {
+  color: var(--dh-color-gold);
+  min-width: 80px;
+}
+
+.trait-total-value {
+  color: var(--dh-color-gold-light);
+  font-size: 1.2rem;
+  font-weight: bold;
 }

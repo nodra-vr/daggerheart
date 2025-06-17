@@ -34,6 +34,20 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;
     
+    // Ensure tooltip properties exist for resources (migration fallback)
+    if (!context.systemData.health?.tooltip) {
+      context.systemData.health = context.systemData.health || {};
+      context.systemData.health.tooltip = "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic.";
+    }
+    if (!context.systemData.stress?.tooltip) {
+      context.systemData.stress = context.systemData.stress || {};
+      context.systemData.stress.tooltip = "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic.";
+    }
+    if (!context.systemData.hope?.tooltip) {
+      context.systemData.hope = context.systemData.hope || {};
+      context.systemData.hope.tooltip = "Hope and Fear are currencies used by the players and the GM to represent the way fate turns for or against the characters during the game.";
+    }
+    
     // htmlFields
     context.biographyHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.systemData.biography, {
       secrets: this.document.isOwner,
@@ -121,6 +135,28 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
         ev.dataTransfer.setData('text/plain', JSON.stringify(dragData));
       }, false);
     });
+    
+    // Tooltip functionality with 50ms delay
+    html.find("[data-trait-tooltip]").each((i, element) => {
+      let tooltipTimeout;
+      
+      element.addEventListener("mouseenter", () => {
+        const tooltipText = element.getAttribute("data-trait-tooltip");
+        if (tooltipText && tooltipText.trim() !== "") {
+          tooltipTimeout = setTimeout(() => {
+            element.classList.add("show-tooltip");
+          }, 50);
+        }
+      });
+      
+      element.addEventListener("mouseleave", () => {
+        clearTimeout(tooltipTimeout);
+        element.classList.remove("show-tooltip");
+      });
+    });
+    
+    // Trait value popup functionality
+    html.find(".trait-value-display").click(this._onTraitValueClick.bind(this));
     
     
     // Dealing with Input width
@@ -435,6 +471,313 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     const traitName = event.currentTarget.closest(".trait").dataset.trait;
     const traitValue = this.actor.system[traitName].value;
     await this._rollTrait(traitName, traitValue);
+  }
+  
+  /* -------------------------------------------- */
+  
+  async _onTraitValueClick(event) {
+    event.preventDefault();
+    const displayElement = event.currentTarget;
+    const fieldName = displayElement.dataset.field;
+    
+    // Extract trait name from the parent trait element
+    const traitElement = displayElement.closest(".trait");
+    const traitName = traitElement ? traitElement.dataset.trait : null;
+    
+    if (!traitName) {
+      console.error("Could not determine trait name");
+      return;
+    }
+    
+    // Get current value and label dynamically
+    const currentValue = this.actor.system[traitName]?.value || 0;
+    const label = traitName.charAt(0).toUpperCase() + traitName.slice(1); // Capitalize trait name
+    
+    this._showTraitEditPopup(fieldName, currentValue, label, displayElement);
+  }
+  
+  /* -------------------------------------------- */
+  
+  _showTraitEditPopup(fieldName, currentValue, label, displayElement) {
+    // Create or get the popup overlay
+    let overlay = this.element.find('.trait-edit-popup-overlay');
+    if (overlay.length === 0) {
+      overlay = this.element.find('.trait-edit-popup-overlay');
+    }
+    
+    // Extract trait name for data access
+    const traitName = fieldName.split('.')[1]; // e.g., "system.strength.value" -> "strength"
+    const traitData = this.actor.system[traitName] || {};
+    
+    // Set up the popup content
+    overlay.find('.trait-edit-label').text(label);
+    
+    // Set base value (fallback to current value if no baseValue exists)
+    const baseInput = overlay.find('.trait-base-input');
+    const baseValue = traitData.baseValue !== undefined ? traitData.baseValue : currentValue;
+    baseInput.val(baseValue);
+    
+    // Store trait info for later use
+    overlay.data('trait-name', traitName);
+    overlay.data('field-name', fieldName);
+    overlay.data('display-element', displayElement);
+    
+    // Load existing modifiers
+    this._loadModifiers(overlay, traitData.modifiers || []);
+    
+    // Calculate and display total
+    this._updateTotal(overlay);
+    
+    // Show the popup with animation
+    overlay.show();
+    const popup = overlay.find('.trait-edit-popup');
+    
+    // Animate in with JavaScript for smooth backdrop-filter
+    this._animatePopupIn(popup, () => {
+      baseInput.focus().select();
+    });
+    
+    // Set up event handlers
+    this._setupPopupEventHandlers(overlay);
+  }
+  
+  /* -------------------------------------------- */
+  
+  _setupPopupEventHandlers(overlay) {
+    // Clear any existing handlers
+    overlay.off('.trait-edit');
+    overlay.find('*').off('.trait-edit');
+    
+    // Base value input handler
+    const baseInput = overlay.find('.trait-base-input');
+    baseInput.on('input', () => this._updateTotal(overlay));
+    
+    // Keyboard shortcuts
+    overlay.on('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this._hideTraitEditPopup(overlay);
+      }
+    });
+    
+    // Add modifier button
+    overlay.find('.add-modifier-btn').on('click', () => {
+      this._addModifier(overlay);
+    });
+    
+    // Close button
+    overlay.find('.trait-edit-close').on('click', () => {
+      this._submitTraitEdit(overlay);
+    });
+    
+    // Click outside to close (only on the overlay background)
+    overlay.on('click', (e) => {
+      if (e.target === overlay[0]) {
+        this._submitTraitEdit(overlay);
+      }
+    });
+  }
+  
+  /* -------------------------------------------- */
+  
+  _loadModifiers(overlay, modifiers) {
+    const modifiersList = overlay.find('.modifiers-list');
+    modifiersList.empty();
+    
+    modifiers.forEach((modifier, index) => {
+      this._createModifierRow(overlay, modifier, index);
+    });
+  }
+  
+  /* -------------------------------------------- */
+  
+  _createModifierRow(overlay, modifier, index) {
+    const modifiersList = overlay.find('.modifiers-list');
+    const row = $(`
+      <div class="modifier-row ${modifier.enabled === false ? 'disabled' : ''}" data-index="${index}">
+        <input type="text" class="modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" />
+        <input type="number" class="modifier-value" placeholder="±0" value="${modifier.value || 0}" />
+        <input type="checkbox" class="modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} />
+        <button type="button" class="modifier-delete">×</button>
+      </div>
+    `);
+    
+    // Simple event handlers without propagation issues
+    row.find('.modifier-name, .modifier-value').on('input', () => this._updateTotal(overlay));
+    
+    row.find('.modifier-toggle').on('click change', (e) => {
+      e.stopPropagation();
+      const checkbox = $(e.currentTarget);
+      const isEnabled = checkbox.prop('checked');
+      row.toggleClass('disabled', !isEnabled);
+      this._updateTotal(overlay);
+    });
+    
+    row.find('.modifier-delete').on('click', (e) => {
+      e.stopPropagation();
+      row.remove();
+      this._updateTotal(overlay);
+    });
+    
+    modifiersList.append(row);
+  }
+  
+  /* -------------------------------------------- */
+  
+  _addModifier(overlay) {
+    const newModifier = {
+      name: 'Modifier',
+      value: 0,
+      enabled: true
+    };
+    
+    const modifiersList = overlay.find('.modifiers-list');
+    const index = modifiersList.children().length;
+    
+    this._createModifierRow(overlay, newModifier, index);
+    
+    // Focus the name input of the new modifier and select the text
+    const newRow = modifiersList.children().last();
+    const nameInput = newRow.find('.modifier-name');
+    nameInput.focus().select();
+  }
+  
+  /* -------------------------------------------- */
+  
+  _updateTotal(overlay) {
+    const baseValue = parseInt(overlay.find('.trait-base-input').val()) || 0;
+    let modifierTotal = 0;
+    
+    overlay.find('.modifier-row').each((index, row) => {
+      const $row = $(row);
+      const isEnabled = $row.find('.modifier-toggle').is(':checked');
+      
+      if (isEnabled) {
+        const value = parseInt($row.find('.modifier-value').val()) || 0;
+        modifierTotal += value;
+      }
+    });
+    
+    const total = baseValue + modifierTotal;
+    overlay.find('.trait-total-value').text(total);
+    
+    return total;
+  }
+  
+  /* -------------------------------------------- */
+  
+  async _submitTraitEdit(overlay) {
+    const traitName = overlay.data('trait-name');
+    const baseValue = parseInt(overlay.find('.trait-base-input').val()) || 0;
+    
+    // Collect modifiers
+    const modifiers = [];
+    overlay.find('.modifier-row').each((index, row) => {
+      const $row = $(row);
+      let name = $row.find('.modifier-name').val().trim();
+      const value = parseInt($row.find('.modifier-value').val()) || 0;
+      const enabled = $row.find('.modifier-toggle').is(':checked');
+      
+      // Only save modifiers that have a value (even if name is empty)
+      if (value !== 0) {
+        // Default name if empty
+        if (!name) {
+          name = 'Modifier';
+        }
+        modifiers.push({
+          name: name,
+          value: value,
+          enabled: enabled
+        });
+      }
+    });
+    
+    // Calculate final value
+    const totalValue = this._updateTotal(overlay);
+    
+    // Update the actor with new structure
+    const updateData = {};
+    updateData[`system.${traitName}.baseValue`] = baseValue;
+    updateData[`system.${traitName}.modifiers`] = modifiers;
+    updateData[`system.${traitName}.value`] = totalValue;
+    
+    await this.actor.update(updateData);
+    
+    // Update the display element
+    const displayElement = overlay.data('display-element');
+    $(displayElement).text(totalValue);
+    
+    this._hideTraitEditPopup(overlay);
+  }
+  
+  /* -------------------------------------------- */
+  
+  _hideTraitEditPopup(overlay) {
+    const popup = overlay.find('.trait-edit-popup');
+    this._animatePopupOut(popup, () => {
+      overlay.hide();
+    });
+  }
+  
+  /* -------------------------------------------- */
+  
+  _animatePopupIn(popup, callback) {
+    let start = null;
+    const duration = 200; // 200ms animation
+    
+    const animate = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      
+      // Easing function (ease-out)
+      const eased = 1 - Math.pow(1 - progress, 3);
+      
+      const scale = 0.8 + (0.2 * eased); // From 0.8 to 1.0
+      const opacity = eased; // From 0 to 1
+      
+      popup.css({
+        'transform': `scale(${scale})`,
+        'opacity': opacity
+      });
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        callback && callback();
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }
+  
+  /* -------------------------------------------- */
+  
+  _animatePopupOut(popup, callback) {
+    let start = null;
+    const duration = 150; // Slightly faster out animation
+    
+    const animate = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      
+      // Easing function (ease-in)
+      const eased = Math.pow(progress, 2);
+      
+      const scale = 1.0 - (0.2 * eased); // From 1.0 to 0.8
+      const opacity = 1 - eased; // From 1 to 0
+      
+      popup.css({
+        'transform': `scale(${scale})`,
+        'opacity': opacity
+      });
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        callback && callback();
+      }
+    };
+    
+    requestAnimationFrame(animate);
   }
   
   /*async _onWeaponLabelClick(event) {

@@ -23,20 +23,20 @@
         "value": 0,
         "min": 0,
         "max": 6,
-        "tooltip": ""
+        "tooltip": "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic."
         
       },
       "stress": {
         "value": 0,
         "min": 0,
         "max": 6,
-        "tooltip": ""
+        "tooltip": "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic."
       },
       "hope": {
         "value": 2,
         "min": 0,
         "max": 6,
-        "tooltip": ""
+        "tooltip": "Hope and Fear are currencies used by the players and the GM to represent the way fate turns for or against the characters during the game."
       },
       "threshold": {
         "minor": 0,
@@ -127,11 +127,11 @@
       "defenses": {
         "evasion": {
           "value": 0,
-          "tooltip": "Evasion determines your ability to dodge attacks and adverse effects, influenced by class, gear, and creative tactics."
+          "tooltip": "Your character's Evasion reflects how hard it is for adversaries to hit them."
         },
         "armor": {
           "value": 0,
-          "tooltip": "Armor reduces incoming damage by utilizing armor slots and increases your Armor Score based on equipped items."
+          "tooltip": "When your character takes damage, you can mark one Armor Slot, then reduce the severity of the damage by one threshold."
         },
         "armor-slots": {
           "value": 0,
@@ -189,11 +189,11 @@
       "defenses": {
         "evasion": {
           "value": 0,
-          "tooltip": "Evasion determines your ability to dodge attacks and adverse effects, influenced by class, gear, and creative tactics."
+          "tooltip": "Your character's Evasion reflects how hard it is for adversaries to hit them."
         },
         "armor": {
           "value": 0,
-          "tooltip": "Armor reduces incoming damage by utilizing armor slots and increases your Armor Score based on equipped items."
+          "tooltip": "When your character takes damage, you can mark one Armor Slot, then reduce the severity of the damage by one threshold."
         },
         "armor-slots": {
           "value": 0,
