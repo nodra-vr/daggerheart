@@ -17,44 +17,50 @@
         <div class="header-main-container">
             <div class="resource health">
                 <div class="resource-content">
-                    <a class="resource-control" data-action="decrement" data-field="health.value"><i class="fas fa-minus"></i></a>
                     <div class="resource-box">
                         <input type="text" name="system.health.value" value="{{systemData.health.value}}" />
-                        <span class="sep">/</span>
+                        <span>/</span>
                         <input type="text" name="system.health.max" value="{{systemData.health.max}}" />
                     </div>
+                </div>
+                <div class="resource-label-controls">
+                    <a class="resource-control" data-action="decrement" data-field="health.value"><i class="fas fa-minus"></i></a>
+                    <label data-trait-tooltip="{{systemData.health.tooltip}}">{{localize "DH.HitPoints"}}</label>
                     <a class="resource-control" data-action="increment" data-field="health.value"><i class="fas fa-plus"></i></a>
                 </div>
-                <label data-trait-tooltip="{{systemData.health.tooltip}}">{{localize "DH.HitPoints"}}</label>
             </div>
 
             <div class="portrait-container">
                 <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
                 <div class="resource hope">
                     <div class="resource-content">
-                        <a class="resource-control" data-action="decrement" data-field="hope.value"><i class="fas fa-minus"></i></a>
                         <div class="resource-box">
                             <input type="text" name="system.hope.value" value="{{systemData.hope.value}}" />
-                            <span class="sep">/</span>
+                            <span>/</span>
                             <input type="text" name="system.hope.max" value="{{systemData.hope.max}}" />
                         </div>
+                    </div>
+                    <div class="resource-label-controls">
+                        <a class="resource-control" data-action="decrement" data-field="hope.value"><i class="fas fa-minus"></i></a>
+                        <label data-trait-tooltip="{{systemData.hope.tooltip}}">{{localize "DH.Hope"}}</label>
                         <a class="resource-control" data-action="increment" data-field="hope.value"><i class="fas fa-plus"></i></a>
                     </div>
-                    <label data-trait-tooltip="{{systemData.hope.tooltip}}">{{localize "DH.Hope"}}</label>
                 </div>
             </div>
 
             <div class="resource stress">
                 <div class="resource-content">
-                    <a class="resource-control" data-action="decrement" data-field="stress.value"><i class="fas fa-minus"></i></a>
                     <div class="resource-box">
                         <input type="text" name="system.stress.value" value="{{systemData.stress.value}}" />
-                        <span class="sep">/</span>
+                        <span>/</span>
                         <input type="text" name="system.stress.max" value="{{systemData.stress.max}}" />
                     </div>
+                </div>
+                <div class="resource-label-controls">
+                    <a class="resource-control" data-action="decrement" data-field="stress.value"><i class="fas fa-minus"></i></a>
+                    <label data-trait-tooltip="{{systemData.stress.tooltip}}">{{localize "DH.Stress"}}</label>
                     <a class="resource-control" data-action="increment" data-field="stress.value"><i class="fas fa-plus"></i></a>
                 </div>
-                <label data-trait-tooltip="{{systemData.stress.tooltip}}">{{localize "DH.Stress"}}</label>
             </div>
         </div>
 
@@ -173,7 +179,7 @@
                 <section class="traits">
                     <div class="trait" data-trait="agility">
                         <div class="trait-label-wrapper">
-                            <label for="system.agility.value" data-trait-tooltip="{{systemData.agility.tooltip}}">{{localize "DH.Agility"}}</label>
+                            <label for="system.agility.value" data-trait-tooltip="{{systemData.agility.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Agility"}}</label>
                         </div>
                         <div class="trait-value-display" data-field="system.agility.value">{{systemData.agility.value}}</div>
                         <div class="trait-toggle">
@@ -187,7 +193,7 @@
                     </div>
                     <div class="trait" data-trait="strength">
                         <div class="trait-label-wrapper">
-                            <label for="system.strength.value" data-trait-tooltip="{{systemData.strength.tooltip}}">{{localize "DH.Strength"}}</label>
+                            <label for="system.strength.value" data-trait-tooltip="{{systemData.strength.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Strength"}}</label>
                         </div>
                         <div class="trait-value-display" data-field="system.strength.value">{{systemData.strength.value}}</div>
                         <div class="trait-toggle">
@@ -201,7 +207,7 @@
                     </div>
                     <div class="trait" data-trait="finesse">
                         <div class="trait-label-wrapper">
-                            <label for="system.finesse.value" data-trait-tooltip="{{systemData.finesse.tooltip}}">{{localize "DH.Finesse"}}</label>
+                            <label for="system.finesse.value" data-trait-tooltip="{{systemData.finesse.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Finesse"}}</label>
                         </div>
                         <div class="trait-value-display" data-field="system.finesse.value">{{systemData.finesse.value}}</div>
                         <div class="trait-toggle">
@@ -215,7 +221,7 @@
                     </div>
                     <div class="trait" data-trait="instinct">
                         <div class="trait-label-wrapper">
-                            <label for="system.instinct.value" data-trait-tooltip="{{systemData.instinct.tooltip}}">{{localize "DH.Instinct"}}</label>
+                            <label for="system.instinct.value" data-trait-tooltip="{{systemData.instinct.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Instinct"}}</label>
                         </div>
                         <div class="trait-value-display" data-field="system.instinct.value">{{systemData.instinct.value}}</div>
                         <div class="trait-toggle">
@@ -229,7 +235,7 @@
                     </div>
                     <div class="trait" data-trait="presence">
                         <div class="trait-label-wrapper">
-                            <label for="system.presence.value" data-trait-tooltip="{{systemData.presence.tooltip}}">{{localize "DH.Presence"}}</label>
+                            <label for="system.presence.value" data-trait-tooltip="{{systemData.presence.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Presence"}}</label>
                         </div>
                         <div class="trait-value-display" data-field="system.presence.value">{{systemData.presence.value}}</div>
                         <div class="trait-toggle">
@@ -243,7 +249,7 @@
                     </div>
                     <div class="trait" data-trait="knowledge">
                         <div class="trait-label-wrapper">
-                            <label for="system.knowledge.value" data-trait-tooltip="{{systemData.knowledge.tooltip}}">{{localize "DH.Knowledge"}}</label>
+                            <label for="system.knowledge.value" data-trait-tooltip="{{systemData.knowledge.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Knowledge"}}</label>
                         </div>
                         <div class="trait-value-display" data-field="system.knowledge.value">{{systemData.knowledge.value}}</div>
                         <div class="trait-toggle">
