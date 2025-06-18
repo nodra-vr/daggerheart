@@ -86,11 +86,94 @@
   margin-top: .75em;
 }
 
-.daggerheart p {
+.daggerheart p:not(.editor-content p):not(.ProseMirror p) {
   font-size: 12px;
   margin: 0.25em 1.75em;
   margin-bottom: 1em;
   padding-left: .5em;
+}
+
+/* Fix ProseMirror editor content styling - universal fix */
+.daggerheart .editor-content p,
+.daggerheart .ProseMirror p,
+.daggerheart .item-description p {
+  margin: 0.5em 0 !important;
+  padding-left: 0 !important;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.daggerheart .editor-content ul,
+.daggerheart .ProseMirror ul,
+.daggerheart .item-description ul {
+  margin: 0.5em 0 !important;
+  padding-left: 1.5em !important;
+  list-style-type: disc !important;
+}
+
+.daggerheart .editor-content ol,
+.daggerheart .ProseMirror ol,
+.daggerheart .item-description ol {
+  margin: 0.5em 0 !important;
+  padding-left: 1.5em !important;
+  list-style-type: decimal !important;
+}
+
+.daggerheart .editor-content li,
+.daggerheart .ProseMirror li,
+.daggerheart .item-description li {
+  margin: 0.25em 0 !important;
+  padding: 0 !important;
+  line-height: 1.5;
+}
+
+.daggerheart .editor-content ul ul,
+.daggerheart .editor-content ol ol,
+.daggerheart .editor-content ul ol,
+.daggerheart .editor-content ol ul,
+.daggerheart .ProseMirror ul ul,
+.daggerheart .ProseMirror ol ol,
+.daggerheart .ProseMirror ul ol,
+.daggerheart .ProseMirror ol ul,
+.daggerheart .item-description ul ul,
+.daggerheart .item-description ol ol,
+.daggerheart .item-description ul ol,
+.daggerheart .item-description ol ul {
+  margin: 0.25em 0 !important;
+}
+
+.daggerheart .editor-content h1,
+.daggerheart .editor-content h2,
+.daggerheart .editor-content h3,
+.daggerheart .editor-content h4,
+.daggerheart .editor-content h5,
+.daggerheart .editor-content h6,
+.daggerheart .ProseMirror h1,
+.daggerheart .ProseMirror h2,
+.daggerheart .ProseMirror h3,
+.daggerheart .ProseMirror h4,
+.daggerheart .ProseMirror h5,
+.daggerheart .ProseMirror h6,
+.daggerheart .item-description h1,
+.daggerheart .item-description h2,
+.daggerheart .item-description h3,
+.daggerheart .item-description h4,
+.daggerheart .item-description h5,
+.daggerheart .item-description h6 {
+  margin: 1em 0 0.5em 0 !important;
+  padding: 0 !important;
+  font-weight: bold;
+  line-height: 1.3;
+}
+
+.daggerheart .editor-content blockquote,
+.daggerheart .ProseMirror blockquote,
+.daggerheart .item-description blockquote {
+  margin: 1em 0 !important;
+  padding: 0.5em 1em !important;
+  border-left: 3px solid var(--dh-color-gold);
+  background-color: rgba(243, 194, 103, 0.1);
+  font-style: italic;
 }
 
 .prosemirror menu button {
@@ -252,17 +335,17 @@
 .daggerheart .item-list .item:nth-child(even) {
     background: rgb(141 120 151 / 7%);
 }
-
 .daggerheart .item-list .item .item-description {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out, transform 0.3s ease-out;
+	max-height: 0;
+	opacity: 0;
+	overflow: hidden;
+	transform: scaleY(0);
+	transform-origin: top;
+	transition: max-height 0.3s ease-out, opacity 0.2s ease-out, transform 0.3s ease-out;
   margin: 0 0.5em;
-  min-width: 100%;
-  border-left: solid 2px var(--dh-color-gold);
+	min-width: 100%;
+	border-left: solid 2px var(--dh-color-gold);
+	padding: 0em 1.5em;
 }
 
 .daggerheart .item-list .item .item-description > * {
@@ -1907,6 +1990,17 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
 }
 .item-card-chat .card-description p:last-child {
   margin-bottom: 0;
+}
+
+/* Override dark header colors in item-card-chat descriptions */
+.item-card-chat .card-description h1,
+.item-card-chat .card-description h2,
+.item-card-chat .card-description h3,
+.item-card-chat .card-description h4,
+.item-card-chat .card-description h5,
+.item-card-chat .card-description h6 {
+  color: var(--dh-color-off-white) !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* Roll Outcome Styling */
