@@ -421,7 +421,6 @@
   justify-content: center;
   margin: 0px;
   padding: 5px 25px;
-  border: 1px solid var(--dh-color-gold);
   border-radius: 5px;
 }
 
@@ -535,6 +534,10 @@
   background: transparent;
   width: 100%;
   margin: auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: font-size 0.2s ease;
 }
 
 .charname input:focus {
@@ -719,7 +722,7 @@
   font-size: 10px;
   letter-spacing: 1px;
   padding: 2px 6px;
-  background: var(--dh-color-off-black);
+  background: rgb(11, 10, 19);
   border: 2px solid var(--dh-color-gold);
   border-radius: 0px 10px;
   z-index: 1;
@@ -768,7 +771,7 @@
 .traits {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25em;
+  gap: .7em;
   align-items: center;
   justify-content: center;
 }
@@ -787,10 +790,11 @@
   font-size: 10px;
   letter-spacing: 1px;
   padding: .25em 0.25em;
-  background: rgba(11, 10, 19, 0.85);
+  background: rgb(11, 10, 19);
   border: 1px solid var(--dh-color-gold);
   border-radius: .5em;
   z-index: 1;
+  white-space: nowrap;
 }
 
 .trait input {
@@ -1716,11 +1720,29 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
 }
 
 .resource-control {
-	color: var(--dh-color-off-white);
+	color: var(--dh-color-gold);
 	text-decoration: none;
 	font-size: .75em;
 	padding: 0 5px;
 	cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resource-control:hover {
+  color: var(--dh-color-gold-light);
+  transform: scale(1.2);
+}
+
+.resource-label-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  margin-top: 0.25em;
+}
+
+.resource-label-controls label {
+  margin: 0;
 }
 
 .armor-controls {
@@ -2607,4 +2629,18 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
   background: rgba(243, 194, 103, 0.25);
   border-color: var(--dh-color-gold-light);
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
+}
+
+.trait-label-wrapper .trait-d12-icon {
+  margin-right: 2px;
+  transition: transform 0.4s ease-in-out;
+  display: inline-block;
+  color: var(--dh-color-gold);
+  font-size: 11px;
+  vertical-align: middle;
+  margin-bottom: 1px;
+}
+
+.trait-label-wrapper label:hover .trait-d12-icon {
+    transform: rotate(360deg);
 }

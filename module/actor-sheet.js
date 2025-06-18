@@ -162,6 +162,72 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.find(".attribute-value-display").click(this._onAttributeValueClick.bind(this));
     
     
+    // Dynamic text sizing for inputs
+    function adjustTextSize(input, baseFontSizeEm = 1, minFontSizeEm = 0.5) {
+      const $input = $(input);
+      const text = $input.val();
+      const maxWidth = $input.width();
+      
+      // Convert em to px for calculation
+      const parentFontSize = parseInt($input.parent().css('font-size'));
+      const baseFontSize = baseFontSizeEm * parentFontSize;
+      const minFontSize = minFontSizeEm * parentFontSize;
+      
+      // Create a temporary span to measure text width
+      const $temp = $('<span>').css({
+        visibility: 'hidden',
+        position: 'absolute',
+        fontSize: baseFontSize + 'px',
+        fontFamily: $input.css('font-family'),
+        fontWeight: $input.css('font-weight'),
+        letterSpacing: $input.css('letter-spacing'),
+        textTransform: $input.css('text-transform'),
+        whiteSpace: 'nowrap'
+      }).text(text || $input.attr('placeholder') || '');
+      
+      $('body').append($temp);
+      
+      let fontSize = baseFontSize;
+      let textWidth = $temp.width();
+      
+      // Calculate appropriate font size
+      if (textWidth > maxWidth) {
+        fontSize = Math.max(minFontSize, Math.floor(baseFontSize * (maxWidth / textWidth) * 0.9));
+      }
+      
+      $temp.remove();
+      
+      // Convert back to em
+      const fontSizeEm = fontSize / parentFontSize;
+      $input.css('font-size', fontSizeEm + 'em');
+    }
+    
+    // Domain input dynamic text sizing
+    const domainInputs = html.find('.header-domain input');
+    
+    // Apply sizing on initial load
+    domainInputs.each(function() {
+      adjustTextSize(this, 1, 0.625); // 16px base (1em), 10px min (0.625em)
+    });
+    
+    // Apply sizing on input change
+    domainInputs.on('input', function() {
+      adjustTextSize(this, 1, 0.625);
+    });
+    
+    // Character name dynamic text sizing
+    const charnameInput = html.find('.charname input');
+    
+    // Apply sizing on initial load
+    charnameInput.each(function() {
+      adjustTextSize(this, 2.5, 1.2); // 2.5em base, 1.2em min
+    });
+    
+    // Apply sizing on input change
+    charnameInput.on('input', function() {
+      adjustTextSize(this, 2.5, 1.2);
+    });
+    
     // Dealing with Input width
     let el = html.find(".input-wrap .input");
     let widthMachine = html.find(".input-wrap .width-machine");
