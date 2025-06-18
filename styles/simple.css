@@ -2122,7 +2122,8 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
 }
 
 /* Popup overlay styles */
-.trait-edit-popup-overlay {
+.trait-edit-popup-overlay,
+.attribute-edit-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -2132,140 +2133,179 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
 }
 
-.trait-edit-popup {
-  background: rgba(11, 10, 19, 0.84);
-  backdrop-filter: blur(5px);
-  border: 1px solid var(--dh-color-gold);
-  border-radius: 10px;
-  padding: 1rem;
-  min-width: 200px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+.trait-edit-popup,
+.attribute-edit-popup {
+  background: #0b0a13d6;
+  backdrop-filter: blur(10px);
+  border: 1px solid #ffffff3d;
+  border-radius: 15px;
+  padding: 0;
+  min-width: 320px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
   transform: scale(0.8);
   opacity: 0;
   position: relative;
+  overflow: hidden;
 }
 
-.trait-edit-header {
+.trait-edit-header,
+.attribute-edit-header {
+  background: rgba(11, 10, 19, 0.5);
+  border-bottom: 1px solid var(--dh-color-gold);
+  padding: 1rem 1.5rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 0.75rem;
+  position: relative;
 }
 
-.trait-edit-label {
+.trait-edit-label,
+.attribute-edit-label {
   color: var(--dh-color-gold);
-  font-weight: bold;
+  font-weight: 600;
   font-size: 1.1rem;
-  flex: 1;
+  text-transform: uppercase;
+  letter-spacing: 2px;
   text-align: center;
+  text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
 }
 
-.trait-edit-close {
-  background: rgba(11, 10, 19, 0.95);
-  border: 1px solid var(--dh-color-gold);
+.trait-edit-close,
+.attribute-edit-close {
+  background: rgba(11, 10, 19, 0.85);
+  border: 2px solid rgba(243, 194, 103, 0.5);
   color: var(--dh-color-gold);
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
   position: absolute;
-  right: -10px;
-  top: -10px;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-.trait-edit-close:hover {
+.trait-edit-close:hover,
+.attribute-edit-close:hover {
   background: var(--dh-color-gold);
-  color: var(--dh-color-dark-blue);
-  transform: scale(1.1);
+  color: var(--dh-color-off-black);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 15px rgba(243, 194, 103, 0.6);
 }
 
-.trait-edit-content {
+.trait-edit-content,
+.attribute-edit-content {
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  min-width: 300px;
+  gap: 1.25rem;
+  min-width: 320px;
   position: relative;
 }
 
-.trait-base-value {
+.trait-base-value,
+.attribute-base-value {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  background: rgba(67, 63, 100, 0.2);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(109, 103, 149, 0.3);
+  justify-content: center;
 }
 
-.trait-base-value label {
+.trait-base-value label,
+.attribute-base-value label {
   color: var(--dh-color-gold);
-  font-weight: bold;
+  font-weight: 600;
   min-width: 80px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
 }
 
-.trait-base-input {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--dh-color-gold);
-  border-radius: 5px;
+.trait-base-input,
+.attribute-base-input {
+  background: rgba(11, 10, 19, 0.6);
+  border: 1px solid #433f64;
+  border-radius: 8px;
   padding: 0.5rem;
   text-align: center;
   color: var(--dh-color-off-white);
   font-size: 1.2rem;
-  font-weight: bold;
-  width: 80px;
-  transition: all 0.2s ease;
+  font-weight: 700;
+  width: 50px;
+  transition: all 0.3s ease;
 }
 
-.trait-base-input:focus {
+.trait-base-input:focus,
+.attribute-base-input:focus {
   outline: none;
-  border-color: var(--dh-color-gold-light);
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 10px rgba(243, 194, 103, 0.3);
+  border-color: var(--dh-color-gold);
+  background: rgba(11, 10, 19, 0.8);
+  box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
 }
 
-.trait-modifiers-section {
-  border-top: 1px solid rgba(243, 194, 103, 0.3);
-  padding-top: 0.75rem;
+.trait-modifiers-section,
+.attribute-modifiers-section {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #433f64;
 }
 
 .modifiers-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  /* margin-bottom: 0.75rem; */
+  padding-bottom: 0.5rem;
+  /* border-bottom: 1px solid rgba(243, 194, 103, 0.2); */
 }
 
 .modifiers-header span {
   color: var(--dh-color-gold);
-  font-weight: bold;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .add-modifier-btn {
-  background: var(--dh-color-gold);
-  color: var(--dh-color-off-black);
-  border: none;
+  background: rgba(243, 194, 103, 0.2);
+  color: var(--dh-color-gold);
+  border: 1px solid var(--dh-color-gold);
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   cursor: pointer;
   font-weight: bold;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
-  font-size: 16px;
+  font-size: 18px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .add-modifier-btn:hover {
-  background: var(--dh-color-gold-light);
-  transform: scale(1.1);
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
 }
 
 .modifiers-list {
@@ -2275,80 +2315,160 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
   max-height: 200px;
   overflow-y: auto;
   position: relative;
+  padding-right: 0.25rem;
+}
+
+.modifiers-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.modifiers-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.modifiers-list::-webkit-scrollbar-thumb {
+  background: var(--dh-color-gold);
+  border-radius: 2px;
+  opacity: 0.6;
 }
 
 .modifier-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 5px;
-  border: 1px solid rgba(243, 194, 103, 0.2);
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid transparent;
   position: relative;
+  transition: all 0.2s ease;
+}
+
+.modifier-row:nth-child(even) {
+  background: rgba(141, 120, 151, 0.05);
+}
+
+.modifier-row:hover {
+  background: rgba(67, 63, 100, 0.3);
+  border-color: rgba(243, 194, 103, 0.3);
 }
 
 .modifier-name {
   flex: 1;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(243, 194, 103, 0.3);
-  border-radius: 3px;
-  padding: 0.25rem 0.5rem;
+  background: rgba(11, 10, 19, 0.5);
+  border: 1px solid #433f64;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
   color: var(--dh-color-off-white);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.modifier-name:focus {
+  border-color: var(--dh-color-gold);
+  background: rgba(11, 10, 19, 0.7);
+  outline: none;
 }
 
 .modifier-value {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(243, 194, 103, 0.3);
-  border-radius: 3px;
-  padding: 0.25rem;
+  background: rgba(11, 10, 19, 0.5);
+  border: 1px solid #433f64;
+  border-radius: 6px;
+  padding: 0.4rem;
   text-align: center;
   color: var(--dh-color-off-white);
-  font-size: 0.9rem;
-  width: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: 55px;
+  transition: all 0.2s ease;
+}
+
+.modifier-value:focus {
+  border-color: var(--dh-color-gold);
+  background: rgba(11, 10, 19, 0.7);
+  outline: none;
 }
 
 .modifier-toggle {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--dh-color-gold);
+  width: 18px;
+  height: 18px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(11, 10, 19, 0.6);
+  border: 2px solid #433f64;
+  border-radius: 4px;
   cursor: pointer;
   position: relative;
-  z-index: 1;
+  transition: all 0.2s ease;
+}
+
+.modifier-toggle:checked {
+  background: var(--dh-color-gold);
+  border-color: var(--dh-color-gold-light);
+}
+
+.modifier-toggle:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--dh-color-off-black);
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transform: none;
+}
+
+.modifier-toggle:hover {
+  border-color: var(--dh-color-gold);
+  transform: scale(1.1);
 }
 
 .modifier-delete {
-  background: #ff4444;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  width: 20px;
-  height: 20px;
+  background: rgba(255, 68, 68, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .modifier-delete:hover {
-  background: #ff6666;
-  transform: scale(1.1);
+  background: #ff4444;
+  color: white;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
 }
 
 .modifier-row.disabled {
   pointer-events: auto;
+  opacity: 0.7;
 }
 
 .modifier-row.disabled .modifier-name,
 .modifier-row.disabled .modifier-value {
-  opacity: 0.5;
-  background: rgba(255, 255, 255, 0.05);
+  opacity: 0.6;
+  background: rgba(0, 0, 0, 0.3);
   color: rgba(242, 243, 244, 0.5);
+  border-color: rgba(67, 63, 100, 0.3);
 }
 
 /* Ensure all controls are interactive */
@@ -2366,24 +2486,35 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
   cursor: pointer;
 }
 
-.trait-total {
+.trait-total,
+.attribute-total {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  border-top: 1px solid rgba(243, 194, 103, 0.3);
-  padding-top: 0.75rem;
-  font-weight: bold;
+  justify-content: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(243, 194, 103, 0.1) 0%, rgba(243, 194, 103, 0.05) 100%);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--dh-color-gold);
+  margin-top: 0.25rem;
+  box-shadow: 0 2px 8px rgba(243, 194, 103, 0.2);
 }
 
-.trait-total label {
+.trait-total label,
+.attribute-total label {
   color: var(--dh-color-gold);
-  min-width: 80px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
 }
 
-.trait-total-value {
+.trait-total-value,
+.attribute-total-value {
   color: var(--dh-color-gold-light);
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
 }
 
 /* Generic attribute value display */
@@ -2421,33 +2552,38 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
 
 /* Simple attribute popup styles */
 .attribute-edit-simple .attribute-edit-content {
-  min-width: 200px;
+  min-width: 250px;
+  padding: 1.25rem;
 }
 
 .attribute-simple-value {
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgba(67, 63, 100, 0.2);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(109, 103, 149, 0.3);
 }
 
 .attribute-simple-input {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--dh-color-gold);
-  border-radius: 5px;
-  padding: 0.5rem;
+  background: rgba(11, 10, 19, 0.6);
+  border: 1px solid #433f64;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
   text-align: center;
   color: var(--dh-color-off-white);
-  font-size: 1.2rem;
-  font-weight: bold;
-  width: 100px;
-  transition: all 0.2s ease;
+  font-size: 1.4rem;
+  font-weight: 700;
+  width: 120px;
+  transition: all 0.3s ease;
 }
 
 .attribute-simple-input:focus {
   outline: none;
-  border-color: var(--dh-color-gold-light);
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 10px rgba(243, 194, 103, 0.3);
+  border-color: var(--dh-color-gold);
+  background: rgba(11, 10, 19, 0.8);
+  box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
 }
 
 /* Weapon modifier display styles */
