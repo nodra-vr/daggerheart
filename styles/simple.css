@@ -2385,3 +2385,90 @@ body.game .app a.inline-roll i, a.inline-roll.roll i {
   font-size: 1.2rem;
   font-weight: bold;
 }
+
+/* Generic attribute value display */
+.attribute-value-display {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.attribute-value-display:hover {
+  transform: scale(1.05);
+}
+
+/* Defense-specific value displays */
+.defense-value-display {
+  width: 64px;
+  height: 64px;
+  background: url("icons/Shield BG-2.png") no-repeat;
+  background-size: contain;
+  background-position: center center;
+  border: none;
+  color: black;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  padding-bottom: 6px;
+}
+
+.defense[data-defense="evasion"] .defense-value-display {
+  background-image: url("icons/Evade BG-2.png");
+}
+
+/* Simple attribute popup styles */
+.attribute-edit-simple .attribute-edit-content {
+  min-width: 200px;
+}
+
+.attribute-simple-value {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.attribute-simple-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 5px;
+  padding: 0.5rem;
+  text-align: center;
+  color: var(--dh-color-off-white);
+  font-size: 1.2rem;
+  font-weight: bold;
+  width: 100px;
+  transition: all 0.2s ease;
+}
+
+.attribute-simple-input:focus {
+  outline: none;
+  border-color: var(--dh-color-gold-light);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(243, 194, 103, 0.3);
+}
+
+/* Weapon modifier display styles */
+.weapon-modifier-display {
+  width: 45px;
+  height: 30px;
+  background: rgba(243, 194, 103, 0.15);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 15px;
+  color: var(--dh-color-off-white);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.weapon-modifier-display:hover {
+  background: rgba(243, 194, 103, 0.25);
+  border-color: var(--dh-color-gold-light);
+  box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
+}

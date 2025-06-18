@@ -158,6 +158,9 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     // Trait value popup functionality
     html.find(".trait-value-display").click(this._onTraitValueClick.bind(this));
     
+    // Generic attribute value popup functionality
+    html.find(".attribute-value-display").click(this._onAttributeValueClick.bind(this));
+    
     
     // Dealing with Input width
     let el = html.find(".input-wrap .input");
@@ -478,59 +481,148 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   async _onTraitValueClick(event) {
     event.preventDefault();
     const displayElement = event.currentTarget;
-    const fieldName = displayElement.dataset.field;
     
-    // Extract trait name from the parent trait element
-    const traitElement = displayElement.closest(".trait");
-    const traitName = traitElement ? traitElement.dataset.trait : null;
-    
-    if (!traitName) {
-      console.error("Could not determine trait name");
-      return;
-    }
-    
-    // Get current value and label dynamically
-    const currentValue = this.actor.system[traitName]?.value || 0;
-    const label = traitName.charAt(0).toUpperCase() + traitName.slice(1); // Capitalize trait name
-    
-    this._showTraitEditPopup(fieldName, currentValue, label, displayElement);
+    // Use the new generic attribute system
+    this._onAttributeValueClick(event);
   }
   
   /* -------------------------------------------- */
   
-  _showTraitEditPopup(fieldName, currentValue, label, displayElement) {
-    // Create or get the popup overlay
-    let overlay = this.element.find('.trait-edit-popup-overlay');
-    if (overlay.length === 0) {
-      overlay = this.element.find('.trait-edit-popup-overlay');
+  async _onAttributeValueClick(event) {
+    event.preventDefault();
+    const displayElement = event.currentTarget;
+    
+    // Get configuration from data attributes or derive from context
+    const config = {
+      field: displayElement.dataset.field,
+      label: displayElement.dataset.label,
+      type: displayElement.dataset.editType || 'modifiers',
+      hasModifiers: displayElement.dataset.hasModifiers !== 'false',
+      min: displayElement.dataset.min ? parseInt(displayElement.dataset.min) : null,
+      max: displayElement.dataset.max ? parseInt(displayElement.dataset.max) : null
+    };
+    
+    // If no label provided, try to extract from parent element
+    if (!config.label) {
+      const parentElement = displayElement.closest("[data-trait], [data-defense]");
+      if (parentElement) {
+        const attrName = parentElement.dataset.trait || parentElement.dataset.defense || 'Value';
+        config.label = attrName.charAt(0).toUpperCase() + attrName.slice(1);
+      } else {
+        config.label = 'Value';
+      }
     }
     
-    // Extract trait name for data access
-    const traitName = fieldName.split('.')[1]; // e.g., "system.strength.value" -> "strength"
-    const traitData = this.actor.system[traitName] || {};
+    // Get the current value using the field path
+    let currentValue = foundry.utils.getProperty(this.actor, config.field);
+    
+    // Handle both simple values and complex objects with .value
+    if (typeof currentValue === 'object' && currentValue !== null && 'value' in currentValue) {
+      currentValue = currentValue.value || 0;
+    } else {
+      currentValue = currentValue || 0;
+    }
+    
+    // Get attribute data for modifiers if applicable
+    const pathParts = config.field.split('.');
+    let attributeData = this.actor;
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      attributeData = attributeData[pathParts[i]] || {};
+    }
+    
+    // Ensure modifiers is always an array
+    if (config.hasModifiers && !Array.isArray(attributeData.modifiers)) {
+      attributeData.modifiers = [];
+    }
+    
+    // Show the appropriate popup
+    if (config.hasModifiers) {
+      this._showModifierEditPopup(config, currentValue, attributeData, displayElement);
+    } else {
+      this._showSimpleEditPopup(config, currentValue, displayElement);
+    }
+  }
+  
+  /* -------------------------------------------- */
+  
+  _showModifierEditPopup(config, currentValue, attributeData, displayElement) {
+    // Create the popup HTML if it doesn't exist
+    let overlay = this.element.find('.attribute-edit-popup-overlay');
+    if (overlay.length === 0) {
+      const popupHtml = `
+        <div class="attribute-edit-popup-overlay trait-edit-popup-overlay" style="display: none;">
+          <div class="attribute-edit-popup trait-edit-popup">
+            <div class="attribute-edit-header trait-edit-header">
+              <span class="attribute-edit-label trait-edit-label"></span>
+              <button type="button" class="attribute-edit-close trait-edit-close">×</button>
+            </div>
+            <div class="attribute-edit-content trait-edit-content">
+              <div class="attribute-base-value trait-base-value">
+                <label>Base Value</label>
+                <input type="number" class="attribute-base-input trait-base-input" />
+              </div>
+              <div class="attribute-modifiers-section trait-modifiers-section">
+                <div class="modifiers-header">
+                  <span>Modifiers</span>
+                  <button type="button" class="add-modifier-btn">+</button>
+                </div>
+                <div class="modifiers-list"></div>
+              </div>
+              <div class="attribute-total trait-total">
+                <label>Total</label>
+                <span class="attribute-total-value trait-total-value">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      this.element.append(popupHtml);
+      overlay = this.element.find('.attribute-edit-popup-overlay');
+    }
+    
+    // Extract attribute name for data access
+    const pathParts = config.field.split('.');
+    const attributeName = pathParts[pathParts.length - 2]; // e.g., "system.strength.value" -> "strength"
     
     // Set up the popup content
-    overlay.find('.trait-edit-label').text(label);
+    overlay.find('.attribute-edit-label').text(config.label);
     
     // Set base value (fallback to current value if no baseValue exists)
-    const baseInput = overlay.find('.trait-base-input');
-    const baseValue = traitData.baseValue !== undefined ? traitData.baseValue : currentValue;
+    const baseInput = overlay.find('.attribute-base-input');
+    let baseValue;
+    
+    // Handle weapon modifiers which might store data directly at the field path
+    if (typeof attributeData === 'object' && 'baseValue' in attributeData) {
+      baseValue = attributeData.baseValue;
+    } else if (typeof attributeData === 'object' && 'value' in attributeData && 'modifiers' in attributeData) {
+      // Already has complex structure but no baseValue - use current total as base
+      baseValue = currentValue;
+    } else {
+      // Simple value - use it as base
+      baseValue = currentValue;
+    }
+    
     baseInput.val(baseValue);
     
-    // Store trait info for later use
-    overlay.data('trait-name', traitName);
-    overlay.data('field-name', fieldName);
+    // Apply min/max constraints if specified
+    if (config.min !== null) baseInput.attr('min', config.min);
+    if (config.max !== null) baseInput.attr('max', config.max);
+    
+    // Store config for later use
+    overlay.data('config', config);
+    overlay.data('attribute-name', attributeName);
+    overlay.data('field-name', config.field);
     overlay.data('display-element', displayElement);
     
     // Load existing modifiers
-    this._loadModifiers(overlay, traitData.modifiers || []);
+    this._loadModifiers(overlay, attributeData.modifiers || []);
     
     // Calculate and display total
     this._updateTotal(overlay);
     
     // Show the popup with animation
     overlay.show();
-    const popup = overlay.find('.trait-edit-popup');
+    const popup = overlay.find('.attribute-edit-popup');
     
     // Animate in with JavaScript for smooth backdrop-filter
     this._animatePopupIn(popup, () => {
@@ -543,19 +635,69 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   
   /* -------------------------------------------- */
   
+  _showSimpleEditPopup(config, currentValue, displayElement) {
+    // Create simple popup HTML
+    let overlay = this.element.find('.attribute-edit-popup-overlay');
+    if (overlay.length === 0) {
+      const popupHtml = `
+        <div class="attribute-edit-popup-overlay trait-edit-popup-overlay" style="display: none;">
+          <div class="attribute-edit-popup trait-edit-popup attribute-edit-simple">
+            <div class="attribute-edit-header trait-edit-header">
+              <span class="attribute-edit-label trait-edit-label"></span>
+              <button type="button" class="attribute-edit-close trait-edit-close">×</button>
+            </div>
+            <div class="attribute-edit-content trait-edit-content">
+              <div class="attribute-simple-value">
+                <input type="number" class="attribute-simple-input" />
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      this.element.append(popupHtml);
+      overlay = this.element.find('.attribute-edit-popup-overlay');
+    }
+    
+    // Set up the popup
+    overlay.find('.attribute-edit-label').text(config.label);
+    const input = overlay.find('.attribute-simple-input');
+    input.val(currentValue);
+    
+    // Apply constraints
+    if (config.min !== null) input.attr('min', config.min);
+    if (config.max !== null) input.attr('max', config.max);
+    
+    // Store config
+    overlay.data('config', config);
+    overlay.data('display-element', displayElement);
+    
+    // Show the popup
+    overlay.show();
+    const popup = overlay.find('.attribute-edit-popup');
+    
+    this._animatePopupIn(popup, () => {
+      input.focus().select();
+    });
+    
+    // Set up event handlers for simple popup
+    this._setupSimplePopupEventHandlers(overlay);
+  }
+  
+  /* -------------------------------------------- */
+  
   _setupPopupEventHandlers(overlay) {
     // Clear any existing handlers
-    overlay.off('.trait-edit');
-    overlay.find('*').off('.trait-edit');
+    overlay.off('.attribute-edit');
+    overlay.find('*').off('.attribute-edit');
     
     // Base value input handler
-    const baseInput = overlay.find('.trait-base-input');
+    const baseInput = overlay.find('.attribute-base-input');
     baseInput.on('input', () => this._updateTotal(overlay));
     
     // Keyboard shortcuts
     overlay.on('keydown', (e) => {
       if (e.key === 'Escape') {
-        this._hideTraitEditPopup(overlay);
+        this._hideAttributeEditPopup(overlay);
       }
     });
     
@@ -565,14 +707,45 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     });
     
     // Close button
-    overlay.find('.trait-edit-close').on('click', () => {
-      this._submitTraitEdit(overlay);
+    overlay.find('.attribute-edit-close').on('click', () => {
+      this._submitAttributeEdit(overlay);
     });
     
     // Click outside to close (only on the overlay background)
     overlay.on('click', (e) => {
       if (e.target === overlay[0]) {
-        this._submitTraitEdit(overlay);
+        this._submitAttributeEdit(overlay);
+      }
+    });
+  }
+  
+  /* -------------------------------------------- */
+  
+  _setupSimplePopupEventHandlers(overlay) {
+    // Clear any existing handlers
+    overlay.off('.attribute-edit');
+    overlay.find('*').off('.attribute-edit');
+    
+    const input = overlay.find('.attribute-simple-input');
+    
+    // Enter key to submit
+    input.on('keydown', (e) => {
+      if (e.key === 'Enter') {
+        this._submitSimpleEdit(overlay);
+      } else if (e.key === 'Escape') {
+        this._hideAttributeEditPopup(overlay);
+      }
+    });
+    
+    // Close button
+    overlay.find('.attribute-edit-close').on('click', () => {
+      this._submitSimpleEdit(overlay);
+    });
+    
+    // Click outside to close
+    overlay.on('click', (e) => {
+      if (e.target === overlay[0]) {
+        this._submitSimpleEdit(overlay);
       }
     });
   }
@@ -649,7 +822,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   /* -------------------------------------------- */
   
   _updateTotal(overlay) {
-    const baseValue = parseInt(overlay.find('.trait-base-input').val()) || 0;
+    const baseValue = parseInt(overlay.find('.attribute-base-input').val()) || 0;
     let modifierTotal = 0;
     
     overlay.find('.modifier-row').each((index, row) => {
@@ -663,16 +836,23 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     });
     
     const total = baseValue + modifierTotal;
-    overlay.find('.trait-total-value').text(total);
+    overlay.find('.attribute-total-value').text(total);
+    
+    // Update the display element immediately
+    const displayElement = overlay.data('display-element');
+    if (displayElement) {
+      $(displayElement).text(total);
+    }
     
     return total;
   }
   
   /* -------------------------------------------- */
   
-  async _submitTraitEdit(overlay) {
-    const traitName = overlay.data('trait-name');
-    const baseValue = parseInt(overlay.find('.trait-base-input').val()) || 0;
+  async _submitAttributeEdit(overlay) {
+    const config = overlay.data('config');
+    const attributeName = overlay.data('attribute-name');
+    const baseValue = parseInt(overlay.find('.attribute-base-input').val()) || 0;
     
     // Collect modifiers
     const modifiers = [];
@@ -699,11 +879,24 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     // Calculate final value
     const totalValue = this._updateTotal(overlay);
     
-    // Update the actor with new structure
+    // Build update data based on the field path
     const updateData = {};
-    updateData[`system.${traitName}.baseValue`] = baseValue;
-    updateData[`system.${traitName}.modifiers`] = modifiers;
-    updateData[`system.${traitName}.value`] = totalValue;
+    
+    // Check if we're dealing with weapon modifiers
+    const isWeaponModifier = config.field.includes('weapon-main.to-hit') || config.field.includes('weapon-off.to-hit');
+    
+    let basePath;
+    if (isWeaponModifier) {
+      // For weapon modifiers, the field itself is the base path
+      basePath = config.field;
+    } else {
+      // For other attributes, remove .value from the path
+      basePath = config.field.substring(0, config.field.lastIndexOf('.'));
+    }
+    
+    updateData[`${basePath}.baseValue`] = baseValue;
+    updateData[`${basePath}.modifiers`] = modifiers;
+    updateData[`${basePath}.value`] = totalValue;
     
     await this.actor.update(updateData);
     
@@ -711,15 +904,35 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     const displayElement = overlay.data('display-element');
     $(displayElement).text(totalValue);
     
-    this._hideTraitEditPopup(overlay);
+    this._hideAttributeEditPopup(overlay);
   }
   
   /* -------------------------------------------- */
   
-  _hideTraitEditPopup(overlay) {
-    const popup = overlay.find('.trait-edit-popup');
+  async _submitSimpleEdit(overlay) {
+    const config = overlay.data('config');
+    const value = parseInt(overlay.find('.attribute-simple-input').val()) || 0;
+    
+    // Build update data
+    const updateData = {};
+    updateData[config.field] = value;
+    
+    await this.actor.update(updateData);
+    
+    // Update the display element
+    const displayElement = overlay.data('display-element');
+    $(displayElement).text(value);
+    
+    this._hideAttributeEditPopup(overlay);
+  }
+  
+  /* -------------------------------------------- */
+  
+  _hideAttributeEditPopup(overlay) {
+    const popup = overlay.find('.attribute-edit-popup');
     this._animatePopupOut(popup, () => {
       overlay.hide();
+      overlay.remove(); // Clean up the popup
     });
   }
   
@@ -812,7 +1025,28 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     const rollModifierElement = weaponBox.querySelector(".click-rollable-modifier");
     
     const rollName = rollNameInput ? rollNameInput.value.trim() : "";
-    const rollModifier = rollModifierElement ? parseInt(rollModifierElement.value) || 0 : 0;
+    let rollModifier = 0;
+    
+    // Check for old-style input modifier
+    if (rollModifierElement) {
+      rollModifier = parseInt(rollModifierElement.value) || 0;
+    } else {
+      // Check for new attribute-value-display system
+      const attributeDisplay = weaponBox.querySelector(".attribute-value-display");
+      if (attributeDisplay) {
+        const fieldPath = attributeDisplay.dataset.field;
+        if (fieldPath) {
+          const attrValue = foundry.utils.getProperty(this.actor, fieldPath);
+          // Handle both simple values and complex objects with .value
+          if (typeof attrValue === 'object' && attrValue !== null && 'value' in attrValue) {
+            rollModifier = parseInt(attrValue.value) || 0;
+          } else {
+            rollModifier = parseInt(attrValue) || 0;
+          }
+        }
+      }
+    }
+    
     const rollType = rollableElement.dataset.rollType || "unknown";
     
     // Store roll type for later use

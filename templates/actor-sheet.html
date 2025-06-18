@@ -71,6 +71,33 @@
         </div>
     </header>
     
+    {{!-- Trait Edit Popup (backwards compatibility) --}}
+    <div class="trait-edit-popup-overlay" style="display: none;">
+        <div class="trait-edit-popup">
+            <div class="trait-edit-header">
+                <span class="trait-edit-label"></span>
+                <button type="button" class="trait-edit-close">×</button>
+            </div>
+            <div class="trait-edit-content">
+                <div class="trait-base-value">
+                    <label>Base Value</label>
+                    <input type="number" class="trait-base-input" />
+                </div>
+                <div class="trait-modifiers-section">
+                    <div class="modifiers-header">
+                        <span>Modifiers</span>
+                        <button type="button" class="add-modifier-btn">+</button>
+                    </div>
+                    <div class="modifiers-list"></div>
+                </div>
+                <div class="trait-total">
+                    <label>Total</label>
+                    <span class="trait-total-value">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     {{!-- Sheet Tab Navigation --}}
     <!-- CASE SENSITIVE! -->
     <nav class="sheet-tabs tabs" data-group="primary">
@@ -103,19 +130,23 @@
                             </div> -->
                         </div>
                     </div>
-                    <div class="defense" data-trait="armor">
-                        <input type="number" name="system.defenses.armor.value"
-                            value="{{systemData.defenses.armor.value}}" />
+                    <div class="defense" data-defense="armor">
+                        <div class="attribute-value-display defense-value-display" 
+                             data-field="system.defenses.armor.value"
+                             data-label="Armor"
+                             data-has-modifiers="true"
+                             data-min="0">{{systemData.defenses.armor.value}}</div>
                         <div class="armor-controls">
-                            <!-- <a class="resource-control" data-action="decrement" data-field="defenses.armor.value"><i class="fas fa-minus"></i></a> -->
-                            <label for="system.defenses.armor.value" data-trait-tooltip="{{systemData.defenses.armor.tooltip}}">{{localize "DH.Armor"}}</label>
-                            <!-- <a class="resource-control" data-action="increment" data-field="defenses.armor.value"><i class="fas fa-plus"></i></a> -->  
+                            <label data-trait-tooltip="{{systemData.defenses.armor.tooltip}}">{{localize "DH.Armor"}}</label>
                         </div>
                     </div>
-                    <div class="defense" data-trait="evasion">
-                        <input type="number" name="system.defenses.evasion.value"
-                            value="{{systemData.defenses.evasion.value}}" />
-                        <label for="system.defenses.evasion.value" data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize "DH.Evasion"}}</label>
+                    <div class="defense" data-defense="evasion">
+                        <div class="attribute-value-display defense-value-display" 
+                             data-field="system.defenses.evasion.value"
+                             data-label="Evasion"
+                             data-has-modifiers="true"
+                             data-min="0">{{systemData.defenses.evasion.value}}</div>
+                        <label data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize "DH.Evasion"}}</label>
                     </div>
                     <div class="armorslots">
                         <!-- Reusing armorslots for threshold for styling -->
@@ -344,9 +375,10 @@
                                 </div>
                                 <div class="weapon-roller-box">
                                     <div class="weapon-infobox">
-                                        <input class="weapon-to-hit click-rollable-modifier"
-                                            name="system.weapon-main.to-hit" type="number"
-                                            value="{{systemData.weapon-main.to-hit}}" placeholder="2" />
+                                        <div class="attribute-value-display weapon-modifier-display"
+                                             data-field="system.weapon-main.to-hit"
+                                             data-label="Primary Weapon Attack"
+                                             data-has-modifiers="true">{{#if systemData.weapon-main.to-hit.value}}{{systemData.weapon-main.to-hit.value}}{{else}}{{systemData.weapon-main.to-hit}}{{/if}}</div>
                                         <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
                                     </div>
                                     <div class="weapon-infobox">
@@ -377,9 +409,10 @@
                                 </div>
                                 <div class="weapon-roller-box">
                                     <div class="weapon-infobox">
-                                        <input class="weapon-to-hit click-rollable-modifier"
-                                            name="system.weapon-off.to-hit" type="number"
-                                            value="{{systemData.weapon-off.to-hit}}" placeholder="2" />
+                                        <div class="attribute-value-display weapon-modifier-display"
+                                             data-field="system.weapon-off.to-hit"
+                                             data-label="Secondary Weapon Attack"
+                                             data-has-modifiers="true">{{#if systemData.weapon-off.to-hit.value}}{{systemData.weapon-off.to-hit.value}}{{else}}{{systemData.weapon-off.to-hit}}{{/if}}</div>
                                         <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
                                     </div>
                                     <div class="weapon-infobox">
