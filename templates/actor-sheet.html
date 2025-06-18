@@ -1,26 +1,18 @@
-<form class="flexcol {{cssClass}}" autocomplete="off">
+<form class="flexcol {{cssClass}} {{#if isDying}}dying{{/if}}" autocomplete="off">
     
     <div class="item-bg" style="background-image: url('{{data.img}}');"></div>
     {{!-- Sheet Header --}}
     <header class="sheet-header">
-        <div class="header-top-container">
-            <div class="charlevel">
-                <input type="number" name="system.level.value" value="{{systemData.level.value}}" />
-                <a>{{localize "DH.Level"}}</a>
-            </div>
-            <div class="charlevel">
-                           <input id="prof" type="number" name="system.proficiency.value" value="{{systemData.proficiency.value}}" />
-<a>{{localize "DH.Prof"}}</a>
-            </div>
-        </div>
+        <!--<div class="header-top-container">
+        </div>-->
 
         <div class="header-main-container">
             <div class="resource health">
                 <div class="resource-content">
                     <div class="resource-box">
-                        <input type="text" name="system.health.value" value="{{systemData.health.value}}" />
+                        <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}" />
                         <span>/</span>
-                        <input type="text" name="system.health.max" value="{{systemData.health.max}}" />
+                        <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0" />
                     </div>
                 </div>
                 <div class="resource-label-controls">
@@ -31,19 +23,51 @@
             </div>
 
             <div class="portrait-container">
-                <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
-                <div class="resource hope">
-                    <div class="resource-content">
-                        <div class="resource-box">
-                            <input type="text" name="system.hope.value" value="{{systemData.hope.value}}" />
-                            <span>/</span>
-                            <input type="text" name="system.hope.max" value="{{systemData.hope.max}}" />
+                <div class="portrait-buttons">
+                    <button type="button" class="rest-button short-rest" data-rest-type="short" title="{{localize 'DH.ShortRest'}}">
+                        <i class="fas fa-hourglass-half"></i>
+                    </button>
+                    <button type="button" class="rest-button long-rest" data-rest-type="long" title="{{localize 'DH.LongRest'}}">
+                        <i class="fas fa-bed"></i>
+                    </button>
+                </div>
+                <div class="portrait-image-wrapper">
+                    <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
+                    {{#if isDying}}
+                    <div class="death-overlay" title="Character is dying!">
+                        <i class="fas fa-skull"></i>
+                    </div>
+                    {{/if}}
+                </div>
+
+                <div class="portrait-resources">
+                    <div class="resource hope">
+                        <div class="resource-content">
+                            <div class="resource-box">
+                                <input type="number" name="system.hope.value" value="{{systemData.hope.value}}" min="0" max="{{systemData.hope.max}}" />
+                                <span>/</span>
+                                <input type="number" name="system.hope.max" value="{{systemData.hope.max}}" min="0" />
+                            </div>
+                        </div>
+                        <div class="resource-label-controls">
+                            <a class="resource-control" data-action="decrement" data-field="hope.value"><i class="fas fa-minus"></i></a>
+                            <label data-trait-tooltip="{{systemData.hope.tooltip}}">{{localize "DH.Hope"}}</label>
+                            <a class="resource-control" data-action="increment" data-field="hope.value"><i class="fas fa-plus"></i></a>
                         </div>
                     </div>
-                    <div class="resource-label-controls">
-                        <a class="resource-control" data-action="decrement" data-field="hope.value"><i class="fas fa-minus"></i></a>
-                        <label data-trait-tooltip="{{systemData.hope.tooltip}}">{{localize "DH.Hope"}}</label>
-                        <a class="resource-control" data-action="increment" data-field="hope.value"><i class="fas fa-plus"></i></a>
+                    <div class="resource armor-slots">
+                        <div class="resource-content">
+                            <div class="resource-box">
+                                <input type="number" name="system.defenses.armor-slots.value" value="{{systemData.defenses.armor-slots.value}}" min="0" max="{{systemData.defenses.armor.value}}" />
+                                <span>/</span>
+                                <input type="number" value="{{systemData.defenses.armor.value}}" min="0" readonly disabled title="Edit armor value in the defense section" />
+                            </div>
+                        </div>
+                        <div class="resource-label-controls">
+                            <a class="resource-control" data-action="decrement" data-field="defenses.armor-slots.value"><i class="fas fa-minus"></i></a>
+                            <label>{{localize "DH.ArmorSlots"}}</label>
+                            <a class="resource-control" data-action="increment" data-field="defenses.armor-slots.value"><i class="fas fa-plus"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -51,9 +75,9 @@
             <div class="resource stress">
                 <div class="resource-content">
                     <div class="resource-box">
-                        <input type="text" name="system.stress.value" value="{{systemData.stress.value}}" />
+                        <input type="number" name="system.stress.value" value="{{systemData.stress.value}}" min="0" max="{{systemData.stress.max}}" />
                         <span>/</span>
-                        <input type="text" name="system.stress.max" value="{{systemData.stress.max}}" />
+                        <input type="number" name="system.stress.max" value="{{systemData.stress.max}}" min="0" />
                     </div>
                 </div>
                 <div class="resource-label-controls">
@@ -68,6 +92,18 @@
             <h1 class="charname">
                 <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
             </h1>
+            <!--<div class="header-name-level-prof">
+                <!--<div class="charlevel">
+                    <input type="number" name="system.level.value" value="{{systemData.level.value}}" />
+                    <a>{{localize "DH.Level"}}</a>
+                </div>-->
+                
+                <!--<div class="charlevel">
+                    <input id="prof" type="number" name="system.proficiency.value" value="{{systemData.proficiency.value}}" />
+                    <a>{{localize "DH.Prof"}}</a>
+                </div>
+            </div>-->
+
             <div class="header-domain">
                 <input type="text" name="system.chosenDomains.domain-one" value="{{systemData.chosenDomains.domain-one}}"
                     placeholder="{{localize "DH.DomainOne"}}" />
@@ -122,18 +158,18 @@
 
                 <section class="defenses">
                     <div class="armorslots">
-                        <label>{{localize "DH.ArmorSlots"}}</label>
+                        <label>{{localize "DH.Advancement"}}</label>
                         <div class="values">
                             <div class="resource-group">
-                                <input type="number" name="system.defenses.armor-slots.value"
-                                    value="{{systemData.defenses.armor-slots.value}}" />
-                                <a class="trait-effects">{{localize "DH.Used"}}</a>
+                                <input type="number" name="system.level.value"
+                                    value="{{systemData.level.value}}" />
+                                <a class="trait-effects">{{localize "DH.Level"}}</a>
                             </div>
-                            <!-- <div class="resource-group">
-                                <input type="number" name="system.defenses.armor-slots.max"
-                                    value="{{systemData.defenses.armor-slots.max}}" />
-                                <a class="trait-effects">Max</a>
-                            </div> -->
+                            <div class="resource-group">
+                                <input type="number" name="system.proficiency.value"
+                                    value="{{systemData.proficiency.value}}" />
+                                <a class="trait-effects">{{localize "DH.Prof"}}</a>
+                            </div>
                         </div>
                     </div>
                     <div class="defense" data-defense="armor">

@@ -73,6 +73,7 @@
   "DH.Evasion": "Evasion",
   "DH.Difficulty": "Difficulty",
   "DH.Threshold": "Threshold",
+  "DH.Advancement": "Advancement",
   "DH.threshold": "threshold",
   "DH.Major": "Major",
   "DH.Severe": "Severe",
@@ -132,5 +133,8 @@
   "DH.Solo": "Solo",
   "DH.Category": "Category",
   "DH.Rarity": "Rarity",
-  "DH.GroupLabel": "Group Label"
+  "DH.GroupLabel": "Group Label",
+  "DH.ShortRest": "Short Rest",
+  "DH.LongRest": "Long Rest",
+  "DH.RestComingSoon": "Rest functionality will be added in a future update."
 }

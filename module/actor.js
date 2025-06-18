@@ -24,6 +24,17 @@ export class SimpleActor extends Actor {
     if (!this.system.defenses.armor) this.system.defenses.armor = { value: 0 };
     if (!this.system.defenses['armor-slots']) this.system.defenses['armor-slots'] = { value: 0 };
     
+    // Enforce min/max constraints for health, stress, and hope
+    if (this.system.health?.value !== undefined) {
+      this.system.health.value = Math.max(0, Math.min(this.system.health.value, this.system.health.max || 0));
+    }
+    if (this.system.stress?.value !== undefined) {
+      this.system.stress.value = Math.max(0, Math.min(this.system.stress.value, this.system.stress.max || 0));
+    }
+    if (this.system.hope?.value !== undefined) {
+      this.system.hope.value = Math.max(0, Math.min(this.system.hope.value, this.system.hope.max || 0));
+    }
+    
     this.system.barHealth = {
       max: this.system.health.max || 6,
       min: 0,
@@ -41,6 +52,90 @@ export class SimpleActor extends Actor {
     }
     
     EntitySheetHelper.clampResourceValues(this.system.attributes);
+    
+    // Schedule dead state handling (async operation)
+    if (this.id) { // Only if actor is persisted
+      this._scheduleDeadStateUpdate();
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Schedule an update to the dead state (debounced to avoid rapid calls)
+   * @private
+   */
+  _scheduleDeadStateUpdate() {
+    if (this._deadStateTimeout) {
+      clearTimeout(this._deadStateTimeout);
+    }
+    this._deadStateTimeout = setTimeout(() => {
+      this._handleDeadState();
+    }, 50); // Small delay to batch multiple updates
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Handle the dying/dead state by applying status effects and token tinting
+   * @private
+   */
+  async _handleDeadState() {
+    // Check if actor is dying/dead (hit points maxed out)
+    const health = this.system.health;
+    const isDying = health && health.value === health.max && health.max > 0;
+    
+    // Get the dead status effect
+    const deadEffect = CONFIG.statusEffects.find(e => e.id === "dead");
+    if (!deadEffect) return; // No dead effect configured
+    
+    // Check if actor currently has the dead effect
+    const hasDeadEffect = this.effects.some(e => e.statuses.has("dead"));
+    
+    // Apply or remove dead effect based on dying state
+    if (isDying && !hasDeadEffect) {
+      // Apply dead status effect
+      await this.createEmbeddedDocuments("ActiveEffect", [{
+        name: deadEffect.name || "Dead",
+        icon: deadEffect.icon || "icons/svg/skull.svg",
+        statuses: ["dead"],
+        flags: {
+          core: {
+            statusId: "dead"
+          }
+        }
+      }]);
+    } else if (!isDying && hasDeadEffect) {
+      // Remove dead status effect
+      const deadEffectToRemove = this.effects.find(e => e.statuses.has("dead"));
+      if (deadEffectToRemove) {
+        await deadEffectToRemove.delete();
+      }
+    }
+    
+    // Handle token tinting for all associated tokens
+    const tokens = this.getActiveTokens();
+    for (const token of tokens) {
+      if (isDying) {
+        // Apply red tint (0x8B0000 is dark red)
+        await token.document.update({ tint: "#8B0000" });
+      } else {
+        // Remove tint (restore to default)
+        await token.document.update({ tint: null });
+      }
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  /** @override */
+  _onUpdate(changed, options, userId) {
+    super._onUpdate(changed, options, userId);
+    
+    // Check if health values changed and handle dead state accordingly
+    if (changed.system?.health) {
+      this._scheduleDeadStateUpdate();
+    }
   }
 
   /* -------------------------------------------- */

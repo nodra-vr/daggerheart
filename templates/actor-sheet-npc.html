@@ -1,26 +1,31 @@
-<form class="flexcol {{cssClass}}" autocomplete="off">
+<form class="flexcol {{cssClass}} {{#if isDying}}dying{{/if}}" autocomplete="off">
     <div class="item-bg" style="background-image: url('{{data.img}}');"></div>
     {{!-- Sheet Header --}}
     <header class="sheet-header">
         <div class="header-main-container">
             <div class="resource health">
                 <div class="resource-box">
-                    <input type="text" name="system.health.value" value="{{systemData.health.value}}" />
+                    <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}" />
                     <span class="sep">/</span>
-                    <input type="text" name="system.health.max" value="{{systemData.health.max}}" />
+                    <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0" />
                 </div>
                 <label>{{localize "DH.Health"}}</label>
             </div>
 
             <div class="portrait-container">
                 <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
+                {{#if isDying}}
+                <div class="death-overlay" title="NPC is dying!">
+                    <i class="fas fa-skull"></i>
+                </div>
+                {{/if}}
             </div>
 
             <div class="resource stress">
                 <div class="resource-box">
-                    <input type="text" name="system.stress.value" value="{{systemData.stress.value}}" />
+                    <input type="number" name="system.stress.value" value="{{systemData.stress.value}}" min="0" max="{{systemData.stress.max}}" />
                     <span class="sep">/</span>
-                    <input type="text" name="system.stress.max" value="{{systemData.stress.max}}" />
+                    <input type="number" name="system.stress.max" value="{{systemData.stress.max}}" min="0" />
                 </div>
                 <label>{{localize "DH.Stress"}}</label>
             </div>
