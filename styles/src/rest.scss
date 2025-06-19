@@ -1,0 +1,34 @@
+.rest-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: rgb(0 0 0);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 25%;
+  color: var(--dh-color-off-white);
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &:hover {
+    background: var(--dh-color-gold);
+    color: var(--dh-color-off-black);
+    transform: translateY(-1px) scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0) scale(1.05);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  i {
+    font-size: 1em;
+    margin-right: 0.3em;
+  }
+
+}

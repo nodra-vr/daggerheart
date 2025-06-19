@@ -1,0 +1,54 @@
+:root {
+  --dh-color-dark-blue: #0a0f21;
+  --dh-color-purple: #1e184d;
+  --dh-color-purple-light: #38227b;
+  --dh-color-gold: #f3c267;
+  --dh-color-gold-light: #fef790;
+  --dh-color-gold-dark: #e38c3e;
+  --dh-color-teal: #81ccc3;
+  --dh-color-blue: #2878be;
+  --dh-color-off-white: #F2F3F4;
+  --dh-color-gray: #d8d8d6;
+  --dh-color-off-black: #1c1c1c;
+  --font-size-8: 0.5rem;
+  --font-size-9: 0.5625rem;
+  --font-size-10: 0.625rem;
+  --font-size-15: 0.9375rem;
+  --font-size-17: 1.0625rem;
+  --font-size-19: 1.1875rem;
+  --font-size-21: 1.3125rem;
+  --font-size-22: 1.375rem;
+  --font-size-25: 1.5625rem;
+  --font-size-26: 1.625rem;
+  --font-size-27: 1.6875rem;
+  --font-size-30: 1.875rem;
+  --font-size-34: 2.125rem;
+  --font-size-36: 2.25rem;
+  --font-size-42: 2.625rem;
+}
+
+* {
+  scrollbar-width: none !important;
+  scrollbar-color: white transparent;
+}
+
+.window-app {
+  .window-header {
+    a {
+      flex: 0 0 30px;
+      overflow: hidden;
+      padding: 0 5px;
+      line-height: 0rem;
+      font-size: 0;
+      cursor: pointer;
+      i {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+::-webkit-scrollbar {
+  width: 5px !important;
+  height: 5px !important;
+}
