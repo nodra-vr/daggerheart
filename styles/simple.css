@@ -3043,8 +3043,8 @@ body.game .app a.content-link {
 .death-move-blaze {
   padding: 1em;
   margin: 0.5em 0;
-  background: linear-gradient(135deg, rgba(255, 69, 0, 0.2), rgba(255, 140, 0, 0.2));
-  border: 2px solid var(--dh-color-gold-dark);
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.3), rgba(255, 69, 0, 0.3));
+  border: 2px solid #ff8c00;
   border-radius: 10px;
   position: relative;
   overflow: hidden;
@@ -3057,7 +3057,7 @@ body.game .app a.content-link {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 140, 0, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 140, 0, 0.2) 0%, transparent 70%);
   animation: blazeGlow 3s ease-in-out infinite;
 }
 
@@ -3066,42 +3066,41 @@ body.game .app a.content-link {
   z-index: 1;
   margin: 0.5em 0;
   text-align: center;
+  color: #ffffff;
 }
 
 .death-move-blaze strong {
-	color: var(--dh-color-gold);
-	font-size: 1.5em;
-	text-shadow: 0 0 10px rgba(255, 140, 0, 0.8);
-	text-transform: uppercase;
+  color: #ffeb3b;
+  font-size: 1.2em;
+  text-shadow: 0 0 10px rgba(255, 235, 59, 0.8);
 }
 
-.death-move-blaze strong {
-	color: var(--dh-color-gold);
-	font-size: 1.5em;
-	text-shadow: 0 0 10px rgba(255, 140, 0, 0.8);
-	text-transform: uppercase;
+.death-move-blaze em {
+  color: #ffd54f;
+  display: block;
+  margin-top: 0.5em;
 }
 
 .death-move-blaze-complete {
   padding: 1.5em;
   margin: 0.5em 0;
-  background: linear-gradient(135deg, rgba(20, 20, 20, 0.9), rgba(50, 50, 50, 0.9));
-  border: 2px solid var(--dh-color-gold);
+  background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(60, 60, 60, 0.95));
+  border: 2px solid #ffeb3b;
   border-radius: 10px;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 140, 0, 0.5);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 235, 59, 0.4);
   text-align: center;
 }
 
 .death-move-blaze-complete strong {
-  color: var(--dh-color-gold);
+  color: #ffeb3b;
   font-size: 1.3em;
-  text-shadow: 0 0 15px rgba(255, 140, 0, 1);
+  text-shadow: 0 0 15px rgba(255, 235, 59, 1);
   display: block;
   margin-bottom: 0.5em;
 }
 
 .death-move-blaze-complete em {
-  color: var(--dh-color-off-white);
+  color: #ffffff;
   font-size: 1.1em;
   line-height: 1.4;
 }
@@ -3120,27 +3119,28 @@ body.game .app a.content-link {
 .death-move-avoid {
   padding: 1em;
   margin: 0.5em 0;
-  background: linear-gradient(135deg, rgba(129, 204, 195, 0.2), rgba(40, 120, 190, 0.2));
-  border: 2px solid var(--dh-color-teal);
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.3), rgba(3, 169, 244, 0.3));
+  border: 2px solid #42a5f5;
   border-radius: 10px;
   text-align: center;
 }
 
 .death-move-avoid strong {
-  color: var(--dh-color-teal);
+  color: #81d4fa;
   font-size: 1.1em;
+  text-shadow: 0 0 8px rgba(129, 212, 250, 0.6);
 }
 
 .death-move-avoid em {
-  color: var(--dh-color-off-white);
-  opacity: 0.9;
+  color: #ffffff;
+  opacity: 0.95;
 }
 
 .death-move-avoid-result {
   padding: 1.2em;
   margin: 0.5em 0;
-  background: rgba(20, 20, 20, 0.8);
-  border: 2px solid var(--dh-color-blue);
+  background: rgba(30, 30, 30, 0.9);
+  border: 2px solid #42a5f5;
   border-radius: 10px;
   position: relative;
 }
@@ -3152,7 +3152,7 @@ body.game .app a.content-link {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(40, 120, 190, 0.1) 100%);
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(66, 165, 245, 0.1) 100%);
   border-radius: 8px;
   pointer-events: none;
 }
@@ -3165,40 +3165,44 @@ body.game .app a.content-link {
 .death-move-avoid-result p {
   margin: 0.5em 0;
   text-align: center;
+  color: #ffffff;
 }
 
 .death-move-avoid-result p:first-child {
   font-size: 1.2em;
-  color: var(--dh-color-teal);
+  color: #81d4fa;
   margin-bottom: 1em;
+  font-weight: bold;
 }
 
 .death-move-avoid-result p strong {
-  color: var(--dh-color-gold);
+  color: #ffeb3b;
   font-size: 1.1em;
 }
 
 .death-move-avoid-result .scar-gained {
-  color: var(--dh-color-gold-dark);
+  color: #ffffff;
   font-size: 1.1em;
   margin-top: 1em;
   padding: 0.5em;
-  background: rgba(227, 140, 62, 0.2);
+  background: rgba(244, 67, 54, 0.3);
+  border: 1px solid #f44336;
   border-radius: 5px;
 }
 
 .death-move-avoid-result .scar-avoided {
-  color: var(--dh-color-teal);
+  color: #ffffff;
   font-size: 1.1em;
   margin-top: 1em;
   padding: 0.5em;
-  background: rgba(129, 204, 195, 0.2);
+  background: rgba(76, 175, 80, 0.3);
+  border: 1px solid #4caf50;
   border-radius: 5px;
 }
 
 .death-move-avoid-result .scar-note {
   font-size: 0.9em;
-  color: var(--dh-color-gray);
+  color: #e0e0e0;
   font-style: italic;
   margin-top: 0.5em;
 }
@@ -3206,8 +3210,8 @@ body.game .app a.content-link {
 .death-move-risk {
   padding: 1em;
   margin: 0.5em 0;
-  background: linear-gradient(135deg, rgba(139, 0, 139, 0.2), rgba(75, 0, 130, 0.2));
-  border: 2px solid var(--dh-color-purple-light);
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.3), rgba(103, 58, 183, 0.3));
+  border: 2px solid #ab47bc;
   border-radius: 10px;
   text-align: center;
   position: relative;
@@ -3221,7 +3225,7 @@ body.game .app a.content-link {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(139, 0, 139, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(156, 39, 176, 0.2) 0%, transparent 70%);
   animation: riskPulse 2s ease-in-out infinite;
 }
 
@@ -3230,46 +3234,56 @@ body.game .app a.content-link {
   z-index: 1;
 }
 
+.death-move-risk p {
+  color: #ffffff;
+}
+
 .death-move-risk strong {
-  color: var(--dh-color-purple-light);
+  color: #e1bee7;
   font-size: 1.2em;
-  text-shadow: 0 0 10px rgba(139, 0, 139, 0.8);
+  text-shadow: 0 0 10px rgba(225, 190, 231, 0.8);
 }
 
 .death-move-risk em {
-  color: var(--dh-color-off-white);
-  opacity: 0.9;
+  color: #f3e5f5;
+  opacity: 0.95;
 }
 
 .death-move-risk-critical {
   padding: 1.5em;
   margin: 0.5em 0;
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 140, 0, 0.3));
-  border: 3px solid var(--dh-color-gold);
+  background: linear-gradient(135deg, rgba(255, 235, 59, 0.2), rgba(255, 193, 7, 0.2));
+  border: 3px solid #ffeb3b;
   border-radius: 15px;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), inset 0 0 20px rgba(255, 215, 0, 0.2);
+  box-shadow: 0 0 20px rgba(255, 235, 59, 0.6), inset 0 0 20px rgba(255, 235, 59, 0.1);
   text-align: center;
   animation: criticalGlow 1.5s ease-in-out infinite;
 }
 
+.death-move-risk-critical p {
+  color: #ffffff;
+}
+
 .death-move-risk-critical p:first-child {
   font-size: 1.3em;
-  color: var(--dh-color-gold);
+  color: #ffeb3b;
   font-weight: bold;
   text-transform: uppercase;
   margin-bottom: 0.5em;
+  text-shadow: 0 0 15px rgba(255, 235, 59, 0.8);
 }
 
 .death-move-risk-critical .miracle {
-  color: var(--dh-color-gold-light);
+  color: #fff9c4;
   font-size: 1.2em;
   margin: 1em 0;
 }
 
 .death-move-risk-critical .full-heal {
-  color: var(--dh-color-teal);
+  color: #ffffff;
   font-weight: bold;
-  background: rgba(129, 204, 195, 0.2);
+  background: rgba(76, 175, 80, 0.4);
+  border: 1px solid #4caf50;
   padding: 0.5em;
   border-radius: 8px;
   margin-top: 1em;
@@ -3278,23 +3292,29 @@ body.game .app a.content-link {
 .death-move-risk-hope {
   padding: 1.2em;
   margin: 0.5em 0;
-  background: linear-gradient(135deg, rgba(129, 204, 195, 0.3), rgba(40, 120, 190, 0.2));
-  border: 2px solid var(--dh-color-teal);
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(67, 160, 71, 0.3));
+  border: 2px solid #66bb6a;
   border-radius: 10px;
   text-align: center;
 }
 
+.death-move-risk-hope p {
+  color: #ffffff;
+}
+
 .death-move-risk-hope p:first-child {
   font-size: 1.2em;
-  color: var(--dh-color-teal);
+  color: #a5d6a7;
   font-weight: bold;
   margin-bottom: 0.5em;
+  text-shadow: 0 0 8px rgba(165, 214, 167, 0.6);
 }
 
 .death-move-risk-hope .recovery-available {
-  color: var(--dh-color-gold);
+  color: #ffffff;
   font-size: 1.1em;
-  background: rgba(243, 194, 103, 0.2);
+  background: rgba(255, 235, 59, 0.3);
+  border: 1px solid #ffeb3b;
   padding: 0.5em;
   border-radius: 5px;
   margin-top: 1em;
@@ -3303,30 +3323,36 @@ body.game .app a.content-link {
 .death-move-risk-death {
   padding: 1.2em;
   margin: 0.5em 0;
-  background: linear-gradient(135deg, rgba(139, 0, 0, 0.4), rgba(0, 0, 0, 0.8));
-  border: 2px solid #8B0000;
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.4), rgba(139, 0, 0, 0.6));
+  border: 2px solid #f44336;
   border-radius: 10px;
   text-align: center;
-  box-shadow: inset 0 0 20px rgba(139, 0, 0, 0.5);
+  box-shadow: inset 0 0 20px rgba(244, 67, 54, 0.3);
+}
+
+.death-move-risk-death p {
+  color: #ffffff;
 }
 
 .death-move-risk-death p:first-child {
   font-size: 1.2em;
-  color: #ff6b6b;
+  color: #ffcdd2;
   font-weight: bold;
   margin-bottom: 0.5em;
+  text-shadow: 0 0 8px rgba(255, 205, 210, 0.6);
 }
 
 .death-move-risk-death .final-words {
-  color: var(--dh-color-gray);
+  color: #e0e0e0;
   font-style: italic;
   margin: 1em 0;
 }
 
 .death-move-risk-death .death-result {
-  color: #8B0000;
+  color: #ffffff;
   font-weight: bold;
-  background: rgba(139, 0, 0, 0.2);
+  background: rgba(139, 0, 0, 0.4);
+  border: 1px solid #8b0000;
   padding: 0.5em;
   border-radius: 5px;
   margin-top: 1em;
@@ -3335,21 +3361,26 @@ body.game .app a.content-link {
 .death-move-risk-recovery {
   padding: 1em;
   margin: 0.5em 0;
-  background: linear-gradient(135deg, rgba(0, 128, 0, 0.2), rgba(129, 204, 195, 0.2));
-  border: 2px solid var(--dh-color-teal);
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(129, 204, 195, 0.3));
+  border: 2px solid #66bb6a;
   border-radius: 10px;
   text-align: center;
 }
 
+.death-move-risk-recovery p {
+  color: #ffffff;
+}
+
 .death-move-risk-recovery p:first-child {
   font-size: 1.1em;
-  color: var(--dh-color-teal);
+  color: #a5d6a7;
   font-weight: bold;
   margin-bottom: 0.5em;
+  text-shadow: 0 0 8px rgba(165, 214, 167, 0.6);
 }
 
 .death-move-risk-recovery .recovery-result {
-  color: var(--dh-color-gold);
+  color: #fff9c4;
   font-style: italic;
   margin-top: 0.5em;
 }
@@ -3357,17 +3388,15 @@ body.game .app a.content-link {
 /* Recovery Dialog Styles */
 .recovery-dialog .dialog-content {
   background: rgba(11, 10, 19, 0.95);
-  border: 2px solid var(--dh-color-teal);
-  border-radius: 15px;
-  padding: 0;
-  overflow: hidden;
+  border: none;
+  border-radius: 10px;
+  padding: 1.5em;
 }
 
 .recovery-dialog-content {
-  padding: 1.5em;
   display: flex;
   flex-direction: column;
-  gap: 1.5em;
+  gap: 1em;
 }
 
 .recovery-header {
@@ -3437,13 +3466,15 @@ body.game .app a.content-link {
 .allocation-group label {
   color: var(--dh-color-off-white);
   font-weight: bold;
-  min-width: 100px;
+  flex: 0 0 100px;
 }
 
 .allocation-group .stepper-group {
   display: flex;
   align-items: center;
   gap: 0.5em;
+  flex: 1;
+  justify-content: center;
 }
 
 .recovery-minus, .recovery-plus {
@@ -3478,7 +3509,7 @@ body.game .app a.content-link {
   font-size: 0.85em;
   color: var(--dh-color-gray);
   font-style: italic;
-  min-width: 80px;
+  flex: 0 0 60px;
   text-align: right;
 }
 

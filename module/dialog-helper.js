@@ -142,7 +142,7 @@ export class DaggerheartDialogHelper {
       // Initial announcement message
       await ChatMessage.create({
         content: `<p><em>${characterName} has chosen ${result.selected} as their Death Move.</em></p>`,
-        speaker: ChatMessage.getSpeaker(),
+        speaker: ChatMessage.getSpeaker({ actor }),
         type: CONST.CHAT_MESSAGE_TYPES.OTHER
       });
 
@@ -157,7 +157,7 @@ export class DaggerheartDialogHelper {
                 <p><em>Their next roll will be a Critical Success, but this heroic act will cost them their life.</em></p>
               </div>
             `,
-            speaker: ChatMessage.getSpeaker(),
+            speaker: ChatMessage.getSpeaker({ actor }),
             type: CONST.CHAT_MESSAGE_TYPES.OTHER,
             flags: {
               daggerheart: {
@@ -176,7 +176,7 @@ export class DaggerheartDialogHelper {
                     <p><em>With their final breath, they achieved the impossible. Their name will be remembered in legend.</em></p>
                   </div>
                 `,
-                speaker: ChatMessage.getSpeaker(),
+                speaker: ChatMessage.getSpeaker({ actor }),
                 type: CONST.CHAT_MESSAGE_TYPES.OTHER,
                 flags: {
                   daggerheart: {
@@ -205,7 +205,7 @@ export class DaggerheartDialogHelper {
               <p><em>They fall unconscious, clinging to life...</em></p>
             </div>
           `,
-          speaker: ChatMessage.getSpeaker(),
+          speaker: ChatMessage.getSpeaker({ actor }),
           type: CONST.CHAT_MESSAGE_TYPES.OTHER,
           flags: {
             daggerheart: {
@@ -281,7 +281,7 @@ export class DaggerheartDialogHelper {
               <p><em>Everything hangs in the balance of this single roll...</em></p>
             </div>
           `,
-          speaker: ChatMessage.getSpeaker(),
+          speaker: ChatMessage.getSpeaker({ actor }),
           type: CONST.CHAT_MESSAGE_TYPES.OTHER,
           flags: {
             daggerheart: {
