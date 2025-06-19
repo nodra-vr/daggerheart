@@ -1,12 +1,35 @@
 @charset "UTF-8";
-$black_0a0f21: #0a0f21;
-$black_1c1c1c: #1c1c1c;
-$gainsboro_d8d8d6: #d8d8d6;
-$khaki_fef790: #fef790;
-$mediumturquoise_81ccc3: #81ccc3;
-$midnightblue_1e184d: #1e184d;
-$midnightblue_38227b: #38227b;
-$peru_e38c3e: #e38c3e;
-$sandybrown_f3c267: #f3c267;
-$steelblue_2878be: #2878be;
-$whitesmoke_F2F3F4: #f2f3f4;
+
+/* ============================================
+   DAGGERHEART SYSTEM STYLES
+   ============================================
+   Organized Architecture:
+   1. Foundation - Variables, resets, base styles
+   2. Layout - General sheet and window layouts  
+   3. Components - Reusable UI components
+   4. Features - Specific functionality modules
+   ============================================ */
+
+/* Foundation Layer */
+@import "src/foundation";
+@import "src/base";
+
+/* Layout Layer */
+@import "src/layout";
+
+/* Components Layer */
+@import "src/components";
+
+/* Feature Layer */
+@import "src/header";
+@import "src/character";
+@import "src/dialogs";
+@import "src/chat";
+@import "src/rest";
+@import "src/tabs";
+@import "src/editor";
+@import "src/attribute-popups";
+
+/* Legacy/Additional Sheets */
+@import "src/sheets";
+@import "src/actorSheet/itemList";

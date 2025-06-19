@@ -233,6 +233,7 @@
   margin-top: 0.5em;
   padding-top: 0.5em;
   gap: 0.5em;
+  max-height: 3em;
 }
 
 .daggerheart-dialog .recovery-dialog-content {
