@@ -168,6 +168,19 @@ export class SimpleActor extends Actor {
     const formulaAttributes = [];
     const itemAttributes = [];
 
+    // Add tier of play as a computed property
+    if (game.daggerheart && game.daggerheart.getTierOfPlay) {
+      data.tier = game.daggerheart.getTierOfPlay(this);
+    } else {
+      // Fallback tier calculation if function not available
+      const level = parseInt(data.level?.value) || 1;
+      if (level === 1) data.tier = 1;
+      else if (level >= 2 && level <= 4) data.tier = 2;
+      else if (level >= 5 && level <= 7) data.tier = 3;
+      else if (level >= 8 && level <= 10) data.tier = 4;
+      else data.tier = 1;
+    }
+
     // shorthand formulas
     this._applyShorthand(data, formulaAttributes, shorthand);
 

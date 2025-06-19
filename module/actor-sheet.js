@@ -1413,20 +1413,15 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     event.preventDefault();
     const button = event.currentTarget;
     const restType = button.dataset.restType;
+    const characterName = this.actor.name;
     
-    // Show info notification that this feature is coming soon
-    ui.notifications.info(game.i18n.localize("DH.RestComingSoon"));
-    
-    // Send chat message
-    const restTypeText = restType === 'short' ? game.i18n.localize("DH.ShortRest") : game.i18n.localize("DH.LongRest");
-    const chatMessage = `${this.actor.name} has just taken a ${restTypeText}`;
-    
-    ChatMessage.create({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content: chatMessage,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
-    });
+    if (restType === 'short') {
+      // Show the Short Rest dialog
+      await DaggerheartDialogHelper.showShortRestDialog(characterName, this.actor);
+    } else if (restType === 'long') {
+      // Show the Long Rest dialog
+      await DaggerheartDialogHelper.showLongRestDialog(characterName, this.actor);
+    }
   }
 
   async _onNavGemClick(event) {

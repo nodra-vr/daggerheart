@@ -246,7 +246,7 @@ export class DaggerheartDialogHelper {
             `;
           }
           
-          await hopeResult.roll.toMessage({
+          const avoidMessage = await hopeResult.roll.toMessage({
             speaker: ChatMessage.getSpeaker({ actor }),
             flavor: flavorText,
             flags: {
@@ -310,7 +310,7 @@ export class DaggerheartDialogHelper {
             
             await actor.update(updateData);
             
-            await dualityResult.roll.toMessage({
+            const criticalMessage = await dualityResult.roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor }),
               flavor: `
                 <div class="death-move-risk-critical">
@@ -334,7 +334,7 @@ export class DaggerheartDialogHelper {
             
           } else if (hopeWins) {
             // Hope Wins: Show recovery allocation dialog
-            await dualityResult.roll.toMessage({
+            const hopeMessage = await dualityResult.roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor }),
               flavor: `
                 <div class="death-move-risk-hope">
@@ -400,7 +400,7 @@ export class DaggerheartDialogHelper {
             
           } else if (fearWins) {
             // Fear Wins: Character dies
-            await dualityResult.roll.toMessage({
+            const deathMessage = await dualityResult.roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor }),
               flavor: `
                 <div class="death-move-risk-death">
@@ -766,5 +766,678 @@ export class DaggerheartDialogHelper {
     });
     
     return result;
+  }
+
+  /**
+   * Show the Short Rest dialog
+   * @param {string} characterName - The name of the character
+   * @param {Actor} actor - The actor performing the short rest
+   * @returns {Promise} - Resolves with the selected options or null
+   */
+  static async showShortRestDialog(characterName, actor) {
+    const options = [
+      { 
+        id: 'tend-wounds', 
+        label: 'Tend to Wounds', 
+        value: 'tend-wounds',
+        description: 'Clear 1d4 + character tier hit points'
+      },
+      { 
+        id: 'clear-stress', 
+        label: 'Clear Stress', 
+        value: 'clear-stress',
+        description: 'Clear 1d4 + character tier stress'
+      },
+      { 
+        id: 'repair-armor', 
+        label: 'Repair Armor', 
+        value: 'repair-armor',
+        description: 'Clear 1d4 + character tier armor slots'
+      },
+      { 
+        id: 'prepare', 
+        label: 'Prepare', 
+        value: 'prepare',
+        description: 'Gain a hope'
+      }
+    ];
+
+    const content = `
+      <form>
+        <div class="daggerheart-dialog-content">
+          <p class="dialog-description">Choose exactly <strong>two</strong> options for your Short Rest:</p>
+          <div class="checkbox-group short-rest-options">
+            ${options.map(option => `
+              <div class="checkbox-item">
+                <input type="checkbox" 
+                       id="${option.id}" 
+                       name="${option.id}" 
+                       value="${option.value}">
+                <label for="${option.id}">
+                  <strong>${option.label}</strong>
+                  <br><span class="option-description">${option.description}</span>
+                </label>
+              </div>
+            `).join('')}
+          </div>
+          <div class="selection-counter">
+            <span id="selection-count">0</span> of 2 options selected
+          </div>
+        </div>
+      </form>
+    `;
+
+    const result = await this.showDialog({
+      title: `Short Rest - ${characterName}`,
+      content,
+      dialogClass: 'short-rest-dialog',
+      buttons: {
+        confirm: {
+          label: "Take Short Rest",
+          icon: '<i class="fas fa-bed"></i>',
+          callback: (html) => {
+            const selected = [];
+            html.find('input[type="checkbox"]:checked').each((i, el) => {
+              selected.push(el.value);
+            });
+            return { html, button: 'confirm', selected };
+          }
+        },
+        cancel: {
+          label: "Cancel",
+          callback: () => null
+        }
+      },
+      render: (html) => {
+        // Add event listeners for checkbox selection validation
+        const checkboxes = html.find('input[type="checkbox"]');
+        const confirmButton = html.find('button[data-button="confirm"]');
+        const selectionCount = html.find('#selection-count');
+        
+        const updateSelectionCount = () => {
+          const checkedCount = html.find('input[type="checkbox"]:checked').length;
+          selectionCount.text(checkedCount);
+          
+          if (checkedCount === 2) {
+            confirmButton.prop('disabled', false);
+            selectionCount.parent().removeClass('invalid').addClass('valid');
+          } else {
+            confirmButton.prop('disabled', true);
+            selectionCount.parent().removeClass('valid').addClass('invalid');
+          }
+          
+          // Disable unchecked boxes if 2 are already selected
+          if (checkedCount === 2) {
+            checkboxes.each((i, el) => {
+              if (!el.checked) {
+                $(el).prop('disabled', true);
+              }
+            });
+          } else {
+            checkboxes.prop('disabled', false);
+          }
+        };
+        
+        checkboxes.on('change', updateSelectionCount);
+        updateSelectionCount(); // Initial state
+      }
+    });
+
+    if (result && result.selected && result.selected.length === 2) {
+      // Process the short rest with selected options
+      await this._processShortRest(characterName, actor, result.selected);
+      return result.selected;
+    }
+
+    return null;
+  }
+
+  /**
+   * Process the short rest options
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor taking the rest
+   * @param {Array} selectedOptions - Array of selected option values
+   * @private
+   */
+  static async _processShortRest(characterName, actor, selectedOptions) {
+    // Get character tier for calculations
+    const tier = game.daggerheart?.getTierOfPlay ? game.daggerheart.getTierOfPlay(actor) : 1;
+    
+    // Send initial short rest message
+    await ChatMessage.create({
+      content: `
+        <div class="short-rest-start">
+          <p><strong>${characterName} takes a Short Rest</strong></p>
+          <p><em>Taking time to recover and regroup...</em></p>
+        </div>
+      `,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      flags: {
+        daggerheart: {
+          restType: 'short-rest-start',
+          characterName: characterName
+        }
+      }
+    });
+
+    // Process each selected option
+    for (const option of selectedOptions) {
+      switch (option) {
+        case 'tend-wounds':
+          await this._processTendWounds(characterName, actor, tier);
+          break;
+        case 'clear-stress':
+          await this._processClearStress(characterName, actor, tier);
+          break;
+        case 'repair-armor':
+          await this._processRepairArmor(characterName, actor, tier);
+          break;
+        case 'prepare':
+          await this._processPrepare(characterName, actor);
+          break;
+      }
+    }
+  }
+
+  /**
+   * Process Tend to Wounds option
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor
+   * @param {number} tier - The character's tier
+   * @private
+   */
+  static async _processTendWounds(characterName, actor, tier) {
+    const roll = new Roll(`1d4 + ${tier}`);
+    await roll.evaluate();
+    
+    const healingAmount = roll.total;
+    const currentHP = actor.system.health?.value || 0;
+    const newHP = Math.max(0, currentHP - healingAmount);
+    
+    await actor.update({ "system.health.value": newHP });
+    
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `
+        <div class="short-rest-tend-wounds">
+          <p><strong>Tend to Wounds</strong></p>
+          <p>${characterName} tends to their wounds, healing <strong>${healingAmount}</strong> hit points.</p>
+          <p><em>HP: ${currentHP} → ${newHP}</em></p>
+        </div>
+      `,
+      flags: {
+        daggerheart: {
+          restType: 'short-rest-tend-wounds',
+          characterName: characterName,
+          healingAmount: healingAmount
+        }
+      }
+    });
+  }
+
+  /**
+   * Process Clear Stress option
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor
+   * @param {number} tier - The character's tier
+   * @private
+   */
+  static async _processClearStress(characterName, actor, tier) {
+    const roll = new Roll(`1d4 + ${tier}`);
+    await roll.evaluate();
+    
+    const stressCleared = roll.total;
+    const currentStress = actor.system.stress?.value || 0;
+    const newStress = Math.max(0, currentStress - stressCleared);
+    
+    await actor.update({ "system.stress.value": newStress });
+    
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `
+        <div class="short-rest-clear-stress">
+          <p><strong>Clear Stress</strong></p>
+          <p>${characterName} takes time to decompress, clearing <strong>${stressCleared}</strong> stress.</p>
+          <p><em>Stress: ${currentStress} → ${newStress}</em></p>
+        </div>
+      `,
+      flags: {
+        daggerheart: {
+          restType: 'short-rest-clear-stress',
+          characterName: characterName,
+          stressCleared: stressCleared
+        }
+      }
+    });
+  }
+
+  /**
+   * Process Repair Armor option
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor
+   * @param {number} tier - The character's tier
+   * @private
+   */
+  static async _processRepairArmor(characterName, actor, tier) {
+    const roll = new Roll(`1d4 + ${tier}`);
+    await roll.evaluate();
+    
+    const armorRepaired = roll.total;
+    const currentArmorSlots = actor.system.defenses?.['armor-slots']?.value || 0;
+    const maxArmor = actor.system.defenses?.armor?.value || 0;
+    const newArmorSlots = Math.max(0, currentArmorSlots - armorRepaired);
+    
+    await actor.update({ "system.defenses.armor-slots.value": newArmorSlots });
+    
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `
+        <div class="short-rest-repair-armor">
+          <p><strong>Repair Armor</strong></p>
+          <p>${characterName} mends their armor, clearing <strong>${armorRepaired}</strong> armor slots.</p>
+          <p><em>Damaged Armor: ${currentArmorSlots} → ${newArmorSlots}</em></p>
+        </div>
+      `,
+      flags: {
+        daggerheart: {
+          restType: 'short-rest-repair-armor',
+          characterName: characterName,
+          armorRepaired: armorRepaired
+        }
+      }
+    });
+  }
+
+  /**
+   * Process Prepare option
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor
+   * @private
+   */
+  static async _processPrepare(characterName, actor) {
+    const currentHope = actor.system.hope?.value || 0;
+    const maxHope = actor.system.hope?.max || 0;
+    const newHope = Math.min(maxHope, currentHope + 1);
+    
+    await actor.update({ "system.hope.value": newHope });
+    
+    await ChatMessage.create({
+      content: `
+        <div class="short-rest-prepare">
+          <p><strong>Prepare</strong></p>
+          <p>${characterName} takes time to prepare, gaining <strong>1 Hope</strong>.</p>
+          <p><em>Hope: ${currentHope} → ${newHope}</em></p>
+        </div>
+      `,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      flags: {
+        daggerheart: {
+          restType: 'short-rest-prepare',
+          characterName: characterName,
+          hopeGained: 1
+        }
+      }
+    });
+  }
+
+  /**
+   * Show the Long Rest dialog
+   * @param {string} characterName - The name of the character
+   * @param {Actor} actor - The actor performing the long rest
+   * @returns {Promise} - Resolves with the selected options or null
+   */
+  static async showLongRestDialog(characterName, actor) {
+    const options = [
+      { 
+        id: 'tend-all-wounds', 
+        label: 'Tend to All Wounds', 
+        value: 'tend-all-wounds',
+        description: 'Clear all Hit Points (can do to an ally instead)'
+      },
+      { 
+        id: 'clear-all-stress', 
+        label: 'Clear All Stress', 
+        value: 'clear-all-stress',
+        description: 'Clear all Stress'
+      },
+      { 
+        id: 'repair-all-armor', 
+        label: 'Repair All Armor', 
+        value: 'repair-all-armor',
+        description: 'Clear all Armor Slots (can do to an ally instead)'
+      },
+      { 
+        id: 'prepare', 
+        label: 'Prepare', 
+        value: 'prepare',
+        description: 'Gain 1 Hope (2 Hope if done with party members)'
+      },
+      { 
+        id: 'work-project', 
+        label: 'Work on a Project', 
+        value: 'work-project',
+        description: 'Establish or continue work on a project'
+      }
+    ];
+
+    const content = `
+      <form>
+        <div class="daggerheart-dialog-content">
+          <div class="long-rest-reminder">
+            <p><strong>Domain Card Swapping:</strong> You can swap any domain cards in your loadout for cards in your vault.</p>
+          </div>
+          <p class="dialog-description">Choose exactly <strong>two</strong> options for your Long Rest (or choose the same option twice):</p>
+          <div class="checkbox-group long-rest-options">
+            ${options.map(option => `
+              <div class="checkbox-item" data-option-id="${option.id}">
+                <input type="checkbox" 
+                       id="${option.id}" 
+                       name="${option.id}" 
+                       value="${option.value}">
+                <label for="${option.id}">
+                  <strong>${option.label}</strong>
+                  <br><span class="option-description">${option.description}</span>
+                </label>
+              </div>
+            `).join('')}
+          </div>
+          <div class="selection-counter">
+            <span id="selection-count">0</span> of 2 options selected
+          </div>
+        </div>
+      </form>
+    `;
+
+    const result = await this.showDialog({
+      title: `Long Rest - ${characterName}`,
+      content,
+      dialogClass: 'long-rest-dialog',
+      buttons: {
+        confirm: {
+          label: "Take Long Rest",
+          icon: '<i class="fas fa-campground"></i>',
+          callback: (html) => {
+            const selected = [];
+            html.find('input[type="checkbox"]:checked').each((i, el) => {
+              selected.push(el.value);
+            });
+            return { html, button: 'confirm', selected };
+          }
+        },
+        cancel: {
+          label: "Cancel",
+          callback: () => null
+        }
+      },
+      render: (html) => {
+        // Add event listeners for checkbox selection validation
+        const checkboxes = html.find('input[type="checkbox"]');
+        const confirmButton = html.find('button[data-button="confirm"]');
+        const selectionCount = html.find('#selection-count');
+        
+        const updateSelectionCount = () => {
+          const checkedCount = html.find('input[type="checkbox"]:checked').length;
+          selectionCount.text(checkedCount);
+          
+          if (checkedCount === 2) {
+            confirmButton.prop('disabled', false);
+            selectionCount.parent().removeClass('invalid').addClass('valid');
+          } else {
+            confirmButton.prop('disabled', true);
+            selectionCount.parent().removeClass('valid').addClass('invalid');
+          }
+          
+          // Allow selecting the same option twice by checking if we have 2 selections
+          // If we have 2 different options selected, disable the rest
+          const selectedOptions = [];
+          html.find('input[type="checkbox"]:checked').each((i, el) => {
+            selectedOptions.push(el.value);
+          });
+          
+          if (checkedCount === 2) {
+            // Disable all unchecked boxes except if we want to allow duplicates
+            checkboxes.each((i, el) => {
+              if (!el.checked) {
+                $(el).prop('disabled', true);
+              }
+            });
+          } else {
+            checkboxes.prop('disabled', false);
+          }
+        };
+        
+        checkboxes.on('change', updateSelectionCount);
+        updateSelectionCount(); // Initial state
+      }
+    });
+
+    if (result && result.selected && result.selected.length === 2) {
+      // Process the long rest with selected options
+      await this._processLongRest(characterName, actor, result.selected);
+      return result.selected;
+    }
+
+    return null;
+  }
+
+  /**
+   * Process the long rest options
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor taking the rest
+   * @param {Array} selectedOptions - Array of selected option values
+   * @private
+   */
+  static async _processLongRest(characterName, actor, selectedOptions) {
+    // Send initial long rest message
+    await ChatMessage.create({
+      content: `
+        <div class="long-rest-start">
+          <p><strong>${characterName} takes a Long Rest</strong></p>
+          <p><em>Making camp and taking time to truly recover...</em></p>
+        </div>
+      `,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      flags: {
+        daggerheart: {
+          restType: 'long-rest-start',
+          characterName: characterName
+        }
+      }
+    });
+
+    // Count how many times each option was selected
+    const optionCounts = {};
+    selectedOptions.forEach(option => {
+      optionCounts[option] = (optionCounts[option] || 0) + 1;
+    });
+
+    // Process each selected option
+    for (const [option, count] of Object.entries(optionCounts)) {
+      for (let i = 0; i < count; i++) {
+        switch (option) {
+          case 'tend-all-wounds':
+            await this._processLongRestTendWounds(characterName, actor);
+            break;
+          case 'clear-all-stress':
+            await this._processLongRestClearStress(characterName, actor);
+            break;
+          case 'repair-all-armor':
+            await this._processLongRestRepairArmor(characterName, actor);
+            break;
+          case 'prepare':
+            await this._processLongRestPrepare(characterName, actor);
+            break;
+          case 'work-project':
+            await this._processLongRestWorkProject(characterName, actor);
+            break;
+        }
+      }
+    }
+  }
+
+  /**
+   * Process Tend to All Wounds option (Long Rest)
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor
+   * @private
+   */
+  static async _processLongRestTendWounds(characterName, actor) {
+    const currentHP = actor.system.health?.value || 0;
+    const newHP = 0; // Clear all hit points
+    
+    await actor.update({ "system.health.value": newHP });
+    
+    await ChatMessage.create({
+      content: `
+        <div class="long-rest-tend-wounds">
+          <p><strong>Tend to All Wounds</strong></p>
+          <p>${characterName} takes time to properly tend to all their wounds, fully healing their injuries.</p>
+          <p><em>HP: ${currentHP} → ${newHP} (Fully Healed!)</em></p>
+        </div>
+      `,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      flags: {
+        daggerheart: {
+          restType: 'long-rest-tend-wounds',
+          characterName: characterName,
+          healingAmount: currentHP
+        }
+      }
+    });
+  }
+
+  /**
+   * Process Clear All Stress option (Long Rest)
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor
+   * @private
+   */
+  static async _processLongRestClearStress(characterName, actor) {
+    const currentStress = actor.system.stress?.value || 0;
+    const newStress = 0; // Clear all stress
+    
+    await actor.update({ "system.stress.value": newStress });
+    
+    await ChatMessage.create({
+      content: `
+        <div class="long-rest-clear-stress">
+          <p><strong>Clear All Stress</strong></p>
+          <p>${characterName} takes time to decompress and center themselves, clearing away all mental fatigue.</p>
+          <p><em>Stress: ${currentStress} → ${newStress} (Completely Relaxed!)</em></p>
+        </div>
+      `,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      flags: {
+        daggerheart: {
+          restType: 'long-rest-clear-stress',
+          characterName: characterName,
+          stressCleared: currentStress
+        }
+      }
+    });
+  }
+
+  /**
+   * Process Repair All Armor option (Long Rest)
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor
+   * @private
+   */
+  static async _processLongRestRepairArmor(characterName, actor) {
+    const currentArmorSlots = actor.system.defenses?.['armor-slots']?.value || 0;
+    const newArmorSlots = 0; // Clear all armor slots
+    
+    await actor.update({ "system.defenses.armor-slots.value": newArmorSlots });
+    
+    await ChatMessage.create({
+      content: `
+        <div class="long-rest-repair-armor">
+          <p><strong>Repair All Armor</strong></p>
+          <p>${characterName} spends time meticulously repairing and maintaining their armor, restoring it to perfect condition.</p>
+          <p><em>Damaged Armor: ${currentArmorSlots} → ${newArmorSlots} (Fully Repaired!)</em></p>
+        </div>
+      `,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      flags: {
+        daggerheart: {
+          restType: 'long-rest-repair-armor',
+          characterName: characterName,
+          armorRepaired: currentArmorSlots
+        }
+      }
+    });
+  }
+
+  /**
+   * Process Prepare option (Long Rest)
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor
+   * @private
+   */
+  static async _processLongRestPrepare(characterName, actor) {
+    // For now, just give 1 Hope - could be enhanced to detect party coordination
+    const currentHope = actor.system.hope?.value || 0;
+    const maxHope = actor.system.hope?.max || 0;
+    const hopeGained = 1; // Could be 2 if coordinated with party
+    const newHope = Math.min(maxHope, currentHope + hopeGained);
+    
+    await actor.update({ "system.hope.value": newHope });
+    
+    await ChatMessage.create({
+      content: `
+        <div class="long-rest-prepare">
+          <p><strong>Prepare</strong></p>
+          <p>${characterName} takes time to prepare for the challenges ahead, steeling their resolve.</p>
+          <p><em>Hope: ${currentHope} → ${newHope} (+${hopeGained} Hope)</em></p>
+          <div class="prepare-note">
+            <p><em>Note: If coordinating with party members, each participant gains 2 Hope instead.</em></p>
+          </div>
+        </div>
+      `,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      flags: {
+        daggerheart: {
+          restType: 'long-rest-prepare',
+          characterName: characterName,
+          hopeGained: hopeGained
+        }
+      }
+    });
+  }
+
+  /**
+   * Process Work on a Project option (Long Rest)
+   * @param {string} characterName - The character's name
+   * @param {Actor} actor - The actor
+   * @private
+   */
+  static async _processLongRestWorkProject(characterName, actor) {
+    await ChatMessage.create({
+      content: `
+        <div class="long-rest-work-project">
+          <p><strong>Work on a Project</strong></p>
+          <p>${characterName} dedicates time to working on a personal or group project.</p>
+          <div class="project-note">
+            <p><em>Describe what ${characterName} works on during this time - perhaps crafting, research, writing, or contributing to a group endeavor.</em></p>
+            <p><em>This is an opportunity for character development and storytelling!</em></p>
+          </div>
+        </div>
+      `,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      flags: {
+        daggerheart: {
+          restType: 'long-rest-work-project',
+          characterName: characterName
+        }
+      }
+    });
   }
 } 

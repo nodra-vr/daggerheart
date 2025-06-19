@@ -11,6 +11,34 @@ import { TokenCounterUI } from "./token-counter-ui.js";
 
 import { _rollHope, _rollFear, _rollDuality, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog } from './rollHandler.js';
 
+/**
+ * Calculate the tier of play based on character level
+ * @param {Actor|null} actor - The actor to get the level from (optional if level is provided)
+ * @param {number|null} level - The level to calculate tier for (optional, will use actor's level if not provided)
+ * @returns {number} The tier of play (1-4)
+ */
+function _getTierOfPlay(actor = null, level = null) {
+  let characterLevel = level;
+  
+  if (characterLevel === null || characterLevel === undefined) {
+    if (!actor) {
+      console.warn("Daggerheart | getTierOfPlay: No actor or level provided, defaulting to tier 1");
+      return 1;
+    }
+    characterLevel = actor.system?.level?.value || 1;
+  }
+  
+  characterLevel = parseInt(characterLevel) || 1;
+  characterLevel = Math.max(1, Math.min(10, characterLevel));
+  
+  if (characterLevel === 1) return 1;
+  if (characterLevel >= 2 && characterLevel <= 4) return 2;
+  if (characterLevel >= 5 && characterLevel <= 7) return 3;
+  if (characterLevel >= 8 && characterLevel <= 10) return 4;
+  
+  return 1;
+}
+
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
@@ -61,7 +89,8 @@ Hooks.once("init", async function() {
       isForcedCriticalActive: _isForcedCriticalActive,
       quickRoll: _quickRoll,
       dualityWithDialog: _dualityWithDialog
-    }
+    },
+    getTierOfPlay: _getTierOfPlay
   };
 
   // Define custom Document classes
