@@ -9,7 +9,7 @@ import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
 
-import Rolls from './rolls.js';
+import { _rollHope, _rollFear, _rollDuality, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog } from './rollHandler.js';
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -51,7 +51,17 @@ Hooks.once("init", async function() {
   game.daggerheart = {
     SimpleActor,
     createDaggerheartMacro,
-    Rolls
+    rollHandler: {
+      rollHope: _rollHope,
+      rollFear: _rollFear,
+      rollDuality: _rollDuality,
+      checkCritical: _checkCritical,
+      enableForcedCritical: _enableForcedCritical,
+      disableForcedCritical: _disableForcedCritical,
+      isForcedCriticalActive: _isForcedCriticalActive,
+      quickRoll: _quickRoll,
+      dualityWithDialog: _dualityWithDialog
+    }
   };
 
   // Define custom Document classes

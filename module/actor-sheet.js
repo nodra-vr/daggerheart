@@ -179,237 +179,11 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
           scope: "global",
           img: "https://i.imgur.com/VSTKJWt.png",
           command: `// Duality Dice Roll Macro
-// Setup dice colors for Dice So Nice
-if (game.dice3d) {
-  game.dice3d.addColorset({
-    name: "Hope",
-    category: "Hope Die",
-    description: "Hope",
-    texture: "ice",
-    foreground: "#ffbb00",
-    background: "#ffffff",
-    outline: "#000000",
-    edge: "#ffbb00",
-    material: "glass",
-    font: "Modesto Condensed",
-  });
-  game.dice3d.addColorset({
-    name: "Fear",
-    category: "Fear Die",
-    description: "Fear",
-    texture: "fire",
-    foreground: "#FFFFFF",
-    background: "#523333",
-    outline: "#b30012",
-    edge: "#800013",
-    material: "metal",
-    font: "Modesto Condensed",
-  });
-  game.dice3d.addColorset({
-    name: "Modifier",
-    category: "Modifier Die",
-    description: "Modifier",
-    texture: "marble",
-    foreground: "#222222",
-    background: "#DDDDDD",
-    outline: "#000000",
-    edge: "#555555",
-    material: "plastic",
-    font: "Arial",
-  });
-}
+// Uses the centralized rollHandler system for consistent dice rolling
+// Will use selected token's actor or the user's assigned character
 
-// Main roll dialog
-const dialogContent = \`
-<form>
-<div class="flex-col" style="align-items: stretch; gap: 2rem">
-    <div class="flex-row" style="justify-content: center; gap: 2rem;">
-        <div class="flex-col">
-            <span class="label-bar">Hope Die</span>
-            <select name="hopeDieSize" id="hopeDieSize">
-                <option value="d12" selected>d12</option>
-                <option value="d20">d20</option>
-            </select>
-        </div>
-        <div class="flex-col">
-            <span class="label-bar">Fear Die</span>
-            <select name="fearDieSize" id="fearDieSize">
-                <option value="d12" selected>d12</option>
-                <option value="d20">d20</option>
-            </select>
-        </div>
-    </div>
-  <div class="flex-row">
-    <div class="flex-col stepper-group">
-      <span class="label-bar">Advantage</span>
-      <div class="flex-row">
-        <button id="adv-minus" class="clicker-button clicker-minus-button" type="button"></button>
-        <input id="dualityDiceAdvantageInput" min="0" name="advantage" step="1" type="number" value="0"/>
-        <button id="adv-plus" class="clicker-button clicker-plus-button" type="button"></button>
-      </div>
-    </div>
-    <div class="flex-col stepper-group">
-      <span class="label-bar">Disadvantage</span>
-      <div class="flex-row">
-        <button id="dis-minus" class="clicker-button clicker-minus-button" type="button"></button>
-        <input id="dualityDiceDisadvantageInput" min="0" name="disadvantage" step="1" type="number" value="0"/>
-        <button id="dis-plus" class="clicker-button clicker-plus-button" type="button"></button>
-      </div>
-    </div>
-  </div>
-  <div class="flex-row">
-    <div class="flex-col stepper-group">
-      <span class="label-bar">Flat Modifier</span>
-      <div class="flex-row">
-        <button id="mod-minus" class="clicker-button clicker-minus-button" type="button"></button>
-        <input id="dualityDiceModifierInput" autofocus name="modifier" step="1" type="number" value="0"/>
-        <button id="mod-plus" class="clicker-button clicker-plus-button" type="button"></button>
-      </div>
-    </div>
-  </div>
-</div>
-</form>
-\`;
-
-const dialogChoice = await new Promise(resolve => {
-    new Dialog({
-        title: \`Duality Dice Roll\`,
-        content: dialogContent,
-        buttons: {
-            roll: {
-                label: "Roll",
-                icon: "<i class='fas fa-dice-d12'></i>",
-                callback: (html) => {
-                    const advantage = parseInt(html.find('#dualityDiceAdvantageInput').val()) || 0;
-                    const disadvantage = parseInt(html.find('#dualityDiceDisadvantageInput').val()) || 0;
-                    const modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
-                    const hopeDieSize = html.find('#hopeDieSize').val();
-                    const fearDieSize = html.find('#fearDieSize').val();
-                    resolve({ advantage, disadvantage, modifier, hopeDieSize, fearDieSize });
-                }
-            },
-            rollReaction: {
-                label: "Reaction",
-                icon: "<i class='fas fa-dice-d12'></i>",
-                callback: (html) => {
-                    const advantage = parseInt(html.find('#dualityDiceAdvantageInput').val()) || 0;
-                    const disadvantage = parseInt(html.find('#dualityDiceDisadvantageInput').val()) || 0;
-                    const modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
-                    const hopeDieSize = html.find('#hopeDieSize').val();
-                    const fearDieSize = html.find('#fearDieSize').val();
-                    resolve({ advantage, disadvantage, modifier, hopeDieSize, fearDieSize, reaction: true });
-                }
-            },
-            cancel: {
-                label: "Cancel",
-                callback: () => resolve(null)
-            }
-        },
-        default: 'roll',
-        render: (html) => {
-            function incrementInput(selector, by, clampLo = null) {
-                let input = html.find(selector);
-                if (input.length === 0) return;
-                let newValue = (parseInt(input.val()) || 0) + by;
-                if (clampLo !== null) newValue = Math.max(clampLo, newValue);
-                input.val(newValue);
-            }
-
-            html.find('#adv-plus').click(() => incrementInput('#dualityDiceAdvantageInput', 1, 0));
-            html.find('#adv-minus').click(() => incrementInput('#dualityDiceAdvantageInput', -1, 0));
-            html.find('#dis-plus').click(() => incrementInput('#dualityDiceDisadvantageInput', 1, 0));
-            html.find('#dis-minus').click(() => incrementInput('#dualityDiceDisadvantageInput', -1, 0));
-            html.find('#mod-plus').click(() => incrementInput('#dualityDiceModifierInput', 1));
-            html.find('#mod-minus').click(() => incrementInput('#dualityDiceModifierInput', -1));
-
-            for (const input of html.find("input[type=number]")) {
-                input.addEventListener("wheel", (event) => {
-                    if (input === document.activeElement) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        const step = Math.sign(-1 * event.deltaY);
-                        const oldValue = Number(input.value) || 0;
-                        input.value = String(oldValue + step);
-                    }
-                });
-            }
-        },
-        close: () => resolve(null)
-    }, {
-        classes: ["daggerheart-roll-dialog"]
-    }).render(true);
-});
-
-if (!dialogChoice) { return; }
-
-const { advantage, disadvantage, modifier, hopeDieSize, fearDieSize, reaction } = dialogChoice;
-const totalAdvantage = advantage - disadvantage;
-
-let rollType = "Normal";
-let coreFormula = \`1\${hopeDieSize} + 1\${fearDieSize}\`;
-let flavorSuffix = "";
-if (totalAdvantage > 0) {
-    coreFormula += \` + \${totalAdvantage}d6kh1\`;
-    rollType = "Advantage";
-    flavorSuffix = \` with \${totalAdvantage} Advantage\`;
-} else if (totalAdvantage < 0) {
-    const disAdv = Math.abs(totalAdvantage);
-    coreFormula += \` - \${disAdv}d6kh1\`;
-    rollType = "Disadvantage";
-    flavorSuffix = \` with \${disAdv} Disadvantage\`;
-}
-
-const fullRollFormula = \`\${coreFormula} + \${modifier}\`;
-const roll = new Roll(fullRollFormula);
-await roll.evaluate();
-
-let hopeDieValue, fearDieValue;
-let isCrit = false;
-
-if (roll.dice.length >= 2) {
-  roll.dice[0].options.flavor = "Hope";
-  hopeDieValue = roll.dice[0].total;
-
-  roll.dice[1].options.flavor = "Fear";
-  fearDieValue = roll.dice[1].total;
-
-  isCrit = hopeDieValue === fearDieValue;
-
-  if (roll.dice.length >= 3) {
-    roll.dice[2].options.flavor = "Modifier";
-  }
-} else {
-  console.error(\`Daggerheart | Critical error during Duality Dice roll: Less than two primary dice terms found. Roll object:\`, roll);
-  return;
-}
-
-const isHope = !reaction && hopeDieValue > fearDieValue;
-const isFear = !reaction && hopeDieValue < fearDieValue;
-
-let finalFlavor = \`<p class="roll-flavor-line"><b>Duality Dice</b>\${flavorSuffix}\`;
-if (modifier !== 0) {
-    finalFlavor += modifier > 0 ? \` +\${modifier}\` : \` \${modifier}\`;
-}
-
-if (isCrit) {
-  finalFlavor += \` <b>Critical</b> Success!</p>\`;
-  if (!reaction) {
-    finalFlavor += \`<p class="roll-effect">You gain 1 Hope and clear 1 Stress</p>\`;
-  }
-} else if (isHope) {
-  finalFlavor += \` Rolled with <b>Hope</b>!</p><p class="roll-effect">You gain 1 Hope</p>\`;
-} else if (isFear) {
-  finalFlavor += \` Rolled with <b>Fear</b>!</p><p class="roll-effect">The GM gains 1 Fear</p>\`;
-}
-
-await roll.toMessage({
-  speaker: ChatMessage.getSpeaker(),
-  flavor: finalFlavor,
-  flags: {
-    daggerheart: {
-      rollType: "duality"
-    }
-  }
+await game.daggerheart.rollHandler.dualityWithDialog({
+  title: "Duality Dice Roll"
 });`
         };
         
@@ -728,15 +502,14 @@ await roll.toMessage({
   * @param {MouseEvent} event    The originating left click event
   */
   async _onItemRoll(event) {
-    // console.log("this is being called");
     let button = $(event.currentTarget);
     const li = button.parents(".item");
     const item = this.actor.items.get(li.data("itemId"));
-    let r = new Roll(button.data('roll'), this.actor.getRollData());
-    return await r.toMessage({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `<h4>${item.name}</h4><a>${button.text()}</a>`
+    
+    // Use the rollHandler for consistent roll handling
+    await game.daggerheart.rollHandler.quickRoll(button.data('roll'), {
+      flavor: `<p class="roll-flavor-line"><b>${item.name}</b> - ${button.text()}</p>`,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor })
     });
   }
   
@@ -1458,21 +1231,10 @@ await roll.toMessage({
   /* -------------------------------------------- */
   
   async _rollBasic(basicName, basicValue) {
-    const roll = new Roll(basicValue);
-    
-    await roll.toMessage({
+    // Use the rollHandler for consistent roll handling
+    await game.daggerheart.rollHandler.quickRoll(basicValue, {
       flavor: basicName,
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      rollMode: "roll",
-      flags: {
-        daggerheart: {
-          rollType: this._pendingRollType || "unknown",
-          weaponName: this._pendingWeaponName || "",
-          actorId: this.actor.id,
-          actorType: this.actor.type
-        }
-      }
+      speaker: ChatMessage.getSpeaker({ actor: this.actor })
     });
     
     // Clear pending roll data
@@ -1483,7 +1245,7 @@ await roll.toMessage({
   async _rollTrait(traitName, traitValue) {
     const traitNamePrint = traitName.charAt(0).toUpperCase() + traitName.slice(1);
     const title = `Roll for ${traitNamePrint}`;
-    game.daggerheart.Rolls.duality({title, traitValue});
+    await game.daggerheart.rollHandler.dualityWithDialog({title, traitValue, actor: this.actor});
   }
 
   /**
@@ -1638,7 +1400,7 @@ await roll.toMessage({
     
     // Show the Death Move dialog
     const characterName = this.actor.name;
-    await DaggerheartDialogHelper.showDeathMoveDialog(characterName);
+    await DaggerheartDialogHelper.showDeathMoveDialog(characterName, this.actor);
   }
 
   async _onRestClick(event) {
@@ -1664,237 +1426,10 @@ await roll.toMessage({
   async _onNavGemClick(event) {
     event.preventDefault();
     
-    // Setup dice colors for Dice So Nice
-    if (game.dice3d) {
-      game.dice3d.addColorset({
-        name: "Hope",
-        category: "Hope Die",
-        description: "Hope",
-        texture: "ice",
-        foreground: "#ffbb00",
-        background: "#ffffff",
-        outline: "#000000",
-        edge: "#ffbb00",
-        material: "glass",
-        font: "Modesto Condensed",
-      });
-      game.dice3d.addColorset({
-        name: "Fear",
-        category: "Fear Die",
-        description: "Fear",
-        texture: "fire",
-        foreground: "#FFFFFF",
-        background: "#523333",
-        outline: "#b30012",
-        edge: "#800013",
-        material: "metal",
-        font: "Modesto Condensed",
-      });
-      game.dice3d.addColorset({
-        name: "Modifier",
-        category: "Modifier Die",
-        description: "Modifier",
-        texture: "marble",
-        foreground: "#222222",
-        background: "#DDDDDD",
-        outline: "#000000",
-        edge: "#555555",
-        material: "plastic",
-        font: "Arial",
-      });
-    }
-
-    // Main roll dialog
-    const dialogContent = `
-    <form>
-    <div class="flex-col" style="align-items: stretch; gap: 2rem">
-        <div class="flex-row" style="justify-content: center; gap: 2rem;">
-            <div class="flex-col">
-                <span class="label-bar">Hope Die</span>
-                <select name="hopeDieSize" id="hopeDieSize">
-                    <option value="d12" selected>d12</option>
-                    <option value="d20">d20</option>
-                </select>
-            </div>
-            <div class="flex-col">
-                <span class="label-bar">Fear Die</span>
-                <select name="fearDieSize" id="fearDieSize">
-                    <option value="d12" selected>d12</option>
-                    <option value="d20">d20</option>
-                </select>
-            </div>
-        </div>
-      <div class="flex-row">
-        <div class="flex-col stepper-group">
-          <span class="label-bar">Advantage</span>
-          <div class="flex-row">
-            <button id="adv-minus" class="clicker-button clicker-minus-button" type="button"></button>
-            <input id="dualityDiceAdvantageInput" min="0" name="advantage" step="1" type="number" value="0"/>
-            <button id="adv-plus" class="clicker-button clicker-plus-button" type="button"></button>
-          </div>
-        </div>
-        <div class="flex-col stepper-group">
-          <span class="label-bar">Disadvantage</span>
-          <div class="flex-row">
-            <button id="dis-minus" class="clicker-button clicker-minus-button" type="button"></button>
-            <input id="dualityDiceDisadvantageInput" min="0" name="disadvantage" step="1" type="number" value="0"/>
-            <button id="dis-plus" class="clicker-button clicker-plus-button" type="button"></button>
-          </div>
-        </div>
-      </div>
-      <div class="flex-row">
-        <div class="flex-col stepper-group">
-          <span class="label-bar">Flat Modifier</span>
-          <div class="flex-row">
-            <button id="mod-minus" class="clicker-button clicker-minus-button" type="button"></button>
-            <input id="dualityDiceModifierInput" autofocus name="modifier" step="1" type="number" value="0"/>
-            <button id="mod-plus" class="clicker-button clicker-plus-button" type="button"></button>
-          </div>
-        </div>
-      </div>
-    </div>
-    </form>
-    `;
-
-    const dialogChoice = await new Promise(resolve => {
-        new Dialog({
-            title: `Duality Dice Roll`,
-            content: dialogContent,
-            buttons: {
-                roll: {
-                    label: "Roll",
-                    icon: "<i class='fas fa-dice-d12'></i>",
-                    callback: (html) => {
-                        const advantage = parseInt(html.find('#dualityDiceAdvantageInput').val()) || 0;
-                        const disadvantage = parseInt(html.find('#dualityDiceDisadvantageInput').val()) || 0;
-                        const modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
-                        const hopeDieSize = html.find('#hopeDieSize').val();
-                        const fearDieSize = html.find('#fearDieSize').val();
-                        resolve({ advantage, disadvantage, modifier, hopeDieSize, fearDieSize });
-                    }
-                },
-                rollReaction: {
-                    label: "Reaction",
-                    icon: "<i class='fas fa-dice-d12'></i>",
-                    callback: (html) => {
-                        const advantage = parseInt(html.find('#dualityDiceAdvantageInput').val()) || 0;
-                        const disadvantage = parseInt(html.find('#dualityDiceDisadvantageInput').val()) || 0;
-                        const modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
-                        const hopeDieSize = html.find('#hopeDieSize').val();
-                        const fearDieSize = html.find('#fearDieSize').val();
-                        resolve({ advantage, disadvantage, modifier, hopeDieSize, fearDieSize, reaction: true });
-                    }
-                },
-                cancel: {
-                    label: "Cancel",
-                    callback: () => resolve(null)
-                }
-            },
-            default: 'roll',
-            render: (html) => {
-                function incrementInput(selector, by, clampLo = null) {
-                    let input = html.find(selector);
-                    if (input.length === 0) return;
-                    let newValue = (parseInt(input.val()) || 0) + by;
-                    if (clampLo !== null) newValue = Math.max(clampLo, newValue);
-                    input.val(newValue);
-                }
-
-                html.find('#adv-plus').click(() => incrementInput('#dualityDiceAdvantageInput', 1, 0));
-                html.find('#adv-minus').click(() => incrementInput('#dualityDiceAdvantageInput', -1, 0));
-                html.find('#dis-plus').click(() => incrementInput('#dualityDiceDisadvantageInput', 1, 0));
-                html.find('#dis-minus').click(() => incrementInput('#dualityDiceDisadvantageInput', -1, 0));
-                html.find('#mod-plus').click(() => incrementInput('#dualityDiceModifierInput', 1));
-                html.find('#mod-minus').click(() => incrementInput('#dualityDiceModifierInput', -1));
-
-                for (const input of html.find("input[type=number]")) {
-                    input.addEventListener("wheel", (event) => {
-                        if (input === document.activeElement) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            const step = Math.sign(-1 * event.deltaY);
-                            const oldValue = Number(input.value) || 0;
-                            input.value = String(oldValue + step);
-                        }
-                    });
-                }
-            },
-            close: () => resolve(null)
-        }, {
-            classes: ["daggerheart-roll-dialog"]
-        }).render(true);
-    });
-
-    if (!dialogChoice) { return; }
-
-    const { advantage, disadvantage, modifier, hopeDieSize, fearDieSize, reaction } = dialogChoice;
-    const totalAdvantage = advantage - disadvantage;
-
-    let rollType = "Normal";
-    let coreFormula = `1${hopeDieSize} + 1${fearDieSize}`;
-    let flavorSuffix = "";
-    if (totalAdvantage > 0) {
-        coreFormula += ` + ${totalAdvantage}d6kh1`;
-        rollType = "Advantage";
-        flavorSuffix = ` with ${totalAdvantage} Advantage`;
-    } else if (totalAdvantage < 0) {
-        const disAdv = Math.abs(totalAdvantage);
-        coreFormula += ` - ${disAdv}d6kh1`;
-        rollType = "Disadvantage";
-        flavorSuffix = ` with ${disAdv} Disadvantage`;
-    }
-
-    const fullRollFormula = `${coreFormula} + ${modifier}`;
-    const roll = new Roll(fullRollFormula);
-    await roll.evaluate();
-
-    let hopeDieValue, fearDieValue;
-    let isCrit = false;
-
-    if (roll.dice.length >= 2) {
-      roll.dice[0].options.flavor = "Hope";
-      hopeDieValue = roll.dice[0].total;
-
-      roll.dice[1].options.flavor = "Fear";
-      fearDieValue = roll.dice[1].total;
-
-      isCrit = hopeDieValue === fearDieValue;
-
-      if (roll.dice.length >= 3) {
-        roll.dice[2].options.flavor = "Modifier";
-      }
-    } else {
-      console.error(`Daggerheart | Critical error during Duality Dice roll: Less than two primary dice terms found. Roll object:`, roll);
-      return;
-    }
-
-    const isHope = !reaction && hopeDieValue > fearDieValue;
-    const isFear = !reaction && hopeDieValue < fearDieValue;
-
-    let finalFlavor = `<p class="roll-flavor-line"><b>Duality Dice</b>${flavorSuffix}`;
-    if (modifier !== 0) {
-        finalFlavor += modifier > 0 ? ` +${modifier}` : ` ${modifier}`;
-    }
-
-    if (isCrit) {
-      finalFlavor += ` <b>Critical</b> Success!</p>`;
-      if (!reaction) {
-        finalFlavor += `<p class="roll-effect">You gain 1 Hope and clear 1 Stress</p>`;
-      }
-    } else if (isHope) {
-      finalFlavor += ` Rolled with <b>Hope</b>!</p><p class="roll-effect">You gain 1 Hope</p>`;
-    } else if (isFear) {
-      finalFlavor += ` Rolled with <b>Fear</b>!</p><p class="roll-effect">The GM gains 1 Fear</p>`;
-    }
-
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker(),
-      flavor: finalFlavor,
-      flags: {
-        daggerheart: {
-          rollType: "duality"
-        }
-      }
+    // Use the rollHandler for the duality roll with dialog
+    await game.daggerheart.rollHandler.dualityWithDialog({
+      title: "Duality Dice Roll",
+      actor: this.actor
     });
   }
 
@@ -2139,11 +1674,11 @@ export class NPCActorSheet extends SimpleActorSheet {
     let button = $(event.currentTarget);
     const li = button.parents(".item");
     const item = this.actor.items.get(li.data("itemId"));
-    let r = new Roll(button.data('roll'), this.actor.getRollData());
-    return await r.toMessage({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `<h2>${item.name}</h2><h3>${button.text()}</h3>`
+    
+    // Use the rollHandler for consistent roll handling
+    await game.daggerheart.rollHandler.quickRoll(button.data('roll'), {
+      flavor: `<p class="roll-flavor-line"><b>${item.name}</b> - ${button.text()}</p>`,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor })
     });
   }
   
@@ -2151,15 +1686,22 @@ export class NPCActorSheet extends SimpleActorSheet {
   
   async _rollTrait(traitName, traitValue) {
     const traitNamePrint = traitName.charAt(0).toUpperCase() + traitName.slice(1);
-    const roll = new Roll(`1d20 + @mod`, {mod: traitValue});
-    await roll.evaluate();
-  
+    const title = `Roll for ${traitNamePrint}`;
+    
+    // For NPCs, we'll use a simple d20 roll via quickRoll
+    const result = await game.daggerheart.rollHandler.quickRoll(`1d20 + ${traitValue}`, {
+      flavor: `<p class="roll-flavor-line"><b>${traitNamePrint}</b></p>`,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      sendToChat: false // We'll send our own message with additional flavor
+    });
+    
+    const roll = result.roll;
     const d20Term = roll.terms.find(t => t.faces === 20);
     const d20result = d20Term.results[0].result;
-  
-    let flavor = `${traitNamePrint}`;
+    
+    let flavor = `<p class="roll-flavor-line"><b>${traitNamePrint}</b></p>`;
     if (d20result === 20) {
-      flavor += ` - Critical Success!`;
+      flavor = `<p class="roll-flavor-line"><b>${traitNamePrint}</b> - <b>Critical Success!</b></p>`;
       
       // Apply mechanical effects for critical success (clear 1 stress for NPCs)
       await this._applyCriticalSuccess();
@@ -2169,18 +1711,18 @@ export class NPCActorSheet extends SimpleActorSheet {
     if (this._pendingRollType === "attack") {
       flavor += this._getTargetingResults(roll.total);
     }
-  
+    
     await roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: flavor,
-        flags: {
-          daggerheart: {
-            rollType: this._pendingRollType || "unknown",
-            weaponName: this._pendingWeaponName || "",
-            actorId: this.actor.id,
-            actorType: this.actor.type
-          }
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      flavor: flavor,
+      flags: {
+        daggerheart: {
+          rollType: this._pendingRollType || "unknown",
+          weaponName: this._pendingWeaponName || "",
+          actorId: this.actor.id,
+          actorType: this.actor.type
         }
+      }
     });
     
     // Clear pending roll data
