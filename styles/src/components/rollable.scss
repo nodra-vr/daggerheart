@@ -1,0 +1,8 @@
+/* Click and rollable elements */
+.daggerheart {
+  .click-rollable:hover, .basic-rollable:hover {
+    cursor: pointer;
+    filter: brightness(0.8);
+    color: var(--dh-color-gold);
+  }
+} 

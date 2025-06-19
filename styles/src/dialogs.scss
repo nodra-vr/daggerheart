@@ -356,7 +356,6 @@
   }
 
   .max-available {
-    flex: 0 0 70px;
     font-size: 0.8em;
     white-space: nowrap;
     color: var(--dh-color-gray);
@@ -364,7 +363,7 @@
   }
 }
 
-.daggerheart-dialog .recovery-minus, 
+.daggerheart-dialog .recovery-minus,
 .daggerheart-dialog .recovery-plus {
   width: 32px;
   height: 32px;
@@ -436,7 +435,7 @@
   white-space: nowrap;
 
   &:hover {
-    background: rgba(109, 103, 149, 0.8);
+    background: rgba(109, 103, 149,.8);
     border-color: var(--dh-color-gold);
     color: var(--dh-color-gold);
     transform: translateY(-1px);
