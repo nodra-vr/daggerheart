@@ -384,4 +384,13 @@ export class SimpleActor extends Actor {
     const allowed = Hooks.call("modifyTokenAttribute", {attribute, value, isDelta, isBar}, updates);
     return allowed !== false ? this.update(updates) : this;
   }
+
+  async clearAllStress() {
+    return this.update({"system.stress.value":0});
+  }
+
+  async clearAllHP() { 
+    this.system.health.value = 0;
+    return this.update({"system.health.value":0});
+  }
 }
