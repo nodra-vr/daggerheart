@@ -656,6 +656,12 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       attributeData = attributeData[pathParts[i]] || {};
     }
     
+    // For weapon modifiers, if the data is empty, get the actual field value
+    const isWeaponModifier = config.field.includes('weapon-main.to-hit') || config.field.includes('weapon-off.to-hit');
+    if (isWeaponModifier && (!attributeData || Object.keys(attributeData).length === 0)) {
+      attributeData = currentValue;
+    }
+    
     // Ensure modifiers is always an array
     if (config.hasModifiers && !Array.isArray(attributeData.modifiers)) {
       attributeData.modifiers = [];

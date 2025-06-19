@@ -13,12 +13,14 @@
             </div>
 
             <div class="portrait-container">
-                <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
-                {{#if isDying}}
-                <div class="death-overlay" title="NPC is dying!">
-                    <i class="fas fa-skull"></i>
+                <div class="portrait-image-wrapper">
+                    <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
+                    {{#if isDying}}
+                    <div class="death-overlay" title="NPC is dying!">
+                        <i class="fas fa-skull"></i>
+                    </div>
+                    {{/if}}
                 </div>
-                {{/if}}
             </div>
 
             <div class="resource stress">

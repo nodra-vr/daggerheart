@@ -166,7 +166,14 @@ Hooks.once("init", async function() {
 /**
  * Macrobar hook.
  */
-Hooks.on("hotbarDrop", (bar, data, slot) => createDaggerheartMacro(data, slot));
+Hooks.on("hotbarDrop", (bar, data, slot) => {
+  // For items, we want to create a macro instead of the default item behavior
+  if (data.type === "Item") {
+    createDaggerheartMacro(data, slot);
+    return false; // Prevent default behavior
+  }
+  return createDaggerheartMacro(data, slot);
+});
 
 /**
  * Ready hook to initialize the counter UI
