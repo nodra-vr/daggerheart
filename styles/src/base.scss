@@ -1,3 +1,4 @@
+/* Core Daggerheart System Styles */
 .daggerheart {
   a:hover {
     text-shadow: none;
@@ -33,6 +34,19 @@
     padding-left: .5em;
   }
 
+  .editor,
+  .editor-content {
+    height: 100%;
+    width: 95%;
+    margin: auto;
+  }
+
+  .editor {
+    border: 1px solid #6d6795;
+    border-radius: 25px;
+    padding: 1em;
+  }
+
   .window-content {
     height: 100%;
     padding: 5px;
@@ -59,19 +73,6 @@
       width: 100%;
       padding: 0.5em 5em;
     }
-  }
-
-  .editor,
-  .editor-content {
-    height: 100%;
-    width: 95%;
-    margin: auto;
-  }
-
-  .editor {
-    border: 1px solid #6d6795;
-    border-radius: 25px;
-    padding: 1em;
   }
 
   .click-rollable:hover, .basic-rollable:hover {

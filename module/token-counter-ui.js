@@ -260,6 +260,39 @@ export class TokenCounterUI {
         }
       }, true); // capture phase
     });
+
+    // Add right-click/left-click functionality to counter displays themselves
+    const setupCounterDisplay = (selector, modifyFunction) => {
+      const counterDisplay = document.querySelector(`${selector} .counter-display`);
+      if (counterDisplay) {
+        // Prevent default context menu
+        counterDisplay.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+
+        // Handle left-click (increment) and right-click (decrement)
+        counterDisplay.addEventListener("mousedown", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          if (e.button === 0) { // Left click
+            await modifyFunction(1);
+          } else if (e.button === 2) { // Right click
+            await modifyFunction(-1);
+          }
+        });
+
+        // Add visual feedback for interactivity
+        counterDisplay.style.cursor = "pointer";
+        counterDisplay.style.userSelect = "none";
+        counterDisplay.title = "Left-click to increase, Right-click to decrease";
+      }
+    };
+
+    // Setup for both HP and Hope/Stress counters
+    setupCounterDisplay("#token-hp-counter", this.modifyHP.bind(this));
+    setupCounterDisplay("#token-hope-counter", this.modifyHopeOrStress.bind(this));
   }
 
   /**

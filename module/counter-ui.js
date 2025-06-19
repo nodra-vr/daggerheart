@@ -129,6 +129,33 @@ export class CounterUI {
         }
       }, true); // Use capture phase
     });
+
+    // Add right-click/left-click functionality to the counter display itself
+    const counterDisplay = document.querySelector("#counter-ui .counter-display");
+    if (counterDisplay) {
+      // Prevent default context menu on the counter display
+      counterDisplay.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      // Handle left-click (increment) and right-click (decrement) on counter display
+      counterDisplay.addEventListener("mousedown", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (e.button === 0) { // Left click
+          await this.increase();
+        } else if (e.button === 2) { // Right click
+          await this.decrease();
+        }
+      });
+
+      // Add visual feedback for interactivity
+      counterDisplay.style.cursor = "pointer";
+      counterDisplay.style.userSelect = "none";
+      counterDisplay.title = "Left-click to increase, Right-click to decrease";
+    }
   }
 
   /**

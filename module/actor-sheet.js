@@ -126,6 +126,42 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     // Resource Management
     html.find(".resource-control").click(this._onResourceControl.bind(this));
 
+    // Add right-click/left-click functionality to resource boxes
+    html.find('.resource-box').each((index, resourceBox) => {
+      const $resourceBox = $(resourceBox);
+      const parentResource = $resourceBox.closest('.resource');
+      let field = null;
+
+      // Determine the field based on the resource type
+      if (parentResource.hasClass('health')) {
+        field = 'health.value';
+      } else if (parentResource.hasClass('hope')) {
+        field = 'hope.value';
+      } else if (parentResource.hasClass('stress')) {
+        field = 'stress.value';
+      } else if (parentResource.hasClass('armor-slots')) {
+        field = 'defenses.armor-slots.value';
+      }
+
+      if (field) {
+        $resourceBox.off('click.resource-increment contextmenu.resource-decrement');
+        
+        $resourceBox.on('click.resource-increment', async (e) => {
+          if (e.which === 1) { // Left click
+            e.preventDefault();
+            e.stopPropagation();
+            await this._modifyResourceValue(field, 1);
+          }
+        });
+
+        $resourceBox.on('contextmenu.resource-decrement', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          await this._modifyResourceValue(field, -1);
+        });
+      }
+    });
+    
     // Attribute Management
     html.find(".attributes").on("click", ".attribute-control", EntitySheetHelper.onClickAttributeControl.bind(this));
     html.find(".groups").on("click", ".group-control", EntitySheetHelper.onClickAttributeGroupControl.bind(this));
@@ -308,6 +344,15 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     textarea.on("keyup", () => {
       textarea.css("height", calcHeight(textarea.val()) + "px");
     });
+
+    // Add visual feedback and tooltips for all interactive displays
+    html.find('.resource-box').each((index, element) => {
+      element.style.cursor = 'pointer';
+      element.style.userSelect = 'none';
+      $(element).attr('title', 'Left-click to increase, Right-click to decrease');
+    });
+
+
   }
   
   /* -------------------------------------------- */
@@ -691,7 +736,11 @@ await game.daggerheart.rollHandler.dualityWithDialog({
             <div class="attribute-edit-content trait-edit-content">
               <div class="attribute-base-value trait-base-value">
                 <label>Base Value</label>
-                <input type="number" class="attribute-base-input trait-base-input" />
+                <div class="base-value-controls">
+                  <button type="button" class="base-value-decrement">-</button>
+                  <input type="number" class="attribute-base-input trait-base-input" />
+                  <button type="button" class="base-value-increment">+</button>
+                </div>
               </div>
               <div class="attribute-modifiers-section trait-modifiers-section">
                 <div class="modifiers-header">
@@ -825,6 +874,20 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     // Base value input handler
     const baseInput = overlay.find('.attribute-base-input');
     baseInput.on('input', () => this._updateTotal(overlay));
+    
+    // Base value increment/decrement buttons
+    overlay.find('.base-value-increment').on('click', () => {
+      const currentValue = parseInt(baseInput.val()) || 0;
+      baseInput.val(currentValue + 1);
+      this._updateTotal(overlay);
+    });
+    
+    overlay.find('.base-value-decrement').on('click', () => {
+      const currentValue = parseInt(baseInput.val()) || 0;
+      const newValue = Math.max(0, currentValue - 1); // Prevent negative values
+      baseInput.val(newValue);
+      this._updateTotal(overlay);
+    });
     
     // Keyboard shortcuts
     overlay.on('keydown', (e) => {
@@ -1468,6 +1531,71 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       
       this.actor.update({
         [`system.${field}`]: updateValue
+      });
+    }
+  }
+
+  /**
+   * Helper method to modify resource values (used by right-click/left-click functionality)
+   * @param {string} field - The field path to modify
+   * @param {number} delta - The amount to change (+1 or -1)
+   * @private
+   */
+  async _modifyResourceValue(field, delta) {
+    const currentValue = foundry.utils.getProperty(this.actor.system, field);
+    const newValue = Math.max(0, parseInt(currentValue) + delta);
+    
+    // Get max value for clamping if applicable
+    const resourceName = field.split('.')[0];
+    let maxValue = null;
+    if (resourceName === 'health' || resourceName === 'stress' || resourceName === 'hope') {
+      maxValue = foundry.utils.getProperty(this.actor.system, resourceName + '.max');
+    }
+    
+    const finalValue = maxValue ? Math.min(newValue, maxValue) : newValue;
+    
+    await this.actor.update({
+      [`system.${field}`]: finalValue
+    });
+  }
+
+  /* -------------------------------------------- */
+
+  async _modifyAttributeValue(field, delta) {
+    // Get current value
+    let currentValue = foundry.utils.getProperty(this.actor, field);
+    
+    // Handle both simple values and complex objects with .value
+    if (typeof currentValue === 'object' && currentValue !== null && 'value' in currentValue) {
+      currentValue = parseInt(currentValue.value) || 0;
+    } else {
+      currentValue = parseInt(currentValue) || 0;
+    }
+    
+    const newValue = Math.max(0, currentValue + delta);
+    
+    // For complex attribute structures, update just the value part
+    const pathParts = field.split('.');
+    if (pathParts.length > 2 && pathParts[pathParts.length - 1] === 'value') {
+      // Check if this is a complex structure that needs special handling
+      const attrPath = pathParts.slice(0, -1).join('.');
+      const attrData = foundry.utils.getProperty(this.actor, attrPath);
+      
+      if (typeof attrData === 'object' && attrData !== null) {
+        // Update the complex structure
+        await this.actor.update({
+          [field]: newValue
+        });
+      } else {
+        // Simple value
+        await this.actor.update({
+          [field]: newValue
+        });
+      }
+    } else {
+      // Direct value update
+      await this.actor.update({
+        [field]: newValue
       });
     }
   }

@@ -12,11 +12,11 @@ import { TokenCounterUI } from "./token-counter-ui.js";
 import { _rollHope, _rollFear, _rollDuality, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog } from './rollHandler.js';
 
 /**
- * Calculate the tier of play based on character level
- * @param {Actor|null} actor - The actor to get the level from (optional if level is provided)
- * @param {number|null} level - The level to calculate tier for (optional, will use actor's level if not provided)
- * @returns {number} The tier of play (1-4)
+ @param {Actor|null} actor (optional if level is provided)
+ @param {number|null} level (optional, will use actor's level if not provided)
+ @returns {number}
  */
+
 function _getTierOfPlay(actor = null, level = null) {
   let characterLevel = level;
   

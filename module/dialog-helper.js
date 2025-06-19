@@ -77,7 +77,10 @@ export class DaggerheartDialogHelper {
                        name="${config.singleSelect ? 'selection' : option.id}" 
                        value="${option.value || option.id}"
                        ${option.checked ? 'checked' : ''}>
-                <label for="${option.id}">${option.label}</label>
+                <label for="${option.id}">
+                  <strong>${option.label}</strong>
+                  ${option.description ? `<span class="option-description">${option.description}</span>` : ''}
+                </label>
               </div>
             `).join('')}
           </div>
@@ -806,7 +809,7 @@ export class DaggerheartDialogHelper {
       <form>
         <div class="daggerheart-dialog-content">
           <p class="dialog-description">Choose exactly <strong>two</strong> options for your Short Rest:</p>
-          <div class="checkbox-group short-rest-options">
+          <div class="checkbox-group">
             ${options.map(option => `
               <div class="checkbox-item">
                 <input type="checkbox" 
@@ -815,7 +818,7 @@ export class DaggerheartDialogHelper {
                        value="${option.value}">
                 <label for="${option.id}">
                   <strong>${option.label}</strong>
-                  <br><span class="option-description">${option.description}</span>
+                  <span class="option-description">${option.description}</span>
                 </label>
               </div>
             `).join('')}
@@ -830,7 +833,7 @@ export class DaggerheartDialogHelper {
     const result = await this.showDialog({
       title: `Short Rest - ${characterName}`,
       content,
-      dialogClass: 'short-rest-dialog',
+      dialogClass: 'checkbox-dialog short-rest-dialog',
       buttons: {
         confirm: {
           label: "Take Short Rest",
@@ -1125,11 +1128,11 @@ export class DaggerheartDialogHelper {
     const content = `
       <form>
         <div class="daggerheart-dialog-content">
-          <div class="long-rest-reminder">
+          <div class="dialog-reminder">
             <p><strong>Domain Card Swapping:</strong> You can swap any domain cards in your loadout for cards in your vault.</p>
           </div>
           <p class="dialog-description">Choose exactly <strong>two</strong> options for your Long Rest (or choose the same option twice):</p>
-          <div class="checkbox-group long-rest-options">
+          <div class="checkbox-group">
             ${options.map(option => `
               <div class="checkbox-item" data-option-id="${option.id}">
                 <input type="checkbox" 
@@ -1138,7 +1141,7 @@ export class DaggerheartDialogHelper {
                        value="${option.value}">
                 <label for="${option.id}">
                   <strong>${option.label}</strong>
-                  <br><span class="option-description">${option.description}</span>
+                  <span class="option-description">${option.description}</span>
                 </label>
               </div>
             `).join('')}
@@ -1153,7 +1156,7 @@ export class DaggerheartDialogHelper {
     const result = await this.showDialog({
       title: `Long Rest - ${characterName}`,
       content,
-      dialogClass: 'long-rest-dialog',
+      dialogClass: 'checkbox-dialog long-rest-dialog',
       buttons: {
         confirm: {
           label: "Take Long Rest",

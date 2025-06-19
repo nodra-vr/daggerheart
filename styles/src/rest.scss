@@ -30,5 +30,188 @@
     font-size: 1em;
     margin-right: 0.3em;
   }
+}
 
+/* All dialog styles moved to unified system in dialogs.scss */
+
+/* Short Rest Chat Message Styles */
+.short-rest-start {
+  padding: 1em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(129, 204, 195, 0.3), rgba(67, 160, 71, 0.3));
+  border: 2px solid #81ccc3;
+  border-radius: 10px;
+  text-align: center;
+
+  p {
+    color: #ffffff;
+    margin: 0.5em 0;
+  }
+
+  strong {
+    color: #a5d6a7;
+    font-size: 1.2em;
+    text-shadow: 0 0 8px rgba(165, 214, 167, 0.6);
+  }
+
+  em {
+    color: #e8f5e8;
+    opacity: 0.9;
+  }
+}
+
+.short-rest-tend-wounds,
+.short-rest-clear-stress,
+.short-rest-repair-armor,
+.short-rest-prepare {
+  padding: 1em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(129, 204, 195, 0.2));
+  border: 1px solid #66bb6a;
+  border-radius: 8px;
+  text-align: center;
+
+  p {
+    color: #ffffff;
+    margin: 0.5em 0;
+
+    &:first-child {
+      color: #a5d6a7;
+      font-weight: bold;
+      font-size: 1.1em;
+      text-shadow: 0 0 5px rgba(165, 214, 167, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  }
+
+  strong {
+    color: var(--dh-color-gold);
+    font-size: 1.1em;
+  }
+
+  em {
+    color: #e8f5e8;
+    font-size: 0.9em;
+    opacity: 0.9;
+  }
+}
+
+/* Long Rest Chat Message Styles */
+.long-rest-start {
+  padding: 1.2em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(103, 58, 183, 0.3), rgba(156, 39, 176, 0.3));
+  border: 2px solid #9c27b0;
+  border-radius: 12px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(156, 39, 176, 0.1) 0%, transparent 70%);
+    animation: longRestGlow 3s ease-in-out infinite;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  p {
+    color: #ffffff;
+    margin: 0.5em 0;
+  }
+
+  strong {
+    color: #ce93d8;
+    font-size: 1.3em;
+    text-shadow: 0 0 10px rgba(206, 147, 216, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  em {
+    color: #f3e5f5;
+    opacity: 0.95;
+    font-size: 1.1em;
+  }
+}
+
+.long-rest-tend-wounds,
+.long-rest-clear-stress,
+.long-rest-repair-armor,
+.long-rest-prepare,
+.long-rest-work-project {
+  padding: 1.2em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(103, 58, 183, 0.2), rgba(156, 39, 176, 0.2));
+  border: 1px solid #9c27b0;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
+
+  p {
+    color: #ffffff;
+    margin: 0.5em 0;
+
+    &:first-child {
+      color: #ce93d8;
+      font-weight: bold;
+      font-size: 1.2em;
+      text-shadow: 0 0 8px rgba(206, 147, 216, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.75em;
+    }
+  }
+
+  strong {
+    color: var(--dh-color-gold);
+    font-size: 1.1em;
+  }
+
+  em {
+    color: #f3e5f5;
+    font-size: 0.95em;
+    opacity: 0.95;
+    font-weight: bold;
+  }
+}
+
+.long-rest-prepare .prepare-note,
+.long-rest-work-project .project-note {
+  margin-top: 1em;
+  padding: 0.75em;
+  background: rgba(67, 63, 100, 0.3);
+  border: 1px solid #6d6795;
+  border-radius: 6px;
+
+  p {
+    margin: 0.25em 0;
+    font-size: 0.9em;
+    color: #e0e0e0;
+    line-height: 1.4;
+  }
+}
+
+.long-rest-work-project .project-note {
+  text-align: left;
+}
+
+@keyframes longRestGlow {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.1;
+  }
+  50% {
+    transform: scale(1.1) rotate(180deg);
+    opacity: 0.3;
+  }
 }

@@ -1,4 +1,5 @@
-/* General Sheet styling */
+/* General Sheet and Window Layouts */
+/* Sheet Sizing */
 .daggerheart.sheet.actor, .daggerheart.sheet.npc {
   min-width: 700px;
   min-height: 800px;
@@ -14,6 +15,7 @@
   min-height: 420px;
 }
 
+/* Window Content Styling */
 .actor .window-content, .item .window-content, .npc .window-content {
   background: transparent;
   background-color: transparent;
@@ -28,6 +30,7 @@
   padding: 1em 2em;
 }
 
+/* Window Header Styling */
 .actor .window-header, .npc .window-header, .item .window-header {
   background: transparent;
   backdrop-filter: blur(5px);
@@ -43,6 +46,7 @@
   position: relative;
 }
 
+/* Sheet Backgrounds */
 .actor {
   background: transparent;
 }
@@ -51,6 +55,12 @@
   background: transparent;
 }
 
+.sheet.actor, .sheet.npc, .sheet.item {
+  background: rgba(11, 10, 19, 0.8392156863);
+  backdrop-filter: blur(5px);
+}
+
+/* Input Styling for Sheets */
 .daggerheart .actor input[type=text], .daggerheart .actor input[type=number], .daggerheart .actor input[type=password],
 .daggerheart .actor input[type=date], .daggerheart .actor input[type=time], .daggerheart .actor input[type=search] {
   color: #f0f0e0;
@@ -61,11 +71,7 @@
   color: #f0f0e0;
 }
 
-.sheet.actor, .sheet.npc, .sheet.item {
-  background: rgba(11, 10, 19, 0.8392156863);
-  backdrop-filter: blur(5px);
-}
-
+/* Item Sheet Specific Layouts */
 .item-bg {
   position: absolute;
   top: -1vh;
@@ -122,5 +128,27 @@
   z-index: 1;
 }
 
-/* Remaining Sheet-specific Styles */
-@import "./actorSheet/itemList"; 
+/* Base Sheet Body Layout */
+.daggerheart .window-content {
+  height: 100%;
+  padding: 5px;
+  overflow-y: hidden;
+}
+.daggerheart form {
+  height: 100%;
+}
+.daggerheart .sheet-body {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+.daggerheart .sheet-body .tab {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0px;
+  width: 100%;
+  padding: 0.5em 5em;
+}
