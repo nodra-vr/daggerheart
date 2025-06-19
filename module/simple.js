@@ -9,6 +9,8 @@ import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
 
+import Rolls from './rolls.js';
+
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
@@ -48,7 +50,8 @@ Hooks.once("init", async function() {
 
   game.daggerheart = {
     SimpleActor,
-    createDaggerheartMacro
+    createDaggerheartMacro,
+    Rolls
   };
 
   // Define custom Document classes
