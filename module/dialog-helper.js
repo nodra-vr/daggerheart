@@ -299,6 +299,7 @@ export class DaggerheartDialogHelper {
             sendToChat: false,
             returnRoll: false
           });
+          console.log(game.daggerheart.rollHandler);
           
           const { hopeDieValue, fearDieValue, isCrit } = dualityResult;
           const hopeWins = hopeDieValue > fearDieValue;
@@ -333,6 +334,7 @@ export class DaggerheartDialogHelper {
               }
             });
             
+            await game.daggerheart.rollHandler.waitFor3dDice(criticalMessage.id);
             ui.notifications.info(`${characterName} achieves miraculous recovery!`);
             
           } else if (hopeWins) {
@@ -357,6 +359,10 @@ export class DaggerheartDialogHelper {
             });
             
             // Show recovery allocation dialog
+
+            await game.daggerheart.rollHandler.waitFor3dDice(hopeMessage.id);
+            ui.notifications.info(`${characterName} achieves miraculous recovery!`);
+
             const recoveryChoice = await this.showRecoveryAllocationDialog({
               characterName: characterName,
               availablePoints: hopeDieValue,
@@ -423,6 +429,7 @@ export class DaggerheartDialogHelper {
               }
             });
             
+            await game.daggerheart.rollHandler.waitFor3dDice(deathMessage.id);
             ui.notifications.warn(`${characterName} has paid the ultimate price.`);
           }
           
