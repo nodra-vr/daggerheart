@@ -751,6 +751,10 @@
     opacity: 0.8;
 }
 
+.item nav.sheet-tabs.tabs {
+    margin-top: 0.1em;
+}
+
 /* Character Tab */
 .character-main-section {
   display: flex;
@@ -1442,15 +1446,17 @@ input.trait-effects.resize-ta {
   border: 2px solid var(--dh-color-gold);
   border-style: double;
   border-radius: 0px 10px;
+  z-index: -500;
 }
 
 .item .sheet-header .header-fields {
   flex: 1;
-  border: 2px solid var(--dh-color-gold);
+  border: none;
   border-radius: 0px 10px;
   margin-right: 0;
   padding: 0px;
-  padding-bottom: 0px;
+  padding-top: 140px;
+  padding-bottom: 0px !important;
   display: flex;
   height: fit-content;
   flex-direction: column;
@@ -1483,7 +1489,7 @@ input.trait-effects.resize-ta {
   width: 100%;
   font-weight: 600;
   overflow: hidden;
-  line-height: 1;
+  line-height: 0.9;
   border: none;
   text-align: center;
   letter-spacing: 0px;
