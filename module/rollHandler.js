@@ -378,6 +378,12 @@ export async function _quickRoll(dieFormula, options = {}) {
   };
 }
 
+export async function _waitFor3dDice(msgId) {
+  if (game.dice3d){
+    return game.dice3d.waitFor3DAnimationByMessageID(msgId);
+  }
+  return Promise.resolve(true);
+}
 
 
 export async function _dualityWithDialog(config) {
@@ -509,6 +515,7 @@ Hooks.once('init', () => {
     disableForcedCritical: _disableForcedCritical,
     isForcedCriticalActive: _isForcedCriticalActive,
     quickRoll: _quickRoll,
-    dualityWithDialog: _dualityWithDialog
+    dualityWithDialog: _dualityWithDialog,
+    waitFor3dDice: _waitFor3dDice
   };
 });
