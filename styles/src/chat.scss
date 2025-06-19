@@ -1,0 +1,658 @@
+/* Chat Messages */
+.chat-message {
+  margin: 7px 4px;
+  padding: 0.75em 1em;
+  font-size: var(--font-size-12);
+  color: var(--dh-color-off-white);
+  background: rgba(11, 10, 19, 0.8392156863);
+  border: 1px solid #6d6795;
+  backdrop-filter: blur(5px);
+  border-radius: 10px;
+
+  .message-header {
+    line-height: 20px;
+    color: var(--dh-color-off-white);
+    font-weight: 100;
+    font-size: var(--font-size-12);
+    margin-bottom: 0.5em;
+
+    .flavor-text, .whisper-to {
+      flex: 0 0 100%;
+      font-size: var(--font-size-12);
+    }
+
+    .message-sender {
+      flex: 3;
+      margin: 0;
+      white-space: nowrap;
+      text-transform: uppercase;
+      color: var(--dh-color-teal);
+    }
+  }
+
+  .dice-roll .dice-formula, .dice-roll .dice-total {
+    flex: 0 0 100%;
+    position: relative;
+    margin: 0;
+    line-height: 24px;
+    text-align: center;
+    background: rgba(11, 10, 19, 0.8392156863);
+    border: 1px solid #6d6795;
+    box-shadow: none;
+    border-radius: 10px;
+    word-break: break-all;
+    margin-top: 0.25em;
+  }
+
+  .message-content {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    word-break: break-word;
+    padding-bottom: 0.5em;
+
+    p {
+      margin: 0px;
+      font-size: var(--font-size-14);
+      font-weight: 200;
+    }
+  }
+
+  &.whisper {
+    background: #292941;
+    border: 1px solid var(--dh-color-purple-light);
+  }
+
+  /* Roll Outcome Styling */
+  .roll-outcome {
+    font-size: 1.25em;
+    font-weight: bold;
+
+    &.success,
+    &.failure {
+      color: var(--dh-color-gold);
+    }
+  }
+
+  .roll-effect {
+    font-size: 12px;
+    color: #6c6a85;
+    font-weight: lighter;
+    margin-top: 0;
+    margin-bottom: 0.25em;
+  }
+
+  .roll-flavor-line {
+    margin: 0;
+  }
+}
+
+/* Remove padding and default styling from chat messages that contain an item card */
+.chat-message:has(.item-card-chat) {
+  padding: 0;
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+}
+
+/* Daggerheart Chat Cards */
+.daggerheart.chat-card.item-card {
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 0px;
+  margin: 0px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1em;
+  color: var(--dh-color-gold);
+  font-size: 1.25em;
+  border-bottom: 1px solid rgba(216, 216, 214, 0.1490196078);
+  margin-bottom: 0.5em;
+
+  h3 {
+    border-bottom: none;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  img {
+    box-sizing: border-box;
+    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    object-position: top;
+    border: 2px solid var(--dh-color-gray);
+  }
+
+  .flexrow {
+    display: flex;
+    width: 100%;
+  }
+}
+
+/* Item Card in Chat */
+.message-content .item-card-chat {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  border: 1px solid #6d6795;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(11, 10, 19, 0.8392156863);
+  backdrop-filter: blur(5px);
+  color: var(--dh-color-off-white);
+}
+
+.item-card-chat {
+  .card-image-container {
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 10px;
+    color: white;
+    border-bottom: 1px solid var(--dh-color-gold);
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+      z-index: 0;
+    }
+  }
+
+  .card-header-text {
+    z-index: 1;
+    position: relative;
+
+    h3 {
+      margin: 0;
+      font-size: 1.5em;
+      font-weight: bold;
+      border: none;
+      color: var(--dh-color-gold);
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  .card-content {
+    padding: 15px;
+  }
+
+  .card-subtitle {
+    font-size: 0.8em;
+    text-transform: uppercase;
+    color: var(--dh-color-gray);
+    opacity: 0.8;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #433f64;
+    padding-bottom: 5px;
+  }
+
+  .card-description {
+    font-size: 0.9em;
+
+    p {
+      margin: 0.5em 0;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    /* Override dark header colors in item-card-chat descriptions */
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--dh-color-off-white) !important;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+  }
+}
+
+/* Damage Roll Button in Chat */
+.damage-roll-button {
+  background: rgba(11, 10, 19, 0.85);
+  border: 1px solid #433f64;
+  border-radius: 1em;
+  color: #f3c267;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  font-size: 1.15em;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+
+  &:hover {
+    background: rgba(35, 34, 43, 0.9);
+    border-color: #f3c267;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  i {
+    color: #f3c267;
+  }
+
+  /* Critical Damage Button Styling */
+  &.critical {
+    background: rgba(35, 10, 10, 0.85);
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    animation: criticalGlow 2s ease-in-out infinite;
+
+    &:hover {
+      background: rgba(55, 15, 15, 0.9);
+      border-color: #ff9999;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
+    }
+
+    i {
+      color: #ff6b6b;
+    }
+  }
+}
+
+@keyframes criticalGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.8), 0 0 20px rgba(255, 107, 107, 0.4);
+  }
+}
+
+/* Inline links and rolls */
+body.game .app a.inline-roll, a.inline-roll.roll {
+  background: rgba(11, 10, 19, 0.85);
+  border: 1px solid #433f64;
+  border-radius: 0.5em;
+  color: #f3c267;
+  font-weight: 600;
+
+  i {
+    color: #f3c267;
+  }
+}
+
+body.game .app a.content-link {
+  background: rgba(11, 10, 19, 0.85);
+  border: 1px solid #433f64;
+  border-radius: 0.5em;
+  color: #f3c267;
+  font-weight: 600;
+  padding: 1px 4px;
+  white-space: nowrap;
+  word-break: break-all;
+}
+
+/* Death Move Messages */
+.death-move-blaze {
+  padding: 1em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.3), rgba(255, 69, 0, 0.3));
+  border: 2px solid #ff8c00;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 140, 0, 0.2) 0%, transparent 70%);
+    animation: blazeGlow 3s ease-in-out infinite;
+  }
+
+  p {
+    position: relative;
+    z-index: 1;
+    margin: 0.5em 0;
+    text-align: center;
+    color: #ffffff;
+  }
+
+  strong {
+    color: #ffeb3b;
+    font-size: 1.2em;
+    text-shadow: 0 0 10px rgba(255, 235, 59, 0.8);
+  }
+
+  em {
+    color: #ffd54f;
+    display: block;
+    margin-top: 0.5em;
+  }
+}
+
+.death-move-blaze-complete {
+  padding: 1.5em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(60, 60, 60, 0.95));
+  border: 2px solid #ffeb3b;
+  border-radius: 10px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 235, 59, 0.4);
+  text-align: center;
+
+  strong {
+    color: #ffeb3b;
+    font-size: 1.3em;
+    text-shadow: 0 0 15px rgba(255, 235, 59, 1);
+    display: block;
+    margin-bottom: 0.5em;
+  }
+
+  em {
+    color: #ffffff;
+    font-size: 1.1em;
+    line-height: 1.4;
+  }
+}
+
+@keyframes blazeGlow {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.death-move-avoid {
+  padding: 1em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.3), rgba(3, 169, 244, 0.3));
+  border: 2px solid #42a5f5;
+  border-radius: 10px;
+  text-align: center;
+
+  strong {
+    color: #81d4fa;
+    font-size: 1.1em;
+    text-shadow: 0 0 8px rgba(129, 212, 250, 0.6);
+  }
+
+  em {
+    color: #ffffff;
+    opacity: 0.95;
+  }
+}
+
+.death-move-avoid-result {
+  padding: 1.2em;
+  margin: 0.5em 0;
+  background: rgba(30, 30, 30, 0.9);
+  border: 2px solid #42a5f5;
+  border-radius: 10px;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, transparent 0%, rgba(66, 165, 245, 0.1) 100%);
+    border-radius: 8px;
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  p {
+    margin: 0.5em 0;
+    text-align: center;
+    color: #ffffff;
+
+    &:first-child {
+      font-size: 1.2em;
+      color: #81d4fa;
+      margin-bottom: 1em;
+      font-weight: bold;
+    }
+
+    strong {
+      color: #ffeb3b;
+      font-size: 1.1em;
+    }
+  }
+
+  .scar-gained {
+    color: #ffffff;
+    font-size: 1.1em;
+    margin-top: 1em;
+    padding: 0.5em;
+    background: rgba(244, 67, 54, 0.3);
+    border: 1px solid #f44336;
+    border-radius: 5px;
+  }
+
+  .scar-avoided {
+    color: #ffffff;
+    font-size: 1.1em;
+    margin-top: 1em;
+    padding: 0.5em;
+    background: rgba(76, 175, 80, 0.3);
+    border: 1px solid #4caf50;
+    border-radius: 5px;
+  }
+
+  .scar-note {
+    font-size: 0.9em;
+    color: #e0e0e0;
+    font-style: italic;
+    margin-top: 0.5em;
+  }
+}
+
+.death-move-risk {
+  padding: 1em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.3), rgba(103, 58, 183, 0.3));
+  border: 2px solid #ab47bc;
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(156, 39, 176, 0.2) 0%, transparent 70%);
+    animation: riskPulse 2s ease-in-out infinite;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  p {
+    color: #ffffff;
+  }
+
+  strong {
+    color: #e1bee7;
+    font-size: 1.2em;
+    text-shadow: 0 0 10px rgba(225, 190, 231, 0.8);
+  }
+
+  em {
+    color: #f3e5f5;
+    opacity: 0.95;
+  }
+}
+
+.death-move-risk-critical {
+  padding: 1.5em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(255, 235, 59, 0.2), rgba(255, 193, 7, 0.2));
+  border: 3px solid #ffeb3b;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(255, 235, 59, 0.6), inset 0 0 20px rgba(255, 235, 59, 0.1);
+  text-align: center;
+  animation: criticalGlow 1.5s ease-in-out infinite;
+
+  p {
+    color: #ffffff;
+
+    &:first-child {
+      font-size: 1.3em;
+      color: #ffeb3b;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 0.5em;
+      text-shadow: 0 0 15px rgba(255, 235, 59, 0.8);
+    }
+  }
+
+  .miracle {
+    color: #fff9c4;
+    font-size: 1.2em;
+    margin: 1em 0;
+  }
+
+  .full-heal {
+    color: #ffffff;
+    font-weight: bold;
+    background: rgba(76, 175, 80, 0.4);
+    border: 1px solid #4caf50;
+    padding: 0.5em;
+    border-radius: 8px;
+    margin-top: 1em;
+  }
+}
+
+.death-move-risk-hope {
+  padding: 1.2em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(67, 160, 71, 0.3));
+  border: 2px solid #66bb6a;
+  border-radius: 10px;
+  text-align: center;
+
+  p {
+    color: #ffffff;
+
+    &:first-child {
+      font-size: 1.2em;
+      color: #a5d6a7;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+      text-shadow: 0 0 8px rgba(165, 214, 167, 0.6);
+    }
+  }
+
+  .recovery-available {
+    color: #ffffff;
+    font-size: 1.1em;
+    background: rgba(255, 235, 59, 0.3);
+    border: 1px solid #ffeb3b;
+    padding: 0.5em;
+    border-radius: 5px;
+    margin-top: 1em;
+  }
+}
+
+.death-move-risk-death {
+  padding: 1.2em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.4), rgba(139, 0, 0, 0.6));
+  border: 2px solid #f44336;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: inset 0 0 20px rgba(244, 67, 54, 0.3);
+
+  p {
+    color: #ffffff;
+
+    &:first-child {
+      font-size: 1.2em;
+      color: #ffcdd2;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+      text-shadow: 0 0 8px rgba(255, 205, 210, 0.6);
+    }
+  }
+
+  .final-words {
+    color: #e0e0e0;
+    font-style: italic;
+    margin: 1em 0;
+  }
+
+  .death-result {
+    color: #ffffff;
+    font-weight: bold;
+    background: rgba(139, 0, 0, 0.4);
+    border: 1px solid #8b0000;
+    padding: 0.5em;
+    border-radius: 5px;
+    margin-top: 1em;
+  }
+}
+
+.death-move-risk-recovery {
+  padding: 1em;
+  margin: 0.5em 0;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(129, 204, 195, 0.3));
+  border: 2px solid #66bb6a;
+  border-radius: 10px;
+  text-align: center;
+
+  p {
+    color: #ffffff;
+
+    &:first-child {
+      font-size: 1.1em;
+      color: #a5d6a7;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+      text-shadow: 0 0 8px rgba(165, 214, 167, 0.6);
+    }
+  }
+
+  .recovery-result {
+    color: #fff9c4;
+    font-style: italic;
+    margin-top: 0.5em;
+  }
+}
+
+@keyframes riskPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.6;
+  }
+} 

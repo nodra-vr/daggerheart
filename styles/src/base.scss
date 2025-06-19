@@ -1,71 +1,82 @@
-.daggerheart a:hover{
-  text-shadow: none;
-}
+.daggerheart {
+  a:hover {
+    text-shadow: none;
+  }
 
-.daggerheart a{
-  cursor: auto;
-  text-shadow: none;
-}
+  a {
+    cursor: auto;
+    text-shadow: none;
+  }
 
-.daggerheart input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus, input[type="date"]:focus, input[type="time"]:focus, input[type="search"]:focus {
-  box-shadow: none !important;
-}
+  input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus, input[type="date"]:focus, input[type="time"]:focus, input[type="search"]:focus {
+    box-shadow: none !important;
+  }
 
-.daggerheart input[type=text], input[type=number], input[type=password], input[type=date], input[type=time], input[type=datetime-local], input[type=search], input[type=file], select {
-  box-shadow: none !important;
-}
+  input[type=text], input[type=number], input[type=password], input[type=date], input[type=time], input[type=datetime-local], input[type=search], input[type=file], select {
+    box-shadow: none !important;
+  }
 
-.daggerheart h1 {
-  font-size: 1.2em;
-  border-bottom: initial;
-  text-transform: uppercase;
-  letter-spacing: 5px;
-  color: var(--dh-color-gold-dark);
-  font-weight: 700;
-  margin-top: .75em;
-}
+  h1 {
+    font-size: 1.2em;
+    border-bottom: initial;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    color: var(--dh-color-gold-dark);
+    font-weight: 700;
+    margin-top: .75em;
+  }
 
-.daggerheart p:not(.editor-content p):not(.ProseMirror p) {
-  font-size: 12px;
-  margin: 0.25em 1.75em;
-  margin-bottom: 1em;
-  padding-left: .5em;
-}
+  p:not(.editor-content p):not(.ProseMirror p) {
+    font-size: 12px;
+    margin: 0.25em 1.75em;
+    margin-bottom: 1em;
+    padding-left: .5em;
+  }
 
-.daggerheart .window-content {
-  height: 100%;
-  padding: 5px;
-  overflow-y: hidden;
-}
-.daggerheart form {
-  height: 100%;
-}
+  .window-content {
+    height: 100%;
+    padding: 5px;
+    overflow-y: hidden;
+  }
 
-/* Base styles */
-.daggerheart .sheet-body {
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  align-items: center;
-}
-.daggerheart .sheet-body .tab {
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin: 0px;
-  width: 100%;
-  padding: 0.5em 5em;
-}
-.daggerheart .editor,
-.daggerheart .editor-content {
-  height: 100%;
-  width:95%;
-  margin: auto;
-}
+  form {
+    height: 100%;
+  }
 
-.daggerheart .editor {
-  border: 1px solid #6d6795;
-  border-radius: 25px;
-  padding: 1em;
+  /* Base styles */
+  .sheet-body {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+
+    .tab {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin: 0px;
+      width: 100%;
+      padding: 0.5em 5em;
+    }
+  }
+
+  .editor,
+  .editor-content {
+    height: 100%;
+    width: 95%;
+    margin: auto;
+  }
+
+  .editor {
+    border: 1px solid #6d6795;
+    border-radius: 25px;
+    padding: 1em;
+  }
+
+  .click-rollable:hover, .basic-rollable:hover {
+    cursor: pointer;
+    filter: brightness(0.8);
+    color: var(--dh-color-gold);
+  }
 }
