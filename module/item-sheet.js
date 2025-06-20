@@ -9,11 +9,29 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
 
   /** @inheritdoc */
   static get defaultOptions() {
+    // Calculate responsive dimensions based on screen size
+    const screenHeight = window.innerHeight;
+    const screenWidth = window.innerWidth;
+    
+    // Calculate optimal height for item sheet (smaller than actor sheets)
+    const maxHeight = Math.floor(screenHeight * 0.8);
+    const minHeight = 400; // Minimum usable height for items
+    const preferredHeight = 550; // Ideal height for larger screens
+    
+    const height = Math.max(minHeight, Math.min(preferredHeight, maxHeight));
+    
+    // Calculate width for item sheet
+    const maxWidth = Math.floor(screenWidth * 0.8);
+    const minWidth = 350; // Maintain minimum width for usability
+    const preferredWidth = 425; // Standard width for items
+    
+    const width = Math.max(minWidth, Math.min(preferredWidth, maxWidth));
+    
     return foundry.utils.mergeObject(super.defaultOptions, {
           classes: ["daggerheart", "sheet", "item"],
     template: "systems/daggerheart/templates/item-sheet.html",
-      width: 425,
-      height: 550,
+      width: width,
+      height: height,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
       scrollY: [".attributes"],
     });

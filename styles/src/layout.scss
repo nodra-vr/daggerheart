@@ -1,19 +1,19 @@
 /* General Sheet and Window Layouts */
 
 /* Sheet Sizing */
-.daggerheart.sheet.actor, .daggerheart.sheet.npc {
-  min-width: 700px;
-  min-height: 800px;
+.daggerheart.sheet.actor {
+  min-width: 560px;
+  min-height: 600px;
+}
+
+.daggerheart.sheet.npc {
+  min-width: 560px;
+  min-height: 500px;
 }
 
 .daggerheart.sheet.item {
   min-width: 350px;
-  min-height: 500px;
-}
-
-.daggerheart.sheet.item, .daggerheart.sheet.npc {
-  min-width: 560px;
-  min-height: 420px;
+  min-height: 400px;
 }
 
 /* Window Content Styling */

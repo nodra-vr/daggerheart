@@ -27,11 +27,30 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   
   /** @inheritdoc */
   static get defaultOptions() {
+    // Calculate responsive dimensions based on screen size
+    const screenHeight = window.innerHeight;
+    const screenWidth = window.innerWidth;
+    
+    // Calculate optimal height (leave space for browser UI, taskbar, etc.)
+    // Use 85% of available height but ensure it's within reasonable bounds
+    const maxHeight = Math.floor(screenHeight * 0.85);
+    const minHeight = 600; // Minimum usable height
+    const preferredHeight = 980; // Ideal height for larger screens
+    
+    const height = Math.max(minHeight, Math.min(preferredHeight, maxHeight));
+    
+    // Calculate width proportionally for smaller screens
+    const maxWidth = Math.floor(screenWidth * 0.9);
+    const minWidth = 560; // Maintain minimum width for usability
+    const preferredWidth = 560; // Standard width
+    
+    const width = Math.max(minWidth, Math.min(preferredWidth, maxWidth));
+    
     return foundry.utils.mergeObject(super.defaultOptions, {
           classes: ["daggerheart", "sheet", "actor"],
     template: "systems/daggerheart/templates/actor-sheet.html",
-      width: 560,
-      height: 980,
+      width: width,
+      height: height,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
       scrollY: [".biography", ".items", ".attributes"],
       dragDrop: [
@@ -1628,11 +1647,29 @@ export class NPCActorSheet extends SimpleActorSheet {
   
   /** @inheritdoc */
   static get defaultOptions() {
+    // Calculate responsive dimensions based on screen size
+    const screenHeight = window.innerHeight;
+    const screenWidth = window.innerWidth;
+    
+    // Calculate optimal height for NPC sheet (typically smaller than PC sheet)
+    const maxHeight = Math.floor(screenHeight * 0.85);
+    const minHeight = 500; // Minimum usable height for NPC
+    const preferredHeight = 840; // Ideal height for larger screens
+    
+    const height = Math.max(minHeight, Math.min(preferredHeight, maxHeight));
+    
+    // Calculate width for NPC sheet
+    const maxWidth = Math.floor(screenWidth * 0.9);
+    const minWidth = 560; // Maintain minimum width for usability
+    const preferredWidth = 650; // Standard width for NPC
+    
+    const width = Math.max(minWidth, Math.min(preferredWidth, maxWidth));
+    
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["daggerheart", "sheet", "npc"],
       template: "systems/daggerheart/templates/actor-sheet-npc.html",
-      width: 650,
-      height: 840,
+      width: width,
+      height: height,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "experience"}],
       scrollY: [".biography", ".items", ".attributes"],
       dragDrop: [
