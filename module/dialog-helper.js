@@ -611,14 +611,6 @@ export class DaggerheartDialogHelper {
     const content = `
     <form>
     <div class="flex-col" style="align-items: stretch; gap: 2rem">
-        <div class="flex-row" style="justify-content: center; gap: 2rem;">
-            <div class="flex-col">
-                <span class="label-bar">Die</span>
-                <select name="dieSize" id="dieSize">
-                    <option value="d20" ${ initialValues.dieSize === 'd20' ? 'selected' : ''}>d20</option>
-                </select>
-            </div>
-        </div>
       <div class="flex-row">
         <div class="flex-col stepper-group">
           <span class="label-bar">Advantage</span>
@@ -663,7 +655,7 @@ export class DaggerheartDialogHelper {
             const advantage = parseInt(html.find('#npcDiceAdvantageInput').val()) || 0;
             const disadvantage = parseInt(html.find('#npcDiceDisadvantageInput').val()) || 0;
             const modifier = parseInt(html.find('#npcDiceModifierInput').val()) || 0;
-            const dieSize = html.find('#dieSize').val();
+            const dieSize = defaults.dieSize;
             return { advantage, disadvantage, modifier, dieSize };
           }
         },
@@ -674,7 +666,7 @@ export class DaggerheartDialogHelper {
             const advantage = parseInt(html.find('#npcDiceAdvantageInput').val()) || 0;
             const disadvantage = parseInt(html.find('#npcDiceDisadvantageInput').val()) || 0;
             const modifier = parseInt(html.find('#npcDiceModifierInput').val()) || 0;
-            const dieSize = html.find('#dieSize').val();
+            const dieSize = defaults.dieSize;
             return { advantage, disadvantage, modifier, dieSize, reaction: true };
           }
         },
