@@ -258,6 +258,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     // Generic attribute value popup functionality
     html.find(".attribute-value-display").click(this._onAttributeValueClick.bind(this));
     
+    // Threshold HP marking functionality
+    html.find(".threshold-clickable").click(this._onThresholdClick.bind(this));
     
     // Dynamic text sizing for inputs
     function adjustTextSize(input, baseFontSizeEm = 1, minFontSizeEm = 0.5) {
@@ -1616,6 +1618,39 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       }
     });
   }
+
+  /**
+   * Handle threshold HP marking clicks
+   * @param {Event} event - The click event
+   * @private
+   */
+  async _onThresholdClick(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const hpAmount = parseInt(element.dataset.hpAmount);
+    
+    if (!hpAmount || !this.actor.system.health) {
+      return;
+    }
+    
+    // Add damage (mark HP)
+    await this._addDamage(hpAmount);
+  }
+
+  /**
+   * Add damage to current health value (mark HP)
+   * @param {number} damage - The amount of damage to add
+   * @private
+   */
+  async _addDamage(damage) {
+    const currentHP = parseInt(this.actor.system.health.value) || 0;
+    const maxHP = parseInt(this.actor.system.health.max) || 0;
+    const newHP = Math.max(0, Math.min(maxHP, currentHP + damage));
+    
+    await this.actor.update({
+      "system.health.value": newHP
+    });
+  }
 }
 
 
@@ -1640,7 +1675,7 @@ export class NPCActorSheet extends SimpleActorSheet {
     
     // Calculate width for NPC sheet
     const maxWidth = Math.floor(screenWidth * 0.9);
-    const minWidth = 560; // Maintain minimum width for usability
+    const minWidth = 690; // Maintain minimum width for usability
     const preferredWidth = 650; // Standard width for NPC
     
     const width = Math.max(minWidth, Math.min(preferredWidth, maxWidth));

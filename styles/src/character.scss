@@ -629,6 +629,22 @@ input.trait-effects.resize-ta {
 	padding-bottom: 1.35em;
 }
 
+.threshold-clickable {
+	cursor: pointer;
+	transition: all 0.2s ease;
+	user-select: none;
+	
+	&:hover {
+		color: var(--dh-color-gold-light);
+		opacity: 1;
+		transform: scale(1.1);
+	}
+	
+	&:active {
+		transform: scale(0.95);
+	}
+}
+
 .armorslots .trait-effects {
   color: #6c6a85;
 }

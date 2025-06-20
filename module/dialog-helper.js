@@ -936,7 +936,7 @@ export class DaggerheartDialogHelper {
     const content = `
       <form>
         <div class="daggerheart-dialog-content">
-          <p class="dialog-description">Choose exactly <strong>two</strong> options for your Short Rest:</p>
+          <p class="dialog-description">Choose your options for your Short Rest:</p>
           <div class="checkbox-group">
             ${options.map(option => `
               <div class="checkbox-item">
@@ -950,9 +950,6 @@ export class DaggerheartDialogHelper {
                 </label>
               </div>
             `).join('')}
-          </div>
-          <div class="selection-counter">
-            <span id="selection-count">0</span> of 2 options selected
           </div>
         </div>
       </form>
@@ -980,41 +977,11 @@ export class DaggerheartDialogHelper {
         }
       },
       render: (html) => {
-        // Add event listeners for checkbox selection validation
-        const checkboxes = html.find('input[type="checkbox"]');
-        const confirmButton = html.find('button[data-button="confirm"]');
-        const selectionCount = html.find('#selection-count');
-        
-        const updateSelectionCount = () => {
-          const checkedCount = html.find('input[type="checkbox"]:checked').length;
-          selectionCount.text(checkedCount);
-          
-          if (checkedCount === 2) {
-            confirmButton.prop('disabled', false);
-            selectionCount.parent().removeClass('invalid').addClass('valid');
-          } else {
-            confirmButton.prop('disabled', true);
-            selectionCount.parent().removeClass('valid').addClass('invalid');
-          }
-          
-          // Disable unchecked boxes if 2 are already selected
-          if (checkedCount === 2) {
-            checkboxes.each((i, el) => {
-              if (!el.checked) {
-                $(el).prop('disabled', true);
-              }
-            });
-          } else {
-            checkboxes.prop('disabled', false);
-          }
-        };
-        
-        checkboxes.on('change', updateSelectionCount);
-        updateSelectionCount(); // Initial state
+        // No validation needed - players can select any number of options
       }
     });
 
-    if (result && result.selected && result.selected.length === 2) {
+    if (result && result.selected) {
       // Process the short rest with selected options
       await this._processShortRest(characterName, actor, result.selected);
       return result.selected;
@@ -1259,7 +1226,7 @@ export class DaggerheartDialogHelper {
           <div class="dialog-reminder">
             <p><strong>Domain Card Swapping:</strong> You can swap any domain cards in your loadout for cards in your vault.</p>
           </div>
-          <p class="dialog-description">Choose exactly <strong>two</strong> options for your Long Rest (or choose the same option twice):</p>
+          <p class="dialog-description">Choose your options for your Long Rest:</p>
           <div class="checkbox-group">
             ${options.map(option => `
               <div class="checkbox-item" data-option-id="${option.id}">
@@ -1273,9 +1240,6 @@ export class DaggerheartDialogHelper {
                 </label>
               </div>
             `).join('')}
-          </div>
-          <div class="selection-counter">
-            <span id="selection-count">0</span> of 2 options selected
           </div>
         </div>
       </form>
@@ -1303,48 +1267,11 @@ export class DaggerheartDialogHelper {
         }
       },
       render: (html) => {
-        // Add event listeners for checkbox selection validation
-        const checkboxes = html.find('input[type="checkbox"]');
-        const confirmButton = html.find('button[data-button="confirm"]');
-        const selectionCount = html.find('#selection-count');
-        
-        const updateSelectionCount = () => {
-          const checkedCount = html.find('input[type="checkbox"]:checked').length;
-          selectionCount.text(checkedCount);
-          
-          if (checkedCount === 2) {
-            confirmButton.prop('disabled', false);
-            selectionCount.parent().removeClass('invalid').addClass('valid');
-          } else {
-            confirmButton.prop('disabled', true);
-            selectionCount.parent().removeClass('valid').addClass('invalid');
-          }
-          
-          // Allow selecting the same option twice by checking if we have 2 selections
-          // If we have 2 different options selected, disable the rest
-          const selectedOptions = [];
-          html.find('input[type="checkbox"]:checked').each((i, el) => {
-            selectedOptions.push(el.value);
-          });
-          
-          if (checkedCount === 2) {
-            // Disable all unchecked boxes except if we want to allow duplicates
-            checkboxes.each((i, el) => {
-              if (!el.checked) {
-                $(el).prop('disabled', true);
-              }
-            });
-          } else {
-            checkboxes.prop('disabled', false);
-          }
-        };
-        
-        checkboxes.on('change', updateSelectionCount);
-        updateSelectionCount(); // Initial state
+        // No validation needed - players can select any number of options
       }
     });
 
-    if (result && result.selected && result.selected.length === 2) {
+    if (result && result.selected) {
       // Process the long rest with selected options
       await this._processLongRest(characterName, actor, result.selected);
       return result.selected;
