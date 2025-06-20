@@ -181,6 +181,31 @@
   position: relative;
 }
 
+/* Sheet Header Scroll Shrinking */
+.sheet-header {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.sheet-header.shrunk {
+  transform: translateY(-80px) scale(0.4);
+  opacity: 0.6;
+}
+
+.sheet-tabs {
+  transition: margin-top 0.3s ease;
+}
+
+.sheet-body {
+  transition: margin-top 0.3s ease;
+}
+
+form.header-shrunk .sheet-tabs {
+  margin-top: -13em;
+}
+
+form.header-shrunk .sheet-body {
+  margin-top: -10px;
+}
+
 /* Sheet Backgrounds */
 .actor {
   background: transparent;
@@ -1002,7 +1027,7 @@
   border-radius: 0px 10px;
   margin-right: 0;
   padding: 0px;
-  padding-top: 140px;
+  margin-top: 140px;
   padding-bottom: 0px !important;
   display: flex;
   height: fit-content;
@@ -1597,11 +1622,24 @@ input.trait-effects.resize-ta {
   gap: 1em;
   justify-content: center;
 }
+@media (max-width: 768px) {
+  .weapon-group {
+    flex-direction: column;
+    gap: 1.5em;
+    align-items: stretch;
+  }
+}
 
 .weapon-row {
   flex-direction: column;
   display: flex;
   margin-bottom: 5px;
+}
+@media (max-width: 768px) {
+  .weapon-row {
+    width: 100%;
+    margin-bottom: 0;
+  }
 }
 .weapon-row .weapon-field {
   display: flex;
@@ -1697,6 +1735,12 @@ input.trait-effects.resize-ta {
   border: 1px solid #433f64;
   border-radius: 15px;
   background: none;
+}
+@media (max-width: 768px) {
+  .weapon-box {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .weapon-box-inner {

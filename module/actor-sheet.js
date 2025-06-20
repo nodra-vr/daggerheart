@@ -371,7 +371,50 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       $(element).attr('title', 'Left-click to increase, Right-click to decrease');
     });
 
+    // Setup scroll-based header shrinking system
+    this._setupScrollHeaderShrinking(html);
 
+
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Setup scroll-based header shrinking system
+   * @param {jQuery} html The rendered HTML
+   * @private
+   */
+  _setupScrollHeaderShrinking(html) {
+    const sheetHeader = html.find('.sheet-header')[0];
+    const formElement = html.closest('form')[0] || html.find('form')[0] || html[0].querySelector('form');
+    const tabElements = html.find('.sheet-body .tab');
+    
+    if (!sheetHeader || !formElement || tabElements.length === 0) return;
+
+    let lastScrollTop = 0;
+    let headerShrunk = false;
+
+    tabElements.each((index, tabElement) => {
+      tabElement.addEventListener('scroll', (e) => {
+        const currentScrollTop = e.target.scrollTop;
+        const scrollDelta = currentScrollTop - lastScrollTop;
+        
+        // Only shrink header when scrolling down from the very top
+        if (currentScrollTop > 5 && !headerShrunk) {
+          headerShrunk = true;
+          sheetHeader.classList.add('shrunk');
+          formElement.classList.add('header-shrunk');
+        }
+        // Only restore header when actively scrolling up AND reaching the very top
+        else if (currentScrollTop === 0 && scrollDelta < 0 && headerShrunk) {
+          headerShrunk = false;
+          sheetHeader.classList.remove('shrunk');
+          formElement.classList.remove('header-shrunk');
+        }
+        
+        lastScrollTop = currentScrollTop;
+      }, { passive: true });
+    });
   }
   
   /* -------------------------------------------- */
