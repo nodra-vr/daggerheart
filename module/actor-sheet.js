@@ -1890,6 +1890,16 @@ export class NPCActorSheet extends SimpleActorSheet {
       speaker: ChatMessage.getSpeaker({ actor: this.actor })
     });
   }
+
+  /**
+   * Handle crit results, depending on roll.
+   * @param {{isCrit}} config 
+   */
+  async handleNPCResult({isCrit}) {
+    if (isCrit) {
+      await this._applyCriticalSuccess();
+    }
+  }
   
   /* -------------------------------------------- */
   
@@ -1897,46 +1907,8 @@ export class NPCActorSheet extends SimpleActorSheet {
     const traitNamePrint = traitName.charAt(0).toUpperCase() + traitName.slice(1);
     const title = `Roll for ${traitNamePrint}`;
     
-    // For NPCs, we'll use a simple d20 roll via quickRoll
-    const result = await game.daggerheart.rollHandler.quickRoll(`1d20 + ${traitValue}`, {
-      flavor: `<p class="roll-flavor-line"><b>${traitNamePrint}</b></p>`,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      sendToChat: false // We'll send our own message with additional flavor
-    });
-    
-    const roll = result.roll;
-    const d20Term = roll.terms.find(t => t.faces === 20);
-    const d20result = d20Term.results[0].result;
-    
-    let flavor = `<p class="roll-flavor-line"><b>${traitNamePrint}</b></p>`;
-    if (d20result === 20) {
-      flavor = `<p class="roll-flavor-line"><b>${traitNamePrint}</b> - <b>Critical Success!</b></p>`;
-      
-      // Apply mechanical effects for critical success (clear 1 stress for NPCs)
-      await this._applyCriticalSuccess();
-    }
-    
-    // Check for targeting if this is an attack roll
-    if (this._pendingRollType === "attack") {
-      flavor += this._getTargetingResults(roll.total);
-    }
-    
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: flavor,
-      flags: {
-        daggerheart: {
-          rollType: this._pendingRollType || "unknown",
-          weaponName: this._pendingWeaponName || "",
-          actorId: this.actor.id,
-          actorType: this.actor.type
-        }
-      }
-    });
-    
-    // Clear pending roll data
-    this._pendingRollType = null;
-    this._pendingWeaponName = null;
+    // For NPCs, we'll call for an npc dialog roll
+    await game.daggerheart.rollHandler.npcRollWithDialog({title, traitValue, actor: this.actor});
   }
   
   /** @inheritdoc */

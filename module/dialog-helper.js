@@ -589,6 +589,127 @@ export class DaggerheartDialogHelper {
   }
 
   /**
+   * Show the NPC Roll dialog
+   * @param {Object} config - Dialog configuration
+   * @param {string} config.title - Dialog title (defaults to "Roll")
+   * @param {Object} config.rollDetails - Initial roll details
+   * @returns {Promise} - Resolves with roll configuration or null
+   */
+  static async showNPCRollDialog(config = {}) {
+    const { title = "Roll", rollDetails = {} } = config;
+    
+    // Set defaults
+    const defaults = {
+      dieSize: 'd20',
+      advantage: 0,
+      disadvantage: 0,
+      modifier: 0
+    };
+    
+    const initialValues = { ...defaults, ...rollDetails };
+    
+    const content = `
+    <form>
+    <div class="flex-col" style="align-items: stretch; gap: 2rem">
+      <div class="flex-row">
+        <div class="flex-col stepper-group">
+          <span class="label-bar">Advantage</span>
+          <div class="flex-row">
+            <button id="adv-minus" class="clicker-button clicker-minus-button" type="button"></button>
+            <input id="npcDiceAdvantageInput" min="0" name="advantage" step="1" type="number" value="${ initialValues.advantage }"/>
+            <button id="adv-plus" class="clicker-button clicker-plus-button" type="button"></button>
+          </div>
+        </div>
+        <div class="flex-col stepper-group">
+          <span class="label-bar">Disadvantage</span>
+          <div class="flex-row">
+            <button id="dis-minus" class="clicker-button clicker-minus-button" type="button"></button>
+            <input id="npcDiceDisadvantageInput" min="0" name="disadvantage" step="1" type="number" value="${ initialValues.disadvantage }"/>
+            <button id="dis-plus" class="clicker-button clicker-plus-button" type="button"></button>
+          </div>
+        </div>
+      </div>
+      <div class="flex-row">
+        <div class="flex-col stepper-group">
+          <span class="label-bar">Flat Modifier</span>
+          <div class="flex-row">
+            <button id="mod-minus" class="clicker-button clicker-minus-button" type="button"></button>
+            <input id="npcDiceModifierInput" autofocus name="modifier" step="1" type="number" value="${ initialValues.modifier }"/>
+            <button id="mod-plus" class="clicker-button clicker-plus-button" type="button"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </form>
+    `;
+    
+    const result = await this.showDialog({
+      title,
+      content,
+      dialogClass: 'daggerheart-roll-dialog',
+      buttons: {
+        roll: {
+          label: "Roll",
+          icon: "<i class='fas fa-dice-d20'></i>",
+          callback: (html) => {
+            const advantage = parseInt(html.find('#npcDiceAdvantageInput').val()) || 0;
+            const disadvantage = parseInt(html.find('#npcDiceDisadvantageInput').val()) || 0;
+            const modifier = parseInt(html.find('#npcDiceModifierInput').val()) || 0;
+            const dieSize = defaults.dieSize;
+            return { advantage, disadvantage, modifier, dieSize };
+          }
+        },
+        rollReaction: {
+          label: "Reaction",
+          icon: "<i class='fas fa-dice-d20'></i>",
+          callback: (html) => {
+            const advantage = parseInt(html.find('#npcDiceAdvantageInput').val()) || 0;
+            const disadvantage = parseInt(html.find('#npcDiceDisadvantageInput').val()) || 0;
+            const modifier = parseInt(html.find('#npcDiceModifierInput').val()) || 0;
+            const dieSize = defaults.dieSize;
+            return { advantage, disadvantage, modifier, dieSize, reaction: true };
+          }
+        },
+        cancel: {
+          label: "Cancel",
+          callback: () => null
+        }
+      },
+      default: 'roll',
+      render: (html) => {
+        function incrementInput(selector, by, clampLo = null) {
+          let input = html.find(selector);
+          if (input.length === 0) return;
+          let newValue = (parseInt(input.val()) || 0) + by;
+          if (clampLo !== null) newValue = Math.max(clampLo, newValue);
+          input.val(newValue);
+        }
+
+        html.find('#adv-plus').click(() => incrementInput('#npcDiceAdvantageInput', 1, 0));
+        html.find('#adv-minus').click(() => incrementInput('#npcDiceAdvantageInput', -1, 0));
+        html.find('#dis-plus').click(() => incrementInput('#npcDiceDisadvantageInput', 1, 0));
+        html.find('#dis-minus').click(() => incrementInput('#npcDiceDisadvantageInput', -1, 0));
+        html.find('#mod-plus').click(() => incrementInput('#npcDiceModifierInput', 1));
+        html.find('#mod-minus').click(() => incrementInput('#npcDiceModifierInput', -1));
+
+        for (const input of html.find("input[type=number]")) {
+          input.addEventListener("wheel", (event) => {
+            if (input === document.activeElement) {
+              event.preventDefault();
+              event.stopPropagation();
+              const step = Math.sign(-1 * event.deltaY);
+              const oldValue = Number(input.value) || 0;
+              input.value = String(oldValue + step);
+            }
+          });
+        }
+      }
+    });
+    
+    return result;
+  }
+
+  /**
    * Show the Recovery Allocation dialog for Risk it All
    * @param {Object} config - Dialog configuration
    * @param {string} config.characterName - Character name
