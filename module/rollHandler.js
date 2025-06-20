@@ -343,16 +343,16 @@ export async function _rollNPC(options = {}) {
   const config = { ...defaults, ...options };
   const totalAdvantage = config.advantage - config.disadvantage;
   
-  let coreFormula = `1${config.dieSize}`;
+  let dieCount = totalAdvantage == 0 ? 1 : 2;
+  let coreFormula = `${dieCount}${config.dieSize}`;
   let flavorSuffix = "";
   
   if (totalAdvantage > 0) {
     coreFormula += `kh`;
-    flavorSuffix = ` with ${totalAdvantage} Advantage`;
+    flavorSuffix = ` with Advantage`;
   } else if (totalAdvantage < 0) {
-    const disAdv = Math.abs(totalAdvantage);
     coreFormula += `kl`;
-    flavorSuffix = ` with ${disAdv} Disadvantage`;
+    flavorSuffix = ` with Disadvantage`;
   }
   
   const fullRollFormula = config.modifier !== 0 ? `${coreFormula} + ${config.modifier}` : coreFormula;
