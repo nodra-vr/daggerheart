@@ -9,7 +9,7 @@ import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
 
-import { _rollHope, _rollFear, _rollDuality, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _waitFor3dDice } from './rollHandler.js';
+import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
 
 /**
  @param {Actor|null} actor (optional if level is provided)
@@ -83,12 +83,14 @@ Hooks.once("init", async function() {
       rollHope: _rollHope,
       rollFear: _rollFear,
       rollDuality: _rollDuality,
+      rollNPC: _rollNPC,
       checkCritical: _checkCritical,
       enableForcedCritical: _enableForcedCritical,
       disableForcedCritical: _disableForcedCritical,
       isForcedCriticalActive: _isForcedCriticalActive,
       quickRoll: _quickRoll,
       dualityWithDialog: _dualityWithDialog,
+      npcRollWithDialog: _npcRollWithDialog,
       waitFor3dDice: _waitFor3dDice
     },
     getTierOfPlay: _getTierOfPlay
