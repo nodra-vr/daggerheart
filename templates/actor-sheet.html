@@ -194,19 +194,19 @@
                         <!-- Reusing armorslots for threshold for styling -->
                         <label>{{localize "DH.Threshold"}}</label>
                         <div class="values">
-                            <!-- <span class="threshold-text">Mark<br>1 HP</span> -->
+                            <span class="threshold-text">{{localize "DH.Mark1HP"}}</span>
+                            <div class="resource-group">
+                                <input type="number" name="system.threshold.minor"
+                                    value="{{systemData.threshold.minor}}" />
+                                <a class="trait-effects">{{localize "DH.Minor"}}</a>
+                            </div>
+                            <span class="threshold-text">{{localize "DH.Mark2HP"}}</span>
                             <div class="resource-group">
                                 <input type="number" name="system.threshold.major"
                                     value="{{systemData.threshold.major}}" />
                                 <a class="trait-effects">{{localize "DH.Major"}}</a>
                             </div>
-                            <!-- <span class="threshold-text">Mark<br>2 HP</span> -->
-                            <div class="resource-group">
-                                <input type="number" name="system.threshold.severe"
-                                    value="{{systemData.threshold.severe}}" />
-                                <a class="trait-effects">{{localize "DH.Severe"}}</a>
-                            </div>
-                            <!-- <span class="threshold-text">Mark<br>3 HP</span> -->
+                            <span class="threshold-text">{{localize "DH.Mark3HP"}}</span>
                         </div>
                     </div>
 

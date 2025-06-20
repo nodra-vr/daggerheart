@@ -32,16 +32,15 @@
         "max": 6,
         "tooltip": "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic."
       },
+      "threshold": {
+        "minor": 8,
+        "major": 12
+      },
       "hope": {
         "value": 2,
         "min": 0,
         "max": 6,
         "tooltip": "Hope and Fear are currencies used by the players and the GM to represent the way fate turns for or against the characters during the game."
-      },
-      "threshold": {
-        "minor": 0,
-        "major": 0,
-        "severe": 0
       },
       "chosenDomains": {
         "domain-one": "Domain1",
@@ -186,6 +185,10 @@
         "min": 0,
         "max": 6,
         "tooltip": ""
+      },
+      "threshold": {
+        "minor": 0,
+        "major": 0
       },
       "defenses": {
         "evasion": {
