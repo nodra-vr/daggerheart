@@ -5,6 +5,7 @@ export class CounterUI {
   constructor() {
     this.element = null;
     this.count = 0;
+    this.isUpdating = false; // Flag to prevent concurrent operations
   }
 
   /**
@@ -168,11 +169,22 @@ export class CounterUI {
       return;
     }
     
+    // Prevent concurrent operations
+    if (this.isUpdating) {
+      return;
+    }
+    
     // Maximum value is 12
     if (this.count < 12) {
-      this.count += 1;
-      await game.settings.set("daggerheart", "counterValue", this.count);
-      this.updateDisplay();
+      this.isUpdating = true;
+      try {
+        const newCount = this.count + 1;
+        await game.settings.set("daggerheart", "counterValue", newCount);
+        this.count = newCount;
+        this.updateDisplay();
+      } finally {
+        this.isUpdating = false;
+      }
     }
   }
 
@@ -186,11 +198,22 @@ export class CounterUI {
       return;
     }
     
+    // Prevent concurrent operations
+    if (this.isUpdating) {
+      return;
+    }
+    
     // Minimum value is 0
     if (this.count > 0) {
-      this.count -= 1;
-      await game.settings.set("daggerheart", "counterValue", this.count);
-      this.updateDisplay();
+      this.isUpdating = true;
+      try {
+        const newCount = this.count - 1;
+        await game.settings.set("daggerheart", "counterValue", newCount);
+        this.count = newCount;
+        this.updateDisplay();
+      } finally {
+        this.isUpdating = false;
+      }
     }
   }
 

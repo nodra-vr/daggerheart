@@ -366,25 +366,12 @@ input.trait-effects.resize-ta {
   align-items: center;
   gap: 1em;
   justify-content: center;
-  
-  // Responsive: Stack weapons vertically on smaller screens
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1.5em;
-    align-items: stretch;
-  }
 }
 
 .weapon-row {
   flex-direction: column;
   display: flex;
   margin-bottom: 5px;
-  
-  // Responsive: Better spacing when stacked
-  @media (max-width: 768px) {
-    width: 100%;
-    margin-bottom: 0;
-  }
 
   .weapon-field {
     display: flex;
@@ -489,12 +476,6 @@ input.trait-effects.resize-ta {
   border: 1px solid #433f64;
   border-radius: 15px;
   background: none;
-  
-  // Responsive: Full width when stacked
-  @media (max-width: 768px) {
-    width: 100%;
-    max-width: 100%;
-  }
 }
 
 .weapon-box-inner {

@@ -2,12 +2,12 @@
 
 /* Sheet Sizing */
 .daggerheart.sheet.actor {
-  min-width: 560px;
+  min-width: 690px;
   min-height: 600px;
 }
 
 .daggerheart.sheet.npc {
-  min-width: 560px;
+  min-width: 690px;
   min-height: 500px;
 }
 
@@ -47,33 +47,7 @@
   position: relative;
 }
 
-/* Sheet Header Scroll Shrinking */
-.sheet-header {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  
-  &.shrunk {
-    transform: translateY(-80px) scale(0.4);
-    opacity: 0.6;
-  }
-}
 
-// Add transitions to tabs and body for smooth animation
-.sheet-tabs {
-  transition: margin-top 0.3s ease;
-}
-
-.sheet-body {
-  transition: margin-top 0.3s ease;
-}
-
-// Pull tabs and content up when header is shrunk
-form.header-shrunk .sheet-tabs {
-  margin-top: -13em;
-}
-
-form.header-shrunk .sheet-body {
-  margin-top: -.75em;
-}
 
 /* Sheet Backgrounds */
 .actor {

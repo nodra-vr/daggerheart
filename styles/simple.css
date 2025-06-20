@@ -136,12 +136,12 @@
 /* General Sheet and Window Layouts */
 /* Sheet Sizing */
 .daggerheart.sheet.actor {
-  min-width: 560px;
+  min-width: 690px;
   min-height: 600px;
 }
 
 .daggerheart.sheet.npc {
-  min-width: 560px;
+  min-width: 690px;
   min-height: 500px;
 }
 
@@ -181,30 +181,7 @@
   position: relative;
 }
 
-/* Sheet Header Scroll Shrinking */
-.sheet-header {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-.sheet-header.shrunk {
-  transform: translateY(-80px) scale(0.4);
-  opacity: 0.6;
-}
 
-.sheet-tabs {
-  transition: margin-top 0.3s ease;
-}
-
-.sheet-body {
-  transition: margin-top 0.3s ease;
-}
-
-form.header-shrunk .sheet-tabs {
-  margin-top: -13em;
-}
-
-form.header-shrunk .sheet-body {
-  margin-top: -0.75em;
-}
 
 /* Sheet Backgrounds */
 .actor {
@@ -348,9 +325,7 @@ form.header-shrunk .sheet-body {
   padding: 0.25em 0.5em;
 }
 .counter-ui .counter-display:hover {
-  background: rgba(67, 63, 100, 0.3);
   transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(255, 187, 0, 0.2);
 }
 .counter-ui .counter-display:active {
   transform: scale(0.98);
@@ -1439,25 +1414,14 @@ input.trait-effects.resize-ta {
   gap: 1em;
   justify-content: center;
 }
-@media (max-width: 768px) {
-  .weapon-group {
-    flex-direction: column;
-    gap: 1.5em;
-    align-items: stretch;
-  }
-}
+
 
 .weapon-row {
   flex-direction: column;
   display: flex;
   margin-bottom: 5px;
 }
-@media (max-width: 768px) {
-  .weapon-row {
-    width: 100%;
-    margin-bottom: 0;
-  }
-}
+
 .weapon-row .weapon-field {
   display: flex;
   border: none;
@@ -1553,12 +1517,7 @@ input.trait-effects.resize-ta {
   border-radius: 15px;
   background: none;
 }
-@media (max-width: 768px) {
-  .weapon-box {
-    width: 100%;
-    max-width: 100%;
-  }
-}
+
 
 .weapon-box-inner {
   display: flex;
@@ -3147,7 +3106,7 @@ body.game .app a.content-link {
 }
 /* Tabs */
 .sheet-tabs {
-  margin: 1em 0;
+  margin-top: 1em;
   border-top: none;
   border-bottom: 1px solid var(--dh-color-gold);
   display: flex;

@@ -27,30 +27,11 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   
   /** @inheritdoc */
   static get defaultOptions() {
-    // Calculate responsive dimensions based on screen size
-    const screenHeight = window.innerHeight;
-    const screenWidth = window.innerWidth;
-    
-    // Calculate optimal height (leave space for browser UI, taskbar, etc.)
-    // Use 85% of available height but ensure it's within reasonable bounds
-    const maxHeight = Math.floor(screenHeight * 0.85);
-    const minHeight = 600; // Minimum usable height
-    const preferredHeight = 980; // Ideal height for larger screens
-    
-    const height = Math.max(minHeight, Math.min(preferredHeight, maxHeight));
-    
-    // Calculate width proportionally for smaller screens
-    const maxWidth = Math.floor(screenWidth * 0.9);
-    const minWidth = 560; // Maintain minimum width for usability
-    const preferredWidth = 560; // Standard width
-    
-    const width = Math.max(minWidth, Math.min(preferredWidth, maxWidth));
-    
     return foundry.utils.mergeObject(super.defaultOptions, {
           classes: ["daggerheart", "sheet", "actor"],
     template: "systems/daggerheart/templates/actor-sheet.html",
-      width: width,
-      height: height,
+      width: 690,
+      height: 980,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
       scrollY: [".biography", ".items", ".attributes"],
       dragDrop: [
@@ -371,52 +352,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       $(element).attr('title', 'Left-click to increase, Right-click to decrease');
     });
 
-    // Setup scroll-based header shrinking system
-    this._setupScrollHeaderShrinking(html);
-
-
   }
 
-  /* -------------------------------------------- */
-
-  /**
-   * Setup scroll-based header shrinking system
-   * @param {jQuery} html The rendered HTML
-   * @private
-   */
-  _setupScrollHeaderShrinking(html) {
-    const sheetHeader = html.find('.sheet-header')[0];
-    const formElement = html.closest('form')[0] || html.find('form')[0] || html[0].querySelector('form');
-    const tabElements = html.find('.sheet-body .tab');
-    
-    if (!sheetHeader || !formElement || tabElements.length === 0) return;
-
-    let lastScrollTop = 0;
-    let headerShrunk = false;
-
-    tabElements.each((index, tabElement) => {
-      tabElement.addEventListener('scroll', (e) => {
-        const currentScrollTop = e.target.scrollTop;
-        const scrollDelta = currentScrollTop - lastScrollTop;
-        
-        // Only shrink header when scrolling down from the very top
-        if (currentScrollTop > 5 && !headerShrunk) {
-          headerShrunk = true;
-          sheetHeader.classList.add('shrunk');
-          formElement.classList.add('header-shrunk');
-        }
-        // Only restore header when actively scrolling up AND reaching the very top
-        else if (currentScrollTop === 0 && scrollDelta < 0 && headerShrunk) {
-          headerShrunk = false;
-          sheetHeader.classList.remove('shrunk');
-          formElement.classList.remove('header-shrunk');
-        }
-        
-        lastScrollTop = currentScrollTop;
-      }, { passive: true });
-    });
-  }
-  
   /* -------------------------------------------- */
   
   /**
