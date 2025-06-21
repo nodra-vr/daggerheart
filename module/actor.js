@@ -181,6 +181,29 @@ export class SimpleActor extends Actor {
       else data.tier = 1;
     }
 
+    // Add tracker values for formula access
+    if (data.resourceTrackers && Array.isArray(data.resourceTrackers)) {
+      data.trackers = {};
+      data.tracker = {}; // Alternative syntax
+      
+      for (const tracker of data.resourceTrackers) {
+        if (tracker.name) {
+          // Create safe key names for formula access
+          const safeKey = tracker.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+          if (safeKey) {
+            data.trackers[safeKey] = tracker.value || 0;
+            data.tracker[safeKey] = tracker.value || 0;
+            
+            // Also allow access by exact name if it's a valid identifier
+            if (/^[a-zA-Z][a-zA-Z0-9]*$/.test(tracker.name)) {
+              data.trackers[tracker.name] = tracker.value || 0;
+              data.tracker[tracker.name] = tracker.value || 0;
+            }
+          }
+        }
+      }
+    }
+
     // shorthand formulas
     this._applyShorthand(data, formulaAttributes, shorthand);
 
