@@ -70,9 +70,10 @@
 }
 
 .npc .defenses {
-  gap: 2em;
-  margin-bottom: 2em;
-  margin-top: 1em;
+	gap: 2em;
+	margin-bottom: 2em;
+	margin-top: 1em;
+	overflow: hidden;
 }
 
 .defense {
@@ -645,6 +646,47 @@ input.trait-effects.resize-ta {
 	}
 }
 
+/* Threshold Group */
+.threshold-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  align-items: center;
+  margin-bottom: 1em;
+
+  > label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--dh-color-off-white);
+    margin-bottom: 0.25em;
+  }
+}
+
+.threshold-values {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.threshold-group input[name="system.threshold.minor"],
+.threshold-group input[name="system.threshold.major"] {
+  background: url("icons/DH-Arrow.png") no-repeat center center;
+  background-size: contain;
+  border: none;
+  width: 50px;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+}
+
+.threshold-group .trait-effects {
+  color: #6c6a85;
+}
+
+/* Legacy support for .armorslots */
 .armorslots .trait-effects {
   color: #6c6a85;
 }
