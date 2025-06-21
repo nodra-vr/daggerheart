@@ -157,9 +157,9 @@
             <section class="character-main-section">
 
                 <section class="defenses">
-                    <div class="armorslots">
+                    <div class="advancement-group">
                         <label>{{localize "DH.Advancement"}}</label>
-                        <div class="values">
+                        <div class="advancement-values">
                             <div class="resource-group">
                                 <input type="number" name="system.level.value"
                                     value="{{systemData.level.value}}" />
@@ -172,44 +172,46 @@
                             </div>
                         </div>
                     </div>
-                    <div class="defense" data-defense="armor">
-                        <div class="attribute-value-display defense-value-display" 
-                             data-field="system.defenses.armor.value"
-                             data-label="Armor"
-                             data-has-modifiers="true"
-                             data-min="0">{{systemData.defenses.armor.value}}</div>
-                        <div class="armor-controls">
-                            <label data-trait-tooltip="{{systemData.defenses.armor.tooltip}}">{{localize "DH.Armor"}}</label>
+
+                    <div class="defense-group">
+                        <div class="defense" data-defense="armor">
+                            <div class="attribute-value-display defense-value-display" 
+                                 data-field="system.defenses.armor.value"
+                                 data-label="Armor"
+                                 data-has-modifiers="true"
+                                 data-min="0">{{systemData.defenses.armor.value}}</div>
+                            <div class="armor-controls">
+                                <label data-trait-tooltip="{{systemData.defenses.armor.tooltip}}">{{localize "DH.Armor"}}</label>
+                            </div>
+                        </div>
+                        <div class="defense" data-defense="evasion">
+                            <div class="attribute-value-display defense-value-display" 
+                                 data-field="system.defenses.evasion.value"
+                                 data-label="Evasion"
+                                 data-has-modifiers="true"
+                                 data-min="0">{{systemData.defenses.evasion.value}}</div>
+                            <label data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize "DH.Evasion"}}</label>
                         </div>
                     </div>
-                    <div class="defense" data-defense="evasion">
-                        <div class="attribute-value-display defense-value-display" 
-                             data-field="system.defenses.evasion.value"
-                             data-label="Evasion"
-                             data-has-modifiers="true"
-                             data-min="0">{{systemData.defenses.evasion.value}}</div>
-                        <label data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize "DH.Evasion"}}</label>
-                    </div>
-                    <div class="armorslots">
-                        <!-- Reusing armorslots for threshold for styling -->
+
+                    <div class="threshold-group">
                         <label>{{localize "DH.Threshold"}}</label>
-                        <div class="values">
+                        <div class="threshold-values">
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">{{localize "DH.Mark1HP"}}</span>
                             <div class="resource-group">
                                 <input type="number" name="system.threshold.minor"
                                     value="{{systemData.threshold.minor}}" />
-                                <a class="trait-effects">{{localize "DH.Minor"}}</a>
+                                <a class="trait-effects">{{localize "DH.Major"}}</a>
                             </div>
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">{{localize "DH.Mark2HP"}}</span>
                             <div class="resource-group">
                                 <input type="number" name="system.threshold.major"
                                     value="{{systemData.threshold.major}}" />
-                                <a class="trait-effects">{{localize "DH.Major"}}</a>
+                                <a class="trait-effects">{{localize "DH.Severe"}}</a>
                             </div>
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">{{localize "DH.Mark3HP"}}</span>
                         </div>
                     </div>
-
                 </section>
 
                 <section class="traits">

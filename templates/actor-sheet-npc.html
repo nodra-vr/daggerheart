@@ -54,6 +54,33 @@
     {{!-- Sheet Body --}}
     <section class="sheet-body">
         <div class="tab description" data-group="primary" data-tab="description">
+            <div class="npc-defense-section">
+                <div class="defense" data-trait="evasion">
+                    <input type="number" name="system.defenses.evasion.value"
+                        value="{{systemData.defenses.evasion.value}}" />
+                    <label for="system.defenses.evasion.value">{{localize "DH.Difficulty"}}</label>
+                </div>
+                <div class="armorslots">
+                    <!-- Reusing armorslots for threshold for styling -->
+                    <label>{{localize "DH.threshold"}}</label>
+                    <div class="values">
+                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">{{localize "DH.Mark1HP"}}</span>
+                        <div class="resource-group">
+                            <input type="number" name="system.threshold.minor"
+                                value="{{systemData.threshold.minor}}" />
+                            <a class="trait-effects">{{localize "DH.Major"}}</a>
+                        </div>
+                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">{{localize "DH.Mark2HP"}}</span>
+                        <div class="resource-group">
+                            <input type="number" name="system.threshold.major"
+                                value="{{systemData.threshold.major}}" />
+                            <a class="trait-effects">{{localize "DH.Severe"}}</a>
+                        </div>
+                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">{{localize "DH.Mark3HP"}}</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="defenses">
                 <div class="weapon-group">
                     <div class="weapon-row">
@@ -87,50 +114,6 @@
                             </div>
 
                         </div>
-                    </div>
-                </div>
-                <!--<div class="armorslots" style="display: none;">
-                    <label>Armor Slots</label>
-                    <div class="values">
-                        <div class="resource-group">
-                            <input type="number" name="system.defenses.armor-slots.value"
-                                value="{{systemData.defenses.armor-slots.value}}" />
-                            <a class="trait-effects">Used</a>
-                        </div>
-                        <div class="resource-group">
-                            <input type="number" name="system.defenses.armor-slots.max"
-                                value="{{systemData.defenses.armor-slots.max}}" />
-                            <a class="trait-effects">Max</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="defense" data-trait="armor" style="display: none;">
-                    <input type="number" name="system.defenses.armor.value"
-                        value="{{systemData.defenses.armor.value}}" />
-                    <label for="system.defenses.armor.value">Armor</label>
-                </div>-->
-                <div class="defense" data-trait="evasion">
-                    <input type="number" name="system.defenses.evasion.value"
-                        value="{{systemData.defenses.evasion.value}}" />
-                    <label for="system.defenses.evasion.value">{{localize "DH.Difficulty"}}</label>
-                </div>
-                <div class="armorslots">
-                    <!-- Reusing armorslots for threshold for styling -->
-                    <label>{{localize "DH.threshold"}}</label>
-                    <div class="values">
-                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">{{localize "DH.Mark1HP"}}</span>
-                        <div class="resource-group">
-                            <input type="number" name="system.threshold.minor"
-                                value="{{systemData.threshold.minor}}" />
-                            <a class="trait-effects">{{localize "DH.Minor"}}</a>
-                        </div>
-                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">{{localize "DH.Mark2HP"}}</span>
-                        <div class="resource-group">
-                            <input type="number" name="system.threshold.major"
-                                value="{{systemData.threshold.major}}" />
-                            <a class="trait-effects">{{localize "DH.Major"}}</a>
-                        </div>
-                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">{{localize "DH.Mark3HP"}}</span>
                     </div>
                 </div>
             </div>

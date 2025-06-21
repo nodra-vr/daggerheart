@@ -1,6 +1,7 @@
 import { EntitySheetHelper } from "./helper.js";
 import {ATTRIBUTE_TYPES} from "./constants.js";
 import { DaggerheartDialogHelper } from "./dialog-helper.js";
+import { SheetTracker } from "./sheet-tracker.js";
 
 /**
 * Extend the basic ActorSheet with some very simple modifications
@@ -9,6 +10,7 @@ import { DaggerheartDialogHelper } from "./dialog-helper.js";
 export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   _pendingRollType = null;
+  sheetTracker = null;
   getPendingRollType() {
     return this._pendingRollType;
   }
@@ -101,6 +103,13 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   /** @inheritdoc */
   activateListeners(html) {
     super.activateListeners(html);
+    
+    // Initialize Sheet Tracker
+    if (!this.sheetTracker) {
+      this.sheetTracker = new SheetTracker(this);
+    }
+    // Always initialize on re-render to recreate the DOM
+    this.sheetTracker.initialize();
     
     // Restore vault state on re-render
     const vaultList = html.find('.item-list[data-item-type="vault"]');
@@ -1740,6 +1749,13 @@ export class NPCActorSheet extends SimpleActorSheet {
   /** @inheritdoc */
   activateListeners(html) {
     super.activateListeners(html);
+    
+    // Initialize Sheet Tracker for NPCs
+    if (!this.sheetTracker) {
+      this.sheetTracker = new SheetTracker(this);
+    }
+    // Always initialize on re-render to recreate the DOM
+    this.sheetTracker.initialize();
     
     // Everything below here is only needed if the sheet is editable
     if ( !this.isEditable ) return;

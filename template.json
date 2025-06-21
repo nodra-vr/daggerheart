@@ -224,7 +224,8 @@
         "range": "",
         "modifier": "",
         "dmgType": ""
-      }
+      },
+      "resourceTrackers": []
     }
   },
   "Item": {

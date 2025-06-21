@@ -104,9 +104,9 @@
   padding: 1em;
 }
 .daggerheart .window-content {
-  height: 100%;
-  padding: 5px;
-  overflow-y: hidden;
+	height: 95%;
+	padding: 5px;
+	overflow-y: hidden;
 }
 .daggerheart form {
   height: 100%;
@@ -210,19 +210,20 @@
 
 /* Item Sheet Specific Layouts */
 .item-bg {
-  position: absolute;
-  top: -1vh;
-  left: 0;
-  width: 120%;
-  height: 25rem;
-  background-repeat: no-repeat;
-  background-position: top center;
-  background-size: cover;
-  z-index: -1;
-  margin-left: -10%;
-  filter: brightness(30%) blur(5px);
-  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+	position: absolute;
+	top: -2vh;
+	left: 0;
+	width: 100%;
+	height: 25rem;
+	background-repeat: no-repeat;
+	background-position: top center;
+	background-size: cover;
+	z-index: -1;
+	margin-left: -10%;
+	filter: brightness(30%) blur(5px);
+	mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+	-webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+	margin: auto;
 }
 
 .daggerheart.sheet.item {
@@ -1120,14 +1121,15 @@
 
 /* Defenses */
 .defenses {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 3em;
-  flex-direction: row;
-  align-content: center;
-  align-items: center;
-  max-height: 105px;
-  justify-content: space-evenly;
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 1em;
+	flex-direction: row;
+	align-content: center;
+	align-items: center;
+	max-height: 105px;
+	justify-content: space-between;
+	width: 100%;
 }
 
 /* Advancement Section */
@@ -1138,9 +1140,19 @@
 }
 
 .npc .defenses {
-  gap: 2em;
-  margin-bottom: 2em;
-  margin-top: 1em;
+	gap: 2em;
+	margin-bottom: 1em;
+	margin-top: 1em;
+	overflow: hidden;
+}
+
+.npc-defense-section {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 2em;
+	margin-bottom: 2em;
 }
 
 .defense {
@@ -1186,7 +1198,8 @@
   z-index: 1;
 }
 
-.armorslots {
+/* Advancement Group */
+.advancement-group {
   flex: 1;
   max-width: fit-content;
   text-align: center;
@@ -1195,27 +1208,72 @@
   align-items: center;
   gap: 5px;
 }
-.armorslots label {
+.advancement-group label {
   text-transform: uppercase;
 }
-.armorslots .values {
+.advancement-values {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 6px;
 }
-.armorslots .resource-group {
+.advancement-group .resource-group {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.armorslots input {
-  width: 50px;
-  font-size: 18px;
+.advancement-group input {
+  width: 45px;
+  font-size: 16px;
   font-weight: 700;
   background: transparent;
   border: 1px solid #433f64;
   border-radius: 0.5em;
-  padding: 0.25em;
+  padding: 0.2em;
+  color: white;
+  text-align: center;
+}
+
+/* Defense Group */
+.defense-group {
+	display: flex;
+	flex-direction: row;
+	gap: 1em;
+	align-items: center;
+	justify-content: center;
+	flex: 0 1 auto;
+}
+
+/* Threshold Group */
+.threshold-group {
+  flex: 1;
+  max-width: fit-content;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.threshold-group label {
+  text-transform: uppercase;
+}
+.threshold-values {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.threshold-group .resource-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.threshold-group input {
+  width: 40px;
+  font-size: 16px;
+  font-weight: 700;
+  background: transparent;
+  border: 1px solid #433f64;
+  border-radius: 0.5em;
+  padding: 0.2em;
   color: white;
   text-align: center;
 }
@@ -1332,14 +1390,18 @@
 }
 
 input.trait-effects.resize-ta {
-  font-size: 12px;
+  font-size: 11px;
   border: none;
   background: none;
   color: #6c6a85;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
   word-break: break-word;
-  word-wrap: normal;
+  word-wrap: break-word;
+  white-space: normal;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* Experience */
@@ -1412,18 +1474,21 @@ input.trait-effects.resize-ta {
   flex-direction: row;
   align-items: center;
   gap: 1em;
-  justify-content: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 
 .weapon-row {
+  flex: 1;
   flex-direction: column;
   display: flex;
   margin-bottom: 5px;
+  min-width: 0;
 }
 
 .weapon-row .weapon-field {
-  display: flex;
+  display: block;
   border: none;
   background: none;
   color: white;
@@ -1432,6 +1497,11 @@ input.trait-effects.resize-ta {
   padding: 0px;
   margin: 0px;
   height: fit-content;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: center;
 }
 .weapon-row input::placeholder {
   color: rgba(159, 159, 159, 0.4117647059);
@@ -1447,22 +1517,23 @@ input.trait-effects.resize-ta {
   justify-content: center;
 }
 .weapon-row .weapon-desc {
-  font-size: 12px;
-  line-height: 12px;
+  font-size: 11px;
+  line-height: 13px;
   border: none;
   background: none;
   color: white;
   font-weight: 400;
   text-align: center;
   resize: none;
-  display: flex;
+  display: block;
   width: 100%;
   overflow: hidden;
-  margin: 0.5em 0em 0em;
-  justify-content: center;
-  align-items: center;
+  margin: 0.25em 0em 0em;
   word-break: break-word;
-  word-wrap: normal;
+  word-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .weapon-row .weapon-desc::placeholder {
   color: rgba(169, 169, 169, 0.7019607843);
@@ -1496,6 +1567,8 @@ input.trait-effects.resize-ta {
   align-content: center;
   align-items: flex-start;
   justify-content: center;
+  flex: 1;
+  min-width: 0;
 }
 
 .npc .weapon-row .weapon-label {
@@ -1512,10 +1585,13 @@ input.trait-effects.resize-ta {
 
 .weapon-box {
   color: white;
-  padding: 1em 1em;
+  padding: 0.75em;
   border: 1px solid #433f64;
   border-radius: 15px;
   background: none;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 
@@ -1525,29 +1601,38 @@ input.trait-effects.resize-ta {
   align-content: center;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5em;
+  min-width: 0;
+  width: 100%;
 }
 
 .weapon-roller-box {
   display: flex;
   flex-direction: row;
   gap: 0.5em;
+  flex-shrink: 0;
+  align-items: center;
 }
 
 .textarea-container {
-  display: flex;
+  display: block;
   width: 100%;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
   height: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .actor .weapon-damage {
   width: 4.5em;
+  max-width: 4.5em;
+  flex-shrink: 0;
 }
 
 .npc .weapon-damage {
   width: 4.5em;
+  max-width: 4.5em;
+  flex-shrink: 0;
 }
 
 /* Dying/Dead Character Styling */
@@ -1660,16 +1745,31 @@ input.trait-effects.resize-ta {
 	opacity: 0.7;
 	text-align: center;
 	line-height: 1.1;
-	margin: 0 0.25em;
-	padding-bottom: 1.35em;
+	margin: 0;
+	padding: 0 2px;
+	width: 35px;
+	height: auto;
+	word-break: break-all;
+	white-space: normal;
+	display: inline-block;
 }
 
-.armorslots .trait-effects {
+.threshold-clickable {
+	cursor: pointer;
+	transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.threshold-clickable:hover {
+	opacity: 1;
+	color: var(--dh-color-gold);
+}
+
+.threshold-group .trait-effects {
   color: #6c6a85;
 }
 
-.armorslots input[name="system.threshold.minor"],
-.armorslots input[name="system.threshold.major"] {
+.threshold-group input[name="system.threshold.minor"],
+.threshold-group input[name="system.threshold.major"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
   background-size: contain;
   border: none;
@@ -3811,4 +3911,469 @@ body.game .app a.content-link {
   background: rgba(243, 194, 103, 0.25);
   border-color: var(--dh-color-gold-light);
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
+}
+
+/* Sheet Tracker Styles */
+/* Ensure the Daggerheart actor sheet has proper positioning and overflow handling */
+.daggerheart.sheet.actor {
+  overflow: visible !important;
+}
+
+.daggerheart.sheet.actor .window-content {
+	position: relative;
+	overflow: visible !important;
+	max-height: 100%;
+}
+
+.sheet-tracker-sidebar {
+  position: absolute;
+  left: 100%;
+  top: 15%;
+  transform: translateY(0);
+  display: flex;
+  flex-direction: column;
+  gap: .5em;
+  z-index: 100;
+  transition: all 0.3s ease-in-out;
+}
+.sheet-tracker-sidebar.expanded {
+  /* Keep the same left position but show the panel */
+}
+
+/* Main tracker button */
+.tracker-main-button {
+	width: 45px;
+	height: 36px;
+	border-radius: 0% 25% 25% 0%;
+	background: rgba(11, 10, 19, 0.9);
+	border: 1px solid var(--dh-color-gold);
+	color: var(--dh-color-gold);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	position: relative;
+	z-index: 101;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.tracker-main-button:hover {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+.tracker-main-button i {
+  font-size: 16px;
+}
+
+/* Container for individual tracker buttons */
+.tracker-buttons-container {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: 4px;
+	margin-left: .5em;
+}
+
+/* Individual tracker buttons */
+.tracker-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.tracker-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.tracker-button:active {
+  transform: scale(0.95);
+}
+.tracker-button .tracker-button-value {
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+	text-stroke: 1px rgba(0, 0, 0, 0.8);
+	font-size: 2.15em;
+}
+/* Tracker button hover tooltip */
+.tracker-button::after {
+  content: attr(data-tracker-name);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(11, 10, 19, 0.95);
+  color: var(--dh-color-gold);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  border: 1px solid var(--dh-color-gold);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+.tracker-button:hover::after {
+  opacity: 1;
+  visibility: visible;
+  margin-left: 12px;
+}
+
+/* Manager panel */
+.tracker-manager-panel {
+	position: absolute;
+	left: 120%;
+	top: 0;
+	transform: translateY(0) scale(0.8);
+	width: 320px;
+	background: rgba(11, 10, 19, 0.95);
+	backdrop-filter: blur(10px);
+	border: 1px solid var(--dh-color-gold);
+	border-radius: 15px;
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+	max-height: 500px;
+	display: flex;
+	flex-direction: column;
+	margin-right: 8px;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.2s ease;
+	pointer-events: none;
+	overflow: hidden;
+}
+.tracker-manager-panel.show {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0) scale(1);
+	pointer-events: all;
+}
+
+/* Manager header */
+.tracker-manager-header {
+  background: rgba(11, 10, 19, 0.5);
+  border-bottom: 1px solid var(--dh-color-gold);
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.tracker-manager-header span {
+  color: var(--dh-color-gold);
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
+}
+.tracker-manager-header .tracker-manager-close {
+  background: rgba(11, 10, 19, 0.85);
+  border: 2px solid rgba(243, 194, 103, 0.5);
+  color: var(--dh-color-gold);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+.tracker-manager-header .tracker-manager-close:hover {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 15px rgba(243, 194, 103, 0.6);
+}
+
+/* Manager content */
+.tracker-manager-content {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 320px;
+  position: relative;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.tracker-value-input {
+	max-width: 40px;
+}
+
+/* Add tracker form */
+.tracker-add-form {
+  background: rgba(67, 63, 100, 0.2);
+  padding: 0.5em 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(109, 103, 149, 0.3);
+}
+.tracker-add-form .form-group {
+  margin-bottom: 0.75rem;
+}
+.tracker-add-form .form-group:last-of-type {
+  margin-bottom: 1rem;
+}
+.tracker-add-form .form-group-horizontal {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.tracker-add-form .form-group-half {
+  flex: 1;
+}
+.tracker-add-form .form-group-half label {
+  color: var(--dh-color-gold);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+.tracker-add-form .form-group label {
+  color: var(--dh-color-gold);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+.tracker-add-form .form-group input[type=text],
+.tracker-add-form .form-group input[type=number] {
+  background: rgba(11, 10, 19, 0.6);
+  border: 1px solid #433f64;
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: var(--dh-color-off-white);
+  font-size: 0.9rem;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+.tracker-add-form .form-group input[type=text]:focus,
+.tracker-add-form .form-group input[type=number]:focus {
+  outline: none;
+  border-color: var(--dh-color-gold);
+  background: rgba(11, 10, 19, 0.8);
+  box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
+}
+.tracker-add-form .value-inputs {
+  background: #1c1c1c;
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 10px;
+  padding: 5px 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.tracker-add-form .value-inputs input[type=number] {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2em;
+  text-align: center;
+  width: 2.5em;
+  font-weight: 700;
+  min-width: 0;
+}
+.tracker-add-form .value-inputs input[type=number]:focus {
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  outline: none;
+}
+.tracker-add-form .value-inputs .value-separator {
+  color: var(--dh-color-gold);
+  font-weight: bold;
+  font-size: 1.2em;
+}
+.tracker-add-form .color-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tracker-add-form .color-input-wrapper input[type=color] {
+  width: 40px;
+  height: 32px;
+  background: rgba(11, 10, 19, 0.6);
+  border: 1px solid #433f64;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 2px;
+}
+.tracker-add-form .color-input-wrapper input[type=color]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.tracker-add-form .color-input-wrapper input[type=color]::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+.tracker-add-form .color-input-wrapper .color-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #f3c267;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.tracker-add-form .tracker-add-button {
+	background: rgba(243, 194, 103, 0.2);
+	color: var(--dh-color-gold);
+	border: 1px solid var(--dh-color-gold);
+	border-radius: 8px;
+	padding: 0.15rem 0rem;
+	cursor: pointer;
+	font-weight: bold;
+	transition: all 0.3s ease;
+	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	width: 100%;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.tracker-add-form .tracker-add-button:hover {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
+}
+.tracker-add-form .tracker-add-button:active {
+  transform: scale(0.98);
+  box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
+}
+
+/* Tracker list */
+.tracker-list {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5em 1rem;
+  border-radius: 10px;
+  border: 1px solid #433f64;
+}
+.tracker-list .tracker-list-header {
+  color: var(--dh-color-gold);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+.tracker-list .tracker-list-items .no-trackers {
+  color: rgba(242, 243, 244, 0.6);
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+/* Tracker list item */
+.tracker-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid transparent;
+  position: relative;
+  transition: all 0.2s ease;
+  margin-bottom: 0.5rem;
+}
+.tracker-list-item:nth-child(even) {
+  background: rgba(141, 120, 151, 0.05);
+}
+.tracker-list-item:hover {
+  background: rgba(67, 63, 100, 0.3);
+  border-color: rgba(243, 194, 103, 0.3);
+}
+.tracker-list-item .tracker-item-color {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.tracker-list-item .tracker-item-name {
+  flex: 1;
+  color: var(--dh-color-off-white);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+.tracker-list-item .tracker-item-value {
+  color: var(--dh-color-off-white);
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+.tracker-list-item .tracker-item-delete {
+  background: rgba(255, 68, 68, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  padding: 0;
+}
+.tracker-list-item .tracker-item-delete:hover {
+  background: #ff4444;
+  color: white;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.tracker-button {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Dark mode compatibility */
+.daggerheart .sheet-tracker-sidebar {
+  /* Additional theme-specific styles can go here */
 }

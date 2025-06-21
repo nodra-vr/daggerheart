@@ -1,0 +1,368 @@
+/* Sheet Tracker Styles */
+
+/* Ensure the Daggerheart actor sheet has proper positioning and overflow handling */
+.daggerheart.sheet.actor {
+  .window-content {
+    position: relative;
+    overflow: visible !important;
+  }
+}
+
+.sheet-tracker-sidebar {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+  margin-left: 4px;
+  transition: all 0.3s ease-in-out;
+  
+  &.expanded {
+    // Keep the same left position but show the panel
+  }
+}
+
+/* Main tracker button */
+.tracker-main-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1a1b26;
+  border: 2px solid #f3c267;
+  color: #f3c267;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 101;
+  
+  &:hover {
+    background: #f3c267;
+    color: #1a1b26;
+    transform: scale(1.1);
+  }
+  
+  i {
+    font-size: 18px;
+  }
+}
+
+/* Container for individual tracker buttons */
+.tracker-buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* Individual tracker buttons */
+.tracker-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  .tracker-button-value {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Manager panel */
+.tracker-manager-panel {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%) scale(0.8);
+  width: 300px;
+  background: #2b2c37;
+  border: 2px solid #f3c267;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
+  margin-right: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1);
+    pointer-events: all;
+  }
+}
+
+/* Manager header */
+.tracker-manager-header {
+  padding: 12px 16px;
+  background: #1a1b26;
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f3c267;
+  
+  span {
+    color: #f3c267;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .tracker-manager-close {
+    background: none;
+    border: none;
+    color: #f3c267;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: #ff6b6b;
+      transform: rotate(90deg);
+    }
+  }
+}
+
+/* Manager content */
+.tracker-manager-content {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Add tracker form */
+.tracker-add-form {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #433f64;
+  
+  .form-group {
+    margin-bottom: 12px;
+    
+    label {
+      display: block;
+      color: #c1c1c1;
+      font-size: 12px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 8px 12px;
+      background: #1a1b26;
+      border: 1px solid #433f64;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      
+      &:focus {
+        border-color: #f3c267;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(243, 194, 103, 0.2);
+      }
+    }
+  }
+  
+  .value-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    input[type="number"] {
+      flex: 1;
+    }
+    
+    .value-separator {
+      color: #c1c1c1;
+      font-weight: bold;
+    }
+  }
+  
+  .color-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    input[type="color"] {
+      width: 50px;
+      height: 36px;
+      background: #1a1b26;
+      border: 1px solid #433f64;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 2px;
+      
+      &::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+      
+      &::-webkit-color-swatch {
+        border: none;
+        border-radius: 2px;
+      }
+    }
+    
+    .color-preview {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #f3c267;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
+  
+  .tracker-add-button {
+    width: 100%;
+    padding: 10px;
+    background: #f3c267;
+    color: #1a1b26;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    
+    &:hover {
+      background: #ffd166;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Tracker list */
+.tracker-list {
+  .tracker-list-header {
+    color: #c1c1c1;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  
+  .tracker-list-items {
+    .no-trackers {
+      color: #666;
+      font-style: italic;
+      text-align: center;
+      padding: 20px;
+    }
+  }
+}
+
+/* Tracker list item */
+.tracker-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #1a1b26;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #25262f;
+    transform: translateX(-2px);
+  }
+  
+  .tracker-item-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .tracker-item-name {
+    flex: 1;
+    color: #fff;
+    font-weight: 500;
+  }
+  
+  .tracker-item-value {
+    color: #c1c1c1;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  .tracker-item-delete {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: #ff6b6b;
+      transform: scale(1.2);
+    }
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tracker-button {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Dark mode compatibility */
+.daggerheart {
+  .sheet-tracker-sidebar {
+    // Additional theme-specific styles can go here
+  }
+} 

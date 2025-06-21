@@ -8,6 +8,7 @@ import { createDaggerheartMacro } from "./macro.js";
 import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
+import { SheetTracker } from "./sheet-tracker.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
 
@@ -79,6 +80,7 @@ Hooks.once("init", async function() {
   game.daggerheart = {
     SimpleActor,
     createDaggerheartMacro,
+    SheetTracker,
     rollHandler: {
       rollHope: _rollHope,
       rollFear: _rollFear,
