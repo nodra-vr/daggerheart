@@ -511,11 +511,14 @@
             {{!-- Owned Inventory Tab --}}
             <div class="inventory">
                 <div class="tab-category">{{localize "DH.Worn"}}
-                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
-                        data-type="worn">
-                        <i class="fas fa-plus"></i></a>
+                    <div class="category-controls">
+                        <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
+                            data-type="worn">
+                            <i class="fas fa-plus"></i></a>
+                        <a class="item-control category-toggle" data-category="worn" title="Toggle Worn Section"><i class="fas fa-chevron-down"></i></a>
+                    </div>
                 </div>
-                <ol class="item-list" data-item-type="worn">
+                <ol class="item-list category-collapsed" data-item-type="worn">
                     {{#each data.items as |item id|}}
                     {{#if (eq item.type "worn")}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -541,12 +544,15 @@
                 </ol>
 
                 <div class="tab-category">{{localize "DH.Backpack"}}
-                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
-                        data-type="inventory">
-                        <i class="fas fa-plus"></i></a>
+                    <div class="category-controls">
+                        <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
+                            data-type="inventory">
+                            <i class="fas fa-plus"></i></a>
+                        <a class="item-control category-toggle" data-category="backpack" title="Toggle Backpack Section"><i class="fas fa-chevron-down"></i></a>
+                    </div>
                 </div>
 
-                <ol class="item-list" data-item-type="inventory">
+                <ol class="item-list category-collapsed" data-item-type="inventory">
                     {{#each data.items as |item id|}}
                     {{#if (eq item.type "inventory")}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -611,11 +617,14 @@
                 </ol>-->
 
                 <div class="tab-category">{{localize "DH.Class"}}
-                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-class"
-                        data-type="class">
-                        <i class="fas fa-plus"></i></a>
+                    <div class="category-controls">
+                        <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-class"
+                            data-type="class">
+                            <i class="fas fa-plus"></i></a>
+                        <a class="item-control category-toggle" data-category="class" title="Toggle Class Section"><i class="fas fa-chevron-down"></i></a>
+                    </div>
                 </div>
-                <ol class="item-list" data-item-type="class">
+                <ol class="item-list category-collapsed" data-item-type="class">
                     {{#each data.items as |item id|}}
                     {{#if (eq item.type "class")}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -642,11 +651,14 @@
                     {{/each}}
                 </ol>
                 <div class="tab-category">{{localize "DH.Subclass"}}
-                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-subclass"
-                        data-type="subclass">
-                        <i class="fas fa-plus"></i></a>
+                    <div class="category-controls">
+                        <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-subclass"
+                            data-type="subclass">
+                            <i class="fas fa-plus"></i></a>
+                        <a class="item-control category-toggle" data-category="subclass" title="Toggle Subclass Section"><i class="fas fa-chevron-down"></i></a>
+                    </div>
                 </div>
-                <ol class="item-list" data-item-type="subclass">
+                <ol class="item-list category-collapsed" data-item-type="subclass">
                     {{#each data.items as |item id|}}
                     {{#if (eq item.type "subclass")}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -674,11 +686,14 @@
                 </ol>
 
                 <div class="tab-category">{{localize "DH.Ancestry"}}
-                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-ancestry"
-                        data-type="ancestry">
-                        <i class="fas fa-plus"></i></a>
+                    <div class="category-controls">
+                        <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-ancestry"
+                            data-type="ancestry">
+                            <i class="fas fa-plus"></i></a>
+                        <a class="item-control category-toggle" data-category="ancestry" title="Toggle Ancestry Section"><i class="fas fa-chevron-down"></i></a>
+                    </div>
                 </div>
-                <ol class="item-list" data-item-type="ancestry">
+                <ol class="item-list category-collapsed" data-item-type="ancestry">
                     {{#each data.items as |item id|}}
                     {{#if (eq item.type "ancestry")}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -706,11 +721,14 @@
                 </ol>
                 
                 <div class="tab-category">{{localize "DH.Community"}}
-                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-community"
-                        data-type="community">
-                        <i class="fas fa-plus"></i></a>
+                    <div class="category-controls">
+                        <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-community"
+                            data-type="community">
+                            <i class="fas fa-plus"></i></a>
+                        <a class="item-control category-toggle" data-category="community" title="Toggle Community Section"><i class="fas fa-chevron-down"></i></a>
+                    </div>
                 </div>
-                <ol class="item-list" data-item-type="community">
+                <ol class="item-list category-collapsed" data-item-type="community">
                     {{#each data.items as |item id|}}
                     {{#if (eq item.type "community")}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -738,11 +756,14 @@
                 </ol>
 
                 <div class="tab-category">{{localize "DH.Abilities"}}
-                    <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create"
-                        data-type="item">
-                        <i class="fas fa-plus"></i></a>
+                    <div class="category-controls">
+                        <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create"
+                            data-type="item">
+                            <i class="fas fa-plus"></i></a>
+                        <a class="item-control category-toggle" data-category="abilities" title="Toggle Abilities Section"><i class="fas fa-chevron-down"></i></a>
+                    </div>
                 </div>
-                <ol class="item-list" data-item-type="item">
+                <ol class="item-list category-collapsed" data-item-type="item">
                     {{#each data.items as |item id|}}
                     {{#if (eq item.type "item")}}
                     <li class="item" data-item-id="{{item._id}}">

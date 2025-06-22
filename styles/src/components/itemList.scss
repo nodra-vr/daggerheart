@@ -85,6 +85,54 @@
   border: none;
 }
 
+/* Category collapsible animation styles */
+.daggerheart .item-list[data-item-type="class"],
+.daggerheart .item-list[data-item-type="subclass"],
+.daggerheart .item-list[data-item-type="ancestry"],
+.daggerheart .item-list[data-item-type="community"],
+.daggerheart .item-list[data-item-type="item"],
+.daggerheart .item-list[data-item-type="worn"],
+.daggerheart .item-list[data-item-type="inventory"] {
+  max-height: 500px;
+  opacity: 1;
+  transform: scaleY(1);
+  transform-origin: top;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out, transform 0.3s ease-out;
+  overflow: hidden;
+}
+
+.daggerheart .item-list.category-collapsed {
+  max-height: 0;
+  opacity: 0;
+  transform: scaleY(0);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+/* Reduce tab-category spacing when associated section is collapsed */
+.daggerheart .tab-category.section-collapsed {
+  margin-bottom: 0.25em;
+}
+
+/* Ensure normal spacing when expanded (default state) */
+.daggerheart .tab-category:not(.section-collapsed) {
+  margin-bottom: 0.75em;
+}
+
+/* Category controls styling */
+.daggerheart .category-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.daggerheart .vault-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .daggerheart .item-list .item {
   display: flex;
   flex-direction: column;

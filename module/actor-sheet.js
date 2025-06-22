@@ -123,6 +123,28 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
     }
     
+    // Restore category states on re-render
+    if (!this._categoryStates) {
+      this._categoryStates = {};
+    }
+    
+    const categories = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack'];
+    categories.forEach(category => {
+      const categoryList = html.find(`.item-list[data-item-type="${this._getCategoryDataType(category)}"]`);
+      const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
+      const categoryHeader = html.find(`.category-toggle[data-category="${category}"]`).closest('.tab-category');
+      
+      if (this._categoryStates[category]) {
+        categoryList.removeClass('category-collapsed');
+        categoryHeader.removeClass('section-collapsed');
+        categoryIcon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      } else {
+        categoryList.addClass('category-collapsed');
+        categoryHeader.addClass('section-collapsed');
+        categoryIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+      }
+    });
+    
     // Mark empty item lists
     this._markEmptyItemLists(html);
     
@@ -157,6 +179,9 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     
     // Vault Toggle
     html.find('.vault-toggle').click(this._onToggleVault.bind(this));
+    
+    // Category Toggle
+    html.find('.category-toggle').click(this._onToggleCategory.bind(this));
     
     // Death overlay click handler
     html.find('.death-overlay').click(this._onDeathOverlayClick.bind(this));
@@ -1475,6 +1500,47 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
         this._vaultOpen = false;
     }
+  }
+
+  async _onToggleCategory(event) {
+    event.preventDefault();
+    const button = $(event.currentTarget);
+    const icon = button.find('i');
+    const category = button.data('category');
+    const dataType = this._getCategoryDataType(category);
+    const categoryList = this.element.find(`.item-list[data-item-type="${dataType}"]`);
+    const categoryHeader = button.closest('.tab-category');
+
+    if (!this._categoryStates) {
+      this._categoryStates = {};
+    }
+
+    if (categoryList.hasClass('category-collapsed')) {
+        // Expanding
+        categoryList.removeClass('category-collapsed');
+        categoryHeader.removeClass('section-collapsed');
+        icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        this._categoryStates[category] = true;
+    } else {
+        // Collapsing
+        categoryList.addClass('category-collapsed');
+        categoryHeader.addClass('section-collapsed');
+        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        this._categoryStates[category] = false;
+    }
+  }
+
+  _getCategoryDataType(category) {
+    const mapping = {
+      'class': 'class',
+      'subclass': 'subclass',
+      'ancestry': 'ancestry',
+      'community': 'community',
+      'abilities': 'item',
+      'worn': 'worn',
+      'backpack': 'inventory'
+    };
+    return mapping[category] || category;
   }
 
   async _onToggleDescription(event) {
