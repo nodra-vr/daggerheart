@@ -40,21 +40,17 @@ export class DaggerheartDialogHelper {
         };
       }
       
-      new foundry.applications.api.DialogV2({
-        window: { 
-          title: config.title,
-          classes: [dialogClass]
-        },
+      new Dialog({
+        title: config.title,
         content: config.content,
-        buttons: Object.entries(dialogButtons).map(([key, button]) => ({
-          action: key,
-          ...button
-        })),
+        buttons: dialogButtons,
         default: config.default || Object.keys(dialogButtons)[0],
         render: config.render,
         close: () => {
           safeResolve(null);
         }
+      }, {
+        classes: [dialogClass]
       }).render(true);
     });
   }
