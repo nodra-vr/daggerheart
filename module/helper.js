@@ -393,23 +393,25 @@ export class EntitySheetHelper {
     let groupContainer = groupHeader.closest(".group");
     let group = $(groupHeader).find('.group-key');
     // confirm deletion
-    new Dialog({
-      title: game.i18n.localize("SIMPLE.DeleteGroup"),
+    new foundry.applications.api.DialogV2({
+      window: { title: game.i18n.localize("SIMPLE.DeleteGroup") },
       content: `${game.i18n.localize("SIMPLE.DeleteGroupContent")} <strong>${group.val()}</strong>`,
-      buttons: {
-        confirm: {
-          icon: '<i class="fas fa-trash"></i>',
+      buttons: [
+        {
+          action: "confirm",
+          icon: "fas fa-trash",
           label: game.i18n.localize("Yes"),
           callback: async () => {
             groupContainer.parentElement.removeChild(groupContainer);
             await app._onSubmit(event);
           }
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize("No"),
+        {
+          action: "cancel",
+          icon: "fas fa-times",
+          label: game.i18n.localize("No")
         }
-      }
+      ]
     }).render(true);
   }
 
@@ -549,7 +551,7 @@ export class EntitySheetHelper {
     // Render the document creation form
     const template = "templates/sidebar/document-create.html";
     const defaultType = data.type || "";
-    const html = await renderTemplate(template, {
+    const html = await foundry.applications.handlebars.renderTemplate(template, {
       name: data.name || game.i18n.format("DOCUMENT.New", {type: label}),
       folder: data.folder,
       folders: folders,
@@ -560,32 +562,34 @@ export class EntitySheetHelper {
     });
 
     // Render the confirmation dialog window
-    return Dialog.prompt({
-      title: title,
+    return foundry.applications.api.DialogV2.prompt({
+      window: { title: title },
       content: html,
-      label: title,
-      callback: html => {
-        // Get the form data
-        const form = html[0].querySelector("form");
-        const fd = new foundry.applications.ux.FormDataExtended(form);
-        let createData = fd.object;
+      ok: {
+        label: title,
+        callback: (event, button, dialog) => {
+          // Get the form data
+          const form = dialog.element.querySelector("form");
+          const fd = new foundry.applications.ux.FormDataExtended(form);
+          let createData = fd.object;
 
-        // Merge with template data
-        const template = collection.get(form.type.value);
-        if ( template ) {
-          createData = foundry.utils.mergeObject(template.toObject(), createData);
-          createData.type = template.type;
-          delete createData.flags.daggerheart.isTemplate;
-        } else {
-          createData.type = form.type.value;
+          // Merge with template data
+          const template = collection.get(form.type.value);
+          if ( template ) {
+            createData = foundry.utils.mergeObject(template.toObject(), createData);
+            createData.type = template.type;
+            delete createData.flags.daggerheart.isTemplate;
+          } else {
+            createData.type = form.type.value;
+          }
+
+          // Merge provided override data
+          createData = foundry.utils.mergeObject(createData, data, { inplace: false });
+          return this.create(createData, {renderSheet: true});
         }
-
-        // Merge provided override data
-        createData = foundry.utils.mergeObject(createData, data, { inplace: false });
-        return this.create(createData, {renderSheet: true});
       },
       rejectClose: false,
-      options: options
+      ...options
     });
   }
 

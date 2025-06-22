@@ -207,21 +207,61 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     }
     
     // Tooltip functionality with 50ms delay
+    let tooltipElement = null;
     html.find("[data-trait-tooltip]").each((i, element) => {
       let tooltipTimeout;
       
-      element.addEventListener("mouseenter", () => {
+      element.addEventListener("mouseenter", (e) => {
         const tooltipText = element.getAttribute("data-trait-tooltip");
         if (tooltipText && tooltipText.trim() !== "") {
           tooltipTimeout = setTimeout(() => {
-            element.classList.add("show-tooltip");
+            // Create tooltip element
+            if (!tooltipElement) {
+              tooltipElement = document.createElement('div');
+              tooltipElement.className = 'daggerheart-tooltip';
+              tooltipElement.innerHTML = `
+                <div class="tooltip-arrow"></div>
+                <div class="tooltip-content"></div>
+              `;
+              document.body.appendChild(tooltipElement);
+            }
+            
+            // Set content and show
+            tooltipElement.querySelector('.tooltip-content').textContent = tooltipText;
+            tooltipElement.classList.add('show');
+            
+            // Position tooltip
+            const rect = element.getBoundingClientRect();
+            const tooltipRect = tooltipElement.getBoundingClientRect();
+            
+            // Calculate position
+            let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+            let top = rect.top - tooltipRect.height - 8;
+            
+            // Keep tooltip on screen
+            if (left < 10) left = 10;
+            if (left + tooltipRect.width > window.innerWidth - 10) {
+              left = window.innerWidth - tooltipRect.width - 10;
+            }
+            if (top < 10) {
+              // Show below if not enough space above
+              top = rect.bottom + 8;
+              tooltipElement.classList.add('below');
+            } else {
+              tooltipElement.classList.remove('below');
+            }
+            
+            tooltipElement.style.left = left + 'px';
+            tooltipElement.style.top = top + 'px';
           }, 50);
         }
       });
       
       element.addEventListener("mouseleave", () => {
         clearTimeout(tooltipTimeout);
-        element.classList.remove("show-tooltip");
+        if (tooltipElement) {
+          tooltipElement.classList.remove('show');
+        }
       });
     });
     

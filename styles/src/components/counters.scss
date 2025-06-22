@@ -27,14 +27,11 @@
     padding: 0.25em 0.5em;
 
     &:hover {
-      background: rgba(67, 63, 100, 0.3);
       transform: scale(1.05);
-      box-shadow: 0 2px 8px rgba(255, 187, 0, 0.2);
     }
 
     &:active {
       transform: scale(0.98);
-      background: rgba(67, 63, 100, 0.5);
     }
   }
 
