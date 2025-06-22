@@ -252,7 +252,7 @@
   border: 2px solid var(--dh-color-gold);
   border-style: double;
   border-radius: 0px 10px;
-  z-index: -500;
+  /* z-index: -500; -- Removed: This was making the image unclickable */
 }
 
 .item .sheet-body .tab {
@@ -5256,7 +5256,7 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   border: 2px solid var(--dh-color-gold);
   border-style: double;
   border-radius: 0px 10px;
-  z-index: -500;
+  /* z-index: -500; -- Removed: This was making the image unclickable */
 }
 .item .sheet-body .tab {
   height: 100%;
