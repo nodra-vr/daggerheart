@@ -3,33 +3,32 @@
     {{!-- Sheet Header --}}
     <header class="sheet-header">
         <div class="header-main-container">
-            <div class="resource health">
-                <div class="resource-box">
-                    <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}" />
-                    <span class="sep">/</span>
-                    <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0" />
-                </div>
-                <label>{{localize "DH.Health"}}</label>
-            </div>
-
             <div class="portrait-container">
                 <div class="portrait-image-wrapper">
                     <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
                     {{#if isDying}}
-                    <div class="death-overlay" title="NPC is dying!">
+                    <div class="death-overlay" title="Companion is dying!">
                         <i class="fas fa-skull"></i>
                     </div>
                     {{/if}}
                 </div>
-            </div>
 
-            <div class="resource stress">
-                <div class="resource-box">
-                    <input type="number" name="system.stress.value" value="{{systemData.stress.value}}" min="0" max="{{systemData.stress.max}}" />
-                    <span class="sep">/</span>
-                    <input type="number" name="system.stress.max" value="{{systemData.stress.max}}" min="0" />
+                <div class="portrait-resources">
+                    <div class="resource stress">
+                        <div class="resource-content">
+                            <div class="resource-box">
+                                <input type="number" name="system.stress.value" value="{{systemData.stress.value}}" min="0" max="{{systemData.stress.max}}" />
+                                <span>/</span>
+                                <input type="number" name="system.stress.max" value="{{systemData.stress.max}}" min="0" />
+                            </div>
+                        </div>
+                        <div class="resource-label-controls">
+                            <a class="resource-control" data-action="decrement" data-field="stress.value"><i class="fas fa-minus"></i></a>
+                            <label data-trait-tooltip="{{systemData.stress.tooltip}}">{{localize "DH.Stress"}}</label>
+                            <a class="resource-control" data-action="increment" data-field="stress.value"><i class="fas fa-plus"></i></a>
+                        </div>
+                    </div>
                 </div>
-                <label>{{localize "DH.Stress"}}</label>
             </div>
         </div>
 
@@ -37,85 +36,131 @@
             <h1 class="charname">
                 <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
             </h1>
-            <div class="header-domain">
-                <input type="text" name="system.chosenDomains.domain-one" value="{{systemData.chosenDomains.domain-one}}"
-                    placeholder="{{localize "DH.TierX"}}" />
-                <input type="text" name="system.chosenDomains.domain-two" value="{{systemData.chosenDomains.domain-two}}"
-                    placeholder="{{localize "DH.Solo"}}" />
-            </div>
         </div>
     </header>
 
     {{!-- Sheet Tab Navigation --}}
     <nav class="sheet-tabs tabs" data-group="primary">
-        <a class="item" data-tab="description">{{localize "DH.Description"}}</a>
+        <a class="item active" data-tab="companion">{{localize "DH.Companion"}}</a>
+        <a class="item" data-tab="biography">{{localize "DH.Biography"}}</a>
     </nav>
 
     {{!-- Sheet Body --}}
     <section class="sheet-body">
-        <div class="tab description" data-group="primary" data-tab="description">
-            <div class="npc-defense-section">
+        <div class="tab companion" data-group="primary" data-tab="companion">
+            <div class="companion-defense-section">
                 <div class="defense" data-trait="evasion">
                     <input type="number" name="system.defenses.evasion.value"
                         value="{{systemData.defenses.evasion.value}}" />
-                    <label for="system.defenses.evasion.value">{{localize "DH.Difficulty"}}</label>
+                    <label for="system.defenses.evasion.value">{{localize "DH.Evasion"}}</label>
                 </div>
-                <div class="threshold-group">
-                    <label>{{localize "DH.Threshold"}}</label>
-                    <div class="threshold-values">
-                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">{{localize "DH.Mark1HP"}}</span>
-                        <div class="resource-group">
-                            <input type="number" name="system.threshold.minor"
-                                value="{{systemData.threshold.minor}}" />
-                            <a class="trait-effects">{{localize "DH.Major"}}</a>
-                        </div>
-                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">{{localize "DH.Mark2HP"}}</span>
-                        <div class="resource-group">
-                            <input type="number" name="system.threshold.major"
-                                value="{{systemData.threshold.major}}" />
-                            <a class="trait-effects">{{localize "DH.Severe"}}</a>
-                        </div>
-                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">{{localize "DH.Mark3HP"}}</span>
-                    </div>
-                </div>
-            </div>
 
-            <div class="defenses">
-                <div class="weapon-group">
-                    <div class="weapon-row">
-                        <label class="weapon-label">{{localize "DH.PrimaryAttack"}}</label>
-                        <div class="weapon-box click-rollable-group basic-rollable-group">
-                            <div class="weapon-box-inner">
-                                <div class="weapon-infobox-first">
-                                    <input class="weapon-field basic-rollable-name click-rollable-name"
-                                        name="system.weapon-main.name" type="text"
-                                        value="{{systemData.weapon-main.name}}" placeholder="{{localize "DH.Attack"}}" />
-                                        <div class="textarea-container">
-                                            <input class="trait-effects resize-ta" name="system.weapon-main.description"
-                                                placeholder="{{localize "DH.AttackTraitsHere"}}"
-                                                value="{{systemData.weapon-main.description}}" />
-                                        </div>
-                                </div>
-                                <div class="weapon-roller-box">
-                                    <div class="weapon-infobox">
-                                        <input class="weapon-to-hit click-rollable-modifier"
-                                            name="system.weapon-main.to-hit" type="number"
-                                            value="{{systemData.weapon-main.to-hit}}" placeholder="2" />
-                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
+                <div class="companion-weapon-section">
+                    <div class="weapon-group">
+                        <div class="weapon-row">
+                            <label class="weapon-label">{{localize "DH.PrimaryAttack"}}</label>
+                            <div class="weapon-box click-rollable-group basic-rollable-group">
+                                <div class="weapon-box-inner">
+                                    <div class="weapon-infobox-first">
+                                        <input class="weapon-field basic-rollable-name click-rollable-name"
+                                            name="system.weapon-main.name" type="text"
+                                            value="{{systemData.weapon-main.name}}" placeholder="{{localize "DH.Attack"}}" />
+                                            <div class="textarea-container">
+                                                <input class="trait-effects resize-ta" name="system.weapon-main.description"
+                                                    placeholder="{{localize "DH.AttackTraitsHere"}}"
+                                                    value="{{systemData.weapon-main.description}}" />
+                                            </div>
                                     </div>
-                                    <div class="weapon-infobox">
-                                        <input class="weapon-damage basic-rollable-value"
-                                            name="system.weapon-main.damage" type="text"
-                                            value="{{systemData.weapon-main.damage}}" placeholder="1d8" />
-                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
+                                    <div class="weapon-roller-box">
+                                        <div class="weapon-infobox">
+                                            <input class="weapon-to-hit click-rollable-modifier"
+                                                name="system.weapon-main.to-hit" type="number"
+                                                value="{{systemData.weapon-main.to-hit}}" placeholder="2" />
+                                            <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
+                                        </div>
+                                        <div class="weapon-infobox">
+                                            <input class="weapon-damage basic-rollable-value"
+                                                name="system.weapon-main.damage" type="text"
+                                                value="{{systemData.weapon-main.damage}}" placeholder="1d8" />
+                                            <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="experience-group">
+                <div class="experience-row click-rollable-group">
+                    <div class="experience-row-column">
+                        <div class="exp-level"><input type="number" name="system.experience.1level" value="{{systemData.experience.1level}}" placeholder="1" /></div>
+                        <a class="trait-effects">{{localize "DH.Level"}}</a>  
+                    </div>
+                    <div class="experience-row-column-2">
+                        <input class="click-rollable-name" name="system.experience.1Name" type="text"
+                            value="{{systemData.experience.1Name}}" placeholder="{{localize "DH.Experience"}}" />
+                    </div>
+                    <div class="experience-row-column">
+                        <input class="click-rollable-modifier" type="number" name="system.experience.1Mod"
+                            value="{{systemData.experience.1Mod}}" />
+                    </div>
+                </div>
+                <div class="experience-row click-rollable-group">
+                    <div class="experience-row-column">
+                        <div class="exp-level"><input type="number" name="system.experience.2level" value="{{systemData.experience.2level}}" placeholder="1"/></div>
+                        <a class="trait-effects">{{localize "DH.Level"}}</a>
+                    </div>
+                    <div class="experience-row-column-2">
+                        <input class="click-rollable-name" name="system.experience.2Name" type="text" value="{{systemData.experience.2Name}}" placeholder="{{localize "DH.Experience"}}"/>
+                    </div>
+                    <div class="experience-row-column">
+                        <input class="click-rollable-modifier"type="number" name="system.experience.2Mod" value="{{systemData.experience.2Mod}}"/>
+                    </div>
+                </div>
+                <div class="experience-row click-rollable-group">
+                    <div class="experience-row-column">
+                        <div class="exp-level"><input type="number" name="system.experience.5level" value="{{systemData.experience.5level}}" placeholder="2"/></div>
+                        <a class="trait-effects">{{localize "DH.Level"}}</a>
+                    </div>
+                    <div class="experience-row-column-2">
+                        <input class="click-rollable-name" name="system.experience.5Name" type="text" value="{{systemData.experience.5Name}}" placeholder="{{localize "DH.Experience"}}"/>
+                    </div>
+                    <div class="experience-row-column">
+                        <input class="click-rollable-modifier"type="number" name="system.experience.5Mod" value="{{systemData.experience.5Mod}}"/>
+                    </div>
+                </div>
+                <div class="experience-row click-rollable-group">
+                    <div class="experience-row-column">
+                        <div class="exp-level"><input type="number" name="system.experience.8level" value="{{systemData.experience.8level}}" placeholder="5"/></div>
+                        <a class="trait-effects">{{localize "DH.Level"}}</a>
+                    </div>
+                    <div class="experience-row-column-2">
+                        <input class="click-rollable-name" name="system.experience.8Name" type="text" value="{{systemData.experience.8Name}}" placeholder="{{localize "DH.Experience"}}"/>
+                    </div>
+                    <div class="experience-row-column">
+                        <input class="click-rollable-modifier"type="number" name="system.experience.8Mod" value="{{systemData.experience.8Mod}}"/>
+                    </div>
+                </div>
+                <div class="experience-row click-rollable-group">
+                    <div class="experience-row-column">
+                        <div class="exp-level"><input type="number" name="system.experience.11level" value="{{systemData.experience.11level}}" placeholder="8"/></div>
+                        <a class="trait-effects">{{localize "DH.Level"}}</a>
+                    </div>
+                    <div class="experience-row-column-2">
+                        <input class="click-rollable-name" name="system.experience.1Name2" type="text"
+                            value="{{systemData.experience.1Name2}}" placeholder="{{localize "DH.Experience"}}" />
+                    </div>
+                    <div class="experience-row-column">
+                        <input class="click-rollable-modifier" type="number" name="system.experience.1Mod2"
+                            value="{{systemData.experience.1Mod2}}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab biography" data-group="primary" data-tab="biography">
             {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
         </div>
     </section>

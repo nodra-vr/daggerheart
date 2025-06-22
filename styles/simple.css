@@ -140,7 +140,8 @@
   min-height: 600px;
 }
 
-.daggerheart.sheet.npc {
+.daggerheart.sheet.npc,
+.daggerheart.sheet.companion {
   min-width: 690px;
   min-height: 500px;
 }
@@ -151,7 +152,7 @@
 }
 
 /* Window Content Styling */
-.actor .window-content, .item .window-content, .npc .window-content {
+.actor .window-content, .item .window-content, .npc .window-content, .companion .window-content {
   background: transparent;
   background-color: transparent;
   color: #f0f0e0;
@@ -166,7 +167,7 @@
 }
 
 /* Window Header Styling */
-.actor .window-header, .npc .window-header, .item .window-header {
+.actor .window-header, .npc .window-header, .companion .window-header, .item .window-header {
   background: transparent;
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.2392156863);
@@ -190,7 +191,11 @@
   background: transparent;
 }
 
-.sheet.actor, .sheet.npc, .sheet.item {
+.companion {
+  background: transparent;
+}
+
+.sheet.actor, .sheet.npc, .sheet.companion, .sheet.item {
   background: rgba(11, 10, 19, 0.8392156863);
   backdrop-filter: blur(5px);
 }
@@ -203,6 +208,11 @@
 
 .daggerheart .npc input[type=text], .daggerheart .npc input[type=number], .daggerheart .npc input[type=password],
 .daggerheart .npc input[type=date], .daggerheart .npc input[type=time], .daggerheart .npc input[type=search] {
+  color: #f0f0e0;
+}
+
+.daggerheart .companion input[type=text], .daggerheart .companion input[type=number], .daggerheart .companion input[type=password],
+.daggerheart .companion input[type=date], .daggerheart .companion input[type=time], .daggerheart .companion input[type=search] {
   color: #f0f0e0;
 }
 
@@ -791,6 +801,10 @@
   gap: 1em;
   overflow: visible;
   max-height: 26em;
+}
+
+.companion .sheet-header {
+  max-height: 22em;
 }
 
 .npc .sheet-header {
@@ -1498,7 +1512,8 @@ input.trait-effects.resize-ta {
   justify-content: center;
 }
 
-.npc .weapon-row .weapon-label {
+.npc .weapon-row .weapon-label,
+.companion .weapon-row .weapon-label {
   font-size: 14px;
   display: flex;
   border: none;
@@ -1545,19 +1560,22 @@ input.trait-effects.resize-ta {
   width: 4.5em;
 }
 
-.npc .weapon-damage {
+.npc .weapon-damage,
+.companion .weapon-damage {
   width: 4.5em;
 }
 
 /* Dying/Dead Character Styling */
 .daggerheart.sheet.character.dying .item-bg,
-.daggerheart.sheet.npc.dying .item-bg {
+.daggerheart.sheet.npc.dying .item-bg,
+.daggerheart.sheet.companion.dying .item-bg {
   filter: saturate(0.3) brightness(0.6) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
 }
 
 .daggerheart.sheet.character.dying .profile-img,
-.daggerheart.sheet.npc.dying .profile-img {
+.daggerheart.sheet.npc.dying .profile-img,
+.daggerheart.sheet.companion.dying .profile-img {
   filter: saturate(0.3) brightness(0.7) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
 }
@@ -5435,20 +5453,29 @@ body.game .app a.content-link {
   margin: 1.5em 0;
 }
 
-.npc .defenses {
+.npc .defenses,
+.companion .defenses {
   gap: 2em;
   margin-bottom: 1em;
   margin-top: 1em;
   overflow: hidden;
 }
 
-.npc-defense-section {
+.npc-defense-section,
+.companion-defense-section {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 2em;
   margin-bottom: 2em;
+}
+
+.companion-weapon-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .defense {
@@ -5869,7 +5896,8 @@ input.trait-effects.resize-ta {
   min-width: 0;
 }
 
-.npc .weapon-row .weapon-label {
+.npc .weapon-row .weapon-label,
+.companion .weapon-row .weapon-label {
   font-size: 14px;
   display: flex;
   border: none;

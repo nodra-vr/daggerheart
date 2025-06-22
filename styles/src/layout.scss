@@ -6,7 +6,8 @@
   min-height: 600px;
 }
 
-.daggerheart.sheet.npc {
+.daggerheart.sheet.npc,
+.daggerheart.sheet.companion {
   min-width: 690px;
   min-height: 500px;
 }
@@ -17,7 +18,7 @@
 }
 
 /* Window Content Styling */
-.actor .window-content, .item .window-content, .npc .window-content {
+.actor .window-content, .item .window-content, .npc .window-content, .companion .window-content {
   background: transparent;
   background-color: transparent;
   color: #f0f0e0;
@@ -32,7 +33,7 @@
 }
 
 /* Window Header Styling */
-.actor .window-header, .npc .window-header, .item .window-header {
+.actor .window-header, .npc .window-header, .companion .window-header, .item .window-header {
   background: transparent;
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.2392156863);
@@ -58,7 +59,11 @@
   background: transparent;
 }
 
-.sheet.actor, .sheet.npc, .sheet.item {
+.companion {
+  background: transparent;
+}
+
+.sheet.actor, .sheet.npc, .sheet.companion, .sheet.item {
   background: rgba(11, 10, 19, 0.8392156863);
   backdrop-filter: blur(5px);
 }
@@ -71,6 +76,11 @@
 
 .daggerheart .npc input[type=text], .daggerheart .npc input[type=number], .daggerheart .npc input[type=password],
 .daggerheart .npc input[type=date], .daggerheart .npc input[type=time], .daggerheart .npc input[type=search] {
+  color: #f0f0e0;
+}
+
+.daggerheart .companion input[type=text], .daggerheart .companion input[type=number], .daggerheart .companion input[type=password],
+.daggerheart .companion input[type=date], .daggerheart .companion input[type=time], .daggerheart .companion input[type=search] {
   color: #f0f0e0;
 }
 

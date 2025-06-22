@@ -459,7 +459,8 @@ input.trait-effects.resize-ta {
   }
 }
 
-.npc .weapon-row .weapon-label {
+.npc .weapon-row .weapon-label,
+.companion .weapon-row .weapon-label {
   font-size: 14px;
   display: flex;
   border: none;
@@ -506,19 +507,22 @@ input.trait-effects.resize-ta {
   width: 4.5em;
 }
 
-.npc .weapon-damage {
+.npc .weapon-damage,
+.companion .weapon-damage {
   width: 4.5em;
 }
 
 /* Dying/Dead Character Styling */
 .daggerheart.sheet.character.dying .item-bg,
-.daggerheart.sheet.npc.dying .item-bg {
+.daggerheart.sheet.npc.dying .item-bg,
+.daggerheart.sheet.companion.dying .item-bg {
   filter: saturate(0.3) brightness(0.6) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
 }
 
 .daggerheart.sheet.character.dying .profile-img,
-.daggerheart.sheet.npc.dying .profile-img {
+.daggerheart.sheet.npc.dying .profile-img,
+.daggerheart.sheet.companion.dying .profile-img {
   filter: saturate(0.3) brightness(0.7) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
 }

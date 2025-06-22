@@ -131,6 +131,7 @@
   "DH.Subclass": "Subclass",
   "DH.Ancestry": "Ancestry",
   "DH.Community": "Community",
+  "DH.Companion": "Companion",
   "DH.Abilities": "Abilities",
   "DH.Vault": "Vault",
   "DH.SendToVault": "Send to Vault",
