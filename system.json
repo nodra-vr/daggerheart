@@ -1,6 +1,6 @@
 {
   "id": "daggerheart",
-        "version": "2.3.1",
+        "version": "2.3.2",
   "title": "Daggerheart",
   "url": "",
   "description": "Unofficial Daggerheart Game System",
@@ -11,10 +11,6 @@
       "url": "https://github.com/featureJosh"
     }
   ],
-  "documentTypes": {
-    "Actor": ["character", "npc", "companion"],
-    "Item": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass"]
-  },
   "esmodules": ["module/simple.js"],
   "styles": ["styles/simple.css"],
   "packs": [
