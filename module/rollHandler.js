@@ -233,11 +233,11 @@ export async function _rollDuality(options = {}) {
   let flavorSuffix = "";
   
   if (totalAdvantage > 0) {
-    coreFormula += ` + ${totalAdvantage}d6`;
+    coreFormula += ` + ${totalAdvantage}d6kh`;
     flavorSuffix = ` with ${totalAdvantage} Advantage`;
   } else if (totalAdvantage < 0) {
     const disAdv = Math.abs(totalAdvantage);
-    coreFormula += ` - ${disAdv}d6`;
+    coreFormula += ` - ${disAdv}d6kl`;
     flavorSuffix = ` with ${disAdv} Disadvantage`;
   }
   
