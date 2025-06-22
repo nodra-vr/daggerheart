@@ -3570,7 +3570,9 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   }
 }
 /* Tabs */
-.daggerheart.sheet.actor .sheet-tabs,
+.daggerheart.sheet.actor:not(.npc) .sheet-tabs,
+.daggerheart.sheet.actor.npc .sheet-tabs,
+.daggerheart.sheet.companion .sheet-tabs,
 .item-sheet-card .sheet-tabs {
   margin-top: 1em;
   border-top: none;
@@ -3584,7 +3586,9 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   max-height: 35px;
   gap: 2em;
 }
-.daggerheart.sheet.actor .sheet-tabs .item,
+.daggerheart.sheet.actor:not(.npc) .sheet-tabs .item,
+.daggerheart.sheet.actor.npc .sheet-tabs .item,
+.daggerheart.sheet.companion .sheet-tabs .item,
 .item-sheet-card .sheet-tabs .item {
   border: none;
   padding: 0px 10px;
@@ -3604,7 +3608,11 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   line-height: 35px;
   text-shadow: none;
 }
-.daggerheart.sheet.actor .sheet-tabs .item.active, .daggerheart.sheet.actor .sheet-tabs .item:hover,
+.daggerheart.sheet.actor:not(.npc) .sheet-tabs .item.active, .daggerheart.sheet.actor:not(.npc) .sheet-tabs .item:hover,
+.daggerheart.sheet.actor.npc .sheet-tabs .item.active,
+.daggerheart.sheet.actor.npc .sheet-tabs .item:hover,
+.daggerheart.sheet.companion .sheet-tabs .item.active,
+.daggerheart.sheet.companion .sheet-tabs .item:hover,
 .item-sheet-card .sheet-tabs .item.active,
 .item-sheet-card .sheet-tabs .item:hover {
   color: var(--dh-color-gold);
