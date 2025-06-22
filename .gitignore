@@ -6,3 +6,5 @@ node_modules
 styles/simple - old.css
 styles/src/simple-temporary.scss
 styles/src/testing-layouts.scss
+module/rollHandler-old.js
+module/actor-sheet-old.js

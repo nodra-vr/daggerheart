@@ -46,14 +46,6 @@ export async function _rollHope(options = {}) {
     
     try {
       await ChatMessage.create({
-        content: `
-          <div class="dice-roll">
-            <div class="dice-result">
-              <div class="dice-formula">${roll.formula}</div>
-              <div class="dice-total">${roll.total}</div>
-            </div>
-          </div>
-        `,
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: defaultFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -132,14 +124,6 @@ export async function _rollFear(options = {}) {
     
     try {
       await ChatMessage.create({
-        content: `
-          <div class="dice-roll">
-            <div class="dice-result">
-              <div class="dice-formula">${roll.formula}</div>
-              <div class="dice-total">${roll.total}</div>
-            </div>
-          </div>
-        `,
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: defaultFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -309,14 +293,6 @@ export async function _rollDuality(options = {}) {
     
     try {
       await ChatMessage.create({
-        content: `
-          <div class="dice-roll">
-            <div class="dice-result">
-              <div class="dice-formula">${roll.formula}</div>
-              <div class="dice-total">${roll.total}</div>
-            </div>
-          </div>
-        `,
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: finalFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -453,14 +429,6 @@ export async function _rollNPC(options = {}) {
     
     try {
       await ChatMessage.create({
-        content: `
-          <div class="dice-roll">
-            <div class="dice-result">
-              <div class="dice-formula">${roll.formula}</div>
-              <div class="dice-total">${roll.total}</div>
-            </div>
-          </div>
-        `,
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: finalFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -536,14 +504,6 @@ export async function _quickRoll(dieFormula, options = {}) {
   if (config.sendToChat) {
     try {
       await ChatMessage.create({
-        content: `
-          <div class="dice-roll">
-            <div class="dice-result">
-              <div class="dice-formula">${roll.formula}</div>
-              <div class="dice-total">${roll.total}</div>
-            </div>
-          </div>
-        `,
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: config.flavor || `<p class="roll-flavor-line"><b>Roll</b></p>`,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -667,15 +627,16 @@ export async function _dualityWithDialog(config) {
 
   // Send message
   try {
+    // Ensure dice flavors are properly set before sending to chat
+    if (result.roll.dice.length >= 2) {
+      result.roll.dice[0].options.flavor = "Hope";
+      result.roll.dice[1].options.flavor = "Fear";
+      if (result.roll.dice.length >= 3) {
+        result.roll.dice[2].options.flavor = "Modifier";
+      }
+    }
+    
     await ChatMessage.create({
-      content: `
-        <div class="dice-roll">
-          <div class="dice-result">
-            <div class="dice-formula">${result.roll.formula}</div>
-            <div class="dice-total">${result.roll.total}</div>
-          </div>
-        </div>
-      `,
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor: finalFlavor,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -789,14 +750,6 @@ export async function _npcRollWithDialog(config) {
   // Send message
   try {
     await ChatMessage.create({
-      content: `
-        <div class="dice-roll">
-          <div class="dice-result">
-            <div class="dice-formula">${result.roll.formula}</div>
-            <div class="dice-total">${result.roll.total}</div>
-          </div>
-        </div>
-      `,
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor: finalFlavor,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,

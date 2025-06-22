@@ -12,6 +12,7 @@ import { TokenCounterUI } from "./token-counter-ui.js";
 import { SheetTracker } from "./sheet-tracker.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
+import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing } from './damage-application.js';
 
 /**
  @param {Actor|null} actor (optional if level is provided)
@@ -99,6 +100,13 @@ Hooks.once("init", async function() {
       dualityWithDialog: _dualityWithDialog,
       npcRollWithDialog: _npcRollWithDialog,
       waitFor3dDice: _waitFor3dDice
+    },
+    damageApplication: {
+      applyDamage: applyDamage,
+      applyHealing: applyHealing,
+      rollDamage: rollDamage,
+      rollHealing: rollHealing,
+      extractRollTotal: extractRollTotal
     },
     getTierOfPlay: _getTierOfPlay
   };
@@ -266,8 +274,51 @@ Hooks.once("ready", async function() {
   game.daggerheart.spendFear = window.spendFear;
   game.daggerheart.gainFear = window.gainFear;
   
+  // Add global damage application functions
+  window.applyDamage = async function(targetActor, damageAmount, sourceActor) {
+    if (!game.daggerheart?.damageApplication?.applyDamage) {
+      console.error("Damage application not initialized");
+      ui.notifications.error("Damage application not available");
+      return false;
+    }
+    return await game.daggerheart.damageApplication.applyDamage(targetActor, damageAmount, sourceActor);
+  };
+  
+  window.applyHealing = async function(targetActor, healAmount, sourceActor) {
+    if (!game.daggerheart?.damageApplication?.applyHealing) {
+      console.error("Healing application not initialized");
+      ui.notifications.error("Healing application not available");
+      return false;
+    }
+    return await game.daggerheart.damageApplication.applyHealing(targetActor, healAmount, sourceActor);
+  };
+  
+  window.rollDamage = async function(formula, options) {
+    if (!game.daggerheart?.damageApplication?.rollDamage) {
+      console.error("Damage rolling not initialized");
+      ui.notifications.error("Damage rolling not available");
+      return null;
+    }
+    return await game.daggerheart.damageApplication.rollDamage(formula, options);
+  };
+  
+  window.rollHealing = async function(formula, options) {
+    if (!game.daggerheart?.damageApplication?.rollHealing) {
+      console.error("Healing rolling not initialized");
+      ui.notifications.error("Healing rolling not available");
+      return null;
+    }
+    return await game.daggerheart.damageApplication.rollHealing(formula, options);
+  };
+  
+  // Also add to the game.daggerheart object for consistency
+  game.daggerheart.applyDamage = window.applyDamage;
+  game.daggerheart.applyHealing = window.applyHealing;
+  game.daggerheart.rollDamage = window.rollDamage;
+  game.daggerheart.rollHealing = window.rollHealing;
+  
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), and spendStress() functions are now available globally.");
+  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), and rollHealing() functions are now available globally.");
   
   // Create demo macros if they don't exist (optional - for testing)
   if (game.user.isGM) {
@@ -288,6 +339,32 @@ Hooks.once("ready", async function() {
       await game.daggerheart.createSpendStressMacro(1);
       console.log("Created demo 'Apply Stress' macro for GM.");
     }
+    
+    // Create demo damage application macros
+    const existingDamageMacro = game.macros.find(m => m.name === "Apply Damage" && m.flags?.["daggerheart.damageApplicationMacro"]);
+    if (!existingDamageMacro) {
+      await _createDamageApplicationMacro();
+      console.log("Created demo 'Apply Damage' macro for GM.");
+    }
+    
+    const existingHealingMacro = game.macros.find(m => m.name === "Apply Healing" && m.flags?.["daggerheart.healingApplicationMacro"]);
+    if (!existingHealingMacro) {
+      await _createHealingApplicationMacro();
+      console.log("Created demo 'Apply Healing' macro for GM.");
+    }
+    
+    // Create demo damage/healing roll macros
+    const existingRollDamageMacro = game.macros.find(m => m.name === "Roll Damage" && m.flags?.["daggerheart.rollDamageMacro"]);
+    if (!existingRollDamageMacro) {
+      await _createRollDamageMacro();
+      console.log("Created demo 'Roll Damage' macro for GM.");
+    }
+    
+    const existingRollHealingMacro = game.macros.find(m => m.name === "Roll Healing" && m.flags?.["daggerheart.rollHealingMacro"]);
+    if (!existingRollHealingMacro) {
+      await _createRollHealingMacro();
+      console.log("Created demo 'Roll Healing' macro for GM.");
+    }
   }
 });
 
@@ -307,7 +384,7 @@ Hooks.on("preCreateActor", function(document, data, options, userId) {
 });
 
 /**
- * Hook to add damage button to attack roll chat messages
+ * Hook to add damage/healing application buttons to chat messages
  */
 Hooks.on("renderChatMessage", (message, html, data) => {
   // Get roll type and actor information from message flags
@@ -319,43 +396,53 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   const actorType = flags.actorType;
   const weaponName = flags.weaponName;
   
-  // Only add damage buttons to attack rolls, not damage rolls
-  if (rollType !== "attack") return;
-  
-  // Check for existing button
-  const existingButton = html.find(".damage-roll-button").length;
-  if (existingButton > 0) return;
-  
-  // Get the actor
-  const actor = game.actors.get(actorId);
-  if (!actor) return;
-  
-  // Get weapon data
-  let weaponData = null;
-  let weaponType = null;
-  
-  const primaryWeapon = actor.system["weapon-main"];
-  const secondaryWeapon = actor.system["weapon-off"];
-  
-  if (primaryWeapon?.name === weaponName) {
-    weaponData = primaryWeapon;
-    weaponType = "primary";
-  } else if (secondaryWeapon?.name === weaponName) {
-    weaponData = secondaryWeapon;
-    weaponType = "secondary";
+  // Add damage buttons to attack rolls (existing functionality)
+  if (rollType === "attack") {
+    // Check for existing button
+    const existingButton = html.find(".damage-roll-button").length;
+    if (existingButton > 0) return;
+    
+    // Get the actor
+    const actor = game.actors.get(actorId);
+    if (!actor) return;
+    
+    // Get weapon data
+    let weaponData = null;
+    let weaponType = null;
+    
+    const primaryWeapon = actor.system["weapon-main"];
+    const secondaryWeapon = actor.system["weapon-off"];
+    
+    if (primaryWeapon?.name === weaponName) {
+      weaponData = primaryWeapon;
+      weaponType = "primary";
+    } else if (secondaryWeapon?.name === weaponName) {
+      weaponData = secondaryWeapon;
+      weaponType = "secondary";
+    }
+    
+    if (!weaponData || !weaponData.damage) return;
+    
+    // Check if this was a critical success
+    const flavor = message.flavor || '';
+    const isCritical = flavor.includes("Critical") && flavor.includes("Success");
+    
+    // Add damage button based on actor type
+    if (actorType === "character") {
+      _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritical);
+    } else if (actorType === "npc") {
+      _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritical);
+    }
   }
   
-  if (!weaponData || !weaponData.damage) return;
+  // Add damage/healing application buttons to damage rolls
+  if (rollType === "damage") {
+    _addDamageApplicationButtons(message, html, flags);
+  }
   
-  // Check if this was a critical success
-  const flavor = message.flavor || '';
-  const isCritical = flavor.includes("Critical") && flavor.includes("Success");
-  
-  // Add damage button based on actor type
-  if (actorType === "character") {
-    _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritical);
-  } else if (actorType === "npc") {
-    _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritical);
+  // Add damage/healing application buttons to healing rolls
+  if (rollType === "healing") {
+    _addHealingApplicationButtons(message, html, flags);
   }
 });
 
@@ -557,27 +644,38 @@ async function _rollCharacterDamage(event) {
   const roll = new Roll(rollValue);
   await roll.evaluate();
   
-  try {
-    await ChatMessage.create({
-      content: `
-        <div class="dice-roll">
-          <div class="dice-result">
-            <div class="dice-formula">${roll.formula}</div>
-            <div class="dice-total">${roll.total}</div>
+      try {
+      await ChatMessage.create({
+        content: `
+          <div class="dice-roll">
+            <div class="dice-result">
+              <div class="dice-formula">${roll.formula}</div>
+              <div class="dice-total">${roll.total}</div>
+            </div>
           </div>
-        </div>
-      `,
-      flavor: flavorText,
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: actor }),
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      rolls: [roll],
-      rollMode: "roll"
-    });
-  } catch (error) {
-    console.error("Error creating character damage chat message:", error);
-    ui.notifications.warn("Chat message failed to send, but damage was rolled.");
-  }
+        `,
+        flavor: flavorText,
+        user: game.user.id,
+        speaker: ChatMessage.getSpeaker({ actor: actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+        rolls: [roll],
+        rollMode: "roll",
+        flags: {
+          daggerheart: {
+            rollType: "damage",
+            actorId: actor.id,
+            actorType: "character",
+            weaponName: weaponName,
+            weaponType: weaponType,
+            isCritical: isCritical,
+            damageAmount: roll.total
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Error creating character damage chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but damage was rolled.");
+    }
 }
 
 /**
@@ -613,27 +711,38 @@ async function _rollAdversaryDamage(event) {
   const roll = new Roll(rollValue);
   await roll.evaluate();
   
-  try {
-    await ChatMessage.create({
-      content: `
-        <div class="dice-roll">
-          <div class="dice-result">
-            <div class="dice-formula">${roll.formula}</div>
-            <div class="dice-total">${roll.total}</div>
+      try {
+      await ChatMessage.create({
+        content: `
+          <div class="dice-roll">
+            <div class="dice-result">
+              <div class="dice-formula">${roll.formula}</div>
+              <div class="dice-total">${roll.total}</div>
+            </div>
           </div>
-        </div>
-      `,
-      flavor: flavorText,
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: actor }),
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      rolls: [roll],
-      rollMode: "roll"
-    });
-  } catch (error) {
-    console.error("Error creating adversary damage chat message:", error);
-    ui.notifications.warn("Chat message failed to send, but damage was rolled.");
-  }
+        `,
+        flavor: flavorText,
+        user: game.user.id,
+        speaker: ChatMessage.getSpeaker({ actor: actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+        rolls: [roll],
+        rollMode: "roll",
+        flags: {
+          daggerheart: {
+            rollType: "damage",
+            actorId: actor.id,
+            actorType: "npc",
+            weaponName: weaponName,
+            weaponType: weaponType,
+            isCritical: isCritical,
+            damageAmount: roll.total
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Error creating adversary damage chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but damage was rolled.");
+    }
 }
 
 /**
@@ -661,6 +770,117 @@ function _calculateAdversaryCriticalDamage(damageFormula) {
   } else {
     // No dice found, just return the original formula
     return damageFormula;
+  }
+}
+
+/**
+ * Add damage and healing application buttons to damage rolls
+ */
+function _addDamageApplicationButtons(message, html, flags) {
+  // Check for existing buttons
+  const existingButtons = html.find(".apply-damage-button, .apply-healing-button").length;
+  if (existingButtons > 0) return;
+  
+  const damageAmount = flags.damageAmount || extractRollTotal(message);
+  if (!damageAmount) return;
+  
+  const sourceActor = game.actors.get(flags.actorId);
+  
+  // Create damage and healing buttons
+  const buttonContainer = `<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
+    <button class="apply-damage-button" data-damage="${damageAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
+      <i class="fas fa-sword"></i> Damage (${damageAmount})
+    </button>
+    <button class="apply-healing-button" data-healing="${damageAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
+      <i class="fas fa-heart"></i> Heal (${damageAmount})
+    </button>
+  </div>`;
+  
+  html.find(".message-content").append(buttonContainer);
+  
+  // Add click handlers
+  html.find(".apply-damage-button").click(async (event) => {
+    event.preventDefault();
+    await _handleDamageApplicationButton(event, "damage");
+  });
+  
+  html.find(".apply-healing-button").click(async (event) => {
+    event.preventDefault();
+    await _handleDamageApplicationButton(event, "healing");
+  });
+}
+
+/**
+ * Add damage and healing application buttons to healing rolls
+ */
+function _addHealingApplicationButtons(message, html, flags) {
+  // Check for existing buttons
+  const existingButtons = html.find(".apply-damage-button, .apply-healing-button").length;
+  if (existingButtons > 0) return;
+  
+  const healingAmount = flags.healingAmount || extractRollTotal(message);
+  if (!healingAmount) return;
+  
+  const sourceActor = game.actors.get(flags.actorId);
+  
+  // Create healing and damage buttons (healing first for healing rolls)
+  const buttonContainer = `<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
+    <button class="apply-healing-button" data-healing="${healingAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
+      <i class="fas fa-heart"></i> Heal (${healingAmount})
+    </button>
+    <button class="apply-damage-button" data-damage="${healingAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
+      <i class="fas fa-sword"></i> Damage (${healingAmount})
+    </button>
+  </div>`;
+  
+  html.find(".message-content").append(buttonContainer);
+  
+  // Add click handlers
+  html.find(".apply-healing-button").click(async (event) => {
+    event.preventDefault();
+    await _handleDamageApplicationButton(event, "healing");
+  });
+  
+  html.find(".apply-damage-button").click(async (event) => {
+    event.preventDefault();
+    await _handleDamageApplicationButton(event, "damage");
+  });
+}
+
+
+
+/**
+ * Handle clicks on damage/healing application buttons
+ */
+async function _handleDamageApplicationButton(event, type) {
+  const button = event.currentTarget;
+  const amount = parseInt(button.dataset[type]) || 0;
+  const sourceActorId = button.dataset.sourceActorId;
+  
+  if (amount <= 0) {
+    ui.notifications.error("Invalid amount for application.");
+    return;
+  }
+  
+  const sourceActor = sourceActorId ? game.actors.get(sourceActorId) : null;
+  
+  try {
+    let success = false;
+    if (type === "damage") {
+      success = await applyDamage(null, amount, sourceActor);
+    } else if (type === "healing") {
+      success = await applyHealing(null, amount, sourceActor);
+    }
+    
+    if (success) {
+      // Optionally disable the button after successful application
+      button.disabled = true;
+      button.style.opacity = "0.5";
+      button.innerHTML = `<i class="fas fa-check"></i> Applied`;
+    }
+  } catch (error) {
+    console.error(`Error applying ${type}:`, error);
+    ui.notifications.error(`Error applying ${type}. Check console for details.`);
   }
 }
 
@@ -705,6 +925,228 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
     }
   });
 });
+
+/**
+ * Create a damage application macro
+ */
+async function _createDamageApplicationMacro() {
+  const command = `// Apply Damage Macro
+// Prompts for damage amount and applies it to targeted/selected token
+const damageAmount = await new Promise((resolve) => {
+  new Dialog({
+    title: "Apply Damage",
+    content: \`
+      <form>
+        <div class="form-group">
+          <label>Damage Amount:</label>
+          <input type="number" name="damage" value="1" min="1" max="999">
+        </div>
+      </form>
+    \`,
+    buttons: {
+      apply: {
+        label: "Apply Damage",
+        callback: (html) => {
+          const damage = parseInt(html.find('[name="damage"]').val()) || 1;
+          resolve(damage);
+        }
+      },
+      cancel: {
+        label: "Cancel",
+        callback: () => resolve(null)
+      }
+    },
+    default: "apply"
+  }).render(true);
+});
+
+if (damageAmount && typeof applyDamage === 'function') {
+  await applyDamage(null, damageAmount, null);
+} else if (!damageAmount) {
+  // User cancelled
+} else {
+  ui.notifications.error("applyDamage function not available. Make sure the Daggerheart system is properly loaded.");
+}`;
+
+  await Macro.create({
+    name: "Apply Damage",
+    type: "script",
+    img: "icons/svg/sword.svg",
+    command: command,
+    flags: { "daggerheart.damageApplicationMacro": true }
+  });
+}
+
+/**
+ * Create a healing application macro
+ */
+async function _createHealingApplicationMacro() {
+  const command = `// Apply Healing Macro
+// Prompts for healing amount and applies it to targeted/selected token
+const healingAmount = await new Promise((resolve) => {
+  new Dialog({
+    title: "Apply Healing",
+    content: \`
+      <form>
+        <div class="form-group">
+          <label>Healing Amount:</label>
+          <input type="number" name="healing" value="1" min="1" max="999">
+        </div>
+      </form>
+    \`,
+    buttons: {
+      apply: {
+        label: "Apply Healing",
+        callback: (html) => {
+          const healing = parseInt(html.find('[name="healing"]').val()) || 1;
+          resolve(healing);
+        }
+      },
+      cancel: {
+        label: "Cancel",
+        callback: () => resolve(null)
+      }
+    },
+    default: "apply"
+  }).render(true);
+});
+
+if (healingAmount && typeof applyHealing === 'function') {
+  await applyHealing(null, healingAmount, null);
+} else if (!healingAmount) {
+  // User cancelled
+} else {
+  ui.notifications.error("applyHealing function not available. Make sure the Daggerheart system is properly loaded.");
+}`;
+
+  await Macro.create({
+    name: "Apply Healing",
+    type: "script",
+    img: "icons/svg/heal.svg",
+    command: command,
+    flags: { "daggerheart.healingApplicationMacro": true }
+  });
+}
+
+/**
+ * Create a damage rolling macro
+ */
+async function _createRollDamageMacro() {
+  const command = `// Roll Damage Macro
+// Prompts for damage formula and rolls it with application buttons
+const damageFormula = await new Promise((resolve) => {
+  new Dialog({
+    title: "Roll Damage",
+    content: \`
+      <form>
+        <div class="form-group">
+          <label>Damage Formula:</label>
+          <input type="text" name="formula" value="1d4+1" placeholder="e.g., 1d4+1, 2d6">
+        </div>
+        <div class="form-group">
+          <label>Flavor Text (optional):</label>
+          <input type="text" name="flavor" placeholder="e.g., Sword Strike">
+        </div>
+      </form>
+    \`,
+    buttons: {
+      roll: {
+        label: "Roll Damage",
+        callback: (html) => {
+          const formula = html.find('[name="formula"]').val() || "1d4";
+          const flavor = html.find('[name="flavor"]').val() || null;
+          resolve({ formula, flavor });
+        }
+      },
+      cancel: {
+        label: "Cancel",
+        callback: () => resolve(null)
+      }
+    },
+    default: "roll"
+  }).render(true);
+});
+
+if (damageFormula && typeof rollDamage === 'function') {
+  const options = {};
+  if (damageFormula.flavor) {
+    options.flavor = \`<p class="roll-flavor-line"><b>\${damageFormula.flavor}</b></p>\`;
+  }
+  await rollDamage(damageFormula.formula, options);
+} else if (!damageFormula) {
+  // User cancelled
+} else {
+  ui.notifications.error("rollDamage function not available. Make sure the Daggerheart system is properly loaded.");
+}`;
+
+  await Macro.create({
+    name: "Roll Damage",
+    type: "script",
+    img: "icons/svg/dice-target.svg",
+    command: command,
+    flags: { "daggerheart.rollDamageMacro": true }
+  });
+}
+
+/**
+ * Create a healing rolling macro
+ */
+async function _createRollHealingMacro() {
+  const command = `// Roll Healing Macro
+// Prompts for healing formula and rolls it with application buttons
+const healingFormula = await new Promise((resolve) => {
+  new Dialog({
+    title: "Roll Healing",
+    content: \`
+      <form>
+        <div class="form-group">
+          <label>Healing Formula:</label>
+          <input type="text" name="formula" value="1d4+1" placeholder="e.g., 1d4+1, 2d6">
+        </div>
+        <div class="form-group">
+          <label>Flavor Text (optional):</label>
+          <input type="text" name="flavor" placeholder="e.g., Healing Potion">
+        </div>
+      </form>
+    \`,
+    buttons: {
+      roll: {
+        label: "Roll Healing",
+        callback: (html) => {
+          const formula = html.find('[name="formula"]').val() || "1d4";
+          const flavor = html.find('[name="flavor"]').val() || null;
+          resolve({ formula, flavor });
+        }
+      },
+      cancel: {
+        label: "Cancel",
+        callback: () => resolve(null)
+      }
+    },
+    default: "roll"
+  }).render(true);
+});
+
+if (healingFormula && typeof rollHealing === 'function') {
+  const options = {};
+  if (healingFormula.flavor) {
+    options.flavor = \`<p class="roll-flavor-line"><b>\${healingFormula.flavor}</b></p>\`;
+  }
+  await rollHealing(healingFormula.formula, options);
+} else if (!healingFormula) {
+  // User cancelled
+} else {
+  ui.notifications.error("rollHealing function not available. Make sure the Daggerheart system is properly loaded.");
+}`;
+
+  await Macro.create({
+    name: "Roll Healing",
+    type: "script",
+    img: "icons/svg/angel.svg",
+    command: command,
+    flags: { "daggerheart.rollHealingMacro": true }
+  });
+}
 
 /**
  * Adds the item template context menu.

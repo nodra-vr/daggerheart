@@ -1309,11 +1309,26 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   /* -------------------------------------------- */
   
   async _rollBasic(basicName, basicValue) {
-    // Use the rollHandler for consistent roll handling
-    await game.daggerheart.rollHandler.quickRoll(basicValue, {
-      flavor: basicName,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor })
-    });
+    // Check if this is a damage or healing roll and use appropriate function
+    if (this._pendingRollType === "damage") {
+      // Use the damage rolling function which will add application buttons
+      await game.daggerheart.damageApplication.rollDamage(basicValue, {
+        flavor: `<p class="roll-flavor-line"><b>${basicName}</b></p>`,
+        sourceActor: this.actor
+      });
+    } else if (this._pendingRollType === "healing") {
+      // Use the healing rolling function which will add application buttons
+      await game.daggerheart.damageApplication.rollHealing(basicValue, {
+        flavor: `<p class="roll-flavor-line"><b>${basicName}</b></p>`,
+        sourceActor: this.actor
+      });
+    } else {
+      // Use the rollHandler for other roll types
+      await game.daggerheart.rollHandler.quickRoll(basicValue, {
+        flavor: basicName,
+        speaker: ChatMessage.getSpeaker({ actor: this.actor })
+      });
+    }
     
     // Clear pending roll data
     this._pendingRollType = null;
