@@ -218,6 +218,152 @@ export class CounterUI {
   }
 
   /**
+   * Spend (decrease) the counter by a specified amount
+   * @param {number} amount - The amount of fear to spend
+   */
+  async spendFear(amount = 1) {
+    // Check permissions
+    if (!game.user.isGM && !game.user.hasRole("ASSISTANT")) {
+      console.warn("Only GMs and Assistant GMs can spend fear");
+      ui.notifications.warn("Only GMs and Assistant GMs can spend fear.");
+      return false;
+    }
+    
+    // Validate amount parameter
+    if (!Number.isInteger(amount) || amount <= 0) {
+      console.warn("Fear amount must be a positive integer");
+      ui.notifications.warn("Fear amount must be a positive integer.");
+      return false;
+    }
+    
+    // Prevent concurrent operations
+    if (this.isUpdating) {
+      return false;
+    }
+    
+    // Check if we have enough fear to spend
+    if (this.count < amount) {
+      console.warn(`Cannot spend ${amount} fear. Current fear: ${this.count}`);
+      ui.notifications.warn(`Cannot spend ${amount} fear. Current fear: ${this.count}`);
+      return false;
+    }
+    
+    this.isUpdating = true;
+    try {
+      const newCount = Math.max(0, this.count - amount);
+      await game.settings.set("daggerheart", "counterValue", newCount);
+      this.count = newCount;
+      this.updateDisplay();
+      
+      // Success notification
+      const message = amount === 1 ? 
+        `Spent 1 fear. Remaining fear: ${this.count}` : 
+        `Spent ${amount} fear. Remaining fear: ${this.count}`;
+      ui.notifications.info(message);
+      
+      // Send to chat
+      ChatMessage.create({
+        user: game.user.id,
+        speaker: ChatMessage.getSpeaker(),
+        content: `<div class="fear-spend-message">
+          <h3><i class="fas fa-skull"></i> Fear Spent</h3>
+          <p>The GM has spent <strong>${amount}</strong> fear.</p>
+          <p>Remaining fear: <strong>${this.count}</strong></p>
+        </div>`,
+        flags: {
+          daggerheart: {
+            messageType: "fearSpent",
+            amountSpent: amount,
+            remainingFear: this.count
+          }
+        }
+      });
+      
+      return true;
+    } catch (error) {
+      console.error("Error spending fear:", error);
+      ui.notifications.error("Error spending fear. Check console for details.");
+      return false;
+    } finally {
+      this.isUpdating = false;
+    }
+  }
+
+  /**
+   * Gain (increase) the counter by a specified amount
+   * @param {number} amount - The amount of fear to gain
+   */
+  async gainFear(amount = 1) {
+    // Check permissions
+    if (!game.user.isGM && !game.user.hasRole("ASSISTANT")) {
+      console.warn("Only GMs and Assistant GMs can gain fear");
+      ui.notifications.warn("Only GMs and Assistant GMs can gain fear.");
+      return false;
+    }
+    
+    // Validate amount parameter
+    if (!Number.isInteger(amount) || amount <= 0) {
+      console.warn("Fear amount must be a positive integer");
+      ui.notifications.warn("Fear amount must be a positive integer.");
+      return false;
+    }
+    
+    // Prevent concurrent operations
+    if (this.isUpdating) {
+      return false;
+    }
+    
+    // Check if we can add more fear (maximum is 12)
+    if (this.count >= 12) {
+      console.warn(`Cannot gain fear. Fear is already at maximum (12)`);
+      ui.notifications.warn(`Cannot gain fear. Fear is already at maximum.`);
+      return false;
+    }
+    
+    this.isUpdating = true;
+    try {
+      const newCount = Math.min(12, this.count + amount);
+      const actualAmount = newCount - this.count;
+      await game.settings.set("daggerheart", "counterValue", newCount);
+      this.count = newCount;
+      this.updateDisplay();
+      
+      // Success notification
+      const message = actualAmount === 1 ? 
+        `Gained 1 fear. Current fear: ${this.count}` : 
+        `Gained ${actualAmount} fear. Current fear: ${this.count}`;
+      ui.notifications.info(message);
+      
+      // Send to chat
+      ChatMessage.create({
+        user: game.user.id,
+        speaker: ChatMessage.getSpeaker(),
+        content: `<div class="fear-gain-message">
+          <h3><i class="fas fa-skull"></i> Fear Gained</h3>
+          <p>The GM has gained <strong>${actualAmount}</strong> fear.</p>
+          <p>Current fear: <strong>${this.count}</strong></p>
+          ${this.count >= 12 ? '<p class="fear-warning"><em>Maximum fear reached!</em></p>' : ''}
+        </div>`,
+        flags: {
+          daggerheart: {
+            messageType: "fearGained",
+            amountGained: actualAmount,
+            currentFear: this.count
+          }
+        }
+      });
+      
+      return true;
+    } catch (error) {
+      console.error("Error gaining fear:", error);
+      ui.notifications.error("Error gaining fear. Check console for details.");
+      return false;
+    } finally {
+      this.isUpdating = false;
+    }
+  }
+
+  /**
    * Update the counter display
    */
   updateDisplay() {

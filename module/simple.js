@@ -5,7 +5,7 @@ import { SimpleItemSheet } from "./item-sheet.js";
 import { SimpleActorSheet, NPCActorSheet } from "./actor-sheet.js";
 import { CompanionActorSheet } from "./actor-sheet-companion.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
-import { createDaggerheartMacro } from "./macro.js";
+import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, spendStress } from "./spending-system.js";
 import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
@@ -81,6 +81,10 @@ Hooks.once("init", async function() {
   game.daggerheart = {
     SimpleActor,
     createDaggerheartMacro,
+    createSpendFearMacro,
+    createGainFearMacro,
+    createSpendStressMacro,
+    spendStress,
     SheetTracker,
     rollHandler: {
       rollHope: _rollHope,
@@ -228,7 +232,63 @@ Hooks.once("ready", async function() {
   game.daggerheart.tokenCounter = new TokenCounterUI();
   await game.daggerheart.tokenCounter.initialize();
   
+  // Add global spendFear function
+  window.spendFear = async function(amount) {
+    if (!game.daggerheart?.counter) {
+      console.error("Fear counter not initialized");
+      ui.notifications.error("Fear counter not available");
+      return false;
+    }
+    return await game.daggerheart.counter.spendFear(amount);
+  };
+  
+  // Add global gainFear function
+  window.gainFear = async function(amount) {
+    if (!game.daggerheart?.counter) {
+      console.error("Fear counter not initialized");
+      ui.notifications.error("Fear counter not available");
+      return false;
+    }
+    return await game.daggerheart.counter.gainFear(amount);
+  };
+  
+  // Add global spendStress function
+  window.spendStress = async function(actor, amount) {
+    if (!game.daggerheart?.spendStress) {
+      console.error("spendStress function not initialized");
+      ui.notifications.error("spendStress function not available");
+      return false;
+    }
+    return await game.daggerheart.spendStress(actor, amount);
+  };
+  
+  // Also add to the game.daggerheart object for consistency
+  game.daggerheart.spendFear = window.spendFear;
+  game.daggerheart.gainFear = window.gainFear;
+  
   console.log("Counter UI initialized and displayed above the hotbar.");
+  console.log("spendFear(), gainFear(), and spendStress() functions are now available globally.");
+  
+  // Create demo macros if they don't exist (optional - for testing)
+  if (game.user.isGM) {
+    const existingSpendFearMacro = game.macros.find(m => m.name === "Spend 1 Fear" && m.flags?.["daggerheart.spendFearMacro"]);
+    if (!existingSpendFearMacro) {
+      await game.daggerheart.createSpendFearMacro(1);
+      console.log("Created demo 'Spend 1 Fear' macro for GM.");
+    }
+    
+    const existingGainFearMacro = game.macros.find(m => m.name === "Gain Fear" && m.flags?.["daggerheart.gainFearMacro"]);
+    if (!existingGainFearMacro) {
+      await game.daggerheart.createGainFearMacro(1);
+      console.log("Created demo 'Gain Fear' macro for GM.");
+    }
+    
+    const existingStressMacro = game.macros.find(m => m.name === "Apply Stress" && m.flags?.["daggerheart.spendStressMacro"]);
+    if (!existingStressMacro) {
+      await game.daggerheart.createSpendStressMacro(1);
+      console.log("Created demo 'Apply Stress' macro for GM.");
+    }
+  }
 });
 
 /**
