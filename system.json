@@ -15,6 +15,10 @@
     "Actor": {
       "types": ["character", "npc", "companion"],
       "htmlFields": ["biography", "inventory", "worn"]
+    },
+    "Item": {
+      "types": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass"],
+      "htmlFields": ["description"]
     }
   },
   "esmodules": ["module/simple.js"],
