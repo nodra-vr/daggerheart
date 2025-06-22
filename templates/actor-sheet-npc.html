@@ -4,12 +4,18 @@
     <header class="sheet-header">
         <div class="header-main-container">
             <div class="resource health">
-                <div class="resource-box">
-                    <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}" />
-                    <span class="sep">/</span>
-                    <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0" />
+                <div class="resource-content">
+                    <div class="resource-box">
+                        <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}" />
+                        <span>/</span>
+                        <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0" />
+                    </div>
                 </div>
-                <label>{{localize "DH.Health"}}</label>
+                <div class="resource-label-controls">
+                    <a class="resource-control" data-action="decrement" data-field="health.value"><i class="fas fa-minus"></i></a>
+                    <label>{{localize "DH.Health"}}</label>
+                    <a class="resource-control" data-action="increment" data-field="health.value"><i class="fas fa-plus"></i></a>
+                </div>
             </div>
 
             <div class="portrait-container">
@@ -24,12 +30,18 @@
             </div>
 
             <div class="resource stress">
-                <div class="resource-box">
-                    <input type="number" name="system.stress.value" value="{{systemData.stress.value}}" min="0" max="{{systemData.stress.max}}" />
-                    <span class="sep">/</span>
-                    <input type="number" name="system.stress.max" value="{{systemData.stress.max}}" min="0" />
+                <div class="resource-content">
+                    <div class="resource-box">
+                        <input type="number" name="system.stress.value" value="{{systemData.stress.value}}" min="0" max="{{systemData.stress.max}}" />
+                        <span>/</span>
+                        <input type="number" name="system.stress.max" value="{{systemData.stress.max}}" min="0" />
+                    </div>
                 </div>
-                <label>{{localize "DH.Stress"}}</label>
+                <div class="resource-label-controls">
+                    <a class="resource-control" data-action="decrement" data-field="stress.value"><i class="fas fa-minus"></i></a>
+                    <label>{{localize "DH.Stress"}}</label>
+                    <a class="resource-control" data-action="increment" data-field="stress.value"><i class="fas fa-plus"></i></a>
+                </div>
             </div>
         </div>
 

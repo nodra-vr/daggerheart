@@ -14,6 +14,20 @@
                 </div>
 
                 <div class="portrait-resources">
+                    <div class="resource health">
+                        <div class="resource-content">
+                            <div class="resource-box">
+                                <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}" />
+                                <span>/</span>
+                                <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0" />
+                            </div>
+                        </div>
+                        <div class="resource-label-controls">
+                            <a class="resource-control" data-action="decrement" data-field="health.value"><i class="fas fa-minus"></i></a>
+                            <label data-trait-tooltip="{{systemData.health.tooltip}}">{{localize "DH.HitPoints"}}</label>
+                            <a class="resource-control" data-action="increment" data-field="health.value"><i class="fas fa-plus"></i></a>
+                        </div>
+                    </div>
                     <div class="resource stress">
                         <div class="resource-content">
                             <div class="resource-box">
