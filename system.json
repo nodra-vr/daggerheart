@@ -1,6 +1,6 @@
 {
   "id": "daggerheart",
-        "version": "2.3.0",
+        "version": "2.3.1",
   "title": "Daggerheart",
   "url": "",
   "description": "Unofficial Daggerheart Game System",
@@ -12,14 +12,8 @@
     }
   ],
   "documentTypes": {
-    "Actor": {
-      "types": ["character", "npc", "companion"],
-      "htmlFields": ["biography", "inventory", "worn"]
-    },
-    "Item": {
-      "types": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass"],
-      "htmlFields": ["description"]
-    }
+    "Actor": ["character", "npc", "companion"],
+    "Item": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass"]
   },
   "esmodules": ["module/simple.js"],
   "styles": ["styles/simple.css"],
@@ -50,5 +44,5 @@
   "primaryTokenAttribute": "barHealth",
   "secondaryTokenAttribute": "hope",
   "manifest": "https://raw.githubusercontent.com/featureJosh/daggerheart-swb/master/system.json",
-  "download"  : "https://github.com/featureJosh/daggerheart-swb/archive/refs/tags/v2.3.0.zip"
+  "download"  : "https://github.com/featureJosh/daggerheart-swb/archive/refs/tags/v2.3.1.zip"
 }
