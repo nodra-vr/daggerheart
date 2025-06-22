@@ -11,6 +11,12 @@
       "url": "https://github.com/featureJosh"
     }
   ],
+  "documentTypes": {
+    "Actor": {
+      "types": ["character", "npc", "companion"],
+      "htmlFields": ["biography", "inventory", "worn"]
+    }
+  },
   "esmodules": ["module/simple.js"],
   "styles": ["styles/simple.css"],
   "packs": [
