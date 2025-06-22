@@ -1,40 +1,44 @@
 /* Tabs */
-.sheet-tabs {
-  margin-top: 1em;
-  border-top: none;
-  border-bottom: 1px solid var(--dh-color-gold);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: nowrap;
-  position: relative;
-  width: 100%;
-  max-height: 35px;
-  gap: 2em;
-
-  .item {
-    border: none;
-    padding: 0px 10px;
-    letter-spacing: 1px;
-    font-size: 14px;
-    box-shadow: none;
-    color: white;
-    background: none !important;
-    filter: none;
-    text-transform: uppercase;
-    font-weight: 501;
-    height: auto;
+// Scope sheet-tabs to only character, adversary, companion, and item sheets
+.daggerheart.sheet.actor,
+.item-sheet-card {
+  .sheet-tabs {
+    margin-top: 1em;
+    border-top: none;
+    border-bottom: 1px solid var(--dh-color-gold);
     display: flex;
+    justify-content: center;
     align-items: center;
-    transition: opacity 0.5s ease-in-out;
-    cursor: pointer;
-    line-height: 35px;
-    text-shadow: none;
+    flex-wrap: nowrap;
+    position: relative;
+    width: 100%;
+    max-height: 35px;
+    gap: 2em;
 
-    &.active, &:hover {
-      color: var(--dh-color-gold);
-      border-bottom: 4px solid var(--dh-color-gold);
+    .item {
+      border: none;
+      padding: 0px 10px;
+      letter-spacing: 1px;
+      font-size: 14px;
+      box-shadow: none;
+      color: white;
+      background: none !important;
+      filter: none;
+      text-transform: uppercase;
+      font-weight: 501;
+      height: auto;
+      display: flex;
+      align-items: center;
+      transition: opacity 0.5s ease-in-out;
+      cursor: pointer;
+      line-height: 35px;
       text-shadow: none;
+
+      &.active, &:hover {
+        color: var(--dh-color-gold);
+        border-bottom: 4px solid var(--dh-color-gold);
+        text-shadow: none;
+      }
     }
   }
 }

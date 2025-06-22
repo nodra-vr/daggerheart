@@ -3,18 +3,36 @@ import { DaggerheartDialogHelper } from './dialog-helper.js';
 export async function _rollHope(options = {}) {
   // Dice So Nice
   if (game.dice3d) {
-    game.dice3d.addColorset({
-      name: "Hope",
-      category: "Hope Die",
-      description: "Hope",
-      texture: "ice",
-      foreground: "#ffbb00",
-      background: "#ffffff",
-      outline: "#000000",
-      edge: "#ffbb00",
-      material: "glass",
-      font: "Modesto Condensed",
-    });
+    try {
+      const hopeSetting = game.settings.get("daggerheart", "customHopeDice");
+      const hopeStyle = JSON.parse(hopeSetting);
+      game.dice3d.addColorset({
+        name: hopeStyle.name,
+        category: hopeStyle.category,
+        description: hopeStyle.description,
+        texture: hopeStyle.texture,
+        foreground: hopeStyle.foreground,
+        background: hopeStyle.background,
+        outline: hopeStyle.outline,
+        edge: hopeStyle.edge,
+        material: hopeStyle.material,
+        font: hopeStyle.font,
+      });
+    } catch (error) {
+      console.warn("Invalid Hope dice JSON configuration, using defaults:", error);
+      game.dice3d.addColorset({
+        name: "Hope",
+        category: "Hope Die",
+        description: "Hope",
+        texture: "ice",
+        foreground: "#ffbb00",
+        background: "#ffffff",
+        outline: "#000000",
+        edge: "#ffbb00",
+        material: "glass",
+        font: "Modesto Condensed",
+      });
+    }
   }
   
   const defaults = {
@@ -38,7 +56,13 @@ export async function _rollHope(options = {}) {
   await roll.evaluate();
   
   if (roll.dice.length > 0) {
-    roll.dice[0].options.flavor = "Hope";
+    try {
+      const hopeSetting = game.settings.get("daggerheart", "customHopeDice");
+      const hopeStyle = JSON.parse(hopeSetting);
+      roll.dice[0].options.flavor = hopeStyle.name;
+    } catch (error) {
+      roll.dice[0].options.flavor = "Hope";
+    }
   }
   
   if (config.sendToChat) {
@@ -81,18 +105,36 @@ export async function _rollHope(options = {}) {
 export async function _rollFear(options = {}) {
   // Dice So Nice
   if (game.dice3d) {
-    game.dice3d.addColorset({
-      name: "Fear",
-      category: "Fear Die",
-      description: "Fear",
-      texture: "fire",
-      foreground: "#FFFFFF",
-      background: "#523333",
-      outline: "#b30012",
-      edge: "#800013",
-      material: "metal",
-      font: "Modesto Condensed",
-    });
+    try {
+      const fearSetting = game.settings.get("daggerheart", "customFearDice");
+      const fearStyle = JSON.parse(fearSetting);
+      game.dice3d.addColorset({
+        name: fearStyle.name,
+        category: fearStyle.category,
+        description: fearStyle.description,
+        texture: fearStyle.texture,
+        foreground: fearStyle.foreground,
+        background: fearStyle.background,
+        outline: fearStyle.outline,
+        edge: fearStyle.edge,
+        material: fearStyle.material,
+        font: fearStyle.font,
+      });
+    } catch (error) {
+      console.warn("Invalid Fear dice JSON configuration, using defaults:", error);
+      game.dice3d.addColorset({
+        name: "Fear",
+        category: "Fear Die",
+        description: "Fear",
+        texture: "fire",
+        foreground: "#FFFFFF",
+        background: "#523333",
+        outline: "#b30012",
+        edge: "#800013",
+        material: "metal",
+        font: "Modesto Condensed",
+      });
+    }
   }
   
   const defaults = {
@@ -116,7 +158,13 @@ export async function _rollFear(options = {}) {
   await roll.evaluate();
   
   if (roll.dice.length > 0) {
-    roll.dice[0].options.flavor = "Fear";
+    try {
+      const fearSetting = game.settings.get("daggerheart", "customFearDice");
+      const fearStyle = JSON.parse(fearSetting);
+      roll.dice[0].options.flavor = fearStyle.name;
+    } catch (error) {
+      roll.dice[0].options.flavor = "Fear";
+    }
   }
   
   if (config.sendToChat) {
@@ -159,29 +207,69 @@ export async function _rollFear(options = {}) {
 export async function _rollDuality(options = {}) {
   // Dice So Nice
   if (game.dice3d) {
+    let hopeStyle, fearStyle;
+    
+    try {
+      const hopeSetting = game.settings.get("daggerheart", "customHopeDice");
+      hopeStyle = JSON.parse(hopeSetting);
+    } catch (error) {
+      console.warn("Invalid Hope dice JSON configuration, using defaults:", error);
+      hopeStyle = {
+        name: "Hope",
+        category: "Hope Die",
+        description: "Hope",
+        texture: "ice",
+        foreground: "#ffbb00",
+        background: "#ffffff",
+        outline: "#000000",
+        edge: "#ffbb00",
+        material: "glass",
+        font: "Modesto Condensed"
+      };
+    }
+    
+    try {
+      const fearSetting = game.settings.get("daggerheart", "customFearDice");
+      fearStyle = JSON.parse(fearSetting);
+    } catch (error) {
+      console.warn("Invalid Fear dice JSON configuration, using defaults:", error);
+      fearStyle = {
+        name: "Fear",
+        category: "Fear Die",
+        description: "Fear",
+        texture: "fire",
+        foreground: "#FFFFFF",
+        background: "#523333",
+        outline: "#b30012",
+        edge: "#800013",
+        material: "metal",
+        font: "Modesto Condensed"
+      };
+    }
+    
     game.dice3d.addColorset({
-      name: "Hope",
-      category: "Hope Die",
-      description: "Hope",
-      texture: "ice",
-      foreground: "#ffbb00",
-      background: "#ffffff",
-      outline: "#000000",
-      edge: "#ffbb00",
-      material: "glass",
-      font: "Modesto Condensed",
+      name: hopeStyle.name,
+      category: hopeStyle.category,
+      description: hopeStyle.description,
+      texture: hopeStyle.texture,
+      foreground: hopeStyle.foreground,
+      background: hopeStyle.background,
+      outline: hopeStyle.outline,
+      edge: hopeStyle.edge,
+      material: hopeStyle.material,
+      font: hopeStyle.font,
     });
     game.dice3d.addColorset({
-      name: "Fear",
-      category: "Fear Die",
-      description: "Fear",
-      texture: "fire",
-      foreground: "#FFFFFF",
-      background: "#523333",
-      outline: "#b30012",
-      edge: "#800013",
-      material: "metal",
-      font: "Modesto Condensed",
+      name: fearStyle.name,
+      category: fearStyle.category,
+      description: fearStyle.description,
+      texture: fearStyle.texture,
+      foreground: fearStyle.foreground,
+      background: fearStyle.background,
+      outline: fearStyle.outline,
+      edge: fearStyle.edge,
+      material: fearStyle.material,
+      font: fearStyle.font,
     });
     game.dice3d.addColorset({
       name: "Modifier",
@@ -234,10 +322,26 @@ export async function _rollDuality(options = {}) {
   let wasForcedCritical = false;
   
   if (roll.dice.length >= 2) {
-    roll.dice[0].options.flavor = "Hope";
+    let hopeStyle, fearStyle;
+    
+    try {
+      const hopeSetting = game.settings.get("daggerheart", "customHopeDice");
+      hopeStyle = JSON.parse(hopeSetting);
+    } catch (error) {
+      hopeStyle = { name: "Hope" };
+    }
+    
+    try {
+      const fearSetting = game.settings.get("daggerheart", "customFearDice");
+      fearStyle = JSON.parse(fearSetting);
+    } catch (error) {
+      fearStyle = { name: "Fear" };
+    }
+    
+    roll.dice[0].options.flavor = hopeStyle.name;
     hopeDieValue = roll.dice[0].total;
     
-    roll.dice[1].options.flavor = "Fear";
+    roll.dice[1].options.flavor = fearStyle.name;
     fearDieValue = roll.dice[1].total;
     
     // Forced critical
@@ -629,8 +733,24 @@ export async function _dualityWithDialog(config) {
   try {
     // Ensure dice flavors are properly set before sending to chat
     if (result.roll.dice.length >= 2) {
-      result.roll.dice[0].options.flavor = "Hope";
-      result.roll.dice[1].options.flavor = "Fear";
+      let hopeStyle, fearStyle;
+      
+      try {
+        const hopeSetting = game.settings.get("daggerheart", "customHopeDice");
+        hopeStyle = JSON.parse(hopeSetting);
+      } catch (error) {
+        hopeStyle = { name: "Hope" };
+      }
+      
+      try {
+        const fearSetting = game.settings.get("daggerheart", "customFearDice");
+        fearStyle = JSON.parse(fearSetting);
+      } catch (error) {
+        fearStyle = { name: "Fear" };
+      }
+      
+      result.roll.dice[0].options.flavor = hopeStyle.name;
+      result.roll.dice[1].options.flavor = fearStyle.name;
       if (result.roll.dice.length >= 3) {
         result.roll.dice[2].options.flavor = "Modifier";
       }

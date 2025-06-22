@@ -191,6 +191,47 @@ Hooks.once("init", async function() {
   const initFormula = game.settings.get("daggerheart", "initFormula");
   _simpleUpdateInit(initFormula);
 
+  // Register custom dice styling settings
+  game.settings.register("daggerheart", "customHopeDice", {
+    name: "SETTINGS.CustomHopeDiceN",
+    hint: "SETTINGS.CustomHopeDiceL",
+    scope: "client",
+    type: String,
+    default: JSON.stringify({
+      name: "Hope",
+      category: "Hope Die",
+      description: "Hope",
+      texture: "ice",
+      foreground: "#ffbb00",
+      background: "#ffffff",
+      outline: "#000000",
+      edge: "#ffbb00",
+      material: "glass",
+      font: "Modesto Condensed"
+    }, null, 2),
+    config: true
+  });
+
+  game.settings.register("daggerheart", "customFearDice", {
+    name: "SETTINGS.CustomFearDiceN",
+    hint: "SETTINGS.CustomFearDiceL",
+    scope: "client",
+    type: String,
+    default: JSON.stringify({
+      name: "Fear",
+      category: "Fear Die",
+      description: "Fear",
+      texture: "fire",
+      foreground: "#FFFFFF",
+      background: "#523333",
+      outline: "#b30012",
+      edge: "#800013",
+      material: "metal",
+      font: "Modesto Condensed"
+    }, null, 2),
+    config: true
+  });
+
   /**
    * Update the initiative formula.
    * @param {string} formula - Dice formula to evaluate.
@@ -372,15 +413,20 @@ Hooks.once("ready", async function() {
  * Hook to set default prototype token settings for actors
  */
 Hooks.on("preCreateActor", function(document, data, options, userId) {
-  // Set default prototype token settings
-  const prototypeToken = {
-    actorLink: true
-  };
+  // Set default prototype token settings - only link tokens for character types
+  const prototypeToken = {};
+  
+  // Only set actorLink to true for character types, leave NPCs and companions unlinked
+  if (document.type === "character") {
+    prototypeToken.actorLink = true;
+  }
   
   // Merge with any existing prototype token data
-  document.updateSource({
-    "prototypeToken": foundry.utils.mergeObject(document.prototypeToken?.toObject() || {}, prototypeToken)
-  });
+  if (Object.keys(prototypeToken).length > 0) {
+    document.updateSource({
+      "prototypeToken": foundry.utils.mergeObject(document.prototypeToken?.toObject() || {}, prototypeToken)
+    });
+  }
 });
 
 /**
