@@ -15,17 +15,17 @@ export class CompanionActorSheet extends SimpleActorSheet {
     const screenHeight = window.innerHeight;
     const screenWidth = window.innerWidth;
     
-    // Calculate optimal height for NPC sheet (typically smaller than PC sheet)
+    // Calculate optimal height for companion sheet (typically smaller than PC sheet)
     const maxHeight = Math.floor(screenHeight * 0.85);
-    const minHeight = 500; // Minimum usable height for NPC
+    const minHeight = 500; // Minimum usable height for companion
     const preferredHeight = 840; // Ideal height for larger screens
     
     const height = Math.max(minHeight, Math.min(preferredHeight, maxHeight));
     
-    // Calculate width for NPC sheet
+    // Calculate width for companion sheet
     const maxWidth = Math.floor(screenWidth * 0.9);
     const minWidth = 690; // Maintain minimum width for usability
-    const preferredWidth = 650; // Standard width for NPC
+    const preferredWidth = 650; // Standard width for companion
     
     const width = Math.max(minWidth, Math.min(preferredWidth, maxWidth));
     
@@ -34,7 +34,7 @@ export class CompanionActorSheet extends SimpleActorSheet {
       template: "systems/daggerheart/templates/actor-sheet-companion.html",
       width: width,
       height: height,
-      tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "experience"}],
+      tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
       scrollY: [".biography", ".items", ".attributes"],
       dragDrop: [
         { dragSelector: ".item-list .item", dropSelector: null },
@@ -77,7 +77,7 @@ export class CompanionActorSheet extends SimpleActorSheet {
     const imageLink = context.data.img;
     context.imageStyle = `background: url(${imageLink});`;
     
-    // Check if NPC is dying/dead (hit points maxed out)
+    // Check if companion is dying/dead (hit points maxed out)
     const health = context.systemData.health;
     context.isDying = health && health.value === health.max && health.max > 0;
     
@@ -90,7 +90,7 @@ export class CompanionActorSheet extends SimpleActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
     
-    // Initialize Sheet Tracker for NPCs
+    // Initialize Sheet Tracker for companions
     if (!this.sheetTracker) {
       this.sheetTracker = new SheetTracker(this);
     }
@@ -220,7 +220,7 @@ export class CompanionActorSheet extends SimpleActorSheet {
    * Handle crit results, depending on roll.
    * @param {{isCrit}} config 
    */
-  async handleNPCResult({isCrit}) {
+  async handleCompanionResult({isCrit}) {
     if (isCrit) {
       await this._applyCriticalSuccess();
     }
@@ -232,15 +232,15 @@ export class CompanionActorSheet extends SimpleActorSheet {
     const traitNamePrint = traitName.charAt(0).toUpperCase() + traitName.slice(1);
     const title = `Roll for ${traitNamePrint}`;
     
-    // For NPCs, we'll call for an npc dialog roll
+    // For companions, we'll call for an npc dialog roll (same as NPCs)
     await game.daggerheart.rollHandler.npcRollWithDialog({title, traitValue, actor: this.actor});
   }
   
   /** @inheritdoc */
   _getSubmitData(updateData) {
     let formData = super._getSubmitData(updateData);
-    if (this.actor.type === "npc") {
-      formData["system.isNPC"] = true;
+    if (this.actor.type === "companion") {
+      formData["system.isCompanion"] = true;
     }
     return formData;
   }
