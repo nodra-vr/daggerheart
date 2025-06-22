@@ -82,13 +82,13 @@ export async function applyDamage(targetActor = null, damageAmount, sourceActor 
     let severityText = "";
     let severityClass = "";
     if (hpDamage === 3) {
-      severityText = "Major Damage";
+      severityText = "Severe Damage";
       severityClass = "damage-major";
     } else if (hpDamage === 2) {
-      severityText = "Minor Damage"; 
+      severityText = "Major Damage"; 
       severityClass = "damage-minor";
     } else {
-      severityText = "Light Damage";
+      severityText = "Minor Damage";
       severityClass = "damage-light";
     }
 
@@ -315,11 +315,11 @@ function _getThresholdDescription(damageAmount, thresholds, hpDamage) {
   const minorThreshold = parseInt(thresholds.minor) || 0;
   
   if (hpDamage === 3) {
-    return `${damageAmount} ≥ ${majorThreshold} (Major Threshold) = 3 HP`;
+    return `${damageAmount} ≥ ${majorThreshold} (Severe Threshold) = 3 HP`;
   } else if (hpDamage === 2) {
-    return `${damageAmount} ≥ ${minorThreshold} (Minor Threshold) = 2 HP`;
+    return `${damageAmount} ≥ ${minorThreshold} (Major Threshold) = 2 HP`;
   } else {
-    return `${damageAmount} < ${minorThreshold} (Below Minor Threshold) = 1 HP`;
+    return `${damageAmount} < ${minorThreshold} (Minor Threshold) = 1 HP`;
   }
 }
 
