@@ -295,7 +295,26 @@ ChatMessage.create({
     // Handle attribute roll drops (existing functionality)  
   if ( !data.roll || !data.label ) return false;
   const command = `const roll = new Roll("${data.roll}", actor ? actor.getRollData() : {});
-  roll.toMessage({speaker, flavor: "${data.label}"});`;
+  await roll.evaluate();
+  try {
+    await ChatMessage.create({
+      content: \`
+        <div class="dice-roll">
+          <div class="dice-result">
+            <div class="dice-formula">\${roll.formula}</div>
+            <div class="dice-total">\${roll.total}</div>
+          </div>
+        </div>
+      \`,
+      speaker,
+      flavor: "${data.label}",
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      rolls: [roll]
+    });
+  } catch (error) {
+    console.error("Error creating macro roll chat message:", error);
+    ui.notifications.warn("Chat message failed to send, but roll was completed.");
+  }`;
   let macro = game.macros.find(m => (m.name === data.label) && (m.command === command));
   if (!macro) {
     macro = await Macro.create({

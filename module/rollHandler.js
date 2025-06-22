@@ -44,17 +44,32 @@ export async function _rollHope(options = {}) {
   if (config.sendToChat) {
     const defaultFlavor = config.flavor || `<p class="roll-flavor-line"><b>Hope Die</b>${config.modifier !== 0 ? (config.modifier > 0 ? ` +${config.modifier}` : ` ${config.modifier}`) : ''}</p>`;
     
-    await roll.toMessage({
-      speaker: config.speaker || ChatMessage.getSpeaker(),
-      flavor: defaultFlavor,
-      flags: {
-        daggerheart: {
-          rollType: "hope",
-          dieSize: config.dieSize,
-          modifier: config.modifier
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="dice-roll">
+            <div class="dice-result">
+              <div class="dice-formula">${roll.formula}</div>
+              <div class="dice-total">${roll.total}</div>
+            </div>
+          </div>
+        `,
+        speaker: config.speaker || ChatMessage.getSpeaker(),
+        flavor: defaultFlavor,
+        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+        rolls: [roll],
+        flags: {
+          daggerheart: {
+            rollType: "hope",
+            dieSize: config.dieSize,
+            modifier: config.modifier
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating hope roll chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but roll was completed.");
+    }
   }
   
   if (config.returnRoll) {
@@ -115,17 +130,32 @@ export async function _rollFear(options = {}) {
   if (config.sendToChat) {
     const defaultFlavor = config.flavor || `<p class="roll-flavor-line"><b>Fear Die</b>${config.modifier !== 0 ? (config.modifier > 0 ? ` +${config.modifier}` : ` ${config.modifier}`) : ''}</p>`;
     
-    await roll.toMessage({
-      speaker: config.speaker || ChatMessage.getSpeaker(),
-      flavor: defaultFlavor,
-      flags: {
-        daggerheart: {
-          rollType: "fear",
-          dieSize: config.dieSize,
-          modifier: config.modifier
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="dice-roll">
+            <div class="dice-result">
+              <div class="dice-formula">${roll.formula}</div>
+              <div class="dice-total">${roll.total}</div>
+            </div>
+          </div>
+        `,
+        speaker: config.speaker || ChatMessage.getSpeaker(),
+        flavor: defaultFlavor,
+        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+        rolls: [roll],
+        flags: {
+          daggerheart: {
+            rollType: "fear",
+            dieSize: config.dieSize,
+            modifier: config.modifier
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating fear roll chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but roll was completed.");
+    }
   }
   
   if (config.returnRoll) {
@@ -277,24 +307,39 @@ export async function _rollDuality(options = {}) {
       }
     }
     
-    await roll.toMessage({
-      speaker: config.speaker || ChatMessage.getSpeaker(),
-      flavor: finalFlavor,
-      flags: {
-        daggerheart: {
-          rollType: "duality",
-          hopeDieSize: config.hopeDieSize,
-          fearDieSize: config.fearDieSize,
-          modifier: config.modifier,
-          advantage: config.advantage,
-          disadvantage: config.disadvantage,
-          isCrit,
-          isHope,
-          isFear,
-          reaction: config.reaction
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="dice-roll">
+            <div class="dice-result">
+              <div class="dice-formula">${roll.formula}</div>
+              <div class="dice-total">${roll.total}</div>
+            </div>
+          </div>
+        `,
+        speaker: config.speaker || ChatMessage.getSpeaker(),
+        flavor: finalFlavor,
+        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+        rolls: [roll],
+        flags: {
+          daggerheart: {
+            rollType: "duality",
+            hopeDieSize: config.hopeDieSize,
+            fearDieSize: config.fearDieSize,
+            modifier: config.modifier,
+            advantage: config.advantage,
+            disadvantage: config.disadvantage,
+            isCrit,
+            isHope,
+            isFear,
+            reaction: config.reaction
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating duality roll chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but roll was completed.");
+    }
     
     if (isCrit && wasForcedCritical) {
       Hooks.callAll('daggerheart.dualityRollComplete', {
@@ -406,21 +451,36 @@ export async function _rollNPC(options = {}) {
       }
     }
     
-    await roll.toMessage({
-      speaker: config.speaker || ChatMessage.getSpeaker(),
-      flavor: finalFlavor,
-      flags: {
-        daggerheart: {
-          rollType: "npc",
-          dieSize: config.dieSize,
-          modifier: config.modifier,
-          advantage: config.advantage,
-          disadvantage: config.disadvantage,
-          isCrit,
-          reaction: config.reaction
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="dice-roll">
+            <div class="dice-result">
+              <div class="dice-formula">${roll.formula}</div>
+              <div class="dice-total">${roll.total}</div>
+            </div>
+          </div>
+        `,
+        speaker: config.speaker || ChatMessage.getSpeaker(),
+        flavor: finalFlavor,
+        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+        rolls: [roll],
+        flags: {
+          daggerheart: {
+            rollType: "npc",
+            dieSize: config.dieSize,
+            modifier: config.modifier,
+            advantage: config.advantage,
+            disadvantage: config.disadvantage,
+            isCrit,
+            reaction: config.reaction
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating NPC roll chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but roll was completed.");
+    }
   }
   
   if (config.returnRoll) {
@@ -474,10 +534,25 @@ export async function _quickRoll(dieFormula, options = {}) {
   await roll.evaluate();
   
   if (config.sendToChat) {
-    await roll.toMessage({
-      speaker: config.speaker || ChatMessage.getSpeaker(),
-      flavor: config.flavor || `<p class="roll-flavor-line"><b>Roll</b></p>`
-    });
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="dice-roll">
+            <div class="dice-result">
+              <div class="dice-formula">${roll.formula}</div>
+              <div class="dice-total">${roll.total}</div>
+            </div>
+          </div>
+        `,
+        speaker: config.speaker || ChatMessage.getSpeaker(),
+        flavor: config.flavor || `<p class="roll-flavor-line"><b>Roll</b></p>`,
+        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+        rolls: [roll]
+      });
+    } catch (error) {
+      console.error("Error creating quick roll chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but roll was completed.");
+    }
   }
   
   if (config.returnRoll) {
@@ -591,18 +666,33 @@ export async function _dualityWithDialog(config) {
   const pendingWeaponName = sheet?.getPendingWeaponName ? sheet.getPendingWeaponName() : "";
 
   // Send message
-  await result.roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    flavor: finalFlavor,
-    flags: {
-      daggerheart: {
-        rollType: pendingRollType,
-        weaponName: pendingWeaponName,
-        actorId: actor.id,
-        actorType: actor.type
+  try {
+    await ChatMessage.create({
+      content: `
+        <div class="dice-roll">
+          <div class="dice-result">
+            <div class="dice-formula">${result.roll.formula}</div>
+            <div class="dice-total">${result.roll.total}</div>
+          </div>
+        </div>
+      `,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: finalFlavor,
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      rolls: [result.roll],
+      flags: {
+        daggerheart: {
+          rollType: pendingRollType,
+          weaponName: pendingWeaponName,
+          actorId: actor.id,
+          actorType: actor.type
+        }
       }
-    }
-  });
+    });
+  } catch (error) {
+    console.error("Error creating duality dialog roll chat message:", error);
+    ui.notifications.warn("Chat message failed to send, but roll was completed.");
+  }
   
   // Clear pending
   if (sheet?.setPendingRollType) {
@@ -697,18 +787,33 @@ export async function _npcRollWithDialog(config) {
   const pendingWeaponName = sheet?.getPendingWeaponName ? sheet.getPendingWeaponName() : "";
 
   // Send message
-  await result.roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    flavor: finalFlavor,
-    flags: {
-      daggerheart: {
-        rollType: pendingRollType,
-        weaponName: pendingWeaponName,
-        actorId: actor.id,
-        actorType: actor.type
+  try {
+    await ChatMessage.create({
+      content: `
+        <div class="dice-roll">
+          <div class="dice-result">
+            <div class="dice-formula">${result.roll.formula}</div>
+            <div class="dice-total">${result.roll.total}</div>
+          </div>
+        </div>
+      `,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: finalFlavor,
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      rolls: [result.roll],
+      flags: {
+        daggerheart: {
+          rollType: pendingRollType,
+          weaponName: pendingWeaponName,
+          actorId: actor.id,
+          actorType: actor.type
+        }
       }
-    }
-  });
+    });
+  } catch (error) {
+    console.error("Error creating NPC dialog roll chat message:", error);
+    ui.notifications.warn("Chat message failed to send, but roll was completed.");
+  }
   
   // Clear pending
   if (sheet?.setPendingRollType) {

@@ -289,7 +289,7 @@ body.game .app a.inline-roll, a.inline-roll.roll {
   }
 }
 
-body.game .app a.content-link {
+body.game .app a.content-link, .content-link, .inline-roll {
   background: rgba(12, 10, 19, 0.85);
   border: 1px solid #433f64;
   border-radius: 0.5em;

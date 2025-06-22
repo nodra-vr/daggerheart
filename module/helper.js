@@ -196,11 +196,26 @@ export class EntitySheetHelper {
 
       // roll & message
       let r = new Roll(formula, rollData);
-      return r.toMessage({
-        user: game.user.id,
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: `${chatLabel}`
-      });
+      try {
+        return ChatMessage.create({
+          content: `
+            <div class="dice-roll">
+              <div class="dice-result">
+                <div class="dice-formula">${r.formula}</div>
+                <div class="dice-total">${r.total}</div>
+              </div>
+            </div>
+          `,
+          user: game.user.id,
+          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+          flavor: `${chatLabel}`,
+          type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+          rolls: [r]
+        });
+      } catch (error) {
+        console.error("Error creating attribute roll chat message:", error);
+        ui.notifications.warn("Chat message failed to send, but roll was completed.");
+      }
     }
   }
 

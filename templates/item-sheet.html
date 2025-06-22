@@ -1,63 +1,36 @@
-<form class="flexcol {{cssClass}}" autocomplete="off" style="position: relative;">
+<form class="flexcol {{cssClass}} item-sheet-card" autocomplete="off" style="position: relative;">
     
-    <!--<div class="item-bg" style="background-image: url('{{data.img}}');"></div>-->
-    <header class="sheet-header">
-        <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
-        <div class="header-fields">
-            <div class="header-domain">
-                <input type="text" name="system.category" value="{{systemData.category}}" placeholder="{{localize "DH.Category"}}"/>
-                <input type="text" name="system.rarity" value="{{systemData.rarity}}" placeholder="{{localize "DH.Rarity"}}"/>
+    {{!-- Card-style header with image --}}
+    <div class="item-card-header">
+        <div class="card-image-container" style="background-image: url('{{data.img}}');">
+            <div class="card-header-text">
+                <h1 class="item-title">
+                    <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
+                </h1>
             </div>
-            <h1 class="item-charname">
-                <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
-            </h1>
-            <!--<div class="resource">
-                <label>Quantity</label>
-                <input type="number" name="system.quantity" value="{{systemData.quantity}}"/>
+            {{!-- Image upload area --}}
+            <div class="image-upload-area">
+                <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
             </div>
-            <div class="resource">
-                <label>Weight</label>
-                <input type="number" name="system.weight" value="{{systemData.weight}}"/>
-            </div>-->
         </div>
-    </header>
+    </div>
     
-    
-    {{!-- Sheet Tab Navigation --}}
-    <nav class="sheet-tabs tabs" data-group="primary">
-        <a class="item" data-tab="description">{{localize "DH.Description"}}</a>
-        <!--<a class="item" data-tab="attributes">Attributes</a>-->
-    </nav>
-    
-    {{!-- Sheet Body --}}
-    <section class="sheet-body">
-        
-        {{!-- Description Tab --}}
-        <div class="tab" data-group="primary" data-tab="description">
-            {{editor descriptionHTML target="system.description" button=true editable=editable engine="prosemirror"}}
+    {{!-- Card content area --}}
+    <div class="item-card-content">
+        {{!-- Category and rarity section --}}
+        <div class="card-subtitle">
+            <div class="category-rarity-inputs">
+                <input type="text" name="system.category" value="{{systemData.category}}" placeholder="{{localize "DH.Category"}}" class="category-input"/>
+                <span class="separator">-</span>
+                <input type="text" name="system.rarity" value="{{systemData.rarity}}" placeholder="{{localize "DH.Rarity"}}" class="rarity-input"/>
+            </div>
         </div>
         
-        <!--{{!-- Attributes Tab --}}
-        <div class="tab attributes" data-group="primary" data-tab="attributes">
-            <header class="attributes-header flexrow">
-                <span class="attribute-key">{{localize "SIMPLE.AttributeKey"}}</span>
-                <span class="attribute-value">{{localize "SIMPLE.AttributeValue"}}</span>
-                <span class="attribute-label">{{localize "SIMPLE.AttributeLabel"}}</span>
-                <span class="attribute-dtype">{{localize "SIMPLE.AttributeDtype"}}</span>
-                <a class="attribute-control" data-action="create" data-group="{{group}}"><i class="fas fa-plus"></i></a>
-            </header>
-            
-            {{!-- Render the attribute list partial. --}}
-            {{> "systems/daggerheart/templates/parts/sheet-attributes.html" attributes=systemData.ungroupedAttributes dtypes=dtypes}}
-            
-            {{!-- Render the grouped attributes partial and control. --}}
-            <div class="groups">
-                {{> "systems/daggerheart/templates/parts/sheet-groups.html" attributes=systemData.groupedAttributes groups=systemData.groups dtypes=dtypes}}
-                <div class="group-controls flexrow">
-                    <input class="group-prefix" type="text" value=""/>
-                    <a class="button group-control" data-action="create-group"><i class="fas fa-plus"></i>Add Attribute Group</a>
-                </div>
+        {{!-- Description section --}}
+        <div class="card-description">
+            <div class="description-editor">
+                {{editor descriptionHTML target="system.description" button=true editable=editable engine="prosemirror"}}
             </div>
-        </div>-->
-    </section>
+        </div>
+    </div>
 </form>

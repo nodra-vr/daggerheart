@@ -557,12 +557,27 @@ async function _rollCharacterDamage(event) {
   const roll = new Roll(rollValue);
   await roll.evaluate();
   
-  await roll.toMessage({
-    flavor: flavorText,
-    user: game.user.id,
-    speaker: ChatMessage.getSpeaker({ actor: actor }),
-    rollMode: "roll"
-  });
+  try {
+    await ChatMessage.create({
+      content: `
+        <div class="dice-roll">
+          <div class="dice-result">
+            <div class="dice-formula">${roll.formula}</div>
+            <div class="dice-total">${roll.total}</div>
+          </div>
+        </div>
+      `,
+      flavor: flavorText,
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      rolls: [roll],
+      rollMode: "roll"
+    });
+  } catch (error) {
+    console.error("Error creating character damage chat message:", error);
+    ui.notifications.warn("Chat message failed to send, but damage was rolled.");
+  }
 }
 
 /**
@@ -598,12 +613,27 @@ async function _rollAdversaryDamage(event) {
   const roll = new Roll(rollValue);
   await roll.evaluate();
   
-  await roll.toMessage({
-    flavor: flavorText,
-    user: game.user.id,
-    speaker: ChatMessage.getSpeaker({ actor: actor }),
-    rollMode: "roll"
-  });
+  try {
+    await ChatMessage.create({
+      content: `
+        <div class="dice-roll">
+          <div class="dice-result">
+            <div class="dice-formula">${roll.formula}</div>
+            <div class="dice-total">${roll.total}</div>
+          </div>
+        </div>
+      `,
+      flavor: flavorText,
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      rolls: [roll],
+      rollMode: "roll"
+    });
+  } catch (error) {
+    console.error("Error creating adversary damage chat message:", error);
+    ui.notifications.warn("Chat message failed to send, but damage was rolled.");
+  }
 }
 
 /**

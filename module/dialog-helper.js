@@ -249,19 +249,34 @@ export class DaggerheartDialogHelper {
             `;
           }
           
-          const avoidMessage = await hopeResult.roll.toMessage({
-            speaker: ChatMessage.getSpeaker({ actor }),
-            flavor: flavorText,
-            flags: {
-              daggerheart: {
-                deathMove: 'avoid-death-roll',
-                characterName: characterName,
-                gainsScar: gainsScar,
-                hopeValue: hopeValue,
-                characterLevel: characterLevel
+          try {
+            const avoidMessage = await ChatMessage.create({
+              content: `
+                <div class="dice-roll">
+                  <div class="dice-result">
+                    <div class="dice-formula">${hopeResult.roll.formula}</div>
+                    <div class="dice-total">${hopeResult.roll.total}</div>
+                  </div>
+                </div>
+              `,
+              speaker: ChatMessage.getSpeaker({ actor }),
+              flavor: flavorText,
+              type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+              rolls: [hopeResult.roll],
+              flags: {
+                daggerheart: {
+                  deathMove: 'avoid-death-roll',
+                  characterName: characterName,
+                  gainsScar: gainsScar,
+                  hopeValue: hopeValue,
+                  characterLevel: characterLevel
+                }
               }
-            }
-          });
+            });
+          } catch (error) {
+            console.error("Error creating death move avoid roll chat message:", error);
+            ui.notifications.warn("Chat message failed to send, but roll was completed.");
+          }
           
           if (gainsScar) {
             ui.notifications.info(`${characterName} gains a scar. Scar functionality will be implemented in the future.`);
@@ -314,54 +329,80 @@ export class DaggerheartDialogHelper {
             
             await actor.update(updateData);
             
-            const criticalMessage = await dualityResult.roll.toMessage({
-              speaker: ChatMessage.getSpeaker({ actor }),
-              flavor: `
-                <div class="death-move-risk-critical">
-                  <p><strong>Risk it All - CRITICAL SUCCESS!</strong></p>
-                  <p>Hope: <strong>${hopeDieValue}</strong> | Fear: <strong>${fearDieValue}</strong></p>
-                  <p class="miracle"><em>${characterName} achieves the impossible!</em></p>
-                  <p class="full-heal">Complete restoration: HP and Stress set to 0!</p>
-                </div>
-              `,
-              flags: {
-                daggerheart: {
-                  deathMove: 'risk-it-all-critical',
-                  characterName: characterName,
-                  hopeDieValue: hopeDieValue,
-                  fearDieValue: fearDieValue
+            try {
+              const criticalMessage = await ChatMessage.create({
+                content: `
+                  <div class="dice-roll">
+                    <div class="dice-result">
+                      <div class="dice-formula">${dualityResult.roll.formula}</div>
+                      <div class="dice-total">${dualityResult.roll.total}</div>
+                    </div>
+                  </div>
+                `,
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: `
+                  <div class="death-move-risk-critical">
+                    <p><strong>Risk it All - CRITICAL SUCCESS!</strong></p>
+                    <p>Hope: <strong>${hopeDieValue}</strong> | Fear: <strong>${fearDieValue}</strong></p>
+                    <p class="miracle"><em>${characterName} achieves the impossible!</em></p>
+                    <p class="full-heal">Complete restoration: HP and Stress set to 0!</p>
+                  </div>
+                `,
+                type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+                rolls: [dualityResult.roll],
+                flags: {
+                  daggerheart: {
+                    deathMove: 'risk-it-all-critical',
+                    characterName: characterName,
+                    hopeDieValue: hopeDieValue,
+                    fearDieValue: fearDieValue
+                  }
                 }
-              }
-            });
+              });
+            } catch (error) {
+              console.error("Error creating death move critical chat message:", error);
+              ui.notifications.warn("Chat message failed to send, but roll was completed.");
+            }
             
-            await game.daggerheart.rollHandler.waitFor3dDice(criticalMessage.id);
             ui.notifications.info(`${characterName} achieves miraculous recovery!`);
             
           } else if (hopeWins) {
             // Hope Wins: Show recovery allocation dialog
-            const hopeMessage = await dualityResult.roll.toMessage({
-              speaker: ChatMessage.getSpeaker({ actor }),
-              flavor: `
-                <div class="death-move-risk-hope">
-                  <p><strong>Risk it All - Hope Prevails!</strong></p>
-                  <p>Hope: <strong>${hopeDieValue}</strong> | Fear: <strong>${fearDieValue}</strong></p>
-                  <p class="recovery-available"><em>${characterName} can recover ${hopeDieValue} points!</em></p>
-                </div>
-              `,
-              flags: {
-                daggerheart: {
-                  deathMove: 'risk-it-all-hope',
-                  characterName: characterName,
-                  hopeDieValue: hopeDieValue,
-                  fearDieValue: fearDieValue
+            try {
+              const hopeMessage = await ChatMessage.create({
+                content: `
+                  <div class="dice-roll">
+                    <div class="dice-result">
+                      <div class="dice-formula">${dualityResult.roll.formula}</div>
+                      <div class="dice-total">${dualityResult.roll.total}</div>
+                    </div>
+                  </div>
+                `,
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: `
+                  <div class="death-move-risk-hope">
+                    <p><strong>Risk it All - Hope Prevails!</strong></p>
+                    <p>Hope: <strong>${hopeDieValue}</strong> | Fear: <strong>${fearDieValue}</strong></p>
+                    <p class="recovery-available"><em>${characterName} can recover ${hopeDieValue} points!</em></p>
+                  </div>
+                `,
+                type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+                rolls: [dualityResult.roll],
+                flags: {
+                  daggerheart: {
+                    deathMove: 'risk-it-all-hope',
+                    characterName: characterName,
+                    hopeDieValue: hopeDieValue,
+                    fearDieValue: fearDieValue
+                  }
                 }
-              }
-            });
+              });
+            } catch (error) {
+              console.error("Error creating death move hope chat message:", error);
+              ui.notifications.warn("Chat message failed to send, but roll was completed.");
+            }
             
             // Show recovery allocation dialog
-
-            await game.daggerheart.rollHandler.waitFor3dDice(hopeMessage.id);
-            ui.notifications.info(`${characterName} achieves miraculous recovery!`);
 
             const recoveryChoice = await this.showRecoveryAllocationDialog({
               characterName: characterName,
@@ -409,27 +450,41 @@ export class DaggerheartDialogHelper {
             
           } else if (fearWins) {
             // Fear Wins: Character dies
-            const deathMessage = await dualityResult.roll.toMessage({
-              speaker: ChatMessage.getSpeaker({ actor }),
-              flavor: `
-                <div class="death-move-risk-death">
-                  <p><strong>Risk it All - Fear Claims Victory</strong></p>
-                  <p>Hope: <strong>${hopeDieValue}</strong> | Fear: <strong>${fearDieValue}</strong></p>
-                  <p class="final-words"><em>${characterName}'s gamble has failed...</em></p>
-                  <p class="death-result">The ultimate risk has claimed their life.</p>
-                </div>
-              `,
-              flags: {
-                daggerheart: {
-                  deathMove: 'risk-it-all-death',
-                  characterName: characterName,
-                  hopeDieValue: hopeDieValue,
-                  fearDieValue: fearDieValue
+            try {
+              const deathMessage = await ChatMessage.create({
+                content: `
+                  <div class="dice-roll">
+                    <div class="dice-result">
+                      <div class="dice-formula">${dualityResult.roll.formula}</div>
+                      <div class="dice-total">${dualityResult.roll.total}</div>
+                    </div>
+                  </div>
+                `,
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: `
+                  <div class="death-move-risk-death">
+                    <p><strong>Risk it All - Fear Claims Victory</strong></p>
+                    <p>Hope: <strong>${hopeDieValue}</strong> | Fear: <strong>${fearDieValue}</strong></p>
+                    <p class="final-words"><em>${characterName}'s gamble has failed...</em></p>
+                    <p class="death-result">The ultimate risk has claimed their life.</p>
+                  </div>
+                `,
+                type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+                rolls: [dualityResult.roll],
+                flags: {
+                  daggerheart: {
+                    deathMove: 'risk-it-all-death',
+                    characterName: characterName,
+                    hopeDieValue: hopeDieValue,
+                    fearDieValue: fearDieValue
+                  }
                 }
-              }
-            });
+              });
+            } catch (error) {
+              console.error("Error creating death move death chat message:", error);
+              ui.notifications.warn("Chat message failed to send, but roll was completed.");
+            }
             
-            await game.daggerheart.rollHandler.waitFor3dDice(deathMessage.id);
             ui.notifications.warn(`${characterName} has paid the ultimate price.`);
           }
           
@@ -1002,38 +1057,50 @@ export class DaggerheartDialogHelper {
     const tier = game.daggerheart?.getTierOfPlay ? game.daggerheart.getTierOfPlay(actor) : 1;
     
     // Send initial short rest message
-    await ChatMessage.create({
-      content: `
-        <div class="short-rest-start">
-          <p><strong>${characterName} takes a Short Rest</strong></p>
-          <p><em>Taking time to recover and regroup...</em></p>
-        </div>
-      `,
-      speaker: ChatMessage.getSpeaker({ actor }),
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      flags: {
-        daggerheart: {
-          restType: 'short-rest-start',
-          characterName: characterName
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="short-rest-start">
+            <p><strong>${characterName} takes a Short Rest</strong></p>
+            <p><em>Taking time to recover and regroup...</em></p>
+          </div>
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'short-rest-start',
+            characterName: characterName
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating short rest start chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but rest continues.");
+    }
 
-    // Process each selected option
+    // Process each selected option with small delays to prevent race conditions
     for (const option of selectedOptions) {
-      switch (option) {
-        case 'tend-wounds':
-          await this._processTendWounds(characterName, actor, tier);
-          break;
-        case 'clear-stress':
-          await this._processClearStress(characterName, actor, tier);
-          break;
-        case 'repair-armor':
-          await this._processRepairArmor(characterName, actor, tier);
-          break;
-        case 'prepare':
-          await this._processPrepare(characterName, actor);
-          break;
+      try {
+        switch (option) {
+          case 'tend-wounds':
+            await this._processTendWounds(characterName, actor, tier);
+            break;
+          case 'clear-stress':
+            await this._processClearStress(characterName, actor, tier);
+            break;
+          case 'repair-armor':
+            await this._processRepairArmor(characterName, actor, tier);
+            break;
+          case 'prepare':
+            await this._processPrepare(characterName, actor);
+            break;
+        }
+        // Small delay to prevent ChatMessage race conditions
+        await new Promise(resolve => setTimeout(resolve, 100));
+      } catch (error) {
+        console.error(`Error processing short rest option '${option}':`, error);
+        ui.notifications.warn(`Failed to process ${option} during short rest.`);
       }
     }
   }
@@ -1055,23 +1122,35 @@ export class DaggerheartDialogHelper {
     
     await actor.update({ "system.health.value": newHP });
     
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: `
-        <div class="short-rest-tend-wounds">
-          <p><strong>Tend to Wounds</strong></p>
-          <p>${characterName} tends to their wounds, healing <strong>${healingAmount}</strong> hit points.</p>
-          <p><em>HP: ${currentHP} → ${newHP}</em></p>
-        </div>
-      `,
-      flags: {
-        daggerheart: {
-          restType: 'short-rest-tend-wounds',
-          characterName: characterName,
-          healingAmount: healingAmount
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="short-rest-tend-wounds">
+            <p><strong>Tend to Wounds</strong></p>
+            <p>${characterName} tends to their wounds, healing <strong>${healingAmount}</strong> hit points.</p>
+            <p><em>HP: ${currentHP} → ${newHP}</em></p>
+            <div class="dice-roll">
+              <div class="dice-result">
+                <div class="dice-formula">${roll.formula}</div>
+                <div class="dice-total">${roll.total}</div>
+              </div>
+            </div>
+          </div>
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'short-rest-tend-wounds',
+            characterName: characterName,
+            healingAmount: healingAmount
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating short rest tend wounds chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but healing was applied.");
+    }
   }
 
   /**
@@ -1091,23 +1170,35 @@ export class DaggerheartDialogHelper {
     
     await actor.update({ "system.stress.value": newStress });
     
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: `
-        <div class="short-rest-clear-stress">
-          <p><strong>Clear Stress</strong></p>
-          <p>${characterName} takes time to decompress, clearing <strong>${stressCleared}</strong> stress.</p>
-          <p><em>Stress: ${currentStress} → ${newStress}</em></p>
-        </div>
-      `,
-      flags: {
-        daggerheart: {
-          restType: 'short-rest-clear-stress',
-          characterName: characterName,
-          stressCleared: stressCleared
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="short-rest-clear-stress">
+            <p><strong>Clear Stress</strong></p>
+            <p>${characterName} takes time to decompress, clearing <strong>${stressCleared}</strong> stress.</p>
+            <p><em>Stress: ${currentStress} → ${newStress}</em></p>
+            <div class="dice-roll">
+              <div class="dice-result">
+                <div class="dice-formula">${roll.formula}</div>
+                <div class="dice-total">${roll.total}</div>
+              </div>
+            </div>
+          </div>
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'short-rest-clear-stress',
+            characterName: characterName,
+            stressCleared: stressCleared
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating short rest clear stress chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but stress was cleared.");
+    }
   }
 
   /**
@@ -1128,23 +1219,35 @@ export class DaggerheartDialogHelper {
     
     await actor.update({ "system.defenses.armor-slots.value": newArmorSlots });
     
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: `
-        <div class="short-rest-repair-armor">
-          <p><strong>Repair Armor</strong></p>
-          <p>${characterName} mends their armor, clearing <strong>${armorRepaired}</strong> armor slots.</p>
-          <p><em>Damaged Armor: ${currentArmorSlots} → ${newArmorSlots}</em></p>
-        </div>
-      `,
-      flags: {
-        daggerheart: {
-          restType: 'short-rest-repair-armor',
-          characterName: characterName,
-          armorRepaired: armorRepaired
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="short-rest-repair-armor">
+            <p><strong>Repair Armor</strong></p>
+            <p>${characterName} mends their armor, clearing <strong>${armorRepaired}</strong> armor slots.</p>
+            <p><em>Damaged Armor: ${currentArmorSlots} → ${newArmorSlots}</em></p>
+            <div class="dice-roll">
+              <div class="dice-result">
+                <div class="dice-formula">${roll.formula}</div>
+                <div class="dice-total">${roll.total}</div>
+              </div>
+            </div>
+          </div>
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'short-rest-repair-armor',
+            characterName: characterName,
+            armorRepaired: armorRepaired
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating short rest repair armor chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but armor was repaired.");
+    }
   }
 
   /**
@@ -1160,24 +1263,29 @@ export class DaggerheartDialogHelper {
     
     await actor.update({ "system.hope.value": newHope });
     
-    await ChatMessage.create({
-      content: `
-        <div class="short-rest-prepare">
-          <p><strong>Prepare</strong></p>
-          <p>${characterName} takes time to prepare, gaining <strong>1 Hope</strong>.</p>
-          <p><em>Hope: ${currentHope} → ${newHope}</em></p>
-        </div>
-      `,
-      speaker: ChatMessage.getSpeaker({ actor }),
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      flags: {
-        daggerheart: {
-          restType: 'short-rest-prepare',
-          characterName: characterName,
-          hopeGained: 1
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="short-rest-prepare">
+            <p><strong>Prepare</strong></p>
+            <p>${characterName} takes time to prepare, gaining <strong>1 Hope</strong>.</p>
+            <p><em>Hope: ${currentHope} → ${newHope}</em></p>
+          </div>
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'short-rest-prepare',
+            characterName: characterName,
+            hopeGained: 1
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating short rest prepare chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but Hope was gained.");
+    }
   }
 
   /**
@@ -1289,22 +1397,27 @@ export class DaggerheartDialogHelper {
    */
   static async _processLongRest(characterName, actor, selectedOptions) {
     // Send initial long rest message
-    await ChatMessage.create({
-      content: `
-        <div class="long-rest-start">
-          <p><strong>${characterName} takes a Long Rest</strong></p>
-          <p><em>Making camp and taking time to truly recover...</em></p>
-        </div>
-      `,
-      speaker: ChatMessage.getSpeaker({ actor }),
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      flags: {
-        daggerheart: {
-          restType: 'long-rest-start',
-          characterName: characterName
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="long-rest-start">
+            <p><strong>${characterName} takes a Long Rest</strong></p>
+            <p><em>Making camp and taking time to truly recover...</em></p>
+          </div>
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'long-rest-start',
+            characterName: characterName
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating long rest start chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but rest continues.");
+    }
 
     // Count how many times each option was selected
     const optionCounts = {};
@@ -1312,25 +1425,32 @@ export class DaggerheartDialogHelper {
       optionCounts[option] = (optionCounts[option] || 0) + 1;
     });
 
-    // Process each selected option
+    // Process each selected option with small delays to prevent race conditions
     for (const [option, count] of Object.entries(optionCounts)) {
       for (let i = 0; i < count; i++) {
-        switch (option) {
-          case 'tend-all-wounds':
-            await this._processLongRestTendWounds(characterName, actor);
-            break;
-          case 'clear-all-stress':
-            await this._processLongRestClearStress(characterName, actor);
-            break;
-          case 'repair-all-armor':
-            await this._processLongRestRepairArmor(characterName, actor);
-            break;
-          case 'prepare':
-            await this._processLongRestPrepare(characterName, actor);
-            break;
-          case 'work-project':
-            await this._processLongRestWorkProject(characterName, actor);
-            break;
+        try {
+          switch (option) {
+            case 'tend-all-wounds':
+              await this._processLongRestTendWounds(characterName, actor);
+              break;
+            case 'clear-all-stress':
+              await this._processLongRestClearStress(characterName, actor);
+              break;
+            case 'repair-all-armor':
+              await this._processLongRestRepairArmor(characterName, actor);
+              break;
+            case 'prepare':
+              await this._processLongRestPrepare(characterName, actor);
+              break;
+            case 'work-project':
+              await this._processLongRestWorkProject(characterName, actor);
+              break;
+          }
+          // Small delay to prevent ChatMessage race conditions
+          await new Promise(resolve => setTimeout(resolve, 100));
+        } catch (error) {
+          console.error(`Error processing long rest option '${option}':`, error);
+          ui.notifications.warn(`Failed to process ${option} during long rest.`);
         }
       }
     }
@@ -1348,24 +1468,29 @@ export class DaggerheartDialogHelper {
     
     await actor.update({ "system.health.value": newHP });
     
-    await ChatMessage.create({
-      content: `
-        <div class="long-rest-tend-wounds">
-          <p><strong>Tend to All Wounds</strong></p>
-          <p>${characterName} takes time to properly tend to all their wounds, fully healing their injuries.</p>
-          <p><em>HP: ${currentHP} → ${newHP} (Fully Healed!)</em></p>
-        </div>
-      `,
-      speaker: ChatMessage.getSpeaker({ actor }),
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      flags: {
-        daggerheart: {
-          restType: 'long-rest-tend-wounds',
-          characterName: characterName,
-          healingAmount: currentHP
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="long-rest-tend-wounds">
+            <p><strong>Tend to All Wounds</strong></p>
+            <p>${characterName} takes time to properly tend to all their wounds, fully healing their injuries.</p>
+            <p><em>HP: ${currentHP} → ${newHP} (Fully Healed!)</em></p>
+          </div>
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'long-rest-tend-wounds',
+            characterName: characterName,
+            healingAmount: currentHP
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating long rest tend wounds chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but healing was applied.");
+    }
   }
 
   /**
@@ -1380,24 +1505,29 @@ export class DaggerheartDialogHelper {
     
     await actor.update({ "system.stress.value": newStress });
     
-    await ChatMessage.create({
-      content: `
-        <div class="long-rest-clear-stress">
-          <p><strong>Clear All Stress</strong></p>
-          <p>${characterName} takes time to decompress and center themselves, clearing away all mental fatigue.</p>
-          <p><em>Stress: ${currentStress} → ${newStress} (Completely Relaxed!)</em></p>
-        </div>
-      `,
-      speaker: ChatMessage.getSpeaker({ actor }),
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      flags: {
-        daggerheart: {
-          restType: 'long-rest-clear-stress',
-          characterName: characterName,
-          stressCleared: currentStress
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="long-rest-clear-stress">
+            <p><strong>Clear All Stress</strong></p>
+            <p>${characterName} takes time to decompress and center themselves, clearing away all mental fatigue.</p>
+            <p><em>Stress: ${currentStress} → ${newStress} (Completely Relaxed!)</em></p>
+          </div>
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'long-rest-clear-stress',
+            characterName: characterName,
+            stressCleared: currentStress
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating long rest clear stress chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but stress was cleared.");
+    }
   }
 
   /**
@@ -1412,24 +1542,29 @@ export class DaggerheartDialogHelper {
     
     await actor.update({ "system.defenses.armor-slots.value": newArmorSlots });
     
-    await ChatMessage.create({
-      content: `
-        <div class="long-rest-repair-armor">
-          <p><strong>Repair All Armor</strong></p>
-          <p>${characterName} spends time meticulously repairing and maintaining their armor, restoring it to perfect condition.</p>
-          <p><em>Damaged Armor: ${currentArmorSlots} → ${newArmorSlots} (Fully Repaired!)</em></p>
-        </div>
-      `,
-      speaker: ChatMessage.getSpeaker({ actor }),
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      flags: {
-        daggerheart: {
-          restType: 'long-rest-repair-armor',
-          characterName: characterName,
-          armorRepaired: currentArmorSlots
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="long-rest-repair-armor">
+            <p><strong>Repair All Armor</strong></p>
+            <p>${characterName} spends time meticulously repairing and maintaining their armor, restoring it to perfect condition.</p>
+            <p><em>Damaged Armor: ${currentArmorSlots} → ${newArmorSlots} (Fully Repaired!)</em></p>
+          </div>
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'long-rest-repair-armor',
+            characterName: characterName,
+            armorRepaired: currentArmorSlots
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating long rest repair armor chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but armor was repaired.");
+    }
   }
 
   /**
@@ -1447,27 +1582,32 @@ export class DaggerheartDialogHelper {
     
     await actor.update({ "system.hope.value": newHope });
     
-    await ChatMessage.create({
-      content: `
-        <div class="long-rest-prepare">
-          <p><strong>Prepare</strong></p>
-          <p>${characterName} takes time to prepare for the challenges ahead, steeling their resolve.</p>
-          <p><em>Hope: ${currentHope} → ${newHope} (+${hopeGained} Hope)</em></p>
-          <div class="prepare-note">
-            <p><em>Note: If coordinating with party members, each participant gains 2 Hope instead.</em></p>
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="long-rest-prepare">
+            <p><strong>Prepare</strong></p>
+            <p>${characterName} takes time to prepare for the challenges ahead, steeling their resolve.</p>
+            <p><em>Hope: ${currentHope} → ${newHope} (+${hopeGained} Hope)</em></p>
+            <div class="prepare-note">
+              <p><em>Note: If coordinating with party members, each participant gains 2 Hope instead.</em></p>
+            </div>
           </div>
-        </div>
-      `,
-      speaker: ChatMessage.getSpeaker({ actor }),
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      flags: {
-        daggerheart: {
-          restType: 'long-rest-prepare',
-          characterName: characterName,
-          hopeGained: hopeGained
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'long-rest-prepare',
+            characterName: characterName,
+            hopeGained: hopeGained
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating long rest prepare chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but Hope was gained.");
+    }
   }
 
   /**
@@ -1477,25 +1617,30 @@ export class DaggerheartDialogHelper {
    * @private
    */
   static async _processLongRestWorkProject(characterName, actor) {
-    await ChatMessage.create({
-      content: `
-        <div class="long-rest-work-project">
-          <p><strong>Work on a Project</strong></p>
-          <p>${characterName} dedicates time to working on a personal or group project.</p>
-          <div class="project-note">
-            <p><em>Describe what ${characterName} works on during this time - perhaps crafting, research, writing, or contributing to a group endeavor.</em></p>
-            <p><em>This is an opportunity for character development and storytelling!</em></p>
+    try {
+      await ChatMessage.create({
+        content: `
+          <div class="long-rest-work-project">
+            <p><strong>Work on a Project</strong></p>
+            <p>${characterName} dedicates time to working on a personal or group project.</p>
+            <div class="project-note">
+              <p><em>Describe what ${characterName} works on during this time - perhaps crafting, research, writing, or contributing to a group endeavor.</em></p>
+              <p><em>This is an opportunity for character development and storytelling!</em></p>
+            </div>
           </div>
-        </div>
-      `,
-      speaker: ChatMessage.getSpeaker({ actor }),
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      flags: {
-        daggerheart: {
-          restType: 'long-rest-work-project',
-          characterName: characterName
+        `,
+        speaker: ChatMessage.getSpeaker({ actor }),
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        flags: {
+          daggerheart: {
+            restType: 'long-rest-work-project',
+            characterName: characterName
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error creating long rest work project chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but work continues.");
+    }
   }
 } 

@@ -12,10 +12,10 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
           classes: ["daggerheart", "sheet", "item"],
     template: "systems/daggerheart/templates/item-sheet.html",
-      width: 425,
+      width: 350,
       height: 550,
-      tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
-      scrollY: [".attributes"],
+      resizable: true,
+      scrollY: [".card-description"],
     });
   }
 
@@ -48,10 +48,16 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
     html.find(".groups").on("click", ".group-control", EntitySheetHelper.onClickAttributeGroupControl.bind(this));
     html.find(".attributes").on("click", "a.attribute-roll", EntitySheetHelper.onAttributeRoll.bind(this));
 
-    // Image Click Finder
+    // Image Click Finder - both left click and right click for image upload
     html.find('.profile-img').on('contextmenu', event => {
       event.preventDefault(); // Prevents the browser's context menu from opening
       this._onProfileImageClick(event.target);
+    });
+    
+    // Also allow left click for easier image upload
+    html.find('.profile-img').on('click', event => {
+      event.preventDefault();
+      this._onImageEdit(event);
     });
     
     // Add draggable for Macro creation
@@ -79,6 +85,23 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
         // You might need to adjust or remove the uuid depending on your requirements
       }).render(true);
     }
+  }
+
+  /* -------------------------------------------- */
+
+  async _onImageEdit(event) {
+    event.preventDefault();
+    // Use Foundry's built-in file picker for image editing
+    const fp = new FilePicker({
+      type: "image",
+      current: this.object.img,
+      callback: path => {
+        this.object.update({"img": path});
+      },
+      top: this.position.top + 40,
+      left: this.position.left + 10
+    });
+    return fp.browse();
   }
 
   /** @override */
