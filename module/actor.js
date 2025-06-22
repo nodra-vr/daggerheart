@@ -6,11 +6,6 @@ import { EntitySheetHelper } from "./helper.js";
  */
 export class SimpleActor extends Actor {
 
-  /** @override */
-  static get TYPES() {
-    return ["character", "npc", "companion"];
-  }
-
   /** @inheritdoc */
   prepareDerivedData() {
     super.prepareDerivedData();

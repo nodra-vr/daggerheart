@@ -245,6 +245,10 @@
         "minor": 0,
         "major": 0
       },
+      "chosenDomains": {
+        "domain-one": "",
+        "domain-two": ""
+      },
       "defenses": {
         "evasion": {
           "value": 0,
