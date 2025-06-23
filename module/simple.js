@@ -11,7 +11,7 @@ import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
 import { SheetTracker } from "./sheet-tracker.js";
 
-import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice, registerDaggerheartDiceColorsets } from './rollHandler.js';
+import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
 import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
 
 /**
@@ -52,8 +52,50 @@ function _getTierOfPlay(actor = null, level = null) {
 Hooks.once("init", async function() {
   console.log(`Initializing Simple Daggerheart System`);
 
-  // Register Dice So Nice! colorsets for all players
-  registerDaggerheartDiceColorsets();
+  // Initialize Dice So Nice colorsets for all players
+  if (game.dice3d) {
+    // Hope Die
+    game.dice3d.addColorset({
+      name: "Hope",
+      category: "Hope Die",
+      description: "Hope",
+      texture: "ice",
+      foreground: "#ffbb00",
+      background: "#ffffff",
+      outline: "#000000",
+      edge: "#ffbb00",
+      material: "glass",
+      font: "Modesto Condensed",
+    });
+    
+    // Fear Die
+    game.dice3d.addColorset({
+      name: "Fear",
+      category: "Fear Die", 
+      description: "Fear",
+      texture: "fire",
+      foreground: "#FFFFFF",
+      background: "#523333",
+      outline: "#b30012",
+      edge: "#800013",
+      material: "metal",
+      font: "Modesto Condensed",
+    });
+    
+    // Modifier Die
+    game.dice3d.addColorset({
+      name: "Modifier",
+      category: "Modifier Die",
+      description: "Modifier",
+      texture: "marble",
+      foreground: "#222222",
+      background: "#DDDDDD",
+      outline: "#000000",
+      edge: "#555555",
+      material: "plastic",
+      font: "Arial",
+    });
+  }
 
   // CONFIG.statusEffects = [];
 
@@ -113,8 +155,7 @@ Hooks.once("init", async function() {
       undoDamageHealing: undoDamageHealing,
       debugUndoData: debugUndoData
     },
-    getTierOfPlay: _getTierOfPlay,
-    registerDaggerheartDiceColorsets: registerDaggerheartDiceColorsets
+    getTierOfPlay: _getTierOfPlay
   };
 
   // Define custom Document classes
@@ -220,14 +261,6 @@ Hooks.once("init", async function() {
 
   // Preload template partials
   await preloadHandlebarsTemplates();
-});
-
-/**
- * Ready hook - ensures dice colorsets are registered after all modules load
- */
-Hooks.once("ready", async function() {
-  // Re-register dice colorsets to ensure they're available after all modules load
-  registerDaggerheartDiceColorsets();
 });
 
 /**
