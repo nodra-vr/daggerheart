@@ -1670,30 +1670,33 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     // Check if this is a weapon damage roll with the new damage modifier system
     if (damageValueDisplay && rollType === "damage") {
         const fieldPath = damageValueDisplay.dataset.field;
-        let damageFormula;
         
         if (fieldPath) {
           const damageData = foundry.utils.getProperty(this.actor, fieldPath);
           
-          // Handle both simple values and complex objects with .value
-          if (typeof damageData === 'object' && damageData !== null && 'value' in damageData) {
-            damageFormula = damageData.value || '1d8';
+          // Work with structured damage data properly
+          if (typeof damageData === 'object' && damageData !== null && 'baseValue' in damageData) {
+            // New damage modifier system - build formula from structure
+            rollValue = this._buildDamageFormulaFromStructure(damageData, this.actor.type === "character" ? parseInt(proficiencyValue) || 1 : null);
           } else {
-            damageFormula = damageData || '1d8';
+            // Legacy simple string format or fallback
+            const simpleFormula = damageData || '1d8';
+            if (this.actor.type === "character") {
+              const proficiency = Math.max(1, parseInt(proficiencyValue) || 1);
+              rollValue = this._applyProficiencyToDamageFormula(simpleFormula, proficiency);
+            } else {
+              rollValue = simpleFormula;
+            }
           }
         } else {
-          damageFormula = damageValueDisplay.textContent.trim() || '1d8';
-        }
-        
-        // Apply proficiency logic for characters (similar to legacy weapon damage handling)
-        if (this.actor.type === "character") {
-          const proficiency = Math.max(1, parseInt(proficiencyValue) || 1);
-          
-          // Parse the damage formula to apply proficiency logic
-          rollValue = this._applyProficiencyToDamageFormula(damageFormula, proficiency);
-        } else {
-          // For NPCs and companions, use the formula as-is
-          rollValue = damageFormula;
+          // Fallback to display text
+          const displayFormula = damageValueDisplay.textContent.trim() || '1d8';
+          if (this.actor.type === "character") {
+            const proficiency = Math.max(1, parseInt(proficiencyValue) || 1);
+            rollValue = this._applyProficiencyToDamageFormula(displayFormula, proficiency);
+          } else {
+            rollValue = displayFormula;
+          }
         }
     } else if (rollValueInput && rollValueInput.classList.contains("weapon-damage")) {
         // Legacy weapon damage handling (if any remain)
@@ -1726,6 +1729,42 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   
   /* -------------------------------------------- */
   
+  /**
+   * Build damage formula from structured damage data
+   * @param {Object} damageData - The damage data object with baseValue and modifiers
+   * @param {number|null} proficiency - The character's proficiency value (null for NPCs)
+   * @returns {string} - The complete damage formula for rolling
+   * @private
+   */
+  _buildDamageFormulaFromStructure(damageData, proficiency = null) {
+    let baseFormula = damageData.baseValue || '1d8';
+    
+    // Apply proficiency to base formula if character
+    if (proficiency) {
+      baseFormula = this._applyProficiencyToDamageFormula(baseFormula, proficiency);
+    }
+    
+    // Add enabled modifiers
+    const modifiers = damageData.modifiers || [];
+    const enabledModifiers = modifiers.filter(mod => mod.enabled !== false && mod.value);
+    
+    if (enabledModifiers.length === 0) {
+      return baseFormula;
+    }
+    
+    let formula = baseFormula;
+    enabledModifiers.forEach(modifier => {
+      let modValue = modifier.value.trim();
+      // Ensure proper formatting - add + if it doesn't start with + or -
+      if (modValue && !modValue.startsWith('+') && !modValue.startsWith('-')) {
+        modValue = '+' + modValue;
+      }
+      formula += ' ' + modValue;
+    });
+    
+    return formula;
+  }
+
   /**
    * Apply proficiency logic to damage formulas for characters
    * @param {string} damageFormula - The damage formula (e.g., "1d8 + 1 + 1d4")

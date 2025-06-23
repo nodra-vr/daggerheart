@@ -390,54 +390,9 @@ Hooks.once("ready", async function() {
   console.log("Counter UI initialized and displayed above the hotbar.");
   console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), and cleanupDuplicateMacros() functions are now available globally.");
   
-  // Create demo macros if they don't exist (optional - for testing)
+  // Clean up any existing duplicate macros from previous versions, but don't create new ones
   if (game.user.isGM) {
-    // First, clean up any duplicate macros
     await _cleanupDuplicateMacros();
-    
-    const existingSpendFearMacro = game.macros.find(m => m.name === "Spend 1 Fear" && m.flags?.["daggerheart.spendFearMacro"]);
-    if (!existingSpendFearMacro) {
-      await game.daggerheart.createSpendFearMacro(1);
-      console.log("Created demo 'Spend 1 Fear' macro for GM.");
-    }
-    
-    const existingGainFearMacro = game.macros.find(m => m.name === "Gain Fear" && m.flags?.["daggerheart.gainFearMacro"]);
-    if (!existingGainFearMacro) {
-      await game.daggerheart.createGainFearMacro(1);
-      console.log("Created demo 'Gain Fear' macro for GM.");
-    }
-    
-    const existingStressMacro = game.macros.find(m => m.name === "Apply Stress" && m.flags?.["daggerheart.spendStressMacro"]);
-    if (!existingStressMacro) {
-      await game.daggerheart.createSpendStressMacro(1);
-      console.log("Created demo 'Apply Stress' macro for GM.");
-    }
-    
-    // Create demo damage application macros
-    const existingDamageMacro = game.macros.find(m => m.name === "Apply Damage" && m.flags?.["daggerheart.damageApplicationMacro"]);
-    if (!existingDamageMacro) {
-      await _createDamageApplicationMacro();
-      console.log("Created demo 'Apply Damage' macro for GM.");
-    }
-    
-    const existingHealingMacro = game.macros.find(m => m.name === "Apply Healing" && m.flags?.["daggerheart.healingApplicationMacro"]);
-    if (!existingHealingMacro) {
-      await _createHealingApplicationMacro();
-      console.log("Created demo 'Apply Healing' macro for GM.");
-    }
-    
-    // Create demo damage/healing roll macros
-    const existingRollDamageMacro = game.macros.find(m => m.name === "Roll Damage" && m.flags?.["daggerheart.rollDamageMacro"]);
-    if (!existingRollDamageMacro) {
-      await _createRollDamageMacro();
-      console.log("Created demo 'Roll Damage' macro for GM.");
-    }
-    
-    const existingRollHealingMacro = game.macros.find(m => m.name === "Roll Healing" && m.flags?.["daggerheart.rollHealingMacro"]);
-    if (!existingRollHealingMacro) {
-      await _createRollHealingMacro();
-      console.log("Created demo 'Roll Healing' macro for GM.");
-    }
   }
 });
 
@@ -649,19 +604,24 @@ function _handleCharacterDamageButton(message, html, actor, flavor) {
       // Check if this was a critical success
       const isCritical = flavor.includes("Critical") && flavor.includes("Success");
       
-      // Extract damage formula from damage data (handle both old and new formats)
-      let damageFormula;
-      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'value' in weaponData.damage) {
-        // New damage modifier system
-        damageFormula = weaponData.damage.value || weaponData.damage.baseValue || '1d8';
+      // Store structured damage data for proper handling
+      let damageDataJson;
+      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
+        // New damage modifier system - store the complete structured data
+        damageDataJson = JSON.stringify(weaponData.damage);
       } else {
-        // Legacy simple string format
-        damageFormula = weaponData.damage || '1d8';
+        // Legacy simple string format - convert to structure
+        const simpleFormula = weaponData.damage || '1d8';
+        damageDataJson = JSON.stringify({
+          baseValue: simpleFormula,
+          modifiers: [],
+          value: simpleFormula
+        });
       }
       
       // Add damage button to the message
       const buttonText = isCritical ? "Critical Damage" : "Damage";
-      const damageButton = `<button class="damage-roll-button character ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${damageFormula}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+      const damageButton = `<button class="damage-roll-button character ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage-structure="${damageDataJson}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
         <i class="fas fa-dice-d20"></i> ${buttonText}
       </button>`;
       
@@ -716,19 +676,24 @@ function _handleAdversaryDamageButton(message, html, actor, flavor) {
       // Check if this was a critical success (NPCs crit on natural 20)
       const isCritical = flavor.includes("Critical Success");
       
-      // Extract damage formula from damage data (handle both old and new formats)
-      let damageFormula;
-      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'value' in weaponData.damage) {
-        // New damage modifier system
-        damageFormula = weaponData.damage.value || weaponData.damage.baseValue || '1d8';
+      // Store structured damage data for proper handling
+      let damageDataJson;
+      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
+        // New damage modifier system - store the complete structured data
+        damageDataJson = JSON.stringify(weaponData.damage);
       } else {
-        // Legacy simple string format
-        damageFormula = weaponData.damage || '1d8';
+        // Legacy simple string format - convert to structure
+        const simpleFormula = weaponData.damage || '1d8';
+        damageDataJson = JSON.stringify({
+          baseValue: simpleFormula,
+          modifiers: [],
+          value: simpleFormula
+        });
       }
       
       // Add damage button to the message
       const buttonText = isCritical ? "Critical Damage" : "Damage";
-      const damageButton = `<button class="damage-roll-button adversary ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${damageFormula}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+      const damageButton = `<button class="damage-roll-button adversary ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage-structure="${damageDataJson}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
         <i class="fas fa-dice-d20"></i> ${buttonText}
       </button>`;
       
@@ -753,7 +718,7 @@ async function _rollCharacterDamage(event) {
   const actorId = button.dataset.actorId;
   const weaponType = button.dataset.weaponType;
   const weaponName = button.dataset.weaponName;
-  let weaponDamage = button.dataset.weaponDamage;
+  const damageStructureJson = button.dataset.weaponDamageStructure;
   const isCritical = button.dataset.isCritical === "true";
   
   const actor = game.actors.get(actorId);
@@ -762,51 +727,43 @@ async function _rollCharacterDamage(event) {
     return;
   }
   
-  // Safety check: if weaponDamage is still problematic, get fresh data from actor
-  if (!weaponDamage || weaponDamage === "[object Object]" || weaponDamage === "undefined") {
-    console.warn("Daggerheart | Invalid weapon damage in button, fetching from actor");
+  // Parse structured damage data
+  let damageData;
+  try {
+    damageData = JSON.parse(damageStructureJson);
+  } catch (error) {
+    console.warn("Daggerheart | Invalid damage structure in button, fetching from actor");
+    // Fallback: get fresh data from actor
     const weaponField = weaponType === "primary" ? "weapon-main" : "weapon-off";
     const weaponData = actor.system[weaponField];
     
     if (weaponData && weaponData.damage) {
-      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'value' in weaponData.damage) {
-        // New damage modifier system
-        weaponDamage = weaponData.damage.value || weaponData.damage.baseValue || '1d8';
+      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
+        damageData = weaponData.damage;
       } else {
-        // Legacy simple string format
-        weaponDamage = weaponData.damage || '1d8';
+        // Convert legacy format
+        damageData = {
+          baseValue: weaponData.damage || '1d8',
+          modifiers: [],
+          value: weaponData.damage || '1d8'
+        };
       }
     } else {
-      weaponDamage = '1d8'; // Ultimate fallback
+      // Ultimate fallback
+      damageData = {
+        baseValue: '1d8',
+        modifiers: [],
+        value: '1d8'
+      };
     }
   }
   
   // Get proficiency value
   const proficiency = Math.max(1, parseInt(actor.system.proficiency?.value) || 1);
   
-  // Parse dice notation
-  const diceMatch = weaponDamage.match(/^(\d*)d(\d+)(.*)$/i);
-  let rollValue;
-  let flavorText = `${weaponName} - Damage`;
-  
-  if (diceMatch) {
-    const diceCount = parseInt(diceMatch[1]) || proficiency; // Use proficiency if no count specified
-    const dieType = parseInt(diceMatch[2]);
-    const modifier = diceMatch[3] || "";
-    
-    if (isCritical) {
-      // Critical damage: max value + normal roll
-      const maxDamage = diceCount * dieType;
-      rollValue = `${maxDamage} + ${diceCount}d${dieType}${modifier}`;
-      flavorText = `${weaponName} - Critical Damage!`;
-    } else {
-      // Normal damage
-      rollValue = `${diceCount}d${dieType}${modifier}`;
-    }
-  } else {
-    // Fallback for non-standard notation - use the damage formula as-is
-    rollValue = weaponDamage;
-  }
+  // Build roll formula from structured data
+  let rollValue = _buildCharacterDamageFormula(damageData, proficiency, isCritical);
+  let flavorText = isCritical ? `${weaponName} - Critical Damage!` : `${weaponName} - Damage`;
   
   // Create and send the damage roll
   const roll = new Roll(rollValue);
@@ -852,6 +809,84 @@ async function _rollCharacterDamage(event) {
 }
 
 /**
+ * Build character damage formula from structured data with proficiency and critical handling
+ * @param {Object} damageData - The damage data object
+ * @param {number} proficiency - Character's proficiency value
+ * @param {boolean} isCritical - Whether this is a critical hit
+ * @returns {string} - The complete damage formula
+ */
+function _buildCharacterDamageFormula(damageData, proficiency, isCritical) {
+  let baseFormula = damageData.baseValue || '1d8';
+  
+  // Apply proficiency logic to base formula
+  const diceMatch = baseFormula.match(/^(\d*)d(\d+)(.*)$/i);
+  if (diceMatch) {
+    const diceCount = parseInt(diceMatch[1]) || proficiency; // Use proficiency if no count specified
+    const dieType = parseInt(diceMatch[2]);
+    const remainder = diceMatch[3] || "";
+    baseFormula = `${diceCount}d${dieType}${remainder}`;
+  }
+  
+  // Add enabled modifiers
+  const modifiers = damageData.modifiers || [];
+  const enabledModifiers = modifiers.filter(mod => mod.enabled !== false && mod.value);
+  
+  let formula = baseFormula;
+  enabledModifiers.forEach(modifier => {
+    let modValue = modifier.value.trim();
+    // Ensure proper formatting
+    if (modValue && !modValue.startsWith('+') && !modValue.startsWith('-')) {
+      modValue = '+' + modValue;
+    }
+    formula += ' ' + modValue;
+  });
+  
+  // Handle critical damage
+  if (isCritical && diceMatch) {
+    const diceCount = parseInt(diceMatch[1]) || proficiency;
+    const dieType = parseInt(diceMatch[2]);
+    const maxDamage = diceCount * dieType;
+    
+    // Critical: max value + normal roll + modifiers
+    let criticalFormula = `${maxDamage} + ${formula}`;
+    return criticalFormula;
+  }
+  
+  return formula;
+}
+
+/**
+ * Build adversary damage formula from structured data
+ * @param {Object} damageData - The damage data object
+ * @param {boolean} isCritical - Whether this is a critical hit
+ * @returns {string} - The complete damage formula
+ */
+function _buildAdversaryDamageFormula(damageData, isCritical) {
+  let baseFormula = damageData.baseValue || '1d8';
+  
+  // Add enabled modifiers
+  const modifiers = damageData.modifiers || [];
+  const enabledModifiers = modifiers.filter(mod => mod.enabled !== false && mod.value);
+  
+  let formula = baseFormula;
+  enabledModifiers.forEach(modifier => {
+    let modValue = modifier.value.trim();
+    // Ensure proper formatting
+    if (modValue && !modValue.startsWith('+') && !modValue.startsWith('-')) {
+      modValue = '+' + modValue;
+    }
+    formula += ' ' + modValue;
+  });
+  
+  // Handle critical damage for adversaries
+  if (isCritical) {
+    return _calculateAdversaryCriticalDamage(formula);
+  }
+  
+  return formula;
+}
+
+/**
  * Roll damage for adversaries (uses raw damage formula, no proficiency)
  */
 async function _rollAdversaryDamage(event) {
@@ -859,7 +894,7 @@ async function _rollAdversaryDamage(event) {
   const actorId = button.dataset.actorId;
   const weaponType = button.dataset.weaponType;
   const weaponName = button.dataset.weaponName;
-  let weaponDamage = button.dataset.weaponDamage;
+  const damageStructureJson = button.dataset.weaponDamageStructure;
   const isCritical = button.dataset.isCritical === "true";
   
   const actor = game.actors.get(actorId);
@@ -868,36 +903,40 @@ async function _rollAdversaryDamage(event) {
     return;
   }
   
-  // Safety check: if weaponDamage is still problematic, get fresh data from actor
-  if (!weaponDamage || weaponDamage === "[object Object]" || weaponDamage === "undefined") {
-    console.warn("Daggerheart | Invalid weapon damage in button, fetching from actor");
+  // Parse structured damage data
+  let damageData;
+  try {
+    damageData = JSON.parse(damageStructureJson);
+  } catch (error) {
+    console.warn("Daggerheart | Invalid damage structure in button, fetching from actor");
+    // Fallback: get fresh data from actor
     const weaponField = weaponType === "primary" ? "weapon-main" : "weapon-off";
     const weaponData = actor.system[weaponField];
     
     if (weaponData && weaponData.damage) {
-      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'value' in weaponData.damage) {
-        // New damage modifier system
-        weaponDamage = weaponData.damage.value || weaponData.damage.baseValue || '1d8';
+      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
+        damageData = weaponData.damage;
       } else {
-        // Legacy simple string format
-        weaponDamage = weaponData.damage || '1d8';
+        // Convert legacy format
+        damageData = {
+          baseValue: weaponData.damage || '1d8',
+          modifiers: [],
+          value: weaponData.damage || '1d8'
+        };
       }
     } else {
-      weaponDamage = '1d8'; // Ultimate fallback
+      // Ultimate fallback
+      damageData = {
+        baseValue: '1d8',
+        modifiers: [],
+        value: '1d8'
+      };
     }
   }
   
-  let rollValue;
-  let flavorText = `${weaponName} - Damage`;
-  
-  if (isCritical) {
-    // Parse the damage formula to calculate critical damage
-    rollValue = _calculateAdversaryCriticalDamage(weaponDamage);
-    flavorText = `${weaponName} - Critical Damage!`;
-  } else {
-    // Normal damage - use the formula as-is
-    rollValue = weaponDamage;
-  }
+  // Build roll formula from structured data
+  let rollValue = _buildAdversaryDamageFormula(damageData, isCritical);
+  let flavorText = isCritical ? `${weaponName} - Critical Damage!` : `${weaponName} - Damage`;
   
   // Create and send the damage roll
   const roll = new Roll(rollValue);
@@ -1118,228 +1157,6 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
     }
   });
 });
-
-/**
- * Create a damage application macro
- */
-async function _createDamageApplicationMacro() {
-  const command = `// Apply Damage Macro
-// Prompts for damage amount and applies it to targeted/selected token
-const damageAmount = await new Promise((resolve) => {
-  new Dialog({
-    title: "Apply Damage",
-    content: \`
-      <form>
-        <div class="form-group">
-          <label>Damage Amount:</label>
-          <input type="number" name="damage" value="1" min="1" max="999">
-        </div>
-      </form>
-    \`,
-    buttons: {
-      apply: {
-        label: "Apply Damage",
-        callback: (html) => {
-          const damage = parseInt(html.find('[name="damage"]').val()) || 1;
-          resolve(damage);
-        }
-      },
-      cancel: {
-        label: "Cancel",
-        callback: () => resolve(null)
-      }
-    },
-    default: "apply"
-  }).render(true);
-});
-
-if (damageAmount && typeof applyDamage === 'function') {
-  await applyDamage(null, damageAmount, null);
-} else if (!damageAmount) {
-  // User cancelled
-} else {
-  ui.notifications.error("applyDamage function not available. Make sure the Daggerheart system is properly loaded.");
-}`;
-
-  await Macro.create({
-    name: "Apply Damage",
-    type: "script",
-    img: "icons/svg/sword.svg",
-    command: command,
-    flags: { "daggerheart.damageApplicationMacro": true }
-  });
-}
-
-/**
- * Create a healing application macro
- */
-async function _createHealingApplicationMacro() {
-  const command = `// Apply Healing Macro
-// Prompts for healing amount and applies it to targeted/selected token
-const healingAmount = await new Promise((resolve) => {
-  new Dialog({
-    title: "Apply Healing",
-    content: \`
-      <form>
-        <div class="form-group">
-          <label>Healing Amount:</label>
-          <input type="number" name="healing" value="1" min="1" max="999">
-        </div>
-      </form>
-    \`,
-    buttons: {
-      apply: {
-        label: "Apply Healing",
-        callback: (html) => {
-          const healing = parseInt(html.find('[name="healing"]').val()) || 1;
-          resolve(healing);
-        }
-      },
-      cancel: {
-        label: "Cancel",
-        callback: () => resolve(null)
-      }
-    },
-    default: "apply"
-  }).render(true);
-});
-
-if (healingAmount && typeof applyHealing === 'function') {
-  await applyHealing(null, healingAmount, null);
-} else if (!healingAmount) {
-  // User cancelled
-} else {
-  ui.notifications.error("applyHealing function not available. Make sure the Daggerheart system is properly loaded.");
-}`;
-
-  await Macro.create({
-    name: "Apply Healing",
-    type: "script",
-    img: "icons/svg/heal.svg",
-    command: command,
-    flags: { "daggerheart.healingApplicationMacro": true }
-  });
-}
-
-/**
- * Create a damage rolling macro
- */
-async function _createRollDamageMacro() {
-  const command = `// Roll Damage Macro
-// Prompts for damage formula and rolls it with application buttons
-const damageFormula = await new Promise((resolve) => {
-  new Dialog({
-    title: "Roll Damage",
-    content: \`
-      <form>
-        <div class="form-group">
-          <label>Damage Formula:</label>
-          <input type="text" name="formula" value="1d4+1" placeholder="e.g., 1d4+1, 2d6">
-        </div>
-        <div class="form-group">
-          <label>Flavor Text (optional):</label>
-          <input type="text" name="flavor" placeholder="e.g., Sword Strike">
-        </div>
-      </form>
-    \`,
-    buttons: {
-      roll: {
-        label: "Roll Damage",
-        callback: (html) => {
-          const formula = html.find('[name="formula"]').val() || "1d4";
-          const flavor = html.find('[name="flavor"]').val() || null;
-          resolve({ formula, flavor });
-        }
-      },
-      cancel: {
-        label: "Cancel",
-        callback: () => resolve(null)
-      }
-    },
-    default: "roll"
-  }).render(true);
-});
-
-if (damageFormula && typeof rollDamage === 'function') {
-  const options = {};
-  if (damageFormula.flavor) {
-    options.flavor = \`<p class="roll-flavor-line"><b>\${damageFormula.flavor}</b></p>\`;
-  }
-  await rollDamage(damageFormula.formula, options);
-} else if (!damageFormula) {
-  // User cancelled
-} else {
-  ui.notifications.error("rollDamage function not available. Make sure the Daggerheart system is properly loaded.");
-}`;
-
-  await Macro.create({
-    name: "Roll Damage",
-    type: "script",
-    img: "icons/svg/dice-target.svg",
-    command: command,
-    flags: { "daggerheart.rollDamageMacro": true }
-  });
-}
-
-/**
- * Create a healing rolling macro
- */
-async function _createRollHealingMacro() {
-  const command = `// Roll Healing Macro
-// Prompts for healing formula and rolls it with application buttons
-const healingFormula = await new Promise((resolve) => {
-  new Dialog({
-    title: "Roll Healing",
-    content: \`
-      <form>
-        <div class="form-group">
-          <label>Healing Formula:</label>
-          <input type="text" name="formula" value="1d4+1" placeholder="e.g., 1d4+1, 2d6">
-        </div>
-        <div class="form-group">
-          <label>Flavor Text (optional):</label>
-          <input type="text" name="flavor" placeholder="e.g., Healing Potion">
-        </div>
-      </form>
-    \`,
-    buttons: {
-      roll: {
-        label: "Roll Healing",
-        callback: (html) => {
-          const formula = html.find('[name="formula"]').val() || "1d4";
-          const flavor = html.find('[name="flavor"]').val() || null;
-          resolve({ formula, flavor });
-        }
-      },
-      cancel: {
-        label: "Cancel",
-        callback: () => resolve(null)
-      }
-    },
-    default: "roll"
-  }).render(true);
-});
-
-if (healingFormula && typeof rollHealing === 'function') {
-  const options = {};
-  if (healingFormula.flavor) {
-    options.flavor = \`<p class="roll-flavor-line"><b>\${healingFormula.flavor}</b></p>\`;
-  }
-  await rollHealing(healingFormula.formula, options);
-} else if (!healingFormula) {
-  // User cancelled
-} else {
-  ui.notifications.error("rollHealing function not available. Make sure the Daggerheart system is properly loaded.");
-}`;
-
-  await Macro.create({
-    name: "Roll Healing",
-    type: "script",
-    img: "icons/svg/angel.svg",
-    command: command,
-    flags: { "daggerheart.rollHealingMacro": true }
-  });
-}
 
 /**
  * Adds the item template context menu.
