@@ -1,4 +1,4 @@
-<form class="flexcol {{cssClass}} {{#if isDying}}dying{{/if}}" autocomplete="off">
+<form class="flexcol {{cssClass}} {{#if isOutOfScene}}dying{{/if}}" autocomplete="off">
     <div class="item-bg" style="background-image: url('{{data.img}}');"></div>
     {{!-- Sheet Header --}}
     <header class="sheet-header">
@@ -6,28 +6,14 @@
             <div class="portrait-container">
                 <div class="portrait-image-wrapper">
                     <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
-                    {{#if isDying}}
-                    <div class="death-overlay" title="Companion is dying!">
+                    {{#if isOutOfScene}}
+                    <div class="death-overlay" title="Companion is out of scene!">
                         <i class="fas fa-skull"></i>
                     </div>
                     {{/if}}
                 </div>
 
                 <div class="portrait-resources">
-                    <div class="resource health">
-                        <div class="resource-content">
-                            <div class="resource-box">
-                                <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}" />
-                                <span>/</span>
-                                <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0" />
-                            </div>
-                        </div>
-                        <div class="resource-label-controls">
-                            <a class="resource-control" data-action="decrement" data-field="health.value"><i class="fas fa-minus"></i></a>
-                            <label data-trait-tooltip="{{systemData.health.tooltip}}">{{localize "DH.HitPoints"}}</label>
-                            <a class="resource-control" data-action="increment" data-field="health.value"><i class="fas fa-plus"></i></a>
-                        </div>
-                    </div>
                     <div class="resource stress">
                         <div class="resource-content">
                             <div class="resource-box">
@@ -74,17 +60,13 @@
                         <div class="weapon-row">
                             <label class="weapon-label">{{localize "DH.PrimaryAttack"}}</label>
                             <div class="weapon-box click-rollable-group basic-rollable-group">
-                                <button type="button" class="weapon-attack-button click-rollable" data-roll-type="attack" title="Roll Attack">
-                                    <i class="fas fa-sword"></i>
-                                </button>
                                 <div class="weapon-box-inner">
                                     <div class="weapon-infobox-first">
                                         <input class="weapon-field basic-rollable-name click-rollable-name"
                                             name="system.weapon-main.name" type="text"
-                                            value="{{systemData.weapon-main.name}}" placeholder="{{localize "DH.Attack"}}" />
+                                            value="{{systemData.weapon-main.name}}" />
                                             <div class="textarea-container">
                                                 <input class="trait-effects resize-ta" name="system.weapon-main.description"
-                                                    placeholder="{{localize "DH.AttackTraitsHere"}}"
                                                     value="{{systemData.weapon-main.description}}" />
                                             </div>
                                     </div>
@@ -92,15 +74,13 @@
                                         <div class="weapon-infobox">
                                             <input class="weapon-to-hit click-rollable-modifier"
                                                 name="system.weapon-main.to-hit" type="number"
-                                                value="{{systemData.weapon-main.to-hit}}" placeholder="2" />
+                                                value="{{systemData.weapon-main.to-hit}}" />
                                             <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
                                         </div>
                                         <div class="weapon-infobox">
-                                            <div class="weapon-damage-display damage-value-display"
-                                                 data-field="system.weapon-main.damage"
-                                                 data-label="Primary Attack Damage"
-                                                 data-has-modifiers="true"
-                                                 data-edit-type="damage">{{#if systemData.weapon-main.damage.value}}{{systemData.weapon-main.damage.value}}{{else}}{{#if systemData.weapon-main.damage}}{{systemData.weapon-main.damage}}{{else}}1d8{{/if}}{{/if}}</div>
+                                            <input class="weapon-damage basic-rollable-value"
+                                                name="system.weapon-main.damage" type="text"
+                                                value="{{systemData.weapon-main.damage}}" />
                                             <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
                                         </div>
                                     </div>
