@@ -1,8 +1,26 @@
 import { DaggerheartDialogHelper } from './dialog-helper.js';
 
-export async function _rollHope(options = {}) {
-  // Dice So Nice
-  if (game.dice3d) {
+// Hook to ensure all clients have Daggerheart colorsets available when viewing rolls
+Hooks.on("diceSoNiceRollStart", (messageId, context) => {
+  if (!game.dice3d) return;
+  
+  // Get the chat message to check if it's a Daggerheart roll
+  const message = game.messages.get(messageId);
+  if (!message?.flags?.daggerheart) return;
+  
+  // Ensure Daggerheart colorsets are available on this client
+  _ensureDaggerheartColorsets();
+});
+
+// Function to ensure Daggerheart colorsets are available
+function _ensureDaggerheartColorsets() {
+  if (!game.dice3d) return;
+  
+  // Check if colorsets already exist to avoid duplicates
+  const existingColorsets = game.dice3d.DiceColors?.getColorsets?.() || {};
+  
+  // Hope Die
+  if (!existingColorsets["Hope"]) {
     game.dice3d.addColorset({
       name: "Hope",
       category: "Hope Die",
@@ -16,6 +34,43 @@ export async function _rollHope(options = {}) {
       font: "Modesto Condensed",
     });
   }
+  
+  // Fear Die
+  if (!existingColorsets["Fear"]) {
+    game.dice3d.addColorset({
+      name: "Fear",
+      category: "Fear Die",
+      description: "Fear",
+      texture: "fire",
+      foreground: "#FFFFFF",
+      background: "#523333",
+      outline: "#b30012",
+      edge: "#800013",
+      material: "metal",
+      font: "Modesto Condensed",
+    });
+  }
+  
+  // Modifier Die
+  if (!existingColorsets["Modifier"]) {
+    game.dice3d.addColorset({
+      name: "Modifier",
+      category: "Modifier Die",
+      description: "Modifier",
+      texture: "marble",
+      foreground: "#222222",
+      background: "#DDDDDD",
+      outline: "#000000",
+      edge: "#555555",
+      material: "plastic",
+      font: "Arial",
+    });
+  }
+}
+
+export async function _rollHope(options = {}) {
+  // Ensure colorsets are available for this roll
+  _ensureDaggerheartColorsets();
   
   const defaults = {
     dieSize: 'd12',
@@ -84,21 +139,8 @@ export async function _rollHope(options = {}) {
 }
 
 export async function _rollFear(options = {}) {
-  // Dice So Nice
-  if (game.dice3d) {
-    game.dice3d.addColorset({
-      name: "Fear",
-      category: "Fear Die",
-      description: "Fear",
-      texture: "fire",
-      foreground: "#FFFFFF",
-      background: "#523333",
-      outline: "#b30012",
-      edge: "#800013",
-      material: "metal",
-      font: "Modesto Condensed",
-    });
-  }
+  // Ensure colorsets are available for this roll
+  _ensureDaggerheartColorsets();
   
   const defaults = {
     dieSize: 'd12',
@@ -167,45 +209,8 @@ export async function _rollFear(options = {}) {
 }
 
 export async function _rollDuality(options = {}) {
-  // Dice So Nice
-  if (game.dice3d) {
-    game.dice3d.addColorset({
-      name: "Hope",
-      category: "Hope Die",
-      description: "Hope",
-      texture: "ice",
-      foreground: "#ffbb00",
-      background: "#ffffff",
-      outline: "#000000",
-      edge: "#ffbb00",
-      material: "glass",
-      font: "Modesto Condensed",
-    });
-    game.dice3d.addColorset({
-      name: "Fear",
-      category: "Fear Die",
-      description: "Fear",
-      texture: "fire",
-      foreground: "#FFFFFF",
-      background: "#523333",
-      outline: "#b30012",
-      edge: "#800013",
-      material: "metal",
-      font: "Modesto Condensed",
-    });
-    game.dice3d.addColorset({
-      name: "Modifier",
-      category: "Modifier Die",
-      description: "Modifier",
-      texture: "marble",
-      foreground: "#222222",
-      background: "#DDDDDD",
-      outline: "#000000",
-      edge: "#555555",
-      material: "plastic",
-      font: "Arial",
-    });
-  }
+  // Ensure colorsets are available for this roll
+  _ensureDaggerheartColorsets();
   
   const defaults = {
     hopeDieSize: 'd12',
