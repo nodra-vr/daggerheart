@@ -52,11 +52,6 @@ export class SimpleActor extends Actor {
     }
     
     EntitySheetHelper.clampResourceValues(this.system.attributes);
-    
-    // Schedule dead state handling (async operation)
-    if (this.id) { // Only if actor is persisted
-      this._scheduleDeadStateUpdate();
-    }
   }
 
   /* -------------------------------------------- */
@@ -67,11 +62,12 @@ export class SimpleActor extends Actor {
    */
   _scheduleDeadStateUpdate() {
     if (this._deadStateTimeout) {
-      clearTimeout(this._deadStateTimeout);
+      return;
     }
     this._deadStateTimeout = setTimeout(() => {
+      this._deadStateTimeout = null;
       this._handleDeadState();
-    }, 50); // Small delay to batch multiple updates
+    }, 250); // Small delay to batch multiple updates
   }
 
   /* -------------------------------------------- */
@@ -81,6 +77,9 @@ export class SimpleActor extends Actor {
    * @private
    */
   async _handleDeadState() {
+    if (!game.user.isGM) {
+      return
+    }
     // Check if actor is dying/dead (hit points maxed out)
     const health = this.system.health;
     const isDying = health && health.value === health.max && health.max > 0;
@@ -108,6 +107,7 @@ export class SimpleActor extends Actor {
     } else if (!isDying && hasDeadEffect) {
       // Remove dead status effect
       const deadEffectToRemove = this.effects.find(e => e.statuses.has("dead"));
+      console.log({deadEffectToRemove});
       if (deadEffectToRemove) {
         await deadEffectToRemove.delete();
       }
