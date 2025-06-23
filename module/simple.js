@@ -591,9 +591,19 @@ function _handleCharacterDamageButton(message, html, actor, flavor) {
       // Check if this was a critical success
       const isCritical = flavor.includes("Critical") && flavor.includes("Success");
       
+      // Extract damage formula from damage data (handle both old and new formats)
+      let damageFormula;
+      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'value' in weaponData.damage) {
+        // New damage modifier system
+        damageFormula = weaponData.damage.value || weaponData.damage.baseValue || '1d8';
+      } else {
+        // Legacy simple string format
+        damageFormula = weaponData.damage || '1d8';
+      }
+      
       // Add damage button to the message
       const buttonText = isCritical ? "Critical Damage" : "Damage";
-      const damageButton = `<button class="damage-roll-button character ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+      const damageButton = `<button class="damage-roll-button character ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${damageFormula}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
         <i class="fas fa-dice-d20"></i> ${buttonText}
       </button>`;
       
@@ -648,9 +658,19 @@ function _handleAdversaryDamageButton(message, html, actor, flavor) {
       // Check if this was a critical success (NPCs crit on natural 20)
       const isCritical = flavor.includes("Critical Success");
       
+      // Extract damage formula from damage data (handle both old and new formats)
+      let damageFormula;
+      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'value' in weaponData.damage) {
+        // New damage modifier system
+        damageFormula = weaponData.damage.value || weaponData.damage.baseValue || '1d8';
+      } else {
+        // Legacy simple string format
+        damageFormula = weaponData.damage || '1d8';
+      }
+      
       // Add damage button to the message
       const buttonText = isCritical ? "Critical Damage" : "Damage";
-      const damageButton = `<button class="damage-roll-button adversary ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+      const damageButton = `<button class="damage-roll-button adversary ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${damageFormula}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
         <i class="fas fa-dice-d20"></i> ${buttonText}
       </button>`;
       
@@ -675,13 +695,32 @@ async function _rollCharacterDamage(event) {
   const actorId = button.dataset.actorId;
   const weaponType = button.dataset.weaponType;
   const weaponName = button.dataset.weaponName;
-  const weaponDamage = button.dataset.weaponDamage;
+  let weaponDamage = button.dataset.weaponDamage;
   const isCritical = button.dataset.isCritical === "true";
   
   const actor = game.actors.get(actorId);
   if (!actor) {
     console.error("Daggerheart | Actor not found for character damage roll");
     return;
+  }
+  
+  // Safety check: if weaponDamage is still problematic, get fresh data from actor
+  if (!weaponDamage || weaponDamage === "[object Object]" || weaponDamage === "undefined") {
+    console.warn("Daggerheart | Invalid weapon damage in button, fetching from actor");
+    const weaponField = weaponType === "primary" ? "weapon-main" : "weapon-off";
+    const weaponData = actor.system[weaponField];
+    
+    if (weaponData && weaponData.damage) {
+      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'value' in weaponData.damage) {
+        // New damage modifier system
+        weaponDamage = weaponData.damage.value || weaponData.damage.baseValue || '1d8';
+      } else {
+        // Legacy simple string format
+        weaponDamage = weaponData.damage || '1d8';
+      }
+    } else {
+      weaponDamage = '1d8'; // Ultimate fallback
+    }
   }
   
   // Get proficiency value
@@ -707,7 +746,7 @@ async function _rollCharacterDamage(event) {
       rollValue = `${diceCount}d${dieType}${modifier}`;
     }
   } else {
-    // Fallback for non-standard notation
+    // Fallback for non-standard notation - use the damage formula as-is
     rollValue = weaponDamage;
   }
   
@@ -762,13 +801,32 @@ async function _rollAdversaryDamage(event) {
   const actorId = button.dataset.actorId;
   const weaponType = button.dataset.weaponType;
   const weaponName = button.dataset.weaponName;
-  const weaponDamage = button.dataset.weaponDamage;
+  let weaponDamage = button.dataset.weaponDamage;
   const isCritical = button.dataset.isCritical === "true";
   
   const actor = game.actors.get(actorId);
   if (!actor) {
     console.error("Daggerheart | Actor not found for adversary damage roll");
     return;
+  }
+  
+  // Safety check: if weaponDamage is still problematic, get fresh data from actor
+  if (!weaponDamage || weaponDamage === "[object Object]" || weaponDamage === "undefined") {
+    console.warn("Daggerheart | Invalid weapon damage in button, fetching from actor");
+    const weaponField = weaponType === "primary" ? "weapon-main" : "weapon-off";
+    const weaponData = actor.system[weaponField];
+    
+    if (weaponData && weaponData.damage) {
+      if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'value' in weaponData.damage) {
+        // New damage modifier system
+        weaponDamage = weaponData.damage.value || weaponData.damage.baseValue || '1d8';
+      } else {
+        // Legacy simple string format
+        weaponDamage = weaponData.damage || '1d8';
+      }
+    } else {
+      weaponDamage = '1d8'; // Ultimate fallback
+    }
   }
   
   let rollValue;

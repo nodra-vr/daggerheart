@@ -296,6 +296,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     // Generic attribute value popup functionality
     html.find(".attribute-value-display").click(this._onAttributeValueClick.bind(this));
     
+    // Damage value popup functionality
+    html.find(".damage-value-display").click(this._onDamageValueClick.bind(this));
+    
     // Threshold HP marking functionality
     html.find(".threshold-clickable").click(this._onThresholdClick.bind(this));
     
@@ -693,6 +696,59 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   
   /* -------------------------------------------- */
   
+  async _onDamageValueClick(event) {
+    event.preventDefault();
+    const displayElement = event.currentTarget;
+    
+    // Get configuration from data attributes or derive from context
+    const config = {
+      field: displayElement.dataset.field,
+      label: displayElement.dataset.label,
+      type: displayElement.dataset.editType || 'damage',
+      hasModifiers: displayElement.dataset.hasModifiers !== 'false',
+      min: displayElement.dataset.min ? parseInt(displayElement.dataset.min) : null,
+      max: displayElement.dataset.max ? parseInt(displayElement.dataset.max) : null
+    };
+    
+    // If no label provided, use a default
+    if (!config.label) {
+      config.label = 'Weapon Damage';
+    }
+    
+    // Get the current value using the field path
+    let currentValue = foundry.utils.getProperty(this.actor, config.field);
+    
+    // Handle both simple values and complex objects with .value
+    if (typeof currentValue === 'object' && currentValue !== null && 'value' in currentValue) {
+      currentValue = currentValue.value || '1d8';
+    } else {
+      currentValue = currentValue || '1d8';
+    }
+    
+    // Get attribute data for modifiers if applicable
+    const pathParts = config.field.split('.');
+    let attributeData = this.actor;
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      attributeData = attributeData[pathParts[i]] || {};
+    }
+    
+    // For weapon damage, if the data is empty, get the actual field value
+    const isWeaponDamage = config.field.includes('weapon-main.damage') || config.field.includes('weapon-off.damage');
+    if (isWeaponDamage && (!attributeData || Object.keys(attributeData).length === 0)) {
+      attributeData = { value: currentValue, modifiers: [] };
+    }
+    
+    // Ensure modifiers is always an array
+    if (config.hasModifiers && !Array.isArray(attributeData.modifiers)) {
+      attributeData.modifiers = [];
+    }
+    
+    // Show the damage modifier popup
+    this._showDamageModifierEditPopup(config, currentValue, attributeData, displayElement);
+  }
+  
+  /* -------------------------------------------- */
+  
   async _onAttributeValueClick(event) {
     event.preventDefault();
     const displayElement = event.currentTarget;
@@ -900,6 +956,94 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   
   /* -------------------------------------------- */
   
+  _showDamageModifierEditPopup(config, currentValue, attributeData, displayElement) {
+    // Create the damage popup HTML if it doesn't exist
+    let overlay = this.element.find('.damage-edit-popup-overlay');
+    if (overlay.length === 0) {
+      const popupHtml = `
+        <div class="damage-edit-popup-overlay attribute-edit-popup-overlay" style="display: none;">
+          <div class="damage-edit-popup attribute-edit-popup">
+            <div class="damage-edit-header attribute-edit-header">
+              <span class="damage-edit-label attribute-edit-label"></span>
+              <button type="button" class="damage-edit-close attribute-edit-close">×</button>
+            </div>
+            <div class="damage-edit-content attribute-edit-content">
+              <div class="damage-base-value attribute-base-value">
+                <label>Base Formula</label>
+                <div class="base-value-controls">
+                  <input type="text" class="damage-base-input attribute-base-input" placeholder="1d8" />
+                </div>
+              </div>
+              <div class="damage-modifiers-section attribute-modifiers-section">
+                <div class="modifiers-header">
+                  <span>Damage Modifiers</span>
+                  <button type="button" class="add-damage-modifier-btn add-modifier-btn">+</button>
+                </div>
+                <div class="damage-modifiers-list modifiers-list"></div>
+              </div>
+              <div class="damage-total attribute-total">
+                <label>Total Formula</label>
+                <span class="damage-total-value attribute-total-value">1d8</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      this.element.append(popupHtml);
+      overlay = this.element.find('.damage-edit-popup-overlay');
+    }
+    
+    // Extract attribute name for data access
+    const pathParts = config.field.split('.');
+    const attributeName = pathParts[pathParts.length - 2]; // e.g., "system.weapon-main.damage" -> "weapon-main"
+    
+    // Set up the popup content
+    overlay.find('.damage-edit-label').text(config.label);
+    
+    // Set base value (fallback to current value if no baseValue exists)
+    const baseInput = overlay.find('.damage-base-input');
+    let baseValue;
+    
+    // Handle weapon damage which might store data directly at the field path
+    if (typeof attributeData === 'object' && 'baseValue' in attributeData) {
+      baseValue = attributeData.baseValue;
+    } else if (typeof attributeData === 'object' && 'value' in attributeData && 'modifiers' in attributeData) {
+      // Already has complex structure but no baseValue - use current total as base
+      baseValue = currentValue;
+    } else {
+      // Simple value - use it as base
+      baseValue = currentValue;
+    }
+    
+    baseInput.val(baseValue || '1d8');
+    
+    // Store config for later use
+    overlay.data('config', config);
+    overlay.data('attribute-name', attributeName);
+    overlay.data('field-name', config.field);
+    overlay.data('display-element', displayElement);
+    
+    // Load existing modifiers
+    this._loadDamageModifiers(overlay, attributeData.modifiers || []);
+    
+    // Calculate and display total
+    this._updateDamageTotal(overlay);
+    
+    // Show the popup with animation
+    overlay.show();
+    const popup = overlay.find('.damage-edit-popup');
+    
+    // Animate in with JavaScript for smooth backdrop-filter
+    this._animatePopupIn(popup, () => {
+      baseInput.focus().select();
+    });
+    
+    // Set up event handlers
+    this._setupDamagePopupEventHandlers(overlay);
+  }
+  
+  /* -------------------------------------------- */
+  
   _setupPopupEventHandlers(overlay) {
     // Clear any existing handlers
     overlay.off('.attribute-edit');
@@ -1026,6 +1170,221 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     });
     
     modifiersList.append(row);
+  }
+  
+  /* -------------------------------------------- */
+  
+  _setupDamagePopupEventHandlers(overlay) {
+    // Clear any existing handlers
+    overlay.off('.damage-edit');
+    overlay.find('*').off('.damage-edit');
+    
+    // Base value input handler
+    const baseInput = overlay.find('.damage-base-input');
+    baseInput.on('input', () => this._updateDamageTotal(overlay));
+    
+    // Keyboard shortcuts
+    overlay.on('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this._hideDamageEditPopup(overlay);
+      }
+    });
+    
+    // Add modifier button
+    overlay.find('.add-damage-modifier-btn').on('click', () => {
+      this._addDamageModifier(overlay);
+    });
+    
+    // Close button
+    overlay.find('.damage-edit-close').on('click', () => {
+      this._submitDamageEdit(overlay);
+    });
+    
+    // Click outside to close (only on the overlay background)
+    overlay.on('click', (e) => {
+      if (e.target === overlay[0]) {
+        this._submitDamageEdit(overlay);
+      }
+    });
+  }
+  
+  /* -------------------------------------------- */
+  
+  _loadDamageModifiers(overlay, modifiers) {
+    const modifiersList = overlay.find('.damage-modifiers-list');
+    modifiersList.empty();
+    
+    // Ensure modifiers is an array
+    if (!Array.isArray(modifiers)) {
+      modifiers = [];
+    }
+    
+    modifiers.forEach((modifier, index) => {
+      this._createDamageModifierRow(overlay, modifier, index);
+    });
+  }
+  
+  /* -------------------------------------------- */
+  
+  _createDamageModifierRow(overlay, modifier, index) {
+    const modifiersList = overlay.find('.damage-modifiers-list');
+    const row = $(`
+      <div class="damage-modifier-row modifier-row ${modifier.enabled === false ? 'disabled' : ''}" data-index="${index}">
+        <input type="text" class="damage-modifier-name modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" />
+        <input type="text" class="damage-modifier-value modifier-value" placeholder="±1 or ±1d4" value="${modifier.value || ''}" />
+        <input type="checkbox" class="damage-modifier-toggle modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} />
+        <button type="button" class="damage-modifier-delete modifier-delete">×</button>
+      </div>
+    `);
+    
+    // Simple event handlers without propagation issues
+    row.find('.damage-modifier-name, .damage-modifier-value').on('input', () => this._updateDamageTotal(overlay));
+    
+    row.find('.damage-modifier-toggle').on('click change', (e) => {
+      e.stopPropagation();
+      const checkbox = $(e.currentTarget);
+      const isEnabled = checkbox.prop('checked');
+      row.toggleClass('disabled', !isEnabled);
+      this._updateDamageTotal(overlay);
+    });
+    
+    row.find('.damage-modifier-delete').on('click', (e) => {
+      e.stopPropagation();
+      row.remove();
+      this._updateDamageTotal(overlay);
+    });
+    
+    modifiersList.append(row);
+  }
+  
+  /* -------------------------------------------- */
+  
+  _addDamageModifier(overlay) {
+    const newModifier = {
+      name: 'Modifier',
+      value: '+1',
+      enabled: true
+    };
+    
+    const modifiersList = overlay.find('.damage-modifiers-list');
+    const index = modifiersList.children().length;
+    
+    this._createDamageModifierRow(overlay, newModifier, index);
+    
+    // Focus the name input of the new modifier and select the text
+    const newRow = modifiersList.children().last();
+    const nameInput = newRow.find('.damage-modifier-name');
+    nameInput.focus().select();
+  }
+  
+  /* -------------------------------------------- */
+  
+  _updateDamageTotal(overlay) {
+    const baseValue = overlay.find('.damage-base-input').val().trim() || '1d8';
+    let modifierParts = [];
+    
+    overlay.find('.damage-modifier-row').each((index, row) => {
+      const $row = $(row);
+      const isEnabled = $row.find('.damage-modifier-toggle').is(':checked');
+      
+      if (isEnabled) {
+        const value = $row.find('.damage-modifier-value').val().trim();
+        if (value) {
+          // Ensure proper formatting - add + if it doesn't start with + or -
+          let formattedValue = value;
+          if (value && !value.startsWith('+') && !value.startsWith('-')) {
+            formattedValue = '+' + value;
+          }
+          modifierParts.push(formattedValue);
+        }
+      }
+    });
+    
+    // Build the total formula
+    let totalFormula = baseValue;
+    if (modifierParts.length > 0) {
+      totalFormula += ' ' + modifierParts.join(' ');
+    }
+    
+    overlay.find('.damage-total-value').text(totalFormula);
+    
+    // Update the display element immediately
+    const displayElement = overlay.data('display-element');
+    if (displayElement) {
+      $(displayElement).text(totalFormula);
+    }
+    
+    return totalFormula;
+  }
+  
+  /* -------------------------------------------- */
+  
+  async _submitDamageEdit(overlay) {
+    const config = overlay.data('config');
+    const attributeName = overlay.data('attribute-name');
+    const baseValue = overlay.find('.damage-base-input').val().trim() || '1d8';
+    
+    // Collect modifiers
+    const modifiers = [];
+    overlay.find('.damage-modifier-row').each((index, row) => {
+      const $row = $(row);
+      let name = $row.find('.damage-modifier-name').val().trim();
+      const value = $row.find('.damage-modifier-value').val().trim();
+      const enabled = $row.find('.damage-modifier-toggle').is(':checked');
+      
+      // Only save modifiers that have a value (even if name is empty)
+      if (value) {
+        // Default name if empty
+        if (!name) {
+          name = 'Modifier';
+        }
+        modifiers.push({
+          name: name,
+          value: value,
+          enabled: enabled
+        });
+      }
+    });
+    
+    // Calculate final formula
+    const totalFormula = this._updateDamageTotal(overlay);
+    
+    // Build update data based on the field path
+    const updateData = {};
+    
+    // Check if we're dealing with weapon damage
+    const isWeaponDamage = config.field.includes('weapon-main.damage') || config.field.includes('weapon-off.damage');
+    
+    let basePath;
+    if (isWeaponDamage) {
+      // For weapon damage, the field itself is the base path
+      basePath = config.field;
+    } else {
+      // For other attributes, remove .value from the path
+      basePath = config.field.substring(0, config.field.lastIndexOf('.'));
+    }
+    
+    updateData[`${basePath}.baseValue`] = baseValue;
+    updateData[`${basePath}.modifiers`] = modifiers;
+    updateData[`${basePath}.value`] = totalFormula;
+    
+    await this.actor.update(updateData);
+    
+    // Update the display element
+    const displayElement = overlay.data('display-element');
+    $(displayElement).text(totalFormula);
+    
+    this._hideDamageEditPopup(overlay);
+  }
+  
+  /* -------------------------------------------- */
+  
+  _hideDamageEditPopup(overlay) {
+    const popup = overlay.find('.damage-edit-popup');
+    this._animatePopupOut(popup, () => {
+      overlay.hide();
+      overlay.remove(); // Clean up the popup
+    });
   }
   
   /* -------------------------------------------- */
@@ -1292,6 +1651,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const rollableElement = event.currentTarget;
     const rollableGroup = rollableElement.closest(".basic-rollable-group");
     const rollNameInput = rollableGroup.querySelector(".basic-rollable-name");
+    
+    // Check for damage-value-display (new damage modifier system)
+    const damageValueDisplay = rollableGroup.querySelector(".damage-value-display");
     const rollValueInput = rollableGroup.querySelector(".basic-rollable-value");
     
     // Get proficiency directly from actor system data
@@ -1305,8 +1667,36 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     
     let rollValue;
     
-    // Check if this is a weapon damage roll
-    if (rollValueInput && rollValueInput.classList.contains("weapon-damage")) {
+    // Check if this is a weapon damage roll with the new damage modifier system
+    if (damageValueDisplay && rollType === "damage") {
+        const fieldPath = damageValueDisplay.dataset.field;
+        let damageFormula;
+        
+        if (fieldPath) {
+          const damageData = foundry.utils.getProperty(this.actor, fieldPath);
+          
+          // Handle both simple values and complex objects with .value
+          if (typeof damageData === 'object' && damageData !== null && 'value' in damageData) {
+            damageFormula = damageData.value || '1d8';
+          } else {
+            damageFormula = damageData || '1d8';
+          }
+        } else {
+          damageFormula = damageValueDisplay.textContent.trim() || '1d8';
+        }
+        
+        // Apply proficiency logic for characters (similar to legacy weapon damage handling)
+        if (this.actor.type === "character") {
+          const proficiency = Math.max(1, parseInt(proficiencyValue) || 1);
+          
+          // Parse the damage formula to apply proficiency logic
+          rollValue = this._applyProficiencyToDamageFormula(damageFormula, proficiency);
+        } else {
+          // For NPCs and companions, use the formula as-is
+          rollValue = damageFormula;
+        }
+    } else if (rollValueInput && rollValueInput.classList.contains("weapon-damage")) {
+        // Legacy weapon damage handling (if any remain)
         const proficiency = Math.max(1, parseInt(proficiencyValue) || 1);
         const diceInput = rollValueInput.value.trim();
         
@@ -1321,14 +1711,43 @@ await game.daggerheart.rollHandler.dualityWithDialog({
             // fallback logic - if not dice notation, just use the value as-is
             rollValue = diceInput;
         }
-    } else {
+    } else if (rollValueInput) {
         // Original logic for non-weapon damage rolls
         rollValue = rollValueInput.value;
+    } else {
+        // Fallback if no value input found
+        rollValue = '1d8';
     }
 
     // console.log("Current value: ", rollValue);
     
     await this._rollBasic(rollName, rollValue);
+  }
+  
+  /* -------------------------------------------- */
+  
+  /**
+   * Apply proficiency logic to damage formulas for characters
+   * @param {string} damageFormula - The damage formula (e.g., "1d8 + 1 + 1d4")
+   * @param {number} proficiency - The character's proficiency value
+   * @returns {string} - The modified damage formula with proficiency applied
+   * @private
+   */
+  _applyProficiencyToDamageFormula(damageFormula, proficiency) {
+    // Use the same logic as the original weapon damage handling
+    // Parse dice notation at the beginning of the formula
+    const diceMatch = damageFormula.match(/^(\d*)d(\d+)(.*)$/i);
+    
+    if (diceMatch) {
+      const diceCount = diceMatch[1] || proficiency; // Use proficiency if no count specified
+      const dieType = diceMatch[2]; // Die type (8, 6, etc.)
+      const remainder = diceMatch[3] || ""; // Everything after the first dice (modifiers, additional dice, etc.)
+      
+      return `${diceCount}d${dieType}${remainder}`;
+    } else {
+      // If it doesn't match dice notation, return as-is
+      return damageFormula;
+    }
   }
   
   /* -------------------------------------------- */

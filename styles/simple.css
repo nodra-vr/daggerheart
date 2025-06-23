@@ -1178,12 +1178,13 @@
 .defenses {
   display: flex;
   flex-wrap: nowrap;
-  gap: 3em;
+  gap: 1em;
   flex-direction: row;
   align-content: center;
   align-items: center;
   max-height: 105px;
-  justify-content: space-evenly;
+  justify-content: space-between;
+  width: 100%;
 }
 
 /* Advancement Section */
@@ -1539,6 +1540,34 @@ input.trait-effects.resize-ta {
 .weapon-row .weapon-to-hit {
   width: 35px !important;
 }
+.weapon-row .weapon-attack-button {
+  background: var(--dh-color-gold);
+  border: none;
+  border-radius: 10px 0 0 10px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  max-width: 35px;
+  margin: 0;
+  transition: all 0.2s ease;
+  font-size: 18px;
+}
+.weapon-row .weapon-attack-button:hover {
+  background: rgb(67, 63, 100);
+  transform: scale(1.02);
+  color: var(--dh-color-gold);
+  box-shadow: none;
+}
+.weapon-row .weapon-attack-button:active {
+  transform: scale(0.98);
+}
+.weapon-row .weapon-attack-button i {
+  color: white;
+  font-size: inherit;
+}
 .weapon-row .weapon-infobox {
   display: flex;
   flex-direction: column;
@@ -1551,6 +1580,9 @@ input.trait-effects.resize-ta {
   align-content: center;
   align-items: flex-start;
   justify-content: center;
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0.15em;
 }
 
 .npc .weapon-row .weapon-label,
@@ -1568,24 +1600,35 @@ input.trait-effects.resize-ta {
 
 .weapon-box {
   color: white;
-  padding: 1em 1em;
+  padding: 0;
   border: 1px solid #433f64;
   border-radius: 15px;
   background: none;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  display: flex;
 }
 
 .weapon-box-inner {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-content: center;
   align-items: center;
   justify-content: space-between;
+  padding: 0.25em;
+  flex: 1;
 }
 
 .weapon-roller-box {
   display: flex;
+  flex-wrap: nowrap;
   flex-direction: row;
   gap: 0.5em;
+  flex-shrink: 0;
+  align-items: center;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .textarea-container {
@@ -4345,6 +4388,236 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
 }
 
+/* Weapon damage display styles */
+.weapon-damage-display {
+  width: 4.5em;
+  height: 30px;
+  background: rgba(243, 194, 103, 0.15);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 8px;
+  color: var(--dh-color-off-white);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0.25em;
+  transition: all 0.2s ease;
+}
+.weapon-damage-display:hover {
+  background: rgba(243, 194, 103, 0.25);
+  border-color: var(--dh-color-gold-light);
+  box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Damage modifier popup styles */
+.damage-edit-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.damage-edit-popup {
+  background: linear-gradient(135deg, rgba(27, 25, 48, 0.95), rgba(11, 10, 19, 0.95));
+  border: 2px solid var(--dh-color-gold);
+  border-radius: 15px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  transform: scale(0.8);
+  opacity: 0;
+  max-width: 500px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.damage-edit-header {
+  background: var(--dh-color-gold);
+  color: rgba(11, 10, 19, 0.9);
+  padding: 1rem;
+  border-radius: 13px 13px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.damage-edit-label {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.damage-edit-close {
+  background: none;
+  border: none;
+  color: rgba(11, 10, 19, 0.9);
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+.damage-edit-close:hover {
+  background: rgba(11, 10, 19, 0.1);
+}
+
+.damage-edit-content {
+  padding: 1.5rem;
+  color: var(--dh-color-off-white);
+}
+
+.damage-base-value {
+  margin-bottom: 1.5rem;
+}
+.damage-base-value label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--dh-color-gold);
+}
+
+.damage-base-input {
+  background: rgba(11, 10, 19, 0.6);
+  border: 1px solid #433f64;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  text-align: center;
+  color: var(--dh-color-off-white);
+  font-size: 1.2rem;
+  font-weight: 700;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+.damage-base-input:focus {
+  outline: none;
+  border-color: var(--dh-color-gold);
+  background: rgba(11, 10, 19, 0.8);
+  box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
+}
+.damage-base-input::placeholder {
+  color: rgba(159, 159, 159, 0.6);
+}
+
+.damage-modifiers-section {
+  margin-bottom: 1.5rem;
+}
+
+.damage-modifier-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  background: rgba(67, 63, 100, 0.2);
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(109, 103, 149, 0.3);
+  margin-bottom: 0.5rem;
+  transition: all 0.2s ease;
+}
+.damage-modifier-row:hover {
+  background: rgba(67, 63, 100, 0.3);
+  border-color: rgba(243, 194, 103, 0.3);
+}
+.damage-modifier-row.disabled {
+  opacity: 0.7;
+}
+.damage-modifier-row.disabled .damage-modifier-name,
+.damage-modifier-row.disabled .damage-modifier-value {
+  opacity: 0.6;
+}
+
+.damage-modifier-name,
+.damage-modifier-value {
+  background: rgba(11, 10, 19, 0.6);
+  border: 1px solid #433f64;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  color: var(--dh-color-off-white);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+.damage-modifier-name:focus,
+.damage-modifier-value:focus {
+  outline: none;
+  border-color: var(--dh-color-gold);
+  background: rgba(11, 10, 19, 0.8);
+  box-shadow: 0 0 0 2px rgba(243, 194, 103, 0.2);
+}
+.damage-modifier-name::placeholder,
+.damage-modifier-value::placeholder {
+  color: rgba(159, 159, 159, 0.5);
+}
+
+.damage-modifier-value {
+  width: 80px;
+  text-align: center;
+}
+
+.damage-modifier-toggle {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--dh-color-gold);
+}
+
+.damage-modifier-delete {
+  background: rgba(185, 55, 55, 0.8);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.damage-modifier-delete:hover {
+  background: rgb(185, 55, 55);
+  transform: scale(1.1);
+}
+
+.damage-total {
+  background: rgba(67, 63, 100, 0.3);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--dh-color-gold);
+  text-align: center;
+}
+.damage-total label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--dh-color-gold);
+}
+
+.damage-total-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--dh-color-off-white);
+}
+
 /* Sheet Tracker Styles */
 /* Ensure the Daggerheart actor sheet has proper positioning and overflow handling */
 .daggerheart.sheet.actor {
@@ -6153,18 +6426,6 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 }
 
 /* Defenses */
-.defenses {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 1em;
-  flex-direction: row;
-  align-content: center;
-  align-items: center;
-  max-height: 105px;
-  justify-content: space-between;
-  width: 100%;
-}
-
 /* Advancement Section */
 .advancement-section {
   display: flex;
@@ -6599,21 +6860,6 @@ input.trait-effects.resize-ta {
 .weapon-row .weapon-to-hit {
   width: 35px !important;
 }
-.weapon-row .weapon-infobox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center;
-}
-.weapon-row .weapon-infobox-first {
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  align-items: flex-start;
-  justify-content: center;
-  flex: 1;
-  min-width: 0;
-}
 
 .npc .weapon-row .weapon-label,
 .companion .weapon-row .weapon-label {
@@ -6626,36 +6872,6 @@ input.trait-effects.resize-ta {
   padding-top: 3px;
   justify-content: center;
   text-transform: uppercase;
-}
-
-.weapon-box {
-  color: white;
-  padding: 0.75em;
-  border: 1px solid #433f64;
-  border-radius: 15px;
-  background: none;
-  width: 100%;
-  box-sizing: border-box;
-  min-width: 0;
-}
-
-.weapon-box-inner {
-  display: flex;
-  flex-direction: row;
-  align-content: center;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5em;
-  min-width: 0;
-  width: 100%;
-}
-
-.weapon-roller-box {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5em;
-  flex-shrink: 0;
-  align-items: center;
 }
 
 .textarea-container {

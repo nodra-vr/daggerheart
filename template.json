@@ -65,7 +65,7 @@
       },
       "weapon-main": {
         "name": "",
-        "description": "Input your weapon abilities, description, passive and other relevant notes here.",
+        "description": "Range | 1H | Trait",
         "damage": "",
         "to-hit": "",
         "range": "",
@@ -74,7 +74,7 @@
       },
       "weapon-off": {
         "name": "",
-        "description": "Input your weapon abilities, description, passive and other relevant notes here.",
+        "description": "Range | 1H | Trait",
         "damage": "",
         "to-hit": "",
         "range": "",
@@ -218,7 +218,7 @@
       "groups": {},
       "weapon-main": {
         "name": "",
-        "description": "Input your weapon abilities, description, passive and other relevant notes here.",
+        "description": "Range | 1H | Trait",
         "damage": "",
         "to-hit": "",
         "range": "",
@@ -277,7 +277,7 @@
       "groups": {},
       "weapon-main": {
         "name": "",
-        "description": "Input your weapon abilities, description, passive and other relevant notes here.",
+        "description": "Range | 1H | Trait",
         "damage": "",
         "to-hit": "",
         "range": "",
