@@ -1,6 +1,6 @@
 {
   "id": "daggerheart",
-        "version": "2.4.10",
+        "version": "2.4.11",
   "title": "Daggerheart",
   "url": "",
   "description": "Unofficial Daggerheart Game System",
@@ -40,5 +40,5 @@
   "primaryTokenAttribute": "barHealth",
   "secondaryTokenAttribute": "hope",
   "manifest": "https://raw.githubusercontent.com/featureJosh/daggerheart-swb/master/system.json",
-  "download"  : "https://github.com/featureJosh/daggerheart-swb/archive/refs/tags/v2.4.10.zip"
+  "download"  : "https://github.com/featureJosh/daggerheart-swb/archive/refs/tags/v2.4.11.zip"
 }
