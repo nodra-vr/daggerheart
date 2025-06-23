@@ -14,7 +14,9 @@ if (typeof spendFear === 'function') {
 }`;
 
   const macroName = amount === 1 ? "Spend Fear" : `Spend ${amount} Fear`;
-  let macro = game.macros.find(m => (m.name === macroName) && (m.command === command));
+  // Improved duplicate detection: check by name and flag first, then by command as fallback
+  let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.spendFearMacro"]) ||
+              game.macros.find(m => m.name === macroName && m.command === command);
   
   if (!macro) {
     macro = await Macro.create({
@@ -49,7 +51,9 @@ if (typeof gainFear === 'function') {
 }`;
 
   const macroName = amount === 1 ? "Gain Fear" : `Gain ${amount} Fear`;
-  let macro = game.macros.find(m => (m.name === macroName) && (m.command === command));
+  // Improved duplicate detection: check by name and flag first, then by command as fallback
+  let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.gainFearMacro"]) ||
+              game.macros.find(m => m.name === macroName && m.command === command);
   
   if (!macro) {
     macro = await Macro.create({
@@ -208,7 +212,9 @@ if (typeof game.daggerheart?.spendStress === 'function') {
 }`;
 
   const macroName = amount === 1 ? "Apply Stress" : `Apply ${amount} Stress`;
-  let macro = game.macros.find(m => (m.name === macroName) && (m.command === command));
+  // Improved duplicate detection: check by name and flag first, then by command as fallback
+  let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.spendStressMacro"]) ||
+              game.macros.find(m => m.name === macroName && m.command === command);
   
   if (!macro) {
     macro = await Macro.create({
@@ -276,7 +282,9 @@ ChatMessage.create({
 
     // Create the macro
     const macroName = `${item.name}`;
-    let macro = game.macros.find(m => (m.name === macroName) && (m.command === command));
+    // Improved duplicate detection: check by name and flag first, then by command as fallback
+    let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.itemMacro"]) ||
+                game.macros.find(m => m.name === macroName && m.command === command);
     
     if (!macro) {
       macro = await Macro.create({
@@ -320,7 +328,9 @@ ChatMessage.create({
       console.error("Error creating macro roll chat message:", error);
       ui.notifications.warn("Chat message failed to send, but roll was completed.");
     }`;
-  let macro = game.macros.find(m => (m.name === data.label) && (m.command === command));
+  // Improved duplicate detection: check by name and flag first, then by command as fallback
+  let macro = game.macros.find(m => m.name === data.label && m.flags?.["daggerheart.attrMacro"]) ||
+              game.macros.find(m => m.name === data.label && m.command === command);
   if (!macro) {
     macro = await Macro.create({
       name: data.label,

@@ -383,11 +383,18 @@ Hooks.once("ready", async function() {
   game.daggerheart.undoDamageHealing = window.undoDamageHealing;
   game.daggerheart.debugUndoData = window.debugUndoData;
   
+  // Add cleanup function for users
+  window.cleanupDuplicateMacros = _cleanupDuplicateMacros;
+  game.daggerheart.cleanupDuplicateMacros = window.cleanupDuplicateMacros;
+  
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), and debugUndoData() functions are now available globally.");
+  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), and cleanupDuplicateMacros() functions are now available globally.");
   
   // Create demo macros if they don't exist (optional - for testing)
   if (game.user.isGM) {
+    // First, clean up any duplicate macros
+    await _cleanupDuplicateMacros();
+    
     const existingSpendFearMacro = game.macros.find(m => m.name === "Spend 1 Fear" && m.flags?.["daggerheart.spendFearMacro"]);
     if (!existingSpendFearMacro) {
       await game.daggerheart.createSpendFearMacro(1);
@@ -433,6 +440,57 @@ Hooks.once("ready", async function() {
     }
   }
 });
+
+/**
+ * Clean up duplicate macros created by the system
+ */
+async function _cleanupDuplicateMacros() {
+  // Define all macro names and their corresponding flags
+  const macroConfigs = [
+    { name: "Apply Damage", flag: "daggerheart.damageApplicationMacro" },
+    { name: "Apply Healing", flag: "daggerheart.healingApplicationMacro" },
+    { name: "Roll Damage", flag: "daggerheart.rollDamageMacro" },
+    { name: "Roll Healing", flag: "daggerheart.rollHealingMacro" },
+    { name: "Spend Fear", flag: "daggerheart.spendFearMacro" },
+    { name: "Spend 1 Fear", flag: "daggerheart.spendFearMacro" },
+    { name: "Gain Fear", flag: "daggerheart.gainFearMacro" },
+    { name: "Apply Stress", flag: "daggerheart.spendStressMacro" }
+  ];
+  
+  let totalCleaned = 0;
+  
+  for (const config of macroConfigs) {
+    const duplicates = game.macros.filter(m => m.name === config.name);
+    
+    if (duplicates.length > 1) {
+      console.log(`Found ${duplicates.length} duplicate macros named "${config.name}", cleaning up...`);
+      
+      // Keep the first one with the proper flag, or just the first one if none have flags
+      let macroToKeep = duplicates.find(m => m.flags?.[config.flag.split('.')[0]]?.[config.flag.split('.')[1]]) || duplicates[0];
+      
+      // Delete the rest
+      const macrosToDelete = duplicates.filter(m => m.id !== macroToKeep.id);
+      for (const macro of macrosToDelete) {
+        await macro.delete();
+        console.log(`Deleted duplicate macro: ${config.name} (${macro.id})`);
+        totalCleaned++;
+      }
+      
+      // Ensure the kept macro has the proper flag
+      if (!macroToKeep.flags?.[config.flag.split('.')[0]]?.[config.flag.split('.')[1]]) {
+        const flagParts = config.flag.split('.');
+        await macroToKeep.setFlag(flagParts[0], flagParts[1], true);
+      }
+    }
+  }
+  
+  if (totalCleaned > 0) {
+    ui.notifications.info(`Cleaned up ${totalCleaned} duplicate macros.`);
+    console.log(`Daggerheart | Cleaned up ${totalCleaned} duplicate macros.`);
+  } else {
+    console.log("Daggerheart | No duplicate macros found to clean up.");
+  }
+}
 
 /**
  * Hook to set default prototype token settings for actors
