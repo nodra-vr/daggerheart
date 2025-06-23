@@ -4385,7 +4385,7 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  z-index: 101;
+  z-index: 100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 .tracker-main-button:hover {

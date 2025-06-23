@@ -716,7 +716,7 @@ async function _rollCharacterDamage(event) {
   await roll.evaluate();
   
       try {
-      await ChatMessage.create({
+      const chatMessage = await ChatMessage.create({
         content: `
           <div class="dice-roll">
             <div class="dice-result">
@@ -743,6 +743,11 @@ async function _rollCharacterDamage(event) {
           }
         }
       });
+      
+      // Wait for Dice So Nice! animation to complete
+      if (chatMessage?.id && game.dice3d) {
+        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      }
     } catch (error) {
       console.error("Error creating character damage chat message:", error);
       ui.notifications.warn("Chat message failed to send, but damage was rolled.");
@@ -783,7 +788,7 @@ async function _rollAdversaryDamage(event) {
   await roll.evaluate();
   
       try {
-      await ChatMessage.create({
+      const chatMessage = await ChatMessage.create({
         content: `
           <div class="dice-roll">
             <div class="dice-result">
@@ -810,6 +815,11 @@ async function _rollAdversaryDamage(event) {
           }
         }
       });
+      
+      // Wait for Dice So Nice! animation to complete
+      if (chatMessage?.id && game.dice3d) {
+        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      }
     } catch (error) {
       console.error("Error creating adversary damage chat message:", error);
       ui.notifications.warn("Chat message failed to send, but damage was rolled.");

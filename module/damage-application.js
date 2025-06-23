@@ -11,9 +11,10 @@ const undoData = new Map();
  * @param {Actor[]|Actor|null} targetActors - The actors to apply damage to (optional, will auto-select)
  * @param {number} damageAmount - The amount of damage rolled
  * @param {Actor|null} sourceActor - The actor causing the damage (optional)
+ * @param {boolean} createUndo - Whether to create undo data (default: true)
  * @returns {Promise<Object>} Result object with success status and undo data
  */
-export async function applyDamage(targetActors = null, damageAmount, sourceActor = null) {
+export async function applyDamage(targetActors = null, damageAmount, sourceActor = null, createUndo = true) {
   // Validate damage amount
   if (!Number.isInteger(damageAmount) || damageAmount <= 0) {
     console.error("Damage amount must be a positive integer");
@@ -46,15 +47,20 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
     return { success: false, undoId: null };
   }
 
-  // Generate unique undo ID
-  const undoId = `damage_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  const undoRecord = {
-    type: "damage",
-    actors: [],
-    damageAmount: damageAmount,
-    sourceActorId: sourceActor?.id || null,
-    timestamp: Date.now()
-  };
+  // Generate unique undo ID and record only if requested
+  let undoId = null;
+  let undoRecord = null;
+  
+  if (createUndo) {
+    undoId = `damage_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    undoRecord = {
+      type: "damage",
+      actors: [],
+      damageAmount: damageAmount,
+      sourceActorId: sourceActor?.id || null,
+      timestamp: Date.now()
+    };
+  }
 
   let successfulApplications = 0;
   const results = [];
@@ -88,23 +94,20 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
     const maxHealth = parseInt(target.system.health.max) || 6;
     const thresholds = target.system.threshold;
     
-    // Store original health for undo
-    // For unlinked tokens, we need to store the token's actor ID, not the base actor ID
-    const isTokenActor = !!target.token;
-    const actualActorId = isTokenActor && !target.isLinked ? target.id : target._id || target.id;
-    const baseActorId = isTokenActor ? target.token.baseActor.id : target.id;
-    
-    undoRecord.actors.push({
-      actorId: actualActorId,           // The actual actor ID to update
-      baseActorId: baseActorId,         // The base actor ID for reference  
-      originalHealth: currentHealth,
-      actorName: target.name,
-      actorType: target.type,
-      isToken: isTokenActor,
-      isLinked: target.isLinked,
-      tokenId: target.token?.id || null,
-      sceneId: target.token?.scene?.id || null
-    });
+    // Store original health for undo - work with tokens directly (only if creating undo)
+    if (createUndo && undoRecord) {
+      const isFromToken = !!target.token;
+      
+      undoRecord.actors.push({
+        originalHealth: currentHealth,
+        actorName: target.name,
+        actorType: target.type,
+        isFromToken: isFromToken,
+        tokenId: target.token?.id || null,
+        sceneId: target.token?.scene?.id || null,
+        actorId: isFromToken ? null : target.id  // Only store actor ID for non-token actors
+      });
+    }
     
     // Calculate HP damage based on thresholds
     const hpDamage = _calculateDamageToHP(damageAmount, thresholds);
@@ -144,18 +147,20 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
     return { success: false, undoId: null };
   }
 
-  // Store undo data only if we had successful applications
-  undoData.set(undoId, undoRecord);
+  // Store undo data only if we had successful applications and createUndo is true
+  if (createUndo && undoRecord && undoRecord.actors.length > 0) {
+    undoData.set(undoId, undoRecord);
+  }
 
   // Send chat messages for successful applications
-  await _sendDamageApplicationMessages(results, sourceActor, damageAmount, undoId);
+  await _sendDamageApplicationMessages(results, sourceActor, damageAmount, createUndo ? undoId : null);
 
   // Success notification
   const targetNames = results.map(r => r.target.name).join(", ");
   const message = `Applied damage to: ${targetNames}`;
   ui.notifications.info(message);
 
-  return { success: true, undoId: undoId };
+  return { success: true, undoId: createUndo ? undoId : null };
 }
 
 /**
@@ -163,9 +168,10 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
  * @param {Actor[]|Actor|null} targetActors - The actors to heal (optional, will auto-select)
  * @param {number} healAmount - The amount of healing to apply
  * @param {Actor|null} sourceActor - The actor providing the healing (optional)
+ * @param {boolean} createUndo - Whether to create undo data (default: true)
  * @returns {Promise<Object>} Result object with success status and undo data
  */
-export async function applyHealing(targetActors = null, healAmount, sourceActor = null) {
+export async function applyHealing(targetActors = null, healAmount, sourceActor = null, createUndo = true) {
   // Validate heal amount
   if (!Number.isInteger(healAmount) || healAmount <= 0) {
     console.error("Heal amount must be a positive integer");
@@ -198,15 +204,20 @@ export async function applyHealing(targetActors = null, healAmount, sourceActor 
     return { success: false, undoId: null };
   }
 
-  // Generate unique undo ID
-  const undoId = `healing_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  const undoRecord = {
-    type: "healing",
-    actors: [],
-    healAmount: healAmount,
-    sourceActorId: sourceActor?.id || null,
-    timestamp: Date.now()
-  };
+  // Generate unique undo ID and record only if requested
+  let undoId = null;
+  let undoRecord = null;
+  
+  if (createUndo) {
+    undoId = `healing_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    undoRecord = {
+      type: "healing",
+      actors: [],
+      healAmount: healAmount,
+      sourceActorId: sourceActor?.id || null,
+      timestamp: Date.now()
+    };
+  }
 
   let successfulApplications = 0;
   const results = [];
@@ -239,23 +250,20 @@ export async function applyHealing(targetActors = null, healAmount, sourceActor 
     const currentHealth = parseInt(target.system.health.value) || 0;
     const maxHealth = parseInt(target.system.health.max) || 6;
     
-    // Store original health for undo
-    // For unlinked tokens, we need to store the token's actor ID, not the base actor ID
-    const isTokenActor = !!target.token;
-    const actualActorId = isTokenActor && !target.isLinked ? target.id : target._id || target.id;
-    const baseActorId = isTokenActor ? target.token.baseActor.id : target.id;
-    
-    undoRecord.actors.push({
-      actorId: actualActorId,           // The actual actor ID to update
-      baseActorId: baseActorId,         // The base actor ID for reference  
-      originalHealth: currentHealth,
-      actorName: target.name,
-      actorType: target.type,
-      isToken: isTokenActor,
-      isLinked: target.isLinked,
-      tokenId: target.token?.id || null,
-      sceneId: target.token?.scene?.id || null
-    });
+    // Store original health for undo - work with tokens directly (only if creating undo)
+    if (createUndo && undoRecord) {
+      const isFromToken = !!target.token;
+      
+      undoRecord.actors.push({
+        originalHealth: currentHealth,
+        actorName: target.name,
+        actorType: target.type,
+        isFromToken: isFromToken,
+        tokenId: target.token?.id || null,
+        sceneId: target.token?.scene?.id || null,
+        actorId: isFromToken ? null : target.id  // Only store actor ID for non-token actors
+      });
+    }
     
     const newHealth = Math.max(0, currentHealth - healAmount); // Healing reduces damage
     const actualHealing = currentHealth - newHealth;
@@ -291,22 +299,24 @@ export async function applyHealing(targetActors = null, healAmount, sourceActor 
     return { success: false, undoId: null };
   }
 
-  // Store undo data only if we had successful applications
-  undoData.set(undoId, undoRecord);
+  // Store undo data only if we had successful applications and createUndo is true
+  if (createUndo && undoRecord && undoRecord.actors.length > 0) {
+    undoData.set(undoId, undoRecord);
+  }
 
   // Send chat messages for successful applications
-  await _sendHealingApplicationMessages(results, sourceActor, healAmount, undoId);
+  await _sendHealingApplicationMessages(results, sourceActor, healAmount, createUndo ? undoId : null);
 
   // Success notification
   const targetNames = results.map(r => r.target.name).join(", ");
   const message = `Applied healing to: ${targetNames}`;
   ui.notifications.info(message);
 
-  return { success: true, undoId: undoId };
+  return { success: true, undoId: createUndo ? undoId : null };
 }
 
 /**
- * Undo a damage or healing application
+ * Undo a damage or healing application by applying the reverse effect
  * @param {string} undoId - The undo ID to revert
  * @returns {Promise<boolean>} Whether the undo was successful
  */
@@ -320,105 +330,99 @@ export async function undoDamageHealing(undoId) {
 
   console.log("Daggerheart | Starting undo operation:", undoId, record);
 
+  // Get all the targets that need to be restored
+  const targets = [];
+  
+  for (const actorData of record.actors) {
+    console.log("Daggerheart | Processing undo data for:", actorData);
+    
+    let targetActor = null;
+    
+    // For token-based actors, try to find them in current scene
+    if (actorData.isFromToken) {
+      // Search current scene tokens by name (most reliable for unlinked tokens)
+      const tokens = canvas.tokens?.placeables || [];
+      const token = tokens.find(t => 
+        t.actor && 
+        t.actor.name === actorData.actorName && 
+        t.actor.type === actorData.actorType
+      );
+      
+      if (token && token.actor) {
+        targetActor = token.actor;
+        console.log("Daggerheart | Found token actor in current scene:", targetActor.name);
+      } else {
+        console.warn(`Token actor ${actorData.actorName} not found in current scene`);
+        continue;
+      }
+    } else {
+      // For world actors
+      targetActor = game.actors.get(actorData.actorId);
+      if (targetActor) {
+        console.log("Daggerheart | Found world actor:", targetActor.name);
+      } else {
+        console.warn(`World actor ${actorData.actorName} not found`);
+        continue;
+      }
+    }
+    
+    if (targetActor) {
+      const currentHealth = parseInt(targetActor.system.health?.value) || 0;
+      const targetHealth = actorData.originalHealth;
+      const healthDifference = currentHealth - targetHealth;
+      
+      console.log("Daggerheart | Health analysis:", {
+        actorName: targetActor.name,
+        currentHealth: currentHealth,
+        targetHealth: targetHealth,
+        difference: healthDifference
+      });
+      
+      targets.push({
+        actor: targetActor,
+        originalHealth: targetHealth,
+        currentHealth: currentHealth,
+        healthDifference: healthDifference
+      });
+    }
+  }
+
+  if (targets.length === 0) {
+    ui.notifications.warn("No targets found for undo operation.");
+    return false;
+  }
+
+  // Apply the reverse effects using the existing damage/healing system
   let successfulUndos = 0;
   const results = [];
 
-  for (const actorData of record.actors) {
-    console.log("Daggerheart | Processing undo for actor:", actorData);
+  for (const targetData of targets) {
+    const { actor, originalHealth, currentHealth, healthDifference } = targetData;
     
-    let actor = null;
-    
-    // For token actors, find the specific token's actor
-    if (actorData.isToken && actorData.tokenId && actorData.sceneId) {
-      const scene = game.scenes.get(actorData.sceneId);
-      if (scene) {
-        const tokenDoc = scene.tokens.get(actorData.tokenId);
-        if (tokenDoc && tokenDoc.actor) {
-          actor = tokenDoc.actor;
-          console.log("Daggerheart | Found token actor:", actor.name, "ID:", actor.id);
-        }
-      }
-    }
-    
-    // Try to find in current scene if not found in stored scene
-    if (!actor && actorData.isToken) {
-      console.log("Daggerheart | Searching current scene for token actor...");
-      const tokens = canvas.tokens?.placeables || [];
-      for (const token of tokens) {
-        if (token.actor && token.actor.id === actorData.actorId) {
-          actor = token.actor;
-          console.log("Daggerheart | Found actor in current scene:", actor.name);
-          break;
-        }
-      }
-    }
-    
-    // For non-token actors or if token not found, try world actors
-    if (!actor) {
-      actor = game.actors.get(actorData.actorId);
-      if (actor) {
-        console.log("Daggerheart | Found world actor:", actor.name);
-      }
-    }
-    
-    // Final fallback: search by base actor ID for older undo records
-    if (!actor && actorData.baseActorId) {
-      actor = game.actors.get(actorData.baseActorId);
-      if (actor) {
-        console.log("Daggerheart | Found fallback world actor:", actor.name);
-      }
-    }
-    
-    if (!actor) {
-      console.warn(`Actor ${actorData.actorName} (${actorData.actorId}) not found for undo`);
-      ui.notifications.warn(`Actor ${actorData.actorName} not found for undo.`);
-      continue;
-    }
-
-    console.log("Daggerheart | Found actor for undo:", actor.name, actor.type, "Current HP:", actor.system.health?.value, "Target HP:", actorData.originalHealth);
-
-    // Check permissions with more detailed logging
-    const isGM = game.user.isGM;
-    const hasAssistantRole = game.user.hasRole("ASSISTANT");
-    const isOwner = actor.isOwner;
-    const canModify = isGM || hasAssistantRole || isOwner;
-    
-    console.log("Daggerheart | Permission check:", {
-      isGM,
-      hasAssistantRole, 
-      isOwner,
-      canModify,
-      actorName: actor.name,
-      actorType: actor.type
-    });
-    
-    if (!canModify) {
-      console.warn(`User does not have permission to modify ${actor.name}'s health for undo`);
-      ui.notifications.warn(`You do not have permission to modify ${actor.name}'s health.`);
-      continue;
-    }
-
     try {
-      console.log("Daggerheart | Attempting to restore health:", {
-        actorName: actor.name,
-        currentHealth: actor.system.health?.value,
-        targetHealth: actorData.originalHealth
-      });
-      
-      // Restore original health value
-      const updateResult = await actor.update({
-        "system.health.value": actorData.originalHealth
-      });
-      
-      console.log("Daggerheart | Update result:", updateResult);
-      console.log("Daggerheart | Health after update:", actor.system.health?.value);
-
-      successfulUndos++;
-      results.push({
-        actor: actor,
-        restoredHealth: actorData.originalHealth
-      });
-
+      if (healthDifference > 0) {
+        // Actor took damage, so heal them back
+        console.log(`Daggerheart | Healing ${actor.name} by ${healthDifference} to restore to ${originalHealth}`);
+        const healResult = await applyHealing([actor], healthDifference, null, false);
+        if (healResult.success) {
+          successfulUndos++;
+          results.push({ actor: actor, restoredHealth: originalHealth });
+        }
+      } else if (healthDifference < 0) {
+        // Actor was healed, so damage them back
+        const damageAmount = Math.abs(healthDifference);
+        console.log(`Daggerheart | Damaging ${actor.name} by ${damageAmount} to restore to ${originalHealth}`);
+        const damageResult = await applyDamage([actor], damageAmount, null, false);
+        if (damageResult.success) {
+          successfulUndos++;
+          results.push({ actor: actor, restoredHealth: originalHealth });
+        }
+      } else {
+        // No change needed
+        console.log(`Daggerheart | ${actor.name} already at target health ${originalHealth}`);
+        successfulUndos++;
+        results.push({ actor: actor, restoredHealth: originalHealth });
+      }
     } catch (error) {
       console.error(`Error undoing changes for ${actor.name}:`, error);
       ui.notifications.error(`Error undoing changes for ${actor.name}.`);
@@ -427,7 +431,7 @@ export async function undoDamageHealing(undoId) {
 
   console.log("Daggerheart | Undo operation completed:", {
     successfulUndos,
-    totalActors: record.actors.length
+    totalTargets: targets.length
   });
 
   if (successfulUndos > 0) {
@@ -583,7 +587,7 @@ export async function rollDamage(formula, options = {}) {
     const flavorText = config.flavor || `<p class="roll-flavor-line"><b>Damage Roll</b></p>`;
     
     try {
-      await ChatMessage.create({
+      const chatMessage = await ChatMessage.create({
         content: `
           <div class="dice-roll">
             <div class="dice-result">
@@ -608,6 +612,11 @@ export async function rollDamage(formula, options = {}) {
           }
         }
       });
+      
+      // Wait for Dice So Nice! animation to complete
+      if (chatMessage?.id && game.dice3d) {
+        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      }
     } catch (error) {
       console.error("Error creating damage roll chat message:", error);
       ui.notifications.warn("Chat message failed to send, but damage was rolled.");
@@ -667,7 +676,7 @@ export async function rollHealing(formula, options = {}) {
     const flavorText = config.flavor || `<p class="roll-flavor-line"><b>Healing Roll</b></p>`;
     
     try {
-      await ChatMessage.create({
+      const chatMessage = await ChatMessage.create({
         content: `
           <div class="dice-roll">
             <div class="dice-result">
@@ -692,6 +701,11 @@ export async function rollHealing(formula, options = {}) {
           }
         }
       });
+      
+      // Wait for Dice So Nice! animation to complete
+      if (chatMessage?.id && game.dice3d) {
+        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      }
     } catch (error) {
       console.error("Error creating healing roll chat message:", error);
       ui.notifications.warn("Chat message failed to send, but healing was rolled.");
@@ -741,15 +755,15 @@ async function _sendDamageApplicationMessages(results, sourceActor, damageAmount
       <p><strong>${target.name}</strong> takes <strong>${actualDamage} HP</strong> damage${sourceText}.</p>
       <div class="damage-details">
         <p><strong>Damage Roll:</strong> ${damageAmount}</p>
-        <p><strong>Threshold Result:</strong> ${_getThresholdDescription(damageAmount, thresholds, hpDamage)}</p>
+        <section class="secret"><p><strong>Threshold Result:</strong> ${_getThresholdDescription(damageAmount, thresholds, hpDamage)}</p></section>
         <p><strong>Current Damage:</strong> ${newHealth}/${maxHealth}</p>
       </div>
       ${newHealth >= maxHealth ? '<p class="damage-warning"><em><i class="fas fa-skull"></i> Character is dying!</em></p>' : ''}
-      <div class="damage-undo-container" style="margin-top: 0.5em;">
+      ${undoId ? `<div class="damage-undo-container" style="margin-top: 0.5em;">
         <button class="undo-damage-button" data-undo-id="${undoId}" style="width: 100%;">
           <i class="fas fa-undo"></i> Undo
         </button>
-      </div>
+      </div>` : ''}
     </div>`;
 
     await ChatMessage.create({
@@ -794,11 +808,11 @@ async function _sendHealingApplicationMessages(results, sourceActor, healAmount,
         <p><strong>Current Damage:</strong> ${newHealth}/${maxHealth}</p>
       </div>
       ${newHealth === 0 ? '<p class="healing-success"><em><i class="fas fa-sparkles"></i> Fully healed!</em></p>' : ''}
-      <div class="healing-undo-container" style="margin-top: 0.5em;">
+      ${undoId ? `<div class="healing-undo-container" style="margin-top: 0.5em;">
         <button class="undo-healing-button" data-undo-id="${undoId}" style="width: 100%;">
           <i class="fas fa-undo"></i> Undo
         </button>
-      </div>
+      </div>` : ''}
     </div>`;
 
     await ChatMessage.create({

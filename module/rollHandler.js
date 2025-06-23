@@ -45,7 +45,7 @@ export async function _rollHope(options = {}) {
     const defaultFlavor = config.flavor || `<p class="roll-flavor-line"><b>Hope Die</b>${config.modifier !== 0 ? (config.modifier > 0 ? ` +${config.modifier}` : ` ${config.modifier}`) : ''}</p>`;
     
     try {
-      await ChatMessage.create({
+      const chatMessage = await ChatMessage.create({
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: defaultFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -58,6 +58,11 @@ export async function _rollHope(options = {}) {
           }
         }
       });
+      
+      // Wait for Dice So Nice! animation to complete
+      if (chatMessage?.id && game.dice3d) {
+        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      }
     } catch (error) {
       console.error("Error creating hope roll chat message:", error);
       ui.notifications.warn("Chat message failed to send, but roll was completed.");
@@ -123,7 +128,7 @@ export async function _rollFear(options = {}) {
     const defaultFlavor = config.flavor || `<p class="roll-flavor-line"><b>Fear Die</b>${config.modifier !== 0 ? (config.modifier > 0 ? ` +${config.modifier}` : ` ${config.modifier}`) : ''}</p>`;
     
     try {
-      await ChatMessage.create({
+      const chatMessage = await ChatMessage.create({
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: defaultFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -136,6 +141,11 @@ export async function _rollFear(options = {}) {
           }
         }
       });
+      
+      // Wait for Dice So Nice! animation to complete
+      if (chatMessage?.id && game.dice3d) {
+        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      }
     } catch (error) {
       console.error("Error creating fear roll chat message:", error);
       ui.notifications.warn("Chat message failed to send, but roll was completed.");
@@ -292,7 +302,7 @@ export async function _rollDuality(options = {}) {
     }
     
     try {
-      await ChatMessage.create({
+      const chatMessage = await ChatMessage.create({
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: finalFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -312,6 +322,11 @@ export async function _rollDuality(options = {}) {
           }
         }
       });
+      
+      // Wait for Dice So Nice! animation to complete
+      if (chatMessage?.id && game.dice3d) {
+        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      }
     } catch (error) {
       console.error("Error creating duality roll chat message:", error);
       ui.notifications.warn("Chat message failed to send, but roll was completed.");
@@ -428,7 +443,7 @@ export async function _rollNPC(options = {}) {
     }
     
     try {
-      await ChatMessage.create({
+      const chatMessage = await ChatMessage.create({
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: finalFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -445,6 +460,11 @@ export async function _rollNPC(options = {}) {
           }
         }
       });
+      
+      // Wait for Dice So Nice! animation to complete
+      if (chatMessage?.id && game.dice3d) {
+        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      }
     } catch (error) {
       console.error("Error creating NPC roll chat message:", error);
       ui.notifications.warn("Chat message failed to send, but roll was completed.");
@@ -503,12 +523,17 @@ export async function _quickRoll(dieFormula, options = {}) {
   
   if (config.sendToChat) {
     try {
-      await ChatMessage.create({
+      const chatMessage = await ChatMessage.create({
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: config.flavor || `<p class="roll-flavor-line"><b>Roll</b></p>`,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
         rolls: [roll]
       });
+      
+      // Wait for Dice So Nice! animation to complete
+      if (chatMessage?.id && game.dice3d) {
+        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      }
     } catch (error) {
       console.error("Error creating quick roll chat message:", error);
       ui.notifications.warn("Chat message failed to send, but roll was completed.");
@@ -636,7 +661,7 @@ export async function _dualityWithDialog(config) {
       }
     }
     
-    await ChatMessage.create({
+    const chatMessage = await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor: finalFlavor,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -650,6 +675,11 @@ export async function _dualityWithDialog(config) {
         }
       }
     });
+    
+    // Wait for Dice So Nice! animation to complete
+    if (chatMessage?.id && game.dice3d) {
+      await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+    }
   } catch (error) {
     console.error("Error creating duality dialog roll chat message:", error);
     ui.notifications.warn("Chat message failed to send, but roll was completed.");
@@ -749,7 +779,7 @@ export async function _npcRollWithDialog(config) {
 
   // Send message
   try {
-    await ChatMessage.create({
+    const chatMessage = await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor: finalFlavor,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -763,6 +793,11 @@ export async function _npcRollWithDialog(config) {
         }
       }
     });
+    
+    // Wait for Dice So Nice! animation to complete
+    if (chatMessage?.id && game.dice3d) {
+      await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+    }
   } catch (error) {
     console.error("Error creating NPC dialog roll chat message:", error);
     ui.notifications.warn("Chat message failed to send, but roll was completed.");
