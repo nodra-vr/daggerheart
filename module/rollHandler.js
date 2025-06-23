@@ -1,18 +1,15 @@
 import { DaggerheartDialogHelper } from './dialog-helper.js';
 
-// Hook to ensure all clients have Daggerheart colorsets available when viewing rolls
 Hooks.on("diceSoNiceRollStart", (messageId, context) => {
   if (!game.dice3d) return;
   
-  // Get the chat message to check if it's a Daggerheart roll
   const message = game.messages.get(messageId);
   if (!message?.flags?.daggerheart) return;
   
-  // Ensure Daggerheart colorsets are available on this client
+  // Ensure Daggerheart colorsets good for this this client
   _ensureDaggerheartColorsets();
 });
 
-// Function to ensure Daggerheart colorsets are available
 function _ensureDaggerheartColorsets() {
   if (!game.dice3d) return;
   
@@ -51,7 +48,9 @@ function _ensureDaggerheartColorsets() {
     });
   }
   
-  // Modifier Die
+  // Modifier Die, I should probably remove this, but they have a pretty cool
+  // different color for advantage and disadvantage die in the show,
+  // that I wanna replicate somehow in the future.
   if (!existingColorsets["Modifier"]) {
     game.dice3d.addColorset({
       name: "Modifier",
@@ -114,7 +113,6 @@ export async function _rollHope(options = {}) {
         }
       });
       
-      // Wait for Dice So Nice! animation to complete
       if (chatMessage?.id && game.dice3d) {
         await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
       }
@@ -139,7 +137,7 @@ export async function _rollHope(options = {}) {
 }
 
 export async function _rollFear(options = {}) {
-  // Ensure colorsets are available for this roll
+  // Ensure colorsets are available for this rollv
   _ensureDaggerheartColorsets();
   
   const defaults = {
@@ -184,7 +182,6 @@ export async function _rollFear(options = {}) {
         }
       });
       
-      // Wait for Dice So Nice! animation to complete
       if (chatMessage?.id && game.dice3d) {
         await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
       }
@@ -328,7 +325,6 @@ export async function _rollDuality(options = {}) {
         }
       });
       
-      // Wait for Dice So Nice! animation to complete
       if (chatMessage?.id && game.dice3d) {
         await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
       }
