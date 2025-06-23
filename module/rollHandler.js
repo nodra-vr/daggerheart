@@ -6,66 +6,146 @@ Hooks.on("diceSoNiceRollStart", (messageId, context) => {
   const message = game.messages.get(messageId);
   if (!message?.flags?.daggerheart) return;
   
-  // Ensure Daggerheart colorsets good for this this client
-  _ensureDaggerheartColorsets();
+  // Get the actor who made the roll to use their custom colorsets
+  const speaker = message.speaker;
+  const actorId = speaker?.actor;
+  const userId = message.user?.id;
+  
+  // Apply the roller's custom colorsets to all clients
+  _ensureDaggerheartColorsets(userId, actorId);
 });
 
-function _ensureDaggerheartColorsets() {
+// Function to ensure Daggerheart colorsets are available, using custom styles if the roller has them
+function _ensureDaggerheartColorsets(rollerId = null, actorId = null) {
   if (!game.dice3d) return;
+  
+  // Get custom colorsets from the roller's settings
+  const customColorsets = _getCustomColorsets(rollerId);
   
   // Check if colorsets already exist to avoid duplicates
   const existingColorsets = game.dice3d.DiceColors?.getColorsets?.() || {};
   
-  // Hope Die
-  if (!existingColorsets["Hope"]) {
-    game.dice3d.addColorset({
-      name: "Hope",
-      category: "Hope Die",
-      description: "Hope",
-      texture: "ice",
-      foreground: "#ffbb00",
-      background: "#ffffff",
-      outline: "#000000",
-      edge: "#ffbb00",
-      material: "glass",
-      font: "Modesto Condensed",
-    });
+  // Hope Die - use custom if available, otherwise default
+  const hopeColorset = customColorsets.hope || _getDefaultHopeColorset();
+  if (!existingColorsets["Hope"] || customColorsets.hope) {
+    game.dice3d.addColorset(hopeColorset);
   }
   
-  // Fear Die
-  if (!existingColorsets["Fear"]) {
-    game.dice3d.addColorset({
-      name: "Fear",
-      category: "Fear Die",
-      description: "Fear",
-      texture: "fire",
-      foreground: "#FFFFFF",
-      background: "#523333",
-      outline: "#b30012",
-      edge: "#800013",
-      material: "metal",
-      font: "Modesto Condensed",
-    });
+  // Fear Die - use custom if available, otherwise default  
+  const fearColorset = customColorsets.fear || _getDefaultFearColorset();
+  if (!existingColorsets["Fear"] || customColorsets.fear) {
+    game.dice3d.addColorset(fearColorset);
   }
   
-  // Modifier Die, I should probably remove this, but they have a pretty cool
-  // different color for advantage and disadvantage die in the show,
-  // that I wanna replicate somehow in the future.
-  if (!existingColorsets["Modifier"]) {
-    game.dice3d.addColorset({
-      name: "Modifier",
-      category: "Modifier Die",
-      description: "Modifier",
-      texture: "marble",
-      foreground: "#222222",
-      background: "#DDDDDD",
-      outline: "#000000",
-      edge: "#555555",
-      material: "plastic",
-      font: "Arial",
-    });
+  // Modifier Die - use custom if available, otherwise default
+  const modifierColorset = customColorsets.modifier || _getDefaultModifierColorset();
+  if (!existingColorsets["Modifier"] || customColorsets.modifier) {
+    game.dice3d.addColorset(modifierColorset);
   }
 }
+
+// Get custom colorsets from a specific user's settings
+function _getCustomColorsets(userId = null) {
+  const customColorsets = { hope: null, fear: null, modifier: null };
+  
+  if (!userId) return customColorsets;
+  
+  try {
+    // Get the user's custom settings
+    const user = game.users.get(userId);
+    if (!user) return customColorsets;
+    
+    // Parse Hope die setting
+    const hopeSettings = user.getFlag("daggerheart", "customHopeDie") || 
+                        (userId === game.user.id ? game.settings.get("daggerheart", "customHopeDie") : "");
+    if (hopeSettings) {
+      customColorsets.hope = JSON.parse(hopeSettings);
+    }
+    
+    // Parse Fear die setting  
+    const fearSettings = user.getFlag("daggerheart", "customFearDie") ||
+                        (userId === game.user.id ? game.settings.get("daggerheart", "customFearDie") : "");
+    if (fearSettings) {
+      customColorsets.fear = JSON.parse(fearSettings);
+    }
+    
+    // Parse Modifier die setting
+    const modifierSettings = user.getFlag("daggerheart", "customModifierDie") ||
+                            (userId === game.user.id ? game.settings.get("daggerheart", "customModifierDie") : "");
+    if (modifierSettings) {
+      customColorsets.modifier = JSON.parse(modifierSettings);
+    }
+  } catch (error) {
+    console.warn("Daggerheart | Error parsing custom colorsets for user:", userId, error);
+  }
+  
+  return customColorsets;
+}
+
+// Default colorset definitions
+function _getDefaultHopeColorset() {
+  return {
+    name: "Hope",
+    category: "Hope Die", 
+    description: "Hope",
+    texture: "ice",
+    foreground: "#ffbb00",
+    background: "#ffffff",
+    outline: "#000000",
+    edge: "#ffbb00",
+    material: "glass",
+    font: "Modesto Condensed",
+  };
+}
+
+function _getDefaultFearColorset() {
+  return {
+    name: "Fear",
+    category: "Fear Die",
+    description: "Fear", 
+    texture: "fire",
+    foreground: "#FFFFFF",
+    background: "#523333",
+    outline: "#b30012",
+    edge: "#800013",
+    material: "metal",
+    font: "Modesto Condensed",
+  };
+}
+
+function _getDefaultModifierColorset() {
+  return {
+    name: "Modifier",
+    category: "Modifier Die",
+    description: "Modifier",
+    texture: "marble",
+    foreground: "#222222", 
+    background: "#DDDDDD",
+    outline: "#000000",
+    edge: "#555555",
+    material: "plastic",
+    font: "Arial",
+  };
+}
+
+// Test helper function for debugging custom colorsets
+window.testCustomDice = async function() {
+  const testFearColorset = {
+    name: "Fear",
+    category: "Fear Die",
+    description: "Fear",
+    texture: "fire",
+    foreground: "#1d2e2e",
+    background: "#2f2f1e",
+    outline: "#b30012",
+    edge: "#800013",
+    material: "metal",
+    font: "Modesto Condensed"
+  };
+  
+  await game.settings.set("daggerheart", "customFearDie", JSON.stringify(testFearColorset));
+  console.log("Test custom Fear die set. Roll dice to see effect.");
+};
 
 export async function _rollHope(options = {}) {
   // Ensure colorsets are available for this roll
