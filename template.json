@@ -229,60 +229,43 @@
     },
     "companion": {
       "biography": "",
-      "health": {
-        "value": 0,
-        "min": 0,
-        "max": 6,
-        "tooltip": ""
-      },
       "stress": {
         "value": 0,
         "min": 0,
-        "max": 6,
+        "max": 3,
         "tooltip": ""
-      },
-      "threshold": {
-        "minor": 0,
-        "major": 0
-      },
-      "chosenDomains": {
-        "domain-one": "",
-        "domain-two": ""
       },
       "defenses": {
         "evasion": {
-          "value": 0,
+          "value": 10,
           "tooltip": "Your character's Evasion reflects how hard it is for adversaries to hit them."
-        },
-        "armor": {
-          "value": 0,
-          "tooltip": "When your character takes damage, you can mark one Armor Slot, then reduce the severity of the damage by one threshold."
-        },
-        "armor-slots": {
-          "value": 0,
-          "max": 6,
-          "tooltip": "Armorslots indicate the number of available slots for equipping armor, influencing your overall Armor Score."
-        },
-        "severe": {
-          "value": 0
-        },
-        "major": {
-          "value": 0
-        },
-        "minor": {
-          "value": 0
         }
       },
-      "attributes": {},
-      "groups": {},
+      "experience": {
+        "1Name": "",
+        "1level": 1,
+        "1Mod": 2,
+        "1Name2": "",
+        "11level": 1,
+        "1Mod2": 2,
+        "2Name": "",
+        "2level": 2,
+        "2Mod": 0,
+        "5Name": "",
+        "5level": 5,
+        "5Mod": 0,
+        "8Name": "",
+        "8level": 8,
+        "8Mod": 0
+      },
       "weapon-main": {
         "name": "",
-        "description": "Range | 1H | Trait",
-        "damage": "",
+        "description": "Input your weapon abilities, description, passive and other relevant notes here.",
+        "damage": "d6",
         "to-hit": "",
-        "range": "",
+        "range": "melee",
         "modifier": "",
-        "dmgType": ""
+        "dmgType": "physical"
       },
       "resourceTrackers": []
     }
