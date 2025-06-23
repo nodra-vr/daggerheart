@@ -273,6 +273,11 @@ export class DaggerheartDialogHelper {
                 }
               }
             });
+            
+            // Wait for Dice So Nice! animation to complete
+            if (avoidMessage?.id && game.daggerheart?.rollHandler?._waitFor3dDice) {
+              await game.daggerheart.rollHandler._waitFor3dDice(avoidMessage.id);
+            }
           } catch (error) {
             console.error("Error creating death move avoid roll chat message:", error);
             ui.notifications.warn("Chat message failed to send, but roll was completed.");
@@ -359,6 +364,11 @@ export class DaggerheartDialogHelper {
                   }
                 }
               });
+              
+              // Wait for Dice So Nice! animation to complete
+              if (criticalMessage?.id && game.daggerheart?.rollHandler?._waitFor3dDice) {
+                await game.daggerheart.rollHandler._waitFor3dDice(criticalMessage.id);
+              }
             } catch (error) {
               console.error("Error creating death move critical chat message:", error);
               ui.notifications.warn("Chat message failed to send, but roll was completed.");
@@ -397,6 +407,11 @@ export class DaggerheartDialogHelper {
                   }
                 }
               });
+              
+              // Wait for Dice So Nice! animation to complete
+              if (hopeMessage?.id && game.daggerheart?.rollHandler?._waitFor3dDice) {
+                await game.daggerheart.rollHandler._waitFor3dDice(hopeMessage.id);
+              }
             } catch (error) {
               console.error("Error creating death move hope chat message:", error);
               ui.notifications.warn("Chat message failed to send, but roll was completed.");
@@ -480,6 +495,11 @@ export class DaggerheartDialogHelper {
                   }
                 }
               });
+              
+              // Wait for Dice So Nice! animation to complete
+              if (deathMessage?.id && game.daggerheart?.rollHandler?._waitFor3dDice) {
+                await game.daggerheart.rollHandler._waitFor3dDice(deathMessage.id);
+              }
             } catch (error) {
               console.error("Error creating death move death chat message:", error);
               ui.notifications.warn("Chat message failed to send, but roll was completed.");

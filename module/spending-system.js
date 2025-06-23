@@ -296,25 +296,30 @@ ChatMessage.create({
   if ( !data.roll || !data.label ) return false;
   const command = `const roll = new Roll("${data.roll}", actor ? actor.getRollData() : {});
   await roll.evaluate();
-  try {
-    await ChatMessage.create({
-      content: \`
-        <div class="dice-roll">
-          <div class="dice-result">
-            <div class="dice-formula">\${roll.formula}</div>
-            <div class="dice-total">\${roll.total}</div>
+      try {
+      const chatMessage = await ChatMessage.create({
+        content: \`
+          <div class="dice-roll">
+            <div class="dice-result">
+              <div class="dice-formula">\${roll.formula}</div>
+              <div class="dice-total">\${roll.total}</div>
+            </div>
           </div>
-        </div>
-      \`,
-      speaker,
-      flavor: "${data.label}",
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      rolls: [roll]
-    });
-  } catch (error) {
-    console.error("Error creating macro roll chat message:", error);
-    ui.notifications.warn("Chat message failed to send, but roll was completed.");
-  }`;
+        \`,
+        speaker,
+        flavor: "${data.label}",
+        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+        rolls: [roll]
+      });
+      
+      // Wait for Dice So Nice! animation to complete
+      if (chatMessage?.id && game.dice3d) {
+        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      }
+    } catch (error) {
+      console.error("Error creating macro roll chat message:", error);
+      ui.notifications.warn("Chat message failed to send, but roll was completed.");
+    }`;
   let macro = game.macros.find(m => (m.name === data.label) && (m.command === command));
   if (!macro) {
     macro = await Macro.create({

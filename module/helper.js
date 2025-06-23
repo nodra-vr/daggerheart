@@ -197,21 +197,31 @@ export class EntitySheetHelper {
       // roll & message
       let r = new Roll(formula, rollData);
       try {
-        return ChatMessage.create({
-          content: `
-            <div class="dice-roll">
-              <div class="dice-result">
-                <div class="dice-formula">${r.formula}</div>
-                <div class="dice-total">${r.total}</div>
+        return (async () => {
+          await r.evaluate();
+          const chatMessage = await ChatMessage.create({
+            content: `
+              <div class="dice-roll">
+                <div class="dice-result">
+                  <div class="dice-formula">${r.formula}</div>
+                  <div class="dice-total">${r.total}</div>
+                </div>
               </div>
-            </div>
-          `,
-          user: game.user.id,
-          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-          flavor: `${chatLabel}`,
-          type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-          rolls: [r]
-        });
+            `,
+            user: game.user.id,
+            speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+            flavor: `${chatLabel}`,
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+            rolls: [r]
+          });
+          
+          // Wait for Dice So Nice! animation to complete
+          if (chatMessage?.id && game.dice3d) {
+            await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+          }
+          
+          return chatMessage;
+        })();
       } catch (error) {
         console.error("Error creating attribute roll chat message:", error);
         ui.notifications.warn("Chat message failed to send, but roll was completed.");

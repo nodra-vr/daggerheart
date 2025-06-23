@@ -11,8 +11,8 @@ import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
 import { SheetTracker } from "./sheet-tracker.js";
 
-import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
-import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing } from './damage-application.js';
+import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice, registerDaggerheartDiceColorsets } from './rollHandler.js';
+import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
 
 /**
  @param {Actor|null} actor (optional if level is provided)
@@ -51,6 +51,9 @@ function _getTierOfPlay(actor = null, level = null) {
  */
 Hooks.once("init", async function() {
   console.log(`Initializing Simple Daggerheart System`);
+
+  // Register Dice So Nice! colorsets for all players
+  registerDaggerheartDiceColorsets();
 
   // CONFIG.statusEffects = [];
 
@@ -106,9 +109,12 @@ Hooks.once("init", async function() {
       applyHealing: applyHealing,
       rollDamage: rollDamage,
       rollHealing: rollHealing,
-      extractRollTotal: extractRollTotal
+      extractRollTotal: extractRollTotal,
+      undoDamageHealing: undoDamageHealing,
+      debugUndoData: debugUndoData
     },
-    getTierOfPlay: _getTierOfPlay
+    getTierOfPlay: _getTierOfPlay,
+    registerDaggerheartDiceColorsets: registerDaggerheartDiceColorsets
   };
 
   // Define custom Document classes
@@ -217,6 +223,14 @@ Hooks.once("init", async function() {
 });
 
 /**
+ * Ready hook - ensures dice colorsets are registered after all modules load
+ */
+Hooks.once("ready", async function() {
+  // Re-register dice colorsets to ensure they're available after all modules load
+  registerDaggerheartDiceColorsets();
+});
+
+/**
  * Macrobar hook.
  */
 Hooks.on("hotbarDrop", (bar, data, slot) => {
@@ -311,14 +325,33 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.damageApplication.rollHealing(formula, options);
   };
   
+  window.undoDamageHealing = async function(undoId) {
+    if (!game.daggerheart?.damageApplication?.undoDamageHealing) {
+      console.error("Undo functionality not initialized");
+      ui.notifications.error("Undo functionality not available");
+      return false;
+    }
+    return await game.daggerheart.damageApplication.undoDamageHealing(undoId);
+  };
+  
+  window.debugUndoData = function(undoId) {
+    if (!game.daggerheart?.damageApplication?.debugUndoData) {
+      console.error("Debug functionality not initialized");
+      return;
+    }
+    return game.daggerheart.damageApplication.debugUndoData(undoId);
+  };
+  
   // Also add to the game.daggerheart object for consistency
   game.daggerheart.applyDamage = window.applyDamage;
   game.daggerheart.applyHealing = window.applyHealing;
   game.daggerheart.rollDamage = window.rollDamage;
   game.daggerheart.rollHealing = window.rollHealing;
+  game.daggerheart.undoDamageHealing = window.undoDamageHealing;
+  game.daggerheart.debugUndoData = window.debugUndoData;
   
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), and rollHealing() functions are now available globally.");
+  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), and debugUndoData() functions are now available globally.");
   
   // Create demo macros if they don't exist (optional - for testing)
   if (game.user.isGM) {
@@ -443,6 +476,11 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   // Add damage/healing application buttons to healing rolls
   if (rollType === "healing") {
     _addHealingApplicationButtons(message, html, flags);
+  }
+  
+  // Add undo button handlers for damage/healing applied messages
+  if (flags.messageType === "damageApplied" || flags.messageType === "healingApplied") {
+    _addUndoButtonHandlers(html, flags);
   }
 });
 
@@ -847,8 +885,6 @@ function _addHealingApplicationButtons(message, html, flags) {
   });
 }
 
-
-
 /**
  * Handle clicks on damage/healing application buttons
  */
@@ -865,18 +901,16 @@ async function _handleDamageApplicationButton(event, type) {
   const sourceActor = sourceActorId ? game.actors.get(sourceActorId) : null;
   
   try {
-    let success = false;
+    let result = { success: false, undoId: null };
     if (type === "damage") {
-      success = await applyDamage(null, amount, sourceActor);
+      result = await applyDamage(null, amount, sourceActor);
     } else if (type === "healing") {
-      success = await applyHealing(null, amount, sourceActor);
+      result = await applyHealing(null, amount, sourceActor);
     }
     
-    if (success) {
-      // Optionally disable the button after successful application
-      button.disabled = true;
-      button.style.opacity = "0.5";
-      button.innerHTML = `<i class="fas fa-check"></i> Applied`;
+    // Note: No longer disabling buttons after use to allow multiple applications
+    if (!result.success) {
+      console.warn(`Failed to apply ${type}`);
     }
   } catch (error) {
     console.error(`Error applying ${type}:`, error);
@@ -1181,3 +1215,44 @@ Hooks.on("getItemDirectoryEntryContext", (html, options) => {
     }
   });
 });
+
+/**
+ * Add undo button click handlers to damage/healing applied messages
+ */
+function _addUndoButtonHandlers(html, flags) {
+  html.find(".undo-damage-button, .undo-healing-button").click(async (event) => {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const undoId = button.dataset.undoId;
+    
+    if (!undoId) {
+      ui.notifications.error("Undo ID not found.");
+      return;
+    }
+    
+    try {
+      // Disable button during processing
+      button.disabled = true;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Undoing...';
+      
+      const success = await undoDamageHealing(undoId);
+      
+      if (success) {
+        // Replace button with confirmation
+        button.innerHTML = '<i class="fas fa-check"></i> Undone';
+        button.style.opacity = "0.6";
+      } else {
+        // Re-enable button on failure
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-undo"></i> Undo';
+      }
+    } catch (error) {
+      console.error("Error during undo:", error);
+      ui.notifications.error("Error during undo. Check console for details.");
+      
+      // Re-enable button on error
+      button.disabled = false;
+      button.innerHTML = '<i class="fas fa-undo"></i> Undo';
+    }
+  });
+}
