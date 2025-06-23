@@ -1,17 +1,11 @@
 <form class="flexcol {{cssClass}} item-sheet-card" autocomplete="off" style="position: relative;">
     
-    {{!-- Card-style header with image --}}
-    <div class="item-card-header">
-        <div class="card-image-container" style="background-image: url('{{data.img}}');">
-            <div class="card-header-text">
-                <h1 class="item-title">
-                    <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
-                </h1>
-            </div>
-            {{!-- Image upload area --}}
-            <div class="image-upload-area">
-                <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
-            </div>
+    <div class="image-title-container">
+        <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
+        <div class="card-header-text">
+            <h1 class="item-title">
+                <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
+            </h1>
         </div>
     </div>
     
