@@ -290,11 +290,12 @@
 .daggerheart.sheet.item .window-content {
   background: transparent;
   padding: 0;
-  overflow: hidden;
+  overflow: visible !important;
+  position: relative;
 }
 
 .daggerheart.sheet.item {
-  overflow: hidden;
+  overflow: visible !important;
 }
 
 .daggerheart.sheet.item .window-header {

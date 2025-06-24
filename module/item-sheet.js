@@ -1,5 +1,6 @@
 import { EntitySheetHelper } from "./helper.js";
 import {ATTRIBUTE_TYPES} from "./constants.js";
+import { SheetTracker } from "./sheet-tracker.js";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
@@ -110,5 +111,58 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
     formData = EntitySheetHelper.updateAttributes(formData, this.object);
     formData = EntitySheetHelper.updateGroups(formData, this.object);
     return formData;
+  }
+
+  /* -------------------------------------------- */
+
+  /** @override */
+  async _render(force, options) {
+    await super._render(force, options);
+
+    // Initialize sheet tracker after the sheet is rendered
+    // Only initialize once per sheet instance
+    if (this.rendered && this.element && !this.sheetTracker) {
+      await this._initializeSheetTracker();
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Initialize the sheet tracker system for this item sheet
+   */
+  async _initializeSheetTracker() {
+    // Clean up any existing tracker first
+    if (this.sheetTracker) {
+      this.sheetTracker.destroy();
+      this.sheetTracker = null;
+    }
+
+    // Remove any existing sheet tracker sidebars from the DOM
+    this.element.find('.sheet-tracker-sidebar').remove();
+
+    // Create new sheet tracker instance
+    // Note: SheetTracker expects an actor, but we're adapting it for items
+    // We'll create a mock actor-like object that has the item as its "actor"
+    const mockActorSheet = {
+      actor: this.object, // Use the item as the "actor"
+      element: this.element
+    };
+
+    this.sheetTracker = new SheetTracker(mockActorSheet);
+    await this.sheetTracker.initialize();
+  }
+
+  /* -------------------------------------------- */
+
+  /** @override */
+  async close(options) {
+    // Clean up sheet tracker when closing
+    if (this.sheetTracker) {
+      this.sheetTracker.destroy();
+      this.sheetTracker = null;
+    }
+
+    return super.close(options);
   }
 }

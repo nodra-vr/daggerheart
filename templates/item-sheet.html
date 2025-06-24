@@ -1,5 +1,4 @@
-<form class="flexcol {{cssClass}} item-sheet-card" autocomplete="off" style="position: relative;">
-    
+<form class="flexcol {{cssClass}} item-sheet-card" autocomplete="off" style="position: relative; overflow: visible;">
     <div class="image-title-container">
         <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
         <div class="card-header-text">
@@ -8,7 +7,7 @@
             </h1>
         </div>
     </div>
-    
+
     {{!-- Card content area --}}
     <div class="item-card-content">
         {{!-- Category and rarity section --}}
@@ -19,7 +18,7 @@
                 <input type="text" name="system.rarity" value="{{systemData.rarity}}" placeholder="{{localize "DH.Rarity"}}" class="rarity-input"/>
             </div>
         </div>
-        
+
         {{!-- Description section --}}
         <div class="card-description">
             <div class="description-editor">

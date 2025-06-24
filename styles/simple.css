@@ -4637,11 +4637,13 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 }
 
 /* Sheet Tracker Styles */
-/* Ensure the Daggerheart actor sheet has proper positioning and overflow handling */
-.daggerheart.sheet.actor {
+/* Ensure the Daggerheart actor and item sheets have proper positioning and overflow handling */
+.daggerheart.sheet.actor,
+.daggerheart.sheet.item {
   overflow: visible !important;
 }
-.daggerheart.sheet.actor .window-content {
+.daggerheart.sheet.actor .window-content,
+.daggerheart.sheet.item .window-content {
   position: relative;
   overflow: visible !important;
   max-height: 97%;
@@ -5362,11 +5364,12 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 .daggerheart.sheet.item .window-content {
   background: transparent;
   padding: 0;
-  overflow: hidden;
+  overflow: visible !important;
+  position: relative;
 }
 
 .daggerheart.sheet.item {
-  overflow: hidden;
+  overflow: visible !important;
 }
 
 .daggerheart.sheet.item .window-header {

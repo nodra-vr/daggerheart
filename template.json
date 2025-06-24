@@ -280,7 +280,8 @@
       "quantity": 1,
       "weight": 0,
       "attributes": {},
-      "groups": {}
+      "groups": {},
+      "resourceTrackers": []
     },
     "inventory": {
       "description": "",
@@ -289,7 +290,8 @@
       "quantity": 1,
       "weight": 0,
       "attributes": {},
-      "groups": {}
+      "groups": {},
+      "resourceTrackers": []
     },
     "domain": {
       "description": "",
@@ -298,7 +300,8 @@
       "quantity": 1,
       "weight": 0,
       "attributes": {},
-      "groups": {}
+      "groups": {},
+      "resourceTrackers": []
     },
     "worn": {
       "description": "",
@@ -307,7 +310,8 @@
       "quantity": 1,
       "weight": 0,
       "attributes": {},
-      "groups": {}
+      "groups": {},
+      "resourceTrackers": []
     },
     "vault": {
       "description": "",
@@ -316,7 +320,8 @@
       "quantity": 1,
       "weight": 0,
       "attributes": {},
-      "groups": {}
+      "groups": {},
+      "resourceTrackers": []
     },
     "ancestry": {
       "description": "",
@@ -325,7 +330,8 @@
       "quantity": 1,
       "weight": 0,
       "attributes": {},
-      "groups": {}
+      "groups": {},
+      "resourceTrackers": []
     },
     "community": {
       "description": "",
@@ -334,7 +340,8 @@
       "quantity": 1,
       "weight": 0,
       "attributes": {},
-      "groups": {}
+      "groups": {},
+      "resourceTrackers": []
     },
     "class": {
       "description": "",
@@ -343,7 +350,8 @@
       "quantity": 1,
       "weight": 0,
       "attributes": {},
-      "groups": {}
+      "groups": {},
+      "resourceTrackers": []
     },
     "subclass": {
       "description": "",
@@ -352,7 +360,8 @@
       "quantity": 1,
       "weight": 0,
       "attributes": {},
-      "groups": {}
+      "groups": {},
+      "resourceTrackers": []
     }
   }
 }
