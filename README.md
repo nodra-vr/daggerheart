@@ -23,7 +23,6 @@ Install the system using this manifest link: `https://raw.githubusercontent.com/
 | `@ins` | Instinct modifier | `[[/roll 2d12 + @ins]]` |
 | `@pre` | Presence modifier | `[[/roll 2d12 + @pre]]` |
 | `@kno` | Knowledge modifier | `[[/roll 2d12 + @kno]]` |
-| `@exp` | Experience modifier | `[[/roll 2d12 + @exp]]` |
 
 ### Hit Points and Resources
 
