@@ -1,7 +1,8 @@
 /* Sheet Tracker Styles */
 
-/* Ensure the Daggerheart actor and item sheets have proper positioning and overflow handling */
+/* Ensure the Daggerheart actor, npc, and item sheets have proper positioning and overflow handling */
 .daggerheart.sheet.actor,
+.daggerheart.sheet.npc,
 .daggerheart.sheet.item {
   overflow: visible !important;
 

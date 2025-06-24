@@ -4637,12 +4637,14 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 }
 
 /* Sheet Tracker Styles */
-/* Ensure the Daggerheart actor and item sheets have proper positioning and overflow handling */
+/* Ensure the Daggerheart actor, npc, and item sheets have proper positioning and overflow handling */
 .daggerheart.sheet.actor,
+.daggerheart.sheet.npc,
 .daggerheart.sheet.item {
   overflow: visible !important;
 }
 .daggerheart.sheet.actor .window-content,
+.daggerheart.sheet.npc .window-content,
 .daggerheart.sheet.item .window-content {
   position: relative;
   overflow: visible !important;
