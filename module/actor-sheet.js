@@ -101,7 +101,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   /* -------------------------------------------- */
   
   /** @inheritdoc */
-  activateListeners(html) {
+  async activateListeners(html) {
     super.activateListeners(html);
     
     // Initialize Sheet Tracker
@@ -111,10 +111,15 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     // Always initialize on re-render to recreate the DOM
     this.sheetTracker.initialize();
     
-    // Restore vault state on re-render
+    // Disable all transitions during initialization to prevent unwanted animations
+    this._disableTransitions();
+
+    // Load and restore persistent vault state
+    await this._loadVaultState();
+
     const vaultList = html.find('.item-list[data-item-type="vault"]');
     const icon = html.find('.vault-toggle i');
-    
+
     if (this._vaultOpen) {
       vaultList.removeClass('vault-collapsed');
       icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
@@ -122,18 +127,16 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       vaultList.addClass('vault-collapsed');
       icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
     }
-    
-    // Restore category states on re-render
-    if (!this._categoryStates) {
-      this._categoryStates = {};
-    }
-    
+
+    // Load and restore persistent category states
+    await this._loadCategoryStates();
+
     const categories = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack'];
     categories.forEach(category => {
       const categoryList = html.find(`.item-list[data-item-type="${this._getCategoryDataType(category)}"]`);
       const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
       const categoryHeader = html.find(`.category-toggle[data-category="${category}"]`).closest('.tab-category');
-      
+
       if (this._categoryStates[category]) {
         categoryList.removeClass('category-collapsed');
         categoryHeader.removeClass('section-collapsed');
@@ -144,7 +147,13 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
         categoryIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
       }
     });
-    
+
+    // Initialize dynamic spacing for all categories (without transitions)
+    this._updateDynamicSpacing(false);
+
+    // Re-enable transitions after initialization is complete
+    this._enableTransitions();
+
     // Mark empty item lists
     this._markEmptyItemLists(html);
     
@@ -1958,6 +1967,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
         this._vaultOpen = false;
     }
+
+    // Save the updated vault state persistently
+    await this._saveVaultState();
   }
 
   async _onToggleCategory(event) {
@@ -1977,14 +1989,164 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         // Expanding
         categoryList.removeClass('category-collapsed');
         categoryHeader.removeClass('section-collapsed');
+        // Add dynamic spacing class for expanded state
+        categoryHeader.addClass('section-expanded');
         icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
         this._categoryStates[category] = true;
+
+        // Apply dynamic spacing to all collapsed sections (with transitions)
+        this._updateDynamicSpacing(true);
     } else {
         // Collapsing
         categoryList.addClass('category-collapsed');
         categoryHeader.addClass('section-collapsed');
+        // Remove expanded class
+        categoryHeader.removeClass('section-expanded');
         icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
         this._categoryStates[category] = false;
+
+        // Apply dynamic spacing to all collapsed sections (with transitions)
+        this._updateDynamicSpacing(true);
+    }
+
+    // Save the updated state persistently
+    await this._saveCategoryStates();
+  }
+
+  /**
+   * Update dynamic spacing for all category sections based on their collapsed/expanded states
+   * @param {boolean} enableTransitions - Whether to enable CSS transitions during this update
+   * @private
+   */
+  _updateDynamicSpacing(enableTransitions = true) {
+    const allCategoryHeaders = this.element.find('.tab-category');
+    const sheetElement = this.element;
+
+    // Control transitions based on the parameter
+    if (enableTransitions) {
+      sheetElement.addClass('transitions-enabled');
+    } else {
+      sheetElement.removeClass('transitions-enabled');
+    }
+
+    allCategoryHeaders.each((index, header) => {
+      const $header = $(header);
+      const isCollapsed = $header.hasClass('section-collapsed');
+
+      if (isCollapsed) {
+        // Apply minimal spacing for collapsed sections
+        $header.addClass('dynamic-collapsed');
+        $header.removeClass('dynamic-expanded');
+      } else {
+        // Apply normal spacing for expanded sections
+        $header.addClass('dynamic-expanded');
+        $header.removeClass('dynamic-collapsed');
+      }
+    });
+
+    // If transitions were disabled for initialization, re-enable them after a brief delay
+    // to allow for future user interactions
+    if (!enableTransitions) {
+      setTimeout(() => {
+        if (this.element) {
+          this.element.addClass('transitions-enabled');
+        }
+      }, 100);
+    }
+  }
+
+  /**
+   * Load persistent category states from actor flags
+   * @private
+   */
+  async _loadCategoryStates() {
+    if (!this.actor) return;
+
+    // Get saved states from actor flags
+    const savedStates = this.actor.getFlag('daggerheart', 'categoryStates') || {};
+
+    // Initialize _categoryStates with saved values or defaults
+    this._categoryStates = {
+      'class': savedStates.class ?? false,
+      'subclass': savedStates.subclass ?? false,
+      'ancestry': savedStates.ancestry ?? false,
+      'community': savedStates.community ?? false,
+      'abilities': savedStates.abilities ?? false,
+      'worn': savedStates.worn ?? false,
+      'backpack': savedStates.backpack ?? false
+    };
+
+    console.log(`Loaded category states for ${this.actor.name}:`, this._categoryStates);
+  }
+
+  /**
+   * Save persistent category states to actor flags
+   * @private
+   */
+  async _saveCategoryStates() {
+    if (!this.actor || !this._categoryStates) return;
+
+    try {
+      await this.actor.setFlag('daggerheart', 'categoryStates', this._categoryStates);
+      console.log(`Saved category states for ${this.actor.name}:`, this._categoryStates);
+    } catch (error) {
+      console.error('Failed to save category states:', error);
+    }
+  }
+
+  /**
+   * Load persistent vault state from actor flags
+   * @private
+   */
+  async _loadVaultState() {
+    if (!this.actor) return;
+
+    // Get saved vault state from actor flags, default to false (collapsed)
+    this._vaultOpen = this.actor.getFlag('daggerheart', 'vaultOpen') ?? false;
+
+    console.log(`Loaded vault state for ${this.actor.name}:`, this._vaultOpen);
+  }
+
+  /**
+   * Save persistent vault state to actor flags
+   * @private
+   */
+  async _saveVaultState() {
+    if (!this.actor) return;
+
+    try {
+      await this.actor.setFlag('daggerheart', 'vaultOpen', this._vaultOpen);
+      console.log(`Saved vault state for ${this.actor.name}:`, this._vaultOpen);
+    } catch (error) {
+      console.error('Failed to save vault state:', error);
+    }
+  }
+
+  /**
+   * Disable CSS transitions to prevent unwanted animations during initialization
+   * @private
+   */
+  _disableTransitions() {
+    if (this.element) {
+      this.element.removeClass('transitions-enabled');
+      // Also add a temporary class to completely disable transitions
+      this.element.addClass('no-transitions');
+    }
+  }
+
+  /**
+   * Enable CSS transitions for smooth user-initiated animations
+   * @private
+   */
+  _enableTransitions() {
+    if (this.element) {
+      // Use a small delay to ensure DOM updates are complete
+      setTimeout(() => {
+        if (this.element) {
+          this.element.removeClass('no-transitions');
+          this.element.addClass('transitions-enabled');
+        }
+      }, 50);
     }
   }
 

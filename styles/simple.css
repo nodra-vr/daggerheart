@@ -727,13 +727,42 @@
   border: none;
 }
 
-/* Reduce tab-category spacing when associated section is collapsed */
-.daggerheart .tab-category.section-collapsed {
-  margin-bottom: 0.25em;
+/* Dynamic spacing system for collapsed/expanded sections */
+.daggerheart .tab-category {
+  /* Only apply transitions when explicitly enabled for user interactions */
 }
 
-/* Ensure normal spacing when expanded (default state) */
-.daggerheart .tab-category:not(.section-collapsed) {
+/* Completely disable all transitions during initialization */
+.daggerheart.no-transitions .tab-category,
+.daggerheart.no-transitions .item-list {
+  transition: none !important;
+}
+
+/* Enable transitions only when the sheet allows them (user-initiated toggles) */
+.daggerheart.transitions-enabled .tab-category {
+  transition: margin 0.3s ease-in-out;
+}
+
+/* Minimal spacing for collapsed sections */
+.daggerheart .tab-category.dynamic-collapsed {
+  margin-top: 0.05em;
+  margin-bottom: 0.05em;
+}
+
+/* Normal spacing for expanded sections */
+.daggerheart .tab-category.dynamic-expanded {
+  margin-top: 0.5rem;
+  margin-bottom: 0.75em;
+}
+
+/* Fallback: Reduce tab-category spacing when associated section is collapsed (backwards compatibility) */
+.daggerheart .tab-category.section-collapsed:not(.dynamic-collapsed):not(.dynamic-expanded) {
+  margin-bottom: 0.1em;
+  margin-top: 0.1em;
+}
+
+/* Fallback: Ensure normal spacing when expanded (backwards compatibility) */
+.daggerheart .tab-category:not(.section-collapsed):not(.dynamic-collapsed):not(.dynamic-expanded) {
   margin-bottom: 0.75em;
 }
 
@@ -3797,7 +3826,7 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   font-size: var(--font-size-14);
   font-weight: 100;
   text-transform: capitalize;
-  margin: 0.3rem 0em;
+  margin: 0.5rem 0em;
   justify-content: space-between;
   align-items: center;
   text-shadow: none;
@@ -8525,18 +8554,7 @@ body.game .app a.content-link i,
   margin-bottom: 1.5em;
 }
 
-.tab-category {
-  display: flex;
-  border-bottom: 1px solid var(--dh-color-gold-dark);
-  font-size: var(--font-size-14);
-  font-weight: 100;
-  text-transform: capitalize;
-  margin: 1.25rem 0em;
-  justify-content: space-between;
-  align-items: center;
-  text-shadow: none;
-}
-
+/* Removed duplicate .tab-category rule that was conflicting with dynamic spacing system */
 .editor-content * {
   -webkit-user-select: text;
   -moz-user-select: text;
