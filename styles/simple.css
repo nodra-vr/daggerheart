@@ -1857,8 +1857,8 @@ input.trait-effects.resize-ta {
   justify-content: center;
 }
 
-.threshold-group input[name="system.threshold.minor"],
-.threshold-group input[name="system.threshold.major"] {
+.threshold-group input[name="system.threshold.major"],
+.threshold-group input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
   background-size: contain;
   border: none;
@@ -1878,8 +1878,8 @@ input.trait-effects.resize-ta {
   color: #6c6a85;
 }
 
-.armorslots input[name="system.threshold.minor"],
-.armorslots input[name="system.threshold.major"] {
+.armorslots input[name="system.threshold.major"],
+.armorslots input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
   background-size: contain;
   border: none;
@@ -2761,28 +2761,28 @@ input.trait-effects.resize-ta {
 .damage-application-message .damage-warning i {
   color: #ff6b6b;
 }
-.damage-application-message.damage-light {
+.damage-application-message.damage-minor {
   border-color: #f3c267;
 }
-.damage-application-message.damage-light h3 {
+.damage-application-message.damage-minor h3 {
   color: #f3c267;
 }
-.damage-application-message.damage-minor {
+.damage-application-message.damage-major {
   border-color: #ff8c00;
 }
-.damage-application-message.damage-minor h3 {
+.damage-application-message.damage-major h3 {
   color: #ff8c00;
 }
-.damage-application-message.damage-minor .damage-details {
+.damage-application-message.damage-major .damage-details {
   border-left-color: #ff8c00;
 }
-.damage-application-message.damage-major {
+.damage-application-message.damage-severe {
   border-color: #ff6b6b;
 }
-.damage-application-message.damage-major h3 {
+.damage-application-message.damage-severe h3 {
   color: #ff6b6b;
 }
-.damage-application-message.damage-major .damage-details {
+.damage-application-message.damage-severe .damage-details {
   border-left-color: #ff6b6b;
 }
 
@@ -7068,7 +7068,7 @@ input.trait-effects.resize-ta {
 .threshold-group .trait-effects {
   color: #6c6a85;
 }
-.threshold-group input[name="system.threshold.minor"], .threshold-group input[name="system.threshold.major"] {
+.threshold-group input[name="system.threshold.major"], .threshold-group input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
   background-size: contain;
   border: none;
