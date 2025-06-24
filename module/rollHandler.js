@@ -1,86 +1,41 @@
 import { DaggerheartDialogHelper } from './dialog-helper.js';
 
+// Initialize default colorsets only - no custom dice settings
+
 Hooks.on("diceSoNiceRollStart", (messageId, context) => {
   if (!game.dice3d) return;
   
   const message = game.messages.get(messageId);
   if (!message?.flags?.daggerheart) return;
   
-  // Get the actor who made the roll to use their custom colorsets
-  const speaker = message.speaker;
-  const actorId = speaker?.actor;
-  const userId = message.user?.id;
-  
-  // Apply the roller's custom colorsets to all clients
-  _ensureDaggerheartColorsets(userId, actorId);
+  // Ensure default Daggerheart colorsets are available for all players
+  _ensureDaggerheartColorsets();
 });
 
-// Function to ensure Daggerheart colorsets are available, using custom styles if the roller has them
-function _ensureDaggerheartColorsets(rollerId = null, actorId = null) {
+// Function to ensure Daggerheart colorsets are available
+export function _ensureDaggerheartColorsets() {
   if (!game.dice3d) return;
-  
-  // Get custom colorsets from the roller's settings
-  const customColorsets = _getCustomColorsets(rollerId);
   
   // Check if colorsets already exist to avoid duplicates
   const existingColorsets = game.dice3d.DiceColors?.getColorsets?.() || {};
   
-  // Hope Die - use custom if available, otherwise default
-  const hopeColorset = customColorsets.hope || _getDefaultHopeColorset();
-  if (!existingColorsets["Hope"] || customColorsets.hope) {
-    game.dice3d.addColorset(hopeColorset);
+  // Hope Die - always use default
+  if (!existingColorsets["Hope"]) {
+    game.dice3d.addColorset(_getDefaultHopeColorset());
   }
   
-  // Fear Die - use custom if available, otherwise default  
-  const fearColorset = customColorsets.fear || _getDefaultFearColorset();
-  if (!existingColorsets["Fear"] || customColorsets.fear) {
-    game.dice3d.addColorset(fearColorset);
+  // Fear Die - always use default
+  if (!existingColorsets["Fear"]) {
+    game.dice3d.addColorset(_getDefaultFearColorset());
   }
   
-  // Modifier Die - use custom if available, otherwise default
-  const modifierColorset = customColorsets.modifier || _getDefaultModifierColorset();
-  if (!existingColorsets["Modifier"] || customColorsets.modifier) {
-    game.dice3d.addColorset(modifierColorset);
+  // Modifier Die - always use default
+  if (!existingColorsets["Modifier"]) {
+    game.dice3d.addColorset(_getDefaultModifierColorset());
   }
 }
 
-// Get custom colorsets from a specific user's settings
-function _getCustomColorsets(userId = null) {
-  const customColorsets = { hope: null, fear: null, modifier: null };
-  
-  if (!userId) return customColorsets;
-  
-  try {
-    // Get the user's custom settings
-    const user = game.users.get(userId);
-    if (!user) return customColorsets;
-    
-    // Parse Hope die setting
-    const hopeSettings = user.getFlag("daggerheart", "customHopeDie") || 
-                        (userId === game.user.id ? game.settings.get("daggerheart", "customHopeDie") : "");
-    if (hopeSettings) {
-      customColorsets.hope = JSON.parse(hopeSettings);
-    }
-    
-    // Parse Fear die setting  
-    const fearSettings = user.getFlag("daggerheart", "customFearDie") ||
-                        (userId === game.user.id ? game.settings.get("daggerheart", "customFearDie") : "");
-    if (fearSettings) {
-      customColorsets.fear = JSON.parse(fearSettings);
-    }
-    
-    // Parse Modifier die setting
-    const modifierSettings = user.getFlag("daggerheart", "customModifierDie") ||
-                            (userId === game.user.id ? game.settings.get("daggerheart", "customModifierDie") : "");
-    if (modifierSettings) {
-      customColorsets.modifier = JSON.parse(modifierSettings);
-    }
-  } catch (error) {
-    console.warn("Daggerheart | Error parsing custom colorsets for user:", userId, error);
-  }
-  
-  return customColorsets;
-}
+
 
 // Default colorset definitions
 function _getDefaultHopeColorset() {
@@ -128,24 +83,7 @@ function _getDefaultModifierColorset() {
   };
 }
 
-// Test helper function for debugging custom colorsets
-window.testCustomDice = async function() {
-  const testFearColorset = {
-    name: "Fear",
-    category: "Fear Die",
-    description: "Fear",
-    texture: "fire",
-    foreground: "#1d2e2e",
-    background: "#2f2f1e",
-    outline: "#b30012",
-    edge: "#800013",
-    material: "metal",
-    font: "Modesto Condensed"
-  };
-  
-  await game.settings.set("daggerheart", "customFearDie", JSON.stringify(testFearColorset));
-  console.log("Test custom Fear die set. Roll dice to see effect.");
-};
+
 
 export async function _rollHope(options = {}) {
   // Ensure colorsets are available for this roll
@@ -217,7 +155,7 @@ export async function _rollHope(options = {}) {
 }
 
 export async function _rollFear(options = {}) {
-  // Ensure colorsets are available for this rollv
+  // Ensure colorsets are available for this roll
   _ensureDaggerheartColorsets();
   
   const defaults = {

@@ -234,33 +234,7 @@ Hooks.once("init", async function() {
     onChange: formula => _simpleUpdateInit(formula, true)
   });
 
-  // Custom dice colorset settings
-  game.settings.register("daggerheart", "customHopeDie", {
-    name: "Custom Hope Die Style",
-    hint: "Paste your custom Hope die colorset configuration here (JSON format). Leave empty for default style.",
-    scope: "client",
-    type: String,
-    default: "",
-    config: true
-  });
-  
-  game.settings.register("daggerheart", "customFearDie", {
-    name: "Custom Fear Die Style", 
-    hint: "Paste your custom Fear die colorset configuration here (JSON format). Leave empty for default style.",
-    scope: "client",
-    type: String,
-    default: "",
-    config: true
-  });
-  
-  game.settings.register("daggerheart", "customModifierDie", {
-    name: "Custom Modifier Die Style",
-    hint: "Paste your custom Modifier die colorset configuration here (JSON format). Leave empty for default style.", 
-    scope: "client",
-    type: String,
-    default: "",
-    config: true
-  });
+
 
   // init formula
   const initFormula = game.settings.get("daggerheart", "initFormula");
@@ -291,49 +265,13 @@ Hooks.once("init", async function() {
   await preloadHandlebarsTemplates();
 });
 
-// Function to sync current user's custom colorset settings to flags for other players to access
-async function _syncCustomColorsetsToFlags() {
-  const user = game.user;
-  
-  try {
-    // Sync each colorset setting to user flags
-    const hopeSettings = game.settings.get("daggerheart", "customHopeDie");
-    if (hopeSettings) {
-      await user.setFlag("daggerheart", "customHopeDie", hopeSettings);
-    } else {
-      await user.unsetFlag("daggerheart", "customHopeDie");
-    }
-    
-    const fearSettings = game.settings.get("daggerheart", "customFearDie");
-    if (fearSettings) {
-      await user.setFlag("daggerheart", "customFearDie", fearSettings);
-    } else {
-      await user.unsetFlag("daggerheart", "customFearDie");
-    }
-    
-    const modifierSettings = game.settings.get("daggerheart", "customModifierDie");
-    if (modifierSettings) {
-      await user.setFlag("daggerheart", "customModifierDie", modifierSettings);
-    } else {
-      await user.unsetFlag("daggerheart", "customModifierDie");
-    }
-  } catch (error) {
-    console.warn("Daggerheart | Error syncing custom colorsets to flags:", error);
-  }
-}
 
-// Auto-sync settings to flags when they change
-Hooks.on('updateSetting', (setting, value) => {
-  if (setting.key?.startsWith('daggerheart.custom') && setting.key?.endsWith('Die')) {
-    _syncCustomColorsetsToFlags();
-  }
-});
 
-// Test helper for debugging flag sync
-window.testFlagSync = function() {
-  _syncCustomColorsetsToFlags();
-  console.log("Flag sync triggered.");
-};
+
+
+
+
+
 
 /**
  * Macrobar hook.
@@ -466,9 +404,6 @@ Hooks.once("ready", async function() {
   if (game.user.isGM) {
     await _cleanupDuplicateMacros();
   }
-  
-  // Sync custom colorset settings to flags for other players to see
-  _syncCustomColorsetsToFlags();
 });
 
 /**
