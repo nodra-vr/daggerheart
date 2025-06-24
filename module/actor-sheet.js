@@ -2430,10 +2430,21 @@ export class NPCActorSheet extends SimpleActorSheet {
     
     // Initialize Sheet Tracker for NPCs
     if (!this.sheetTracker) {
+      console.log("Creating new SheetTracker for NPC:", this.actor.name);
       this.sheetTracker = new SheetTracker(this);
     }
     // Always initialize on re-render to recreate the DOM
-    this.sheetTracker.initialize();
+    console.log("Initializing SheetTracker for NPC:", this.actor.name);
+
+    // Add a small delay to ensure DOM is ready
+    setTimeout(async () => {
+      try {
+        await this.sheetTracker.initialize();
+        console.log("SheetTracker initialized successfully for NPC:", this.actor.name);
+      } catch (error) {
+        console.error("Error initializing SheetTracker for NPC:", this.actor.name, error);
+      }
+    }, 100);
     
     // Everything below here is only needed if the sheet is editable
     if ( !this.isEditable ) return;

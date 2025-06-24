@@ -310,7 +310,12 @@ export class SheetTracker {
   async render() {
     // Find the character sheet element
     const sheet = this.actorSheet.element;
-    if (!sheet || !sheet.length) return;
+    if (!sheet || !sheet.length) {
+      console.error("SheetTracker: No sheet element found");
+      return;
+    }
+
+    console.log("SheetTracker: Rendering for actor", this.actor.name, "sheet type:", this.actorSheet.constructor.name);
 
     // Save expansion state before removing
     const wasExpanded = this.isExpanded;
@@ -372,8 +377,18 @@ export class SheetTracker {
       </div>
     `;
 
+    // Find the window-content element
+    const windowContent = sheet.find('.window-content');
+    console.log("SheetTracker: Found window-content elements:", windowContent.length);
+
+    if (windowContent.length === 0) {
+      console.error("SheetTracker: No .window-content element found in sheet");
+      return;
+    }
+
     // Insert the sidebar into the sheet
-    sheet.find('.window-content').append(sidebarHtml);
+    windowContent.first().append(sidebarHtml);
+    console.log("SheetTracker: Sidebar HTML appended to sheet");
     
     // Store references
     this.sidebarElement = sheet.find('.sheet-tracker-sidebar');
