@@ -181,6 +181,40 @@ export class SimpleActor extends Actor {
       else data.tier = 1;
     }
 
+    // Add commonly used properties for inline rolls
+    // Proficiency - the main request from the issue
+    data.prof = Math.max(1, parseInt(data.proficiency?.value) || 1);
+    data.proficiency_value = data.prof; // Alternative syntax
+
+    // Level for easy access
+    data.lvl = Math.max(1, parseInt(data.level?.value) || 1);
+    data.level_value = data.lvl; // Alternative syntax
+
+    // Core attributes for inline rolls
+    data.agi = parseInt(data.agility?.value) || 0;
+    data.str = parseInt(data.strength?.value) || 0;
+    data.fin = parseInt(data.finesse?.value) || 0;
+    data.ins = parseInt(data.instinct?.value) || 0;
+    data.pre = parseInt(data.presence?.value) || 0;
+    data.kno = parseInt(data.knowledge?.value) || 0;
+    data.exp = parseInt(data.exp?.value) || 0;
+
+    // Health and stress values
+    data.hp = Math.max(0, parseInt(data.health?.value) || 0);
+    data.hp_max = Math.max(1, parseInt(data.health?.max) || 6);
+    data.stress_value = Math.max(0, parseInt(data.stress?.value) || 0);
+    data.stress_max = Math.max(1, parseInt(data.stress?.max) || 6);
+    data.hope_value = Math.max(0, parseInt(data.hope?.value) || 0);
+    data.hope_max = Math.max(1, parseInt(data.hope?.max) || 5);
+
+    // Defense values
+    data.evasion = Math.max(0, parseInt(data.defenses?.evasion?.value) || 10);
+    data.armor = Math.max(0, parseInt(data.defenses?.armor?.value) || 0);
+    data.armor_slots = Math.max(0, parseInt(data.defenses?.['armor-slots']?.value) || 0);
+    data.severe = Math.max(0, parseInt(data.defenses?.severe?.value) || 0);
+    data.major = Math.max(0, parseInt(data.defenses?.major?.value) || 0);
+    data.minor = Math.max(0, parseInt(data.defenses?.minor?.value) || 0);
+
     // Add tracker values for formula access
     if (data.resourceTrackers && Array.isArray(data.resourceTrackers)) {
       data.trackers = {};
