@@ -199,14 +199,14 @@
                         <div class="threshold-values">
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">{{localize "DH.Mark1HP"}}</span>
                             <div class="resource-group">
-                                <input type="number" name="system.threshold.minor"
-                                    value="{{systemData.threshold.minor}}" />
+                                <input type="number" name="system.threshold.major"
+                                    value="{{systemData.threshold.major}}" />
                                 <a class="trait-effects">{{localize "DH.Major"}}</a>
                             </div>
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">{{localize "DH.Mark2HP"}}</span>
                             <div class="resource-group">
-                                <input type="number" name="system.threshold.major"
-                                    value="{{systemData.threshold.major}}" />
+                                <input type="number" name="system.threshold.severe"
+                                    value="{{systemData.threshold.severe}}" />
                                 <a class="trait-effects">{{localize "DH.Severe"}}</a>
                             </div>
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">{{localize "DH.Mark3HP"}}</span>
@@ -592,7 +592,7 @@
             {{!-- Owned Items Tab --}}
             <div class="features">
                 <div class="tab-title">{{localize "DH.Loadout"}}</div>
-                
+
                 <div class="tab-category">{{localize "DH.Class"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-class"
@@ -612,8 +612,6 @@
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
                             </div>
                             <div class="item-controls">
-                                <a class="item-control" title="{{localize "DH.SendToVault"}}" data-action="send-to-vault"><i
-                                        class="fas fa-arrow-right"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
@@ -646,8 +644,6 @@
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
                             </div>
                             <div class="item-controls">
-                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
-                                        class="fas fa-arrow-right"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
@@ -681,8 +677,6 @@
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
                             </div>
                             <div class="item-controls">
-                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
-                                        class="fas fa-arrow-right"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
@@ -716,8 +710,6 @@
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
                             </div>
                             <div class="item-controls">
-                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
-                                        class="fas fa-arrow-right"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i

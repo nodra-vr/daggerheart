@@ -730,8 +730,8 @@ input.trait-effects.resize-ta {
   justify-content: center;
 }
 
-.threshold-group input[name="system.threshold.minor"],
-.threshold-group input[name="system.threshold.major"] {
+.threshold-group input[name="system.threshold.major"],
+.threshold-group input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
   background-size: contain;
   border: none;
@@ -751,8 +751,8 @@ input.trait-effects.resize-ta {
   color: #6c6a85;
 }
 
-.armorslots input[name="system.threshold.minor"],
-.armorslots input[name="system.threshold.major"] {
+.armorslots input[name="system.threshold.major"],
+.armorslots input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
   background-size: contain;
   border: none;

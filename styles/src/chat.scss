@@ -382,7 +382,7 @@
     }
   }
 
-  &.damage-light {
+  &.damage-minor {
     border-color: #f3c267;
 
     h3 {
@@ -390,7 +390,7 @@
     }
   }
 
-  &.damage-minor {
+  &.damage-major {
     border-color: #ff8c00;
 
     h3 {
@@ -402,7 +402,7 @@
     }
   }
 
-  &.damage-major {
+  &.damage-severe {
     border-color: #ff6b6b;
 
     h3 {

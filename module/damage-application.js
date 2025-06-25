@@ -496,16 +496,16 @@ function _getTargetActors() {
  * @returns {number} The HP damage to apply (1, 2, or 3)
  */
 function _calculateDamageToHP(damageAmount, thresholds) {
+  const severeThreshold = parseInt(thresholds.severe) || 0;
   const majorThreshold = parseInt(thresholds.major) || 0;
-  const minorThreshold = parseInt(thresholds.minor) || 0;
   
+  if (damageAmount >= severeThreshold && severeThreshold > 0) {
+    return 3; // Severe damage
+  }
   if (damageAmount >= majorThreshold && majorThreshold > 0) {
-    return 3; // Major damage
+    return 2; // Major damage
   }
-  if (damageAmount >= minorThreshold && minorThreshold > 0) {
-    return 2; // Minor damage  
-  }
-  return 1; // Light damage
+  return 1; // Minor damage
 }
 
 /**
@@ -516,15 +516,15 @@ function _calculateDamageToHP(damageAmount, thresholds) {
  * @returns {string} Description of the threshold result
  */
 function _getThresholdDescription(damageAmount, thresholds, hpDamage) {
+  const severeThreshold = parseInt(thresholds.severe) || 0;
   const majorThreshold = parseInt(thresholds.major) || 0;
-  const minorThreshold = parseInt(thresholds.minor) || 0;
   
   if (hpDamage === 3) {
-    return `${damageAmount} ≥ ${majorThreshold} (Severe Threshold) = 3 HP`;
+    return `${damageAmount} ≥ ${severeThreshold} (Severe Threshold) = 3 HP`;
   } else if (hpDamage === 2) {
-    return `${damageAmount} ≥ ${minorThreshold} (Major Threshold) = 2 HP`;
+    return `${damageAmount} ≥ ${majorThreshold} (Major Threshold) = 2 HP`;
   } else {
-    return `${damageAmount} < ${minorThreshold} (Minor Threshold) = 1 HP`;
+    return `${damageAmount} < ${majorThreshold} (Minor Threshold) = 1 HP`;
   }
 }
 
@@ -741,13 +741,13 @@ async function _sendDamageApplicationMessages(results, sourceActor, damageAmount
     let severityClass = "";
     if (hpDamage === 3) {
       severityText = "Severe Damage";
-      severityClass = "damage-major";
+      severityClass = "damage-severe";
     } else if (hpDamage === 2) {
       severityText = "Major Damage"; 
-      severityClass = "damage-minor";
+      severityClass = "damage-major";
     } else {
       severityText = "Minor Damage";
-      severityClass = "damage-light";
+      severityClass = "damage-minor";
     }
     
     const chatContent = `<div class="damage-application-message ${severityClass}">

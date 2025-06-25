@@ -33,8 +33,8 @@
         "tooltip": "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic."
       },
       "threshold": {
-        "minor": 8,
-        "major": 12
+        "major": 8,
+        "severe": 12
       },
       "hope": {
         "value": 2,
@@ -136,15 +136,6 @@
           "value": 0,
           "max": 12,
           "tooltip": "Armorslots indicate the number of available slots for equipping armor, influencing your overall Armor Score."
-        },
-        "severe": {
-          "value": 0
-        },
-        "major": {
-          "value": 0
-        },
-        "minor": {
-          "value": 0
         }
       },
       "resourceTrackers": [],
@@ -187,8 +178,8 @@
         "tooltip": ""
       },
       "threshold": {
-        "minor": 0,
-        "major": 0
+        "major": 0,
+        "severe": 0
       },
       "defenses": {
         "evasion": {
@@ -203,15 +194,6 @@
           "value": 0,
           "max": 6,
           "tooltip": "Armorslots indicate the number of available slots for equipping armor, influencing your overall Armor Score."
-        },
-        "severe": {
-          "value": 0
-        },
-        "major": {
-          "value": 0
-        },
-        "minor": {
-          "value": 0
         }
       },
       "attributes": {},
