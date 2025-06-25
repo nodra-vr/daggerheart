@@ -1,37 +1,38 @@
 /* ====================================
    UNIFIED DAGGERHEART DIALOG SYSTEM
    Used by all dialogs from dialog-helper.js
+   Migrated to use Global Design System classes
    ==================================== */
 
-/* Base Dialog Content Container */
+/* Base Dialog Content Container - Using global content layout */
 .daggerheart-dialog-content {
   display: flex;
   flex-direction: column;
-  gap: 1.5em;
+  gap: var(--dh-space-xl);
 }
 
-/* Dialog Description Text */
+/* Dialog Description Text - Using global typography */
 .daggerheart-dialog .dialog-description {
   text-align: center;
   color: var(--dh-color-gold);
   font-style: italic;
   margin: 0;
-  font-size: 1.1em;
+  font-size: var(--dh-font-size-lg);
 }
 
-/* Dialog Reminders/Info Boxes */
+/* Dialog Reminders/Info Boxes - Using global glass effects */
 .daggerheart-dialog .dialog-reminder {
   background: rgba(129, 204, 195, 0.2);
   border: 1px solid #81ccc3;
-  border-radius: 6px;
-  padding: 0.75em;
-  margin-bottom: 1em;
+  border-radius: var(--dh-radius-md);
+  padding: var(--dh-space-md);
+  margin-bottom: var(--dh-space-lg);
   text-align: center;
 
   p {
     margin: 0;
     color: var(--dh-color-off-white);
-    font-size: 0.9em;
+    font-size: var(--dh-font-size-sm);
   }
 
   strong {
@@ -39,21 +40,21 @@
   }
 }
 
-/* Checkbox/Radio Group Container */
+/* Checkbox/Radio Group Container - Using global layout */
 .daggerheart-dialog .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 0.75em;
-  margin: 1em 0;
+  gap: var(--dh-space-md);
+  margin: var(--dh-space-lg) 0;
 }
 
-/* Individual Checkbox/Radio Items */
+/* Individual Checkbox/Radio Items - Using global glass and interactive styles */
 .daggerheart-dialog .checkbox-item {
-  background: rgba(67, 63, 100, 0.3);
-  border: 1px solid #6d6795;
-  border-radius: 8px;
-  padding: 1em;
-  transition: all 0.2s ease;
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-lg);
+  padding: var(--dh-space-lg);
+  transition: var(--dh-transition-fast);
   position: relative;
   cursor: pointer;
 
@@ -61,24 +62,24 @@
     background: rgba(67, 63, 100, 0.5);
     border-color: var(--dh-color-gold);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--dh-shadow-md);
   }
 
-  /* Input positioning for inline layout */
+  /* Input positioning for inline layout - Using global checkbox styling */
   input[type=checkbox],
   input[type=radio] {
     appearance: none;
     -webkit-appearance: none;
     width: 20px;
     height: 20px;
-    border: 2px solid #6d6795;
-    border-radius: 4px;
-    background: rgba(11, 10, 19, 0.6);
+    border: 2px solid var(--dh-border-purple);
+    border-radius: var(--dh-radius-sm);
+    background: var(--dh-bg-input);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: var(--dh-transition-fast);
     position: absolute;
-    top: 1em;
-    right: 1em;
+    top: var(--dh-space-lg);
+    right: var(--dh-space-lg);
     flex-shrink: 0;
 
     &:disabled {
@@ -98,7 +99,7 @@
         transform: translate(-50%, -50%);
         color: var(--dh-color-off-black);
         font-size: 14px;
-        font-weight: bold;
+        font-weight: var(--dh-font-weight-bold);
       }
 
       + label {
@@ -113,7 +114,7 @@
   }
 
   input[type=radio] {
-    border-radius: 50%;
+    border-radius: var(--dh-radius-full);
 
     &:checked::after {
       content: "";
@@ -124,7 +125,7 @@
       width: 8px;
       height: 8px;
       background: var(--dh-color-off-black);
-      border-radius: 50%;
+      border-radius: var(--dh-radius-full);
     }
   }
 
@@ -137,31 +138,31 @@
 
     strong {
       display: block;
-      font-size: 1.1em;
+      font-size: var(--dh-font-size-lg);
       color: var(--dh-color-gold);
-      margin-bottom: 0.25em;
+      margin-bottom: var(--dh-space-xs);
       text-transform: uppercase;
       letter-spacing: 1px;
     }
   }
 
   .option-description {
-    font-size: 0.9em;
+    font-size: var(--dh-font-size-sm);
     color: #a0a0a0;
     font-style: italic;
   }
 }
 
-/* Selection Counter for Multi-Option Dialogs */
+/* Selection Counter for Multi-Option Dialogs - Using global section styling */
 .daggerheart-dialog .selection-counter {
   text-align: center;
-  padding: 0.75em;
-  margin-top: 1em;
-  background: rgba(67, 63, 100, 0.2);
-  border: 1px solid #6d6795;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: all 0.2s ease;
+  padding: var(--dh-space-md);
+  margin-top: var(--dh-space-lg);
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-md);
+  font-weight: var(--dh-font-weight-bold);
+  transition: var(--dh-transition-fast);
 
   &.valid {
     background: rgba(76, 175, 80, 0.2);
@@ -176,46 +177,48 @@
   }
 }
 
-/* Dialog Window Styling */
+/* Dialog Window Styling - Using global popup styles */
 .daggerheart-dialog .dialog-content {
-  padding: 1.5em 1em 0 1em;
+  padding: var(--dh-space-sm) var(--dh-space-lg);
 }
 
 .daggerheart-dialog .window-content {
-  background: rgba(11, 10, 19, 0.85);
-  backdrop-filter: blur(5px);
+  background: var(--dh-bg-dark);
+  backdrop-filter: var(--dh-blur-sm);
   color: var(--dh-color-off-white);
-  padding: 0.75rem 1rem 1rem 1rem;
-  border: 1px solid #6d6795;
+  padding: var(--dh-space-md) var(--dh-space-lg) var(--dh-space-lg) var(--dh-space-lg);
+  border: 1px solid var(--dh-border-purple-light);
   border-top: none;
 }
 
 .daggerheart-dialog.window-app .window-header {
-  background: rgba(11, 10, 19, 0.85);
-  backdrop-filter: blur(5px);
-  border: 1px solid #6d6795;
-  border-bottom: none;
+  background: var(--dh-bg-dark);
+  backdrop-filter: var(--dh-blur-sm);
   color: var(--dh-color-off-white);
   text-transform: uppercase;
   letter-spacing: 2px;
+  border: none;
+  border-radius: 0;
 }
 
-/* Dialog Button Styling */
+/* Dialog Button Styling - Using global button styles */
 .daggerheart-dialog .dialog-buttons {
-  display: flex;
-  gap: 1em;
-  flex-direction: row;
-  align-items: center;
-  margin-top: 1em;
-  padding-top: 1em;
+	display: flex;
+	gap: var(--dh-space-lg);
+	flex-direction: row;
+	align-items: center;
+	margin-top: 0;
+	padding: 0;
 
   button {
-    background: rgba(67, 63, 100, 0.5);
-    border: 1px solid #6d6795;
+    background: var(--dh-bg-section);
+    border: 1px solid var(--dh-border-purple-light);
     color: var(--dh-color-off-white);
-    transition: all 0.2s ease;
-    border-radius: 5px;
+    transition: var(--dh-transition-fast);
+    border-radius: var(--dh-radius-sm);
     text-transform: uppercase;
+    padding: var(--dh-space-sm) var(--dh-space-lg);
+    font-weight: var(--dh-font-weight-semibold);
 
     &:hover:not(:disabled) {
       background: rgba(67, 63, 100, 0.8);

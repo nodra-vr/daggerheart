@@ -60,6 +60,1095 @@
   height: 5px !important;
 }
 
+/* ============================================
+   DAGGERHEART GLOBAL DESIGN SYSTEM
+   ============================================
+   A unified, modular CSS design system for all
+   Daggerheart UI components including popups,
+   dialogs, modals, and interactive elements.
+
+   Architecture:
+   1. Foundation - Variables, tokens, base styles
+   2. Layout - Spacing, positioning, containers
+   3. Typography - Text styles and hierarchies
+   4. Components - Reusable UI elements
+   5. Utilities - Helper classes and modifiers
+   ============================================ */
+/* ============================================
+   1. FOUNDATION LAYER
+   ============================================ */
+/* Enhanced CSS Custom Properties */
+:root {
+  /* Core Color Palette */
+  --dh-color-gold: #f3c267;
+  --dh-color-gold-light: #fef790;
+  --dh-color-gold-dark: #e38c3e;
+  --dh-color-off-white: #F2F3F4;
+  --dh-color-off-black: #1c1c1c;
+  --dh-color-purple: #1e184d;
+  --dh-color-purple-light: #38227b;
+  --dh-color-purple-accent: #433f64;
+  --dh-color-purple-border: #6d6795;
+  /* Glassmorphism Colors */
+  --dh-glass-primary: rgba(255, 255, 255, 0.1);
+  --dh-glass-secondary: rgba(255, 255, 255, 0.05);
+  --dh-glass-accent: rgba(255, 255, 255, 0.15);
+  --dh-glass-border: rgba(255, 255, 255, 0.2);
+  --dh-glass-subtle: rgba(255, 255, 255, 0.1);
+  /* Background Colors */
+  --dh-bg-dark: rgba(11, 10, 19, 0.85);
+  --dh-bg-darker: rgba(11, 10, 19, 0.95);
+  --dh-bg-overlay: rgba(0, 0, 0, 0.6);
+  --dh-bg-section: rgba(67, 63, 100, 0.2);
+  --dh-bg-input: rgba(11, 10, 19, 0.5);
+  --dh-bg-input-focus: rgba(11, 10, 19, 0.7);
+  /* Border Colors */
+  --dh-border-gold: var(--dh-color-gold);
+  --dh-border-gold-subtle: rgba(243, 194, 103, 0.5);
+  --dh-border-purple: var(--dh-color-purple-accent);
+  --dh-border-purple-light: var(--dh-color-purple-border);
+  --dh-border-purple-subtle: rgba(109, 103, 149, 0.2);
+  --dh-border-glass: var(--dh-glass-border);
+  /* Typography Scale */
+  --dh-font-size-xs: 0.75rem; /* 12px */
+  --dh-font-size-sm: 0.85rem; /* 13.6px */
+  --dh-font-size-base: 1rem; /* 16px */
+  --dh-font-size-lg: 1.1rem; /* 17.6px */
+  --dh-font-size-xl: 1.2rem; /* 19.2px */
+  --dh-font-size-2xl: 1.4rem; /* 22.4px */
+  --dh-font-size-3xl: 1.875rem; /* 30px */
+  /* Font Weights */
+  --dh-font-weight-normal: 400;
+  --dh-font-weight-medium: 500;
+  --dh-font-weight-semibold: 600;
+  --dh-font-weight-bold: 700;
+  /* Spacing Scale */
+  --dh-space-xs: 0.25rem; /* 4px */
+  --dh-space-sm: 0.5rem; /* 8px */
+  --dh-space-md: 0.75rem; /* 12px */
+  --dh-space-lg: 1rem; /* 16px */
+  --dh-space-xl: 1.5rem; /* 24px */
+  --dh-space-2xl: 2rem; /* 32px */
+  --dh-space-3xl: 3rem; /* 48px */
+  /* Border Radius Scale */
+  --dh-radius-sm: 4px;
+  --dh-radius-md: 6px;
+  --dh-radius-lg: 8px;
+  --dh-radius-xl: 10px;
+  --dh-radius-2xl: 15px;
+  --dh-radius-full: 50%;
+  /* Shadow Tokens */
+  --dh-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --dh-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --dh-shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.9);
+  --dh-shadow-glow: 0 0 10px rgba(243, 194, 103, 0.5);
+  --dh-shadow-glow-subtle: 0 0 8px rgba(243, 194, 103, 0.4);
+  --dh-shadow-glow-strong: 0 0 15px rgba(243, 194, 103, 0.6);
+  --dh-shadow-focus: 0 0 0 3px rgba(243, 194, 103, 0.2);
+  /* Backdrop Blur Tokens */
+  --dh-blur-sm: blur(5px);
+  --dh-blur-md: blur(10px);
+  --dh-blur-lg: blur(20px);
+  /* Transition Tokens */
+  --dh-transition-fast: all 0.2s ease;
+  --dh-transition-normal: all 0.3s ease;
+  --dh-transition-slow: all 0.5s ease;
+  /* Z-Index Scale */
+  --dh-z-dropdown: 100;
+  --dh-z-modal: 1000;
+  --dh-z-popup: 1001;
+  --dh-z-tooltip: 1002;
+}
+
+/* ============================================
+   2. LAYOUT SYSTEM
+   ============================================ */
+/* Popup Overlay Base */
+.dh-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--dh-bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--dh-z-modal);
+}
+.dh-overlay--blur {
+  backdrop-filter: var(--dh-blur-sm);
+}
+
+/* Popup Container Base */
+.dh-popup {
+  background: var(--dh-bg-dark);
+  backdrop-filter: var(--dh-blur-md);
+  border: none;
+  border-radius: var(--dh-radius-2xl);
+  box-shadow: var(--dh-shadow-lg);
+  min-width: 320px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow: hidden;
+  position: relative;
+  /* Animation states */
+  transform: scale(0.8);
+  opacity: 0;
+  transition: var(--dh-transition-fast);
+}
+.dh-popup--show {
+  transform: scale(1);
+  opacity: 1;
+}
+.dh-popup--large {
+  max-width: 600px;
+}
+.dh-popup--small {
+  min-width: 280px;
+  max-width: 400px;
+}
+
+/* Glass Panel Base */
+.dh-glass {
+  background: var(--dh-glass-primary);
+  backdrop-filter: var(--dh-blur-md);
+  border: 1px solid var(--dh-glass-border);
+  border-radius: var(--dh-radius-xl);
+}
+.dh-glass--secondary {
+  background: var(--dh-glass-secondary);
+}
+.dh-glass--accent {
+  background: var(--dh-glass-accent);
+}
+.dh-glass--section, .dh-popup__section {
+  background: var(--dh-bg-section);
+  border-color: var(--dh-border-purple);
+}
+
+/* Flexbox Utilities */
+.dh-flex {
+  display: flex;
+}
+.dh-flex--column {
+  flex-direction: column;
+}
+.dh-flex--center {
+  align-items: center;
+  justify-content: center;
+}
+.dh-flex--between {
+  justify-content: space-between;
+}
+.dh-flex--gap-xs {
+  gap: var(--dh-space-xs);
+}
+.dh-flex--gap-sm {
+  gap: var(--dh-space-sm);
+}
+.dh-flex--gap-md {
+  gap: var(--dh-space-md);
+}
+.dh-flex--gap-lg {
+  gap: var(--dh-space-lg);
+}
+.dh-flex--gap-xl {
+  gap: var(--dh-space-xl);
+}
+
+/* Spacing Utilities */
+.dh-p-xs {
+  padding: var(--dh-space-xs);
+}
+
+.dh-p-sm {
+  padding: var(--dh-space-sm);
+}
+
+.dh-p-md {
+  padding: var(--dh-space-md);
+}
+
+.dh-p-lg {
+  padding: var(--dh-space-lg);
+}
+
+.dh-p-xl {
+  padding: var(--dh-space-xl);
+}
+
+.dh-px-md {
+  padding-left: var(--dh-space-md);
+  padding-right: var(--dh-space-md);
+}
+
+.dh-px-lg {
+  padding-left: var(--dh-space-lg);
+  padding-right: var(--dh-space-lg);
+}
+
+.dh-py-md {
+  padding-top: var(--dh-space-md);
+  padding-bottom: var(--dh-space-md);
+}
+
+.dh-py-lg {
+  padding-top: var(--dh-space-lg);
+  padding-bottom: var(--dh-space-lg);
+}
+
+.dh-m-xs {
+  margin: var(--dh-space-xs);
+}
+
+.dh-m-sm {
+  margin: var(--dh-space-sm);
+}
+
+.dh-m-md {
+  margin: var(--dh-space-md);
+}
+
+.dh-m-lg {
+  margin: var(--dh-space-lg);
+}
+
+.dh-mt-xs {
+  margin-top: var(--dh-space-xs);
+}
+
+.dh-mt-sm {
+  margin-top: var(--dh-space-sm);
+}
+
+.dh-mt-md {
+  margin-top: var(--dh-space-md);
+}
+
+.dh-mb-md {
+  margin-bottom: var(--dh-space-md);
+}
+
+/* ============================================
+   3. TYPOGRAPHY SYSTEM
+   ============================================ */
+/* Base Typography Classes */
+.dh-text {
+  color: var(--dh-color-off-white);
+}
+.dh-text--gold {
+  color: var(--dh-color-gold);
+}
+.dh-text--gold-light {
+  color: var(--dh-color-gold-light);
+}
+.dh-text--muted {
+  color: rgba(242, 243, 244, 0.6);
+}
+.dh-text--center {
+  text-align: center;
+}
+.dh-text--uppercase {
+  text-transform: uppercase;
+}
+
+/* Typography Scale */
+.dh-text-xs {
+  font-size: var(--dh-font-size-xs);
+}
+
+.dh-text-sm {
+  font-size: var(--dh-font-size-sm);
+}
+
+.dh-text-base {
+  font-size: var(--dh-font-size-base);
+}
+
+.dh-text-lg {
+  font-size: var(--dh-font-size-lg);
+}
+
+.dh-text-xl {
+  font-size: var(--dh-font-size-xl);
+}
+
+.dh-text-2xl {
+  font-size: var(--dh-font-size-2xl);
+}
+
+/* Font Weights */
+.dh-font-normal {
+  font-weight: var(--dh-font-weight-normal);
+}
+
+.dh-font-medium {
+  font-weight: var(--dh-font-weight-medium);
+}
+
+.dh-font-semibold {
+  font-weight: var(--dh-font-weight-semibold);
+}
+
+.dh-font-bold {
+  font-weight: var(--dh-font-weight-bold);
+}
+
+/* Specialized Typography Components */
+.dh-heading, .dh-popup__title {
+  color: var(--dh-color-gold);
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-lg);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  text-shadow: var(--dh-shadow-glow);
+}
+
+.dh-label {
+  color: var(--dh-color-gold);
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dh-value {
+  color: var(--dh-color-gold-light);
+  font-weight: var(--dh-font-weight-bold);
+  font-size: var(--dh-font-size-2xl);
+  text-shadow: var(--dh-shadow-glow);
+}
+
+/* ============================================
+   4. BUTTON COMPONENT SYSTEM
+   ============================================ */
+/* Base Button */
+.dh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--dh-radius-md);
+  font-weight: var(--dh-font-weight-semibold);
+  cursor: pointer;
+  transition: var(--dh-transition-fast);
+  text-transform: uppercase;
+  user-select: none;
+}
+.dh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Button Variants */
+.dh-btn--primary {
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  color: var(--dh-color-off-white);
+  padding: var(--dh-space-sm) var(--dh-space-lg);
+}
+.dh-btn--primary:hover:not(:disabled) {
+  background: rgba(67, 63, 100, 0.8);
+  border-color: var(--dh-color-gold);
+  color: var(--dh-color-gold);
+}
+
+.dh-btn--gold {
+  background: rgba(243, 194, 103, 0.2);
+  border: 1px solid var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  padding: var(--dh-space-sm) var(--dh-space-lg);
+}
+.dh-btn--gold:hover:not(:disabled) {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  box-shadow: var(--dh-shadow-glow);
+}
+
+/* Specialized Button Types */
+.dh-btn--close, .dh-popup__close {
+  background: var(--dh-bg-dark);
+  border: 2px solid var(--dh-border-gold-subtle);
+  color: var(--dh-color-gold);
+  border-radius: var(--dh-radius-full);
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  font-weight: var(--dh-font-weight-bold);
+  box-shadow: var(--dh-shadow-sm);
+}
+.dh-btn--close:hover:not(:disabled), .dh-popup__close:hover:not(:disabled) {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  transform: scale(1.1);
+  box-shadow: var(--dh-shadow-glow-strong);
+}
+
+.dh-btn--add {
+  background: rgba(243, 194, 103, 0.2);
+  border: 1px solid var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  border-radius: var(--dh-radius-full);
+  width: 26px;
+  height: 26px;
+  font-size: 18px;
+  font-weight: var(--dh-font-weight-bold);
+  box-shadow: var(--dh-shadow-sm);
+}
+.dh-btn--add:hover:not(:disabled) {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: var(--dh-shadow-glow);
+}
+
+.dh-btn--delete {
+  background: rgba(255, 68, 68, 0.2);
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  color: #ff6b6b;
+  border-radius: var(--dh-radius-full);
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  font-weight: var(--dh-font-weight-bold);
+  box-shadow: var(--dh-shadow-sm);
+}
+.dh-btn--delete:hover:not(:disabled) {
+  background: #ff4444;
+  color: white;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+}
+
+.dh-btn--increment,
+.dh-btn--decrement {
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  color: var(--dh-color-off-white);
+  border-radius: var(--dh-radius-md);
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  font-weight: var(--dh-font-weight-bold);
+}
+.dh-btn--increment:hover:not(:disabled),
+.dh-btn--decrement:hover:not(:disabled) {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  border-color: var(--dh-color-gold);
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(243, 194, 103, 0.5);
+}
+.dh-btn--increment:active,
+.dh-btn--decrement:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
+}
+
+/* ============================================
+   5. INPUT COMPONENT SYSTEM
+   ============================================ */
+/* Base Input */
+.dh-input {
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-md);
+  color: var(--dh-color-off-white);
+  transition: var(--dh-transition-fast);
+}
+.dh-input:focus {
+  outline: none;
+  border-color: var(--dh-color-gold);
+  background: var(--dh-bg-input-focus);
+  box-shadow: var(--dh-shadow-focus);
+}
+.dh-input::placeholder {
+  color: rgba(242, 243, 244, 0.5);
+}
+.dh-input:disabled {
+  opacity: 0.6;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(242, 243, 244, 0.5);
+  border-color: rgba(67, 63, 100, 0.3);
+  cursor: not-allowed;
+}
+
+/* Input Variants */
+.dh-input--base {
+  padding: var(--dh-space-sm);
+  text-align: center;
+  font-size: var(--dh-font-size-xl);
+  font-weight: var(--dh-font-weight-bold);
+  width: 50px;
+}
+
+.dh-input--modifier-name {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  font-size: var(--dh-font-size-sm);
+}
+
+.dh-input--modifier-value {
+  padding: 0.4rem;
+  text-align: center;
+  font-size: var(--dh-font-size-sm);
+  font-weight: var(--dh-font-weight-semibold);
+  width: 55px;
+}
+
+.dh-input--simple {
+  padding: 0.6rem 1rem;
+  text-align: center;
+  font-size: var(--dh-font-size-2xl);
+  font-weight: var(--dh-font-weight-bold);
+  width: 120px;
+}
+
+/* Checkbox Component */
+.dh-checkbox {
+  width: 18px;
+  height: 18px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--dh-bg-input);
+  border: 2px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-sm);
+  cursor: pointer;
+  position: relative;
+  transition: var(--dh-transition-fast);
+}
+.dh-checkbox:checked {
+  background: var(--dh-color-gold);
+  border-color: var(--dh-color-gold-light);
+}
+.dh-checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--dh-color-off-black);
+  font-size: 11px;
+  font-weight: var(--dh-font-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dh-checkbox:hover {
+  border-color: var(--dh-color-gold);
+  transform: scale(1.1);
+}
+
+/* ============================================
+   6. POPUP COMPONENT SYSTEM
+   ============================================ */
+/* Popup Header */
+.dh-popup__header {
+  background: rgba(11, 10, 19, 0.5);
+  border-bottom: 1px solid var(--dh-color-gold);
+  padding: var(--dh-space-md) var(--dh-space-lg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.dh-popup__close {
+  position: absolute;
+  right: var(--dh-space-lg);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Popup Content */
+.dh-popup__content {
+  padding: var(--dh-space-md) var(--dh-space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--dh-space-md);
+  min-width: 320px;
+  position: relative;
+}
+
+/* Popup Sections */
+.dh-popup__section {
+  padding: var(--dh-space-xs) var(--dh-space-lg);
+  border-radius: var(--dh-radius-xl);
+}
+.dh-popup__section--base-value {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-lg);
+  justify-content: center;
+}
+.dh-popup__section--modifiers {
+  padding: var(--dh-space-sm) var(--dh-space-lg);
+}
+.dh-popup__section--total {
+  background: linear-gradient(135deg, rgba(243, 194, 103, 0.1) 0%, rgba(243, 194, 103, 0.05) 100%);
+  border: 1px solid var(--dh-color-gold);
+  box-shadow: 0 2px 8px rgba(243, 194, 103, 0.2);
+  margin-top: var(--dh-space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dh-space-lg);
+}
+
+/* Base Value Controls */
+.dh-base-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-sm);
+}
+.dh-base-controls .dh-input--base {
+  flex: 1;
+  min-width: 80px;
+}
+
+/* Modifiers Section */
+.dh-modifiers__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--dh-space-sm);
+}
+.dh-modifiers__header .dh-label {
+  margin: 0;
+}
+
+.dh-modifiers__list {
+  display: flex;
+  flex-direction: column;
+  max-height: 200px;
+  overflow-y: auto;
+  position: relative;
+  padding-right: var(--dh-space-xs);
+  /* Custom Scrollbar */
+}
+.dh-modifiers__list::-webkit-scrollbar {
+  width: 4px;
+}
+.dh-modifiers__list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+.dh-modifiers__list::-webkit-scrollbar-thumb {
+  background: var(--dh-color-gold);
+  border-radius: 2px;
+  opacity: 0.6;
+}
+
+/* Modifier Row */
+.dh-modifier {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-sm);
+  padding: var(--dh-space-sm) var(--dh-space-md);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--dh-radius-lg);
+  border: 1px solid transparent;
+  position: relative;
+  transition: var(--dh-transition-fast);
+  /* Ensure all controls are interactive */
+}
+.dh-modifier:nth-child(even) {
+  background: rgba(141, 120, 151, 0.05);
+}
+.dh-modifier:hover {
+  background: var(--dh-bg-section);
+  border-color: rgba(243, 194, 103, 0.3);
+}
+.dh-modifier--disabled {
+  opacity: 0.7;
+}
+.dh-modifier--disabled .dh-input {
+  opacity: 0.6;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(242, 243, 244, 0.5);
+  border-color: rgba(67, 63, 100, 0.3);
+}
+.dh-modifier--disabled .dh-checkbox,
+.dh-modifier--disabled .dh-btn--delete {
+  opacity: 1;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.dh-modifier input,
+.dh-modifier button {
+  position: relative;
+  z-index: 2;
+}
+
+/* ============================================
+   7. ANIMATION & TRANSITION SYSTEM
+   ============================================ */
+/* Popup Animations */
+@keyframes dh-popup-in {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes dh-popup-out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+/* Animation Classes */
+.dh-animate-in {
+  animation: dh-popup-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dh-animate-out {
+  animation: dh-popup-out 150ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* Hover Effects */
+.dh-hover-scale {
+  transition: var(--dh-transition-fast);
+}
+.dh-hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.dh-hover-lift {
+  transition: var(--dh-transition-fast);
+}
+.dh-hover-lift:hover {
+  transform: translateY(-1px);
+}
+
+/* Interactive States */
+.dh-interactive {
+  cursor: pointer;
+  user-select: none;
+  transition: var(--dh-transition-fast);
+}
+.dh-interactive:hover {
+  transform: scale(1.05);
+}
+.dh-interactive:active {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   8. STATE MANAGEMENT CLASSES
+   ============================================ */
+/* Visibility States */
+.dh-hidden {
+  display: none !important;
+}
+
+.dh-invisible {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.dh-visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Loading States */
+.dh-loading {
+  pointer-events: none;
+  opacity: 0.7;
+  cursor: wait;
+}
+.dh-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--dh-color-gold);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: dh-spin 1s linear infinite;
+}
+
+@keyframes dh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* Focus States */
+.dh-focus-visible:focus-visible {
+  outline: 2px solid var(--dh-color-gold);
+  outline-offset: 2px;
+}
+
+/* Error States */
+.dh-error {
+  border-color: #ff4444 !important;
+  background: rgba(255, 68, 68, 0.1) !important;
+}
+.dh-error::placeholder {
+  color: rgba(255, 68, 68, 0.7);
+}
+
+/* Success States */
+.dh-success {
+  border-color: #4caf50 !important;
+  background: rgba(76, 175, 80, 0.1) !important;
+}
+
+/* ============================================
+   9. UTILITY CLASSES
+   ============================================ */
+/* Display Utilities */
+.dh-block {
+  display: block;
+}
+
+.dh-inline {
+  display: inline;
+}
+
+.dh-inline-block {
+  display: inline-block;
+}
+
+.dh-flex {
+  display: flex;
+}
+
+.dh-inline-flex {
+  display: inline-flex;
+}
+
+.dh-grid {
+  display: grid;
+}
+
+/* Position Utilities */
+.dh-relative {
+  position: relative;
+}
+
+.dh-absolute {
+  position: absolute;
+}
+
+.dh-fixed {
+  position: fixed;
+}
+
+.dh-sticky {
+  position: sticky;
+}
+
+/* Overflow Utilities */
+.dh-overflow-hidden {
+  overflow: hidden;
+}
+
+.dh-overflow-auto {
+  overflow: auto;
+}
+
+.dh-overflow-scroll {
+  overflow: scroll;
+}
+
+/* Width & Height Utilities */
+.dh-w-full {
+  width: 100%;
+}
+
+.dh-h-full {
+  height: 100%;
+}
+
+.dh-w-auto {
+  width: auto;
+}
+
+.dh-h-auto {
+  height: auto;
+}
+
+/* Border Utilities */
+.dh-border {
+  border: 1px solid var(--dh-border-purple);
+}
+
+.dh-border-gold {
+  border: 1px solid var(--dh-color-gold);
+}
+
+.dh-border-none {
+  border: none;
+}
+
+.dh-rounded-sm {
+  border-radius: var(--dh-radius-sm);
+}
+
+.dh-rounded-md {
+  border-radius: var(--dh-radius-md);
+}
+
+.dh-rounded-lg {
+  border-radius: var(--dh-radius-lg);
+}
+
+.dh-rounded-xl {
+  border-radius: var(--dh-radius-xl);
+}
+
+.dh-rounded-2xl {
+  border-radius: var(--dh-radius-2xl);
+}
+
+.dh-rounded-full {
+  border-radius: var(--dh-radius-full);
+}
+
+/* Shadow Utilities */
+.dh-shadow-sm {
+  box-shadow: var(--dh-shadow-sm);
+}
+
+.dh-shadow-md {
+  box-shadow: var(--dh-shadow-md);
+}
+
+.dh-shadow-lg {
+  box-shadow: var(--dh-shadow-lg);
+}
+
+.dh-shadow-glow {
+  box-shadow: var(--dh-shadow-glow);
+}
+
+.dh-shadow-none {
+  box-shadow: none;
+}
+
+/* Backdrop Filter Utilities */
+.dh-backdrop-blur-sm {
+  backdrop-filter: var(--dh-blur-sm);
+}
+
+.dh-backdrop-blur-md {
+  backdrop-filter: var(--dh-blur-md);
+}
+
+.dh-backdrop-blur-lg {
+  backdrop-filter: var(--dh-blur-lg);
+}
+
+/* Cursor Utilities */
+.dh-cursor-pointer {
+  cursor: pointer;
+}
+
+.dh-cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+.dh-cursor-wait {
+  cursor: wait;
+}
+
+/* User Select Utilities */
+.dh-select-none {
+  user-select: none;
+}
+
+.dh-select-text {
+  user-select: text;
+}
+
+.dh-select-all {
+  user-select: all;
+}
+
+/* ============================================
+   10. RESPONSIVE DESIGN
+   ============================================ */
+/* Responsive Breakpoints */
+@media (max-width: 480px) {
+  .dh-popup {
+    min-width: 280px;
+    max-width: 95vw;
+    margin: var(--dh-space-lg);
+  }
+  .dh-modifier {
+    flex-direction: column;
+    gap: var(--dh-space-xs);
+  }
+  .dh-modifier .dh-input--modifier-name,
+  .dh-modifier .dh-input--modifier-value {
+    width: 100%;
+  }
+  .dh-base-controls {
+    flex-direction: column;
+    gap: var(--dh-space-xs);
+  }
+}
+@media (max-width: 768px) {
+  .dh-popup--large {
+    max-width: 90vw;
+  }
+  .dh-popup__content {
+    padding: var(--dh-space-sm) var(--dh-space-md);
+  }
+}
+/* ============================================
+   11. ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .dh-popup {
+    border: 2px solid var(--dh-color-gold);
+  }
+  .dh-input {
+    border-width: 2px;
+  }
+  .dh-btn {
+    border-width: 2px;
+  }
+}
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .dh-animate-in,
+  .dh-animate-out,
+  .dh-interactive,
+  .dh-hover-scale,
+  .dh-hover-lift {
+    animation: none;
+    transition: none;
+  }
+  .dh-loading::after {
+    animation: none;
+  }
+}
+/* Focus Visible Support */
+.dh-btn:focus-visible,
+.dh-input:focus-visible,
+.dh-checkbox:focus-visible {
+  outline: 2px solid var(--dh-color-gold);
+  outline-offset: 2px;
+}
+
 /* Core Daggerheart System Styles */
 .daggerheart {
   /* Base styles */
@@ -246,6 +1335,14 @@
 .daggerheart .companion .defense[data-trait=evasion] label,
 .daggerheart .companion .defense[data-trait=evasion] {
   color: var(--dh-color-off-black) !important;
+}
+
+/* NPC Sheet Specific Styling */
+.daggerheart .npc {
+  /* Make evasion defense text white for dark background */
+}
+.daggerheart .npc .defense[data-trait=evasion] label {
+  color: var(--dh-color-off-white) !important;
 }
 
 /* Item Sheet Specific Layouts */
@@ -456,6 +1553,628 @@
   margin-bottom: 0.5em;
 }
 
+/* Countdown Tracker Components */
+.countdown-wrapper {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.countdown-tracker-ui {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75em;
+  width: fit-content;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 9999;
+  pointer-events: all;
+}
+.countdown-tracker-ui .countdown-manage-btn {
+  background: rgba(243, 194, 103, 0.2);
+  border: 1px solid #f3c267;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f3c267;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  backdrop-filter: blur(5px);
+}
+.countdown-tracker-ui .countdown-manage-btn:hover {
+  background: rgba(243, 194, 103, 0.3);
+  transform: scale(1.05);
+}
+.countdown-tracker-ui .countdown-manage-btn:active {
+  transform: scale(0.95);
+}
+.countdown-tracker-ui .countdown-trackers-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.75em;
+  width: 100%;
+  justify-content: center;
+}
+.countdown-tracker-ui .no-trackers {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 0.5em;
+  font-size: 0.9em;
+}
+
+.countdown-tracker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  padding: 0.75em;
+  background: rgba(11, 10, 19, 0.85);
+  backdrop-filter: blur(5px);
+  border: 1px solid #6d6795;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  min-width: 180px;
+  max-width: 220px;
+}
+.countdown-tracker:hover {
+  background: rgba(11, 10, 19, 0.9);
+  border-color: #8a7bb8;
+  transform: translateY(-1px);
+}
+.countdown-tracker .tracker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5em;
+  gap: 0.5em;
+}
+.countdown-tracker .tracker-header .tracker-name-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  flex: 1;
+}
+.countdown-tracker .tracker-header .tracker-name-section .tracker-name {
+  font-weight: bold;
+  color: var(--dh-color-gold);
+  font-size: 0.95em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.countdown-tracker .tracker-header .tracker-name-section .tracker-values {
+  color: var(--dh-color-gray);
+  font-size: 0.8em;
+  font-family: monospace;
+  font-weight: 600;
+}
+.countdown-tracker .tracker-header .tracker-controls {
+  display: flex;
+  gap: 0.25em;
+  flex-shrink: 0;
+}
+.countdown-tracker .progress-bar-container {
+  position: relative;
+  height: 12px;
+  background: rgba(67, 63, 100, 0.3);
+  border: 1px solid rgba(109, 103, 149, 0.5);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.countdown-tracker .progress-bar-container .progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+.countdown-tracker .progress-bar-container .progress-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.countdown-tracker .progress-bar-container .progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 3s infinite;
+}
+.countdown-tracker .progress-bar-container .progress-fill.value-increased {
+  animation: progressIncrease 0.6s ease-out;
+}
+.countdown-tracker .progress-bar-container .progress-fill.value-increased::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: brightShimmer 0.8s ease-out;
+}
+.countdown-tracker .progress-bar-container .progress-fill.value-decreased {
+  animation: progressDecrease 0.6s ease-out;
+}
+.countdown-tracker .progress-bar-container .progress-fill.value-decreased::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(244, 67, 54, 0.4), transparent);
+  animation: warningPulse 0.8s ease-out;
+}
+.countdown-tracker .tracker-btn {
+  background: rgba(67, 63, 100, 0.5);
+  border: 1px solid #6d6795;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dh-color-off-white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.countdown-tracker .tracker-btn:hover {
+  background: rgba(67, 63, 100, 0.8);
+  border-color: var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  transform: scale(1.1);
+}
+.countdown-tracker .tracker-btn:active {
+  transform: scale(0.95);
+}
+.countdown-tracker .tracker-btn.tracker-increase {
+  border-color: var(--dh-color-teal);
+  color: var(--dh-color-teal);
+}
+.countdown-tracker .tracker-btn.tracker-increase:hover {
+  background: rgba(129, 204, 195, 0.2);
+  border-color: var(--dh-color-teal);
+  color: var(--dh-color-off-white);
+}
+.countdown-tracker .tracker-btn.tracker-decrease {
+  border-color: #f44336;
+  color: #f44336;
+}
+.countdown-tracker .tracker-btn.tracker-decrease:hover {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: #f44336;
+  color: var(--dh-color-off-white);
+}
+
+/* Management Dialog Styles - Using Global Design System */
+.daggerheart-dialog.countdown-management-dialog .window-content {
+  background: var(--dh-bg-darker);
+  backdrop-filter: var(--dh-blur-lg);
+  border: none;
+  border-radius: 0;
+  box-shadow: var(--dh-shadow-lg);
+  padding: var(--dh-space-xs) var(--dh-space-md);
+}
+.daggerheart-dialog.countdown-management-dialog .window-header {
+  background: var(--dh-bg-dark);
+  backdrop-filter: var(--dh-blur-md);
+  border: none;
+  border-bottom: none;
+  border-radius: 0;
+}
+.daggerheart-dialog.countdown-management-dialog .window-header .window-title {
+  color: var(--dh-color-gold);
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-lg);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  text-shadow: var(--dh-shadow-glow);
+}
+.daggerheart-dialog.countdown-management-dialog .dialog-section {
+  margin-bottom: var(--dh-space-xs);
+  padding: var(--dh-space-xl);
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-xl);
+  backdrop-filter: var(--dh-blur-sm);
+}
+.daggerheart-dialog.countdown-management-dialog .dialog-section:last-child {
+  margin-bottom: 0;
+}
+.daggerheart-dialog.countdown-management-dialog .dialog-section h3 {
+  margin: 0 0 var(--dh-space-lg) 0;
+  color: var(--dh-color-gold);
+  font-size: var(--dh-font-size-lg);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: var(--dh-font-weight-semibold);
+  text-shadow: var(--dh-shadow-glow-subtle);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group {
+  margin-bottom: var(--dh-space-lg);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group label {
+  display: block;
+  margin-bottom: var(--dh-space-sm);
+  color: var(--dh-color-gold);
+  font-size: var(--dh-font-size-xs);
+  font-weight: var(--dh-font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=text],
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=number] {
+  width: 100%;
+  padding: var(--dh-space-md);
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-lg);
+  color: var(--dh-color-off-white);
+  font-size: var(--dh-font-size-sm);
+  transition: var(--dh-transition-fast);
+  backdrop-filter: var(--dh-blur-sm);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=text]:focus,
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=number]:focus {
+  outline: none;
+  border-color: var(--dh-color-gold);
+  background: var(--dh-bg-input-focus);
+  box-shadow: var(--dh-shadow-focus);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=text]::placeholder,
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=number]::placeholder {
+  color: rgba(240, 240, 224, 0.4);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=color] {
+  width: 60px;
+  height: 40px;
+  padding: var(--dh-space-xs);
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-lg);
+  cursor: pointer;
+  transition: var(--dh-transition-fast);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=color]:hover {
+  border-color: var(--dh-color-gold);
+  box-shadow: var(--dh-shadow-glow-subtle);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=checkbox] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-sm);
+  background: var(--dh-bg-input);
+  cursor: pointer;
+  transition: var(--dh-transition-fast);
+  margin-right: var(--dh-space-md);
+  position: relative;
+  vertical-align: middle;
+  backdrop-filter: var(--dh-blur-sm);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=checkbox]:checked {
+  background: var(--dh-color-gold);
+  border-color: var(--dh-color-gold);
+  box-shadow: var(--dh-shadow-glow-subtle);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=checkbox]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--dh-color-off-black);
+  font-size: 14px;
+  font-weight: var(--dh-font-weight-bold);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group input[type=checkbox]:hover:not(:disabled) {
+  border-color: var(--dh-color-gold);
+  transform: scale(1.1);
+  box-shadow: var(--dh-shadow-glow-subtle);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group .checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--dh-color-off-white);
+  font-size: var(--dh-font-size-sm);
+  font-weight: var(--dh-font-weight-medium);
+}
+.daggerheart-dialog.countdown-management-dialog .form-group .checkbox-label:hover {
+  color: var(--dh-color-gold);
+}
+.daggerheart-dialog.countdown-management-dialog .form-row {
+  display: flex;
+  gap: var(--dh-space-lg);
+}
+.daggerheart-dialog.countdown-management-dialog .form-row .form-group {
+  flex: 1;
+}
+.daggerheart-dialog.countdown-management-dialog .create-tracker-btn {
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  padding: var(--dh-space-md) var(--dh-space-xl);
+  border-radius: var(--dh-radius-lg);
+  cursor: pointer;
+  font-weight: var(--dh-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: var(--dh-transition-fast);
+  width: 100%;
+  backdrop-filter: var(--dh-blur-sm);
+  box-shadow: var(--dh-shadow-md);
+}
+.daggerheart-dialog.countdown-management-dialog .create-tracker-btn:hover:not(:disabled) {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  transform: translateY(-2px);
+  box-shadow: var(--dh-shadow-lg);
+}
+.daggerheart-dialog.countdown-management-dialog .create-tracker-btn:active {
+  transform: translateY(0);
+}
+.daggerheart-dialog.countdown-management-dialog .create-tracker-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--dh-bg-section);
+  border-color: var(--dh-border-purple);
+  color: #666;
+}
+.daggerheart-dialog.countdown-management-dialog .trackers-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-xl);
+  background: var(--dh-bg-section);
+  backdrop-filter: var(--dh-blur-sm);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--dh-space-lg);
+  border-bottom: 1px solid var(--dh-border-purple-subtle);
+  transition: var(--dh-transition-fast);
+  background: rgba(0, 0, 0, 0.1);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker:last-child {
+  border-bottom: none;
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker:hover {
+  background: var(--dh-bg-section);
+  transform: translateY(-1px);
+  box-shadow: var(--dh-shadow-sm);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-info {
+  flex: 1;
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-info .tracker-name-display {
+  font-weight: var(--dh-font-weight-semibold);
+  color: var(--dh-color-gold);
+  margin-bottom: var(--dh-space-xs);
+  font-size: var(--dh-font-size-base);
+  text-shadow: var(--dh-shadow-glow-subtle);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-info .tracker-details {
+  font-size: var(--dh-font-size-sm);
+  color: var(--dh-color-off-white);
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-sm);
+  font-family: monospace;
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-info .tracker-details .visibility-indicator.visible {
+  color: var(--dh-color-teal);
+  text-shadow: 0 0 4px rgba(129, 204, 195, 0.4);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-info .tracker-details .visibility-indicator.hidden {
+  color: #f44336;
+  text-shadow: 0 0 4px rgba(244, 67, 54, 0.4);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-actions {
+  display: flex;
+  gap: var(--dh-space-sm);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-actions button {
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-md);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dh-color-off-white);
+  cursor: pointer;
+  transition: var(--dh-transition-fast);
+  font-size: 12px;
+  backdrop-filter: var(--dh-blur-sm);
+  box-shadow: var(--dh-shadow-sm);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-actions button:hover {
+  background: var(--dh-bg-section);
+  transform: scale(1.1);
+  box-shadow: var(--dh-shadow-md);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-actions button.edit-tracker-btn {
+  border-color: var(--dh-color-blue);
+  color: var(--dh-color-blue);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-actions button.edit-tracker-btn:hover {
+  background: rgba(40, 120, 190, 0.2);
+  border-color: var(--dh-color-blue);
+  box-shadow: 0 0 8px rgba(40, 120, 190, 0.4);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-actions button.toggle-visibility-btn {
+  border-color: var(--dh-color-teal);
+  color: var(--dh-color-teal);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-actions button.toggle-visibility-btn:hover {
+  background: rgba(129, 204, 195, 0.2);
+  border-color: var(--dh-color-teal);
+  box-shadow: 0 0 8px rgba(129, 204, 195, 0.4);
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-actions button.delete-tracker-btn {
+  border-color: #f44336;
+  color: #f44336;
+}
+.daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-actions button.delete-tracker-btn:hover {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: #f44336;
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
+}
+.daggerheart-dialog.countdown-management-dialog .no-trackers {
+  color: rgba(242, 243, 244, 0.6);
+  font-style: italic;
+  text-align: center;
+  padding: var(--dh-space-2xl);
+  background: var(--dh-bg-section);
+  border-radius: var(--dh-radius-lg);
+  border: 1px solid var(--dh-border-purple-subtle);
+  backdrop-filter: var(--dh-blur-sm);
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+@keyframes progressIncrease {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.02);
+    filter: brightness(1.3) saturate(1.2);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+@keyframes progressDecrease {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(0.98);
+    filter: brightness(0.8) saturate(0.8);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+@keyframes brightShimmer {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+@keyframes warningPulse {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .countdown-tracker-ui {
+    max-width: 600px;
+  }
+  .countdown-tracker {
+    min-width: 160px;
+    max-width: 200px;
+  }
+}
+@media (max-width: 768px) {
+  .countdown-tracker-ui {
+    max-width: 400px;
+  }
+  .countdown-trackers-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .countdown-tracker {
+    min-width: 200px;
+    max-width: 280px;
+    padding: 0.6em;
+  }
+  .countdown-management-dialog .form-row {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+  .countdown-management-dialog .trackers-list {
+    max-height: 200px;
+  }
+  .countdown-management-dialog .management-tracker {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5em;
+  }
+  .countdown-management-dialog .management-tracker .tracker-actions {
+    align-self: flex-end;
+  }
+}
+@media (max-width: 480px) {
+  .countdown-wrapper {
+    left: 10px;
+    right: 10px;
+    transform: none;
+  }
+  .countdown-tracker-ui {
+    max-width: none;
+    width: 100%;
+  }
+  .countdown-tracker {
+    min-width: auto;
+    max-width: none;
+  }
+}
 /* Tooltip Components */
 .daggerheart [data-trait-tooltip] {
   position: relative;
@@ -1888,65 +3607,66 @@ input.trait-effects.resize-ta {
 /* ====================================
    UNIFIED DAGGERHEART DIALOG SYSTEM
    Used by all dialogs from dialog-helper.js
+   Migrated to use Global Design System classes
    ==================================== */
-/* Base Dialog Content Container */
+/* Base Dialog Content Container - Using global content layout */
 .daggerheart-dialog-content {
   display: flex;
   flex-direction: column;
-  gap: 1.5em;
+  gap: var(--dh-space-xl);
 }
 
-/* Dialog Description Text */
+/* Dialog Description Text - Using global typography */
 .daggerheart-dialog .dialog-description {
   text-align: center;
   color: var(--dh-color-gold);
   font-style: italic;
   margin: 0;
-  font-size: 1.1em;
+  font-size: var(--dh-font-size-lg);
 }
 
-/* Dialog Reminders/Info Boxes */
+/* Dialog Reminders/Info Boxes - Using global glass effects */
 .daggerheart-dialog .dialog-reminder {
   background: rgba(129, 204, 195, 0.2);
   border: 1px solid #81ccc3;
-  border-radius: 6px;
-  padding: 0.75em;
-  margin-bottom: 1em;
+  border-radius: var(--dh-radius-md);
+  padding: var(--dh-space-md);
+  margin-bottom: var(--dh-space-lg);
   text-align: center;
 }
 .daggerheart-dialog .dialog-reminder p {
   margin: 0;
   color: var(--dh-color-off-white);
-  font-size: 0.9em;
+  font-size: var(--dh-font-size-sm);
 }
 .daggerheart-dialog .dialog-reminder strong {
   color: #81ccc3;
 }
 
-/* Checkbox/Radio Group Container */
+/* Checkbox/Radio Group Container - Using global layout */
 .daggerheart-dialog .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 0.75em;
-  margin: 1em 0;
+  gap: var(--dh-space-md);
+  margin: var(--dh-space-lg) 0;
 }
 
-/* Individual Checkbox/Radio Items */
+/* Individual Checkbox/Radio Items - Using global glass and interactive styles */
 .daggerheart-dialog .checkbox-item {
-  background: rgba(67, 63, 100, 0.3);
-  border: 1px solid #6d6795;
-  border-radius: 8px;
-  padding: 1em;
-  transition: all 0.2s ease;
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-lg);
+  padding: var(--dh-space-lg);
+  transition: var(--dh-transition-fast);
   position: relative;
   cursor: pointer;
-  /* Input positioning for inline layout */
+  /* Input positioning for inline layout - Using global checkbox styling */
 }
 .daggerheart-dialog .checkbox-item:hover {
   background: rgba(67, 63, 100, 0.5);
   border-color: var(--dh-color-gold);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--dh-shadow-md);
 }
 .daggerheart-dialog .checkbox-item input[type=checkbox],
 .daggerheart-dialog .checkbox-item input[type=radio] {
@@ -1954,14 +3674,14 @@ input.trait-effects.resize-ta {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid #6d6795;
-  border-radius: 4px;
-  background: rgba(11, 10, 19, 0.6);
+  border: 2px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-sm);
+  background: var(--dh-bg-input);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--dh-transition-fast);
   position: absolute;
-  top: 1em;
-  right: 1em;
+  top: var(--dh-space-lg);
+  right: var(--dh-space-lg);
   flex-shrink: 0;
 }
 .daggerheart-dialog .checkbox-item input[type=checkbox]:disabled,
@@ -1983,7 +3703,7 @@ input.trait-effects.resize-ta {
   transform: translate(-50%, -50%);
   color: var(--dh-color-off-black);
   font-size: 14px;
-  font-weight: bold;
+  font-weight: var(--dh-font-weight-bold);
 }
 .daggerheart-dialog .checkbox-item input[type=checkbox]:checked + label,
 .daggerheart-dialog .checkbox-item input[type=radio]:checked + label {
@@ -1995,7 +3715,7 @@ input.trait-effects.resize-ta {
   transform: scale(1.1);
 }
 .daggerheart-dialog .checkbox-item input[type=radio] {
-  border-radius: 50%;
+  border-radius: var(--dh-radius-full);
 }
 .daggerheart-dialog .checkbox-item input[type=radio]:checked::after {
   content: "";
@@ -2006,7 +3726,7 @@ input.trait-effects.resize-ta {
   width: 8px;
   height: 8px;
   background: var(--dh-color-off-black);
-  border-radius: 50%;
+  border-radius: var(--dh-radius-full);
 }
 .daggerheart-dialog .checkbox-item label {
   display: block;
@@ -2017,28 +3737,28 @@ input.trait-effects.resize-ta {
 }
 .daggerheart-dialog .checkbox-item label strong {
   display: block;
-  font-size: 1.1em;
+  font-size: var(--dh-font-size-lg);
   color: var(--dh-color-gold);
-  margin-bottom: 0.25em;
+  margin-bottom: var(--dh-space-xs);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 .daggerheart-dialog .checkbox-item .option-description {
-  font-size: 0.9em;
+  font-size: var(--dh-font-size-sm);
   color: #a0a0a0;
   font-style: italic;
 }
 
-/* Selection Counter for Multi-Option Dialogs */
+/* Selection Counter for Multi-Option Dialogs - Using global section styling */
 .daggerheart-dialog .selection-counter {
   text-align: center;
-  padding: 0.75em;
-  margin-top: 1em;
-  background: rgba(67, 63, 100, 0.2);
-  border: 1px solid #6d6795;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: all 0.2s ease;
+  padding: var(--dh-space-md);
+  margin-top: var(--dh-space-lg);
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-md);
+  font-weight: var(--dh-font-weight-bold);
+  transition: var(--dh-transition-fast);
 }
 .daggerheart-dialog .selection-counter.valid {
   background: rgba(76, 175, 80, 0.2);
@@ -2051,46 +3771,48 @@ input.trait-effects.resize-ta {
   color: #ffcdd2;
 }
 
-/* Dialog Window Styling */
+/* Dialog Window Styling - Using global popup styles */
 .daggerheart-dialog .dialog-content {
-  padding: 1.5em 1em 0 1em;
+  padding: var(--dh-space-sm) var(--dh-space-lg);
 }
 
 .daggerheart-dialog .window-content {
-  background: rgba(11, 10, 19, 0.85);
-  backdrop-filter: blur(5px);
+  background: var(--dh-bg-dark);
+  backdrop-filter: var(--dh-blur-sm);
   color: var(--dh-color-off-white);
-  padding: 0.75rem 1rem 1rem 1rem;
-  border: 1px solid #6d6795;
+  padding: var(--dh-space-md) var(--dh-space-lg) var(--dh-space-lg) var(--dh-space-lg);
+  border: 1px solid var(--dh-border-purple-light);
   border-top: none;
 }
 
 .daggerheart-dialog.window-app .window-header {
-  background: rgba(11, 10, 19, 0.85);
-  backdrop-filter: blur(5px);
-  border: 1px solid #6d6795;
-  border-bottom: none;
+  background: var(--dh-bg-dark);
+  backdrop-filter: var(--dh-blur-sm);
   color: var(--dh-color-off-white);
   text-transform: uppercase;
   letter-spacing: 2px;
+  border: none;
+  border-radius: 0;
 }
 
-/* Dialog Button Styling */
+/* Dialog Button Styling - Using global button styles */
 .daggerheart-dialog .dialog-buttons {
   display: flex;
-  gap: 1em;
+  gap: var(--dh-space-lg);
   flex-direction: row;
   align-items: center;
-  margin-top: 1em;
-  padding-top: 1em;
+  margin-top: 0;
+  padding: 0;
 }
 .daggerheart-dialog .dialog-buttons button {
-  background: rgba(67, 63, 100, 0.5);
-  border: 1px solid #6d6795;
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
   color: var(--dh-color-off-white);
-  transition: all 0.2s ease;
-  border-radius: 5px;
+  transition: var(--dh-transition-fast);
+  border-radius: var(--dh-radius-sm);
   text-transform: uppercase;
+  padding: var(--dh-space-sm) var(--dh-space-lg);
+  font-weight: var(--dh-font-weight-semibold);
 }
 .daggerheart-dialog .dialog-buttons button:hover:not(:disabled) {
   background: rgba(67, 63, 100, 0.8);
@@ -3915,7 +5637,14 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   color: #0b0a13;
 }
 
-/* Trait value display styles */
+/* ============================================
+   MODIFIER SYSTEM - REFACTORED WITH GLOBAL DESIGN SYSTEM
+   ============================================
+   This file now uses the global design system classes
+   while maintaining backward compatibility for existing
+   HTML structure and JavaScript interactions.
+   ============================================ */
+/* Trait value display styles - Custom background images */
 .trait-value-display {
   width: 80px;
   height: 64px;
@@ -3928,15 +5657,18 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   font-size: 22px;
   font-weight: 700;
   padding-bottom: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: var(--dh-transition-fast);
 }
 .trait-value-display:hover {
   transform: scale(1.05);
+}
+.trait-value-display:active {
+  transform: scale(0.98);
 }
 
 /* Popup overlay styles */
@@ -3947,134 +5679,150 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1000;
+  background: var(--dh-bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
+  z-index: var(--dh-z-modal);
 }
 
+/* Popup container */
 .trait-edit-popup,
 .attribute-edit-popup {
-  background: rgba(11, 10, 19, 0.8392156863);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2392156863);
-  border-radius: 15px;
-  padding: 0;
+  background: var(--dh-bg-dark);
+  backdrop-filter: var(--dh-blur-md);
+  border: none;
+  border-radius: var(--dh-radius-2xl);
+  box-shadow: var(--dh-shadow-lg);
   min-width: 320px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow: hidden;
+  position: relative;
   transform: scale(0.8);
   opacity: 0;
-  position: relative;
-  overflow: hidden;
+  transition: var(--dh-transition-fast);
+}
+.trait-edit-popup.show,
+.attribute-edit-popup.show {
+  transform: scale(1);
+  opacity: 1;
 }
 
-.trait-edit-header, .attribute-edit-header {
+/* Popup header */
+.trait-edit-header,
+.attribute-edit-header {
   background: rgba(11, 10, 19, 0.5);
   border-bottom: 1px solid var(--dh-color-gold);
-  padding: 0.75rem 1rem;
+  padding: var(--dh-space-md) var(--dh-space-lg);
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
 }
 
+/* Popup title */
 .trait-edit-label,
 .attribute-edit-label {
   color: var(--dh-color-gold);
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-lg);
   text-transform: uppercase;
   letter-spacing: 2px;
   text-align: center;
-  text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
+  text-shadow: var(--dh-shadow-glow);
 }
 
+/* Close button */
 .trait-edit-close,
 .attribute-edit-close {
-  background: rgba(11, 10, 19, 0.85);
-  border: 2px solid rgba(243, 194, 103, 0.5);
+  background: var(--dh-bg-dark);
+  border: 2px solid var(--dh-border-gold-subtle);
   color: var(--dh-color-gold);
-  border-radius: 50%;
+  border-radius: var(--dh-radius-full);
   width: 28px;
   height: 28px;
-  cursor: pointer;
   font-size: 18px;
-  font-weight: bold;
-  transition: all 0.3s ease;
+  font-weight: var(--dh-font-weight-bold);
+  box-shadow: var(--dh-shadow-sm);
+  cursor: pointer;
+  transition: var(--dh-transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
   position: absolute;
-  right: 1rem;
+  right: var(--dh-space-lg);
   top: 50%;
   transform: translateY(-50%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 .trait-edit-close:hover,
 .attribute-edit-close:hover {
   background: var(--dh-color-gold);
   color: var(--dh-color-off-black);
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 15px rgba(243, 194, 103, 0.6);
+  box-shadow: var(--dh-shadow-glow-strong);
 }
 
-.trait-edit-content, .attribute-edit-content {
-  padding: 0.75rem 1rem;
+/* Popup content */
+.trait-edit-content,
+.attribute-edit-content {
+  padding: var(--dh-space-md) var(--dh-space-lg);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--dh-space-md);
   min-width: 320px;
   position: relative;
 }
 
-.trait-base-value, .attribute-base-value {
+/* Base value section */
+.trait-base-value,
+.attribute-base-value {
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-xl);
+  padding: var(--dh-space-xs) var(--dh-space-lg);
   display: flex;
   align-items: center;
-  gap: 1rem;
-  background: rgba(67, 63, 100, 0.2);
-  padding: 0.25rem 1rem;
-  border-radius: 10px;
-  border: 1px solid rgba(109, 103, 149, 0.3);
+  gap: var(--dh-space-lg);
   justify-content: center;
 }
-.trait-base-value label, .attribute-base-value label {
+.trait-base-value label,
+.attribute-base-value label {
   color: var(--dh-color-gold);
-  font-weight: 600;
-  min-width: 80px;
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-sm);
   text-transform: uppercase;
-  font-size: 0.85rem;
   letter-spacing: 1px;
+  min-width: 80px;
 }
 
-/* Base Value Controls for Modifier Popup */
+/* Base value controls */
 .base-value-controls {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--dh-space-sm);
 }
 .base-value-controls .attribute-base-input {
   flex: 1;
   min-width: 80px;
 }
 
+/* Increment/Decrement buttons */
 .base-value-decrement,
 .base-value-increment {
-  background: rgba(67, 63, 100, 0.6);
-  border: 1px solid #6d6795;
-  border-radius: 6px;
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
   color: var(--dh-color-off-white);
+  border-radius: var(--dh-radius-md);
   width: 28px;
   height: 28px;
-  cursor: pointer;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: var(--dh-font-weight-bold);
+  cursor: pointer;
+  transition: var(--dh-transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  user-select: none;
 }
 .base-value-decrement:hover,
 .base-value-increment:hover {
@@ -4090,79 +5838,84 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
 }
 
+/* Base input */
 .trait-base-input,
 .attribute-base-input {
-  background: rgba(11, 10, 19, 0.6);
-  border: 1px solid #433f64;
-  border-radius: 8px;
-  padding: 0.5rem;
-  text-align: center;
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-lg);
   color: var(--dh-color-off-white);
-  font-size: 1.2rem;
-  font-weight: 700;
+  transition: var(--dh-transition-fast);
+  padding: var(--dh-space-sm);
+  text-align: center;
+  font-size: var(--dh-font-size-xl);
+  font-weight: var(--dh-font-weight-bold);
   width: 50px;
-  transition: all 0.3s ease;
 }
 .trait-base-input:focus,
 .attribute-base-input:focus {
   outline: none;
   border-color: var(--dh-color-gold);
-  background: rgba(11, 10, 19, 0.8);
-  box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
+  background: var(--dh-bg-input-focus);
+  box-shadow: var(--dh-shadow-focus);
 }
 
-.trait-modifiers-section, .attribute-modifiers-section {
+/* Modifiers section */
+.trait-modifiers-section,
+.attribute-modifiers-section {
   background: rgba(0, 0, 0, 0.2);
-  padding: 0.5em 1rem;
-  border-radius: 10px;
-  border: 1px solid #433f64;
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-xl);
+  padding: var(--dh-space-sm) var(--dh-space-lg);
 }
 
+/* Modifiers header */
 .modifiers-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
+  padding: var(--dh-space-sm);
 }
 .modifiers-header span {
   color: var(--dh-color-gold);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-sm);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
+/* Add modifier button */
 .add-modifier-btn {
   background: rgba(243, 194, 103, 0.2);
-  color: var(--dh-color-gold);
   border: 1px solid var(--dh-color-gold);
-  border-radius: 50%;
+  color: var(--dh-color-gold);
+  border-radius: var(--dh-radius-full);
   width: 26px;
   height: 26px;
+  font-size: 18px;
+  font-weight: var(--dh-font-weight-bold);
+  box-shadow: var(--dh-shadow-sm);
   cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
+  transition: var(--dh-transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
-  font-size: 18px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 .add-modifier-btn:hover {
   background: var(--dh-color-gold);
   color: var(--dh-color-off-black);
   transform: scale(1.1) rotate(90deg);
-  box-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
+  box-shadow: var(--dh-shadow-glow);
 }
 
+/* Modifiers list */
 .modifiers-list {
   display: flex;
   flex-direction: column;
   max-height: 200px;
   overflow-y: auto;
   position: relative;
-  padding-right: 0.25rem;
+  padding-right: var(--dh-space-xs);
 }
 .modifiers-list::-webkit-scrollbar {
   width: 4px;
@@ -4177,29 +5930,27 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   opacity: 0.6;
 }
 
+/* Modifier row */
 .modifier-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  gap: var(--dh-space-sm);
+  padding: var(--dh-space-sm) var(--dh-space-md);
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
+  border-radius: var(--dh-radius-lg);
   border: 1px solid transparent;
   position: relative;
-  transition: all 0.2s ease;
-  /* Ensure all controls are interactive */
+  transition: var(--dh-transition-fast);
 }
 .modifier-row:nth-child(even) {
   background: rgba(141, 120, 151, 0.05);
 }
 .modifier-row:hover {
-  background: rgba(67, 63, 100, 0.3);
+  background: var(--dh-bg-section);
   border-color: rgba(243, 194, 103, 0.3);
 }
 .modifier-row.disabled {
-  pointer-events: auto;
   opacity: 0.7;
-  /* Keep toggle and delete always interactive */
 }
 .modifier-row.disabled .modifier-name,
 .modifier-row.disabled .modifier-value {
@@ -4210,9 +5961,9 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 }
 .modifier-row.disabled .modifier-toggle,
 .modifier-row.disabled .modifier-delete {
-  pointer-events: auto;
   opacity: 1;
   cursor: pointer;
+  pointer-events: auto;
 }
 .modifier-row input,
 .modifier-row button {
@@ -4220,51 +5971,53 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   z-index: 2;
 }
 
+/* Modifier inputs */
 .modifier-name {
   flex: 1;
-  background: rgba(11, 10, 19, 0.5);
-  border: 1px solid #433f64;
-  border-radius: 6px;
-  padding: 0.4rem 0.6rem;
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-md);
   color: var(--dh-color-off-white);
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
+  transition: var(--dh-transition-fast);
+  padding: 0.4rem 0.6rem;
+  font-size: var(--dh-font-size-sm);
 }
 .modifier-name:focus {
-  border-color: var(--dh-color-gold);
-  background: rgba(11, 10, 19, 0.7);
   outline: none;
+  border-color: var(--dh-color-gold);
+  background: var(--dh-bg-input-focus);
 }
 
 .modifier-value {
-  background: rgba(11, 10, 19, 0.5);
-  border: 1px solid #433f64;
-  border-radius: 6px;
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-md);
+  color: var(--dh-color-off-white);
+  transition: var(--dh-transition-fast);
   padding: 0.4rem;
   text-align: center;
-  color: var(--dh-color-off-white);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: var(--dh-font-size-sm);
+  font-weight: var(--dh-font-weight-semibold);
   width: 55px;
-  transition: all 0.2s ease;
 }
 .modifier-value:focus {
-  border-color: var(--dh-color-gold);
-  background: rgba(11, 10, 19, 0.7);
   outline: none;
+  border-color: var(--dh-color-gold);
+  background: var(--dh-bg-input-focus);
 }
 
+/* Modifier checkbox */
 .modifier-toggle {
   width: 18px;
   height: 18px;
   appearance: none;
   -webkit-appearance: none;
-  background: rgba(11, 10, 19, 0.6);
-  border: 2px solid #433f64;
-  border-radius: 4px;
+  background: var(--dh-bg-input);
+  border: 2px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-sm);
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  transition: var(--dh-transition-fast);
 }
 .modifier-toggle:checked {
   background: var(--dh-color-gold);
@@ -4273,43 +6026,38 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 .modifier-toggle:checked::after {
   content: "✓";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   color: var(--dh-color-off-black);
   font-size: 11px;
-  font-weight: bold;
-  line-height: 1;
+  font-weight: var(--dh-font-weight-bold);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  transform: none;
 }
 .modifier-toggle:hover {
   border-color: var(--dh-color-gold);
   transform: scale(1.1);
 }
 
+/* Modifier delete button */
 .modifier-delete {
   background: rgba(255, 68, 68, 0.2);
-  color: #ff6b6b;
   border: 1px solid rgba(255, 68, 68, 0.4);
-  border-radius: 50%;
+  color: #ff6b6b;
+  border-radius: var(--dh-radius-full);
   width: 22px;
   height: 22px;
-  cursor: pointer;
   font-size: 14px;
-  font-weight: bold;
-  transition: all 0.3s ease;
+  font-weight: var(--dh-font-weight-bold);
+  box-shadow: var(--dh-shadow-sm);
+  cursor: pointer;
+  transition: var(--dh-transition-normal);
   display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 .modifier-delete:hover {
   background: #ff4444;
@@ -4318,39 +6066,46 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
 }
 
-.trait-total, .attribute-total {
+/* Total section */
+.trait-total,
+.attribute-total {
+  background: linear-gradient(135deg, rgba(243, 194, 103, 0.1) 0%, rgba(243, 194, 103, 0.05) 100%);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: var(--dh-radius-xl);
+  box-shadow: 0 2px 8px rgba(243, 194, 103, 0.2);
+  margin-top: var(--dh-space-xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  background: linear-gradient(135deg, rgba(243, 194, 103, 0.1) 0%, rgba(243, 194, 103, 0.05) 100%);
-  padding: 0.25rem 1rem;
-  border-radius: 10px;
-  border: 1px solid var(--dh-color-gold);
-  margin-top: 0.25rem;
-  box-shadow: 0 2px 8px rgba(243, 194, 103, 0.2);
+  gap: var(--dh-space-lg);
+  padding: var(--dh-space-xs) var(--dh-space-lg);
 }
-.trait-total label, .attribute-total label {
+.trait-total label,
+.attribute-total label {
   color: var(--dh-color-gold);
-  font-weight: 600;
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-sm);
   text-transform: uppercase;
-  font-size: 0.9rem;
   letter-spacing: 1px;
 }
 
+/* Total value */
 .trait-total-value,
 .attribute-total-value {
   color: var(--dh-color-gold-light);
-  font-size: 1.4rem;
-  font-weight: 700;
-  text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
+  font-weight: var(--dh-font-weight-bold);
+  font-size: var(--dh-font-size-2xl);
+  text-shadow: var(--dh-shadow-glow);
 }
 
+/* ============================================
+   DISPLAY ELEMENTS - CUSTOM BACKGROUNDS
+   ============================================ */
 /* Generic attribute value display */
 .attribute-value-display {
   cursor: pointer;
-  transition: all 0.2s ease;
   user-select: none;
+  transition: var(--dh-transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4358,9 +6113,15 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 .attribute-value-display:hover {
   transform: scale(1.05);
 }
+.attribute-value-display:active {
+  transform: scale(0.98);
+}
 
 /* Defense-specific value displays */
 .defense-value-display {
+  cursor: pointer;
+  user-select: none;
+  transition: var(--dh-transition-fast);
   width: 64px;
   height: 64px;
   background: url("icons/Shield BG-2.png") no-repeat;
@@ -4373,48 +6134,66 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   font-weight: 700;
   padding-bottom: 6px;
 }
+.defense-value-display:hover {
+  transform: scale(1.05);
+}
+.defense-value-display:active {
+  transform: scale(0.98);
+}
 
 .defense[data-defense=evasion] .defense-value-display {
   background-image: url("icons/Evade BG-2.png");
 }
 
-/* Simple attribute popup styles */
+/* ============================================
+   SIMPLE POPUP STYLES
+   ============================================ */
+/* Simple popup content - Custom sizing */
 .attribute-edit-simple .attribute-edit-content {
   min-width: 250px;
   padding: 1.25rem;
 }
 
+/* Simple value container */
 .attribute-simple-value {
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-xl);
   display: flex;
-  justify-content: center;
   align-items: center;
-  background: rgba(67, 63, 100, 0.2);
+  gap: var(--dh-space-lg);
+  justify-content: center;
   padding: 1rem;
-  border-radius: 10px;
-  border: 1px solid rgba(109, 103, 149, 0.3);
 }
 
+/* Simple input */
 .attribute-simple-input {
-  background: rgba(11, 10, 19, 0.6);
-  border: 1px solid #433f64;
-  border-radius: 8px;
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-lg);
+  color: var(--dh-color-off-white);
+  transition: var(--dh-transition-fast);
   padding: 0.6rem 1rem;
   text-align: center;
-  color: var(--dh-color-off-white);
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: var(--dh-font-size-2xl);
+  font-weight: var(--dh-font-weight-bold);
   width: 120px;
-  transition: all 0.3s ease;
 }
 .attribute-simple-input:focus {
   outline: none;
   border-color: var(--dh-color-gold);
-  background: rgba(11, 10, 19, 0.8);
-  box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
+  background: var(--dh-bg-input-focus);
+  box-shadow: var(--dh-shadow-focus);
 }
 
-/* Weapon modifier display styles */
+/* ============================================
+   WEAPON DISPLAY STYLES - CUSTOM COMPONENTS
+   ============================================ */
+/* Weapon modifier display */
 .weapon-modifier-display {
+  cursor: pointer;
+  user-select: none;
+  transition: var(--dh-transition-fast);
   width: 45px;
   height: 30px;
   background: rgba(243, 194, 103, 0.15);
@@ -4433,10 +6212,15 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   background: rgba(243, 194, 103, 0.25);
   border-color: var(--dh-color-gold-light);
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
+  transform: scale(1.05);
+}
+.weapon-modifier-display:active {
+  transform: scale(0.98);
 }
 
-/* Weapon damage display styles */
+/* Weapon damage display */
 .weapon-damage-display {
+  transition: var(--dh-transition-fast);
   width: 4.5em;
   height: 30px;
   background: rgba(243, 194, 103, 0.15);
@@ -4451,7 +6235,6 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   justify-content: center;
   cursor: pointer;
   padding: 0.25em;
-  transition: all 0.2s ease;
 }
 .weapon-damage-display:hover {
   background: rgba(243, 194, 103, 0.25);
@@ -4460,34 +6243,47 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   transform: translateY(-1px);
 }
 
-/* Damage modifier popup styles */
+/* ============================================
+   DAMAGE POPUP STYLES - USING GLOBAL SYSTEM
+   ============================================ */
+/* Damage popup overlay */
 .damage-edit-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: var(--dh-bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: var(--dh-z-modal);
+  backdrop-filter: blur(4px);
 }
 
+/* Damage popup container */
 .damage-edit-popup {
   background: linear-gradient(135deg, rgba(27, 25, 48, 0.95), rgba(11, 10, 19, 0.95));
+  backdrop-filter: var(--dh-blur-md);
   border: 2px solid var(--dh-color-gold);
-  border-radius: 15px;
+  border-radius: var(--dh-radius-2xl);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  min-width: 320px;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow: hidden;
+  position: relative;
   transform: scale(0.8);
   opacity: 0;
-  max-width: 500px;
-  width: 90vw;
-  max-height: 80vh;
+  transition: var(--dh-transition-fast);
   overflow-y: auto;
 }
+.damage-edit-popup.show {
+  transform: scale(1);
+  opacity: 1;
+}
 
+/* Damage popup header - Custom gold header */
 .damage-edit-header {
   background: var(--dh-color-gold);
   color: rgba(11, 10, 19, 0.9);
@@ -4501,12 +6297,14 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   z-index: 10;
 }
 
+/* Damage popup title */
 .damage-edit-label {
   font-size: 1.2rem;
   font-weight: 700;
   margin: 0;
 }
 
+/* Damage popup close button - Custom styling for gold header */
 .damage-edit-close {
   background: none;
   border: none;
@@ -4527,47 +6325,55 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   background: rgba(11, 10, 19, 0.1);
 }
 
+/* Damage popup content - Using global content */
 .damage-edit-content {
   padding: 1.5rem;
   color: var(--dh-color-off-white);
 }
 
+/* Damage base value section */
 .damage-base-value {
   margin-bottom: 1.5rem;
 }
 .damage-base-value label {
+  color: var(--dh-color-gold);
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 1px;
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: var(--dh-color-gold);
 }
 
+/* Damage base input */
 .damage-base-input {
-  background: rgba(11, 10, 19, 0.6);
-  border: 1px solid #433f64;
-  border-radius: 8px;
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-lg);
+  color: var(--dh-color-off-white);
+  transition: var(--dh-transition-fast);
   padding: 0.6rem 1rem;
   text-align: center;
-  color: var(--dh-color-off-white);
   font-size: 1.2rem;
   font-weight: 700;
   width: 100%;
-  transition: all 0.3s ease;
 }
 .damage-base-input:focus {
   outline: none;
   border-color: var(--dh-color-gold);
-  background: rgba(11, 10, 19, 0.8);
-  box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
+  background: var(--dh-bg-input-focus);
+  box-shadow: var(--dh-shadow-focus);
 }
 .damage-base-input::placeholder {
   color: rgba(159, 159, 159, 0.6);
 }
 
+/* Damage modifiers section */
 .damage-modifiers-section {
   margin-bottom: 1.5rem;
 }
 
+/* Damage modifier row - Custom grid layout */
 .damage-modifier-row {
   display: grid;
   grid-template-columns: 1fr auto auto auto;
@@ -4592,21 +6398,22 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   opacity: 0.6;
 }
 
+/* Damage modifier inputs */
 .damage-modifier-name,
 .damage-modifier-value {
-  background: rgba(11, 10, 19, 0.6);
-  border: 1px solid #433f64;
-  border-radius: 6px;
-  padding: 0.4rem 0.6rem;
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-md);
   color: var(--dh-color-off-white);
+  transition: var(--dh-transition-fast);
+  padding: 0.4rem 0.6rem;
   font-size: 0.9rem;
-  transition: all 0.2s ease;
 }
 .damage-modifier-name:focus,
 .damage-modifier-value:focus {
   outline: none;
   border-color: var(--dh-color-gold);
-  background: rgba(11, 10, 19, 0.8);
+  background: var(--dh-bg-input-focus);
   box-shadow: 0 0 0 2px rgba(243, 194, 103, 0.2);
 }
 .damage-modifier-name::placeholder,
@@ -4619,12 +6426,14 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   text-align: center;
 }
 
+/* Damage modifier toggle - Using global checkbox styling */
 .damage-modifier-toggle {
   width: 16px;
   height: 16px;
   accent-color: var(--dh-color-gold);
 }
 
+/* Damage modifier delete - Custom delete button */
 .damage-modifier-delete {
   background: rgba(185, 55, 55, 0.8);
   border: none;
@@ -4645,24 +6454,36 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   transform: scale(1.1);
 }
 
+/* Damage total section */
 .damage-total {
-  background: rgba(67, 63, 100, 0.3);
-  padding: 1rem;
-  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(243, 194, 103, 0.1) 0%, rgba(243, 194, 103, 0.05) 100%);
   border: 1px solid var(--dh-color-gold);
+  border-radius: var(--dh-radius-xl);
+  box-shadow: 0 2px 8px rgba(243, 194, 103, 0.2);
+  margin-top: var(--dh-space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dh-space-lg);
+  padding: var(--dh-space-xs) var(--dh-space-lg);
   text-align: center;
 }
 .damage-total label {
+  color: var(--dh-color-gold);
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 1px;
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: var(--dh-color-gold);
 }
 
+/* Damage total value */
 .damage-total-value {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--dh-color-off-white);
+  color: var(--dh-color-gold-light);
+  font-weight: var(--dh-font-weight-bold);
+  font-size: var(--dh-font-size-2xl);
+  text-shadow: var(--dh-shadow-glow);
 }
 
 /* Sheet Tracker Styles */
@@ -4788,25 +6609,25 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   margin-left: 12px;
 }
 
-/* Manager panel */
+/* Manager panel - Using global popup styling */
 .tracker-manager-panel {
   position: absolute;
   left: 120%;
   top: 0;
   transform: translateY(0) scale(0.8);
   width: 320px;
-  background: rgba(11, 10, 19, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--dh-color-gold);
-  border-radius: 15px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+  background: var(--dh-bg-darker);
+  backdrop-filter: var(--dh-blur-md);
+  border: none;
+  border-radius: var(--dh-radius-2xl);
+  box-shadow: var(--dh-shadow-lg);
   max-height: 500px;
   display: flex;
   flex-direction: column;
-  margin-right: 8px;
+  margin-right: var(--dh-space-sm);
   opacity: 0;
   visibility: hidden;
-  transition: all 0.2s ease;
+  transition: var(--dh-transition-fast);
   pointer-events: none;
   overflow: hidden;
 }
@@ -4817,11 +6638,11 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   pointer-events: all;
 }
 
-/* Manager header */
+/* Manager header - Using global popup header styling */
 .tracker-manager-header {
   background: rgba(11, 10, 19, 0.5);
   border-bottom: 1px solid var(--dh-color-gold);
-  padding: 0.75rem 1rem;
+  padding: var(--dh-space-md) var(--dh-space-lg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -4829,47 +6650,47 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 }
 .tracker-manager-header span {
   color: var(--dh-color-gold);
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-lg);
   text-transform: uppercase;
   letter-spacing: 2px;
   text-align: center;
-  text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
+  text-shadow: var(--dh-shadow-glow);
 }
 .tracker-manager-header .tracker-manager-close {
-  background: rgba(11, 10, 19, 0.85);
-  border: 2px solid rgba(243, 194, 103, 0.5);
+  background: var(--dh-bg-dark);
+  border: 2px solid var(--dh-border-gold-subtle);
   color: var(--dh-color-gold);
-  border-radius: 50%;
+  border-radius: var(--dh-radius-full);
   width: 28px;
   height: 28px;
   cursor: pointer;
   font-size: 14px;
-  font-weight: bold;
-  transition: all 0.3s ease;
+  font-weight: var(--dh-font-weight-bold);
+  transition: var(--dh-transition-normal);
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
   position: absolute;
-  right: 1rem;
+  right: var(--dh-space-lg);
   top: 50%;
   transform: translateY(-50%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--dh-shadow-sm);
 }
 .tracker-manager-header .tracker-manager-close:hover {
   background: var(--dh-color-gold);
   color: var(--dh-color-off-black);
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 15px rgba(243, 194, 103, 0.6);
+  box-shadow: var(--dh-shadow-glow-strong);
 }
 
-/* Manager content */
+/* Manager content - Using global content layout */
 .tracker-manager-content {
-  padding: 0.75rem 1rem;
+  padding: var(--dh-space-md) var(--dh-space-lg);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--dh-space-md);
   min-width: 320px;
   position: relative;
   overflow-y: auto;
@@ -4880,72 +6701,72 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   max-width: 40px;
 }
 
-/* Add tracker form */
+/* Add tracker form - Using global section styling */
 .tracker-add-form {
-  background: rgba(67, 63, 100, 0.2);
-  padding: 0.5em 1rem;
-  border-radius: 10px;
-  border: 1px solid rgba(109, 103, 149, 0.3);
+  background: var(--dh-bg-section);
+  padding: var(--dh-space-sm) var(--dh-space-lg);
+  border-radius: var(--dh-radius-xl);
+  border: 1px solid var(--dh-border-purple);
 }
 .tracker-add-form .form-group {
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--dh-space-md);
 }
 .tracker-add-form .form-group:last-of-type {
-  margin-bottom: 1rem;
+  margin-bottom: var(--dh-space-lg);
 }
 .tracker-add-form .form-group label {
   color: var(--dh-color-gold);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-sm);
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--dh-space-xs);
   display: block;
 }
 .tracker-add-form .form-group input[type=text],
 .tracker-add-form .form-group input[type=number] {
-  background: rgba(11, 10, 19, 0.6);
-  border: 1px solid #433f64;
-  border-radius: 8px;
-  padding: 0.5rem;
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-lg);
+  padding: var(--dh-space-sm);
   color: var(--dh-color-off-white);
-  font-size: 0.9rem;
+  font-size: var(--dh-font-size-sm);
   width: 100%;
-  transition: all 0.3s ease;
+  transition: var(--dh-transition-normal);
 }
 .tracker-add-form .form-group input[type=text]:focus,
 .tracker-add-form .form-group input[type=number]:focus {
   outline: none;
   border-color: var(--dh-color-gold);
-  background: rgba(11, 10, 19, 0.8);
-  box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
+  background: var(--dh-bg-input-focus);
+  box-shadow: var(--dh-shadow-focus);
 }
 .tracker-add-form .form-group-horizontal {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: var(--dh-space-lg);
+  margin-bottom: var(--dh-space-lg);
 }
 .tracker-add-form .form-group-half {
   flex: 1;
 }
 .tracker-add-form .form-group-half label {
   color: var(--dh-color-gold);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-sm);
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--dh-space-xs);
   display: block;
 }
 .tracker-add-form .value-inputs {
-  background: #1c1c1c;
+  background: var(--dh-color-off-black);
   border: 1px solid var(--dh-color-gold);
-  border-radius: 10px;
+  border-radius: var(--dh-radius-xl);
   padding: 5px 15px;
   display: flex;
   align-items: center;
   gap: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--dh-shadow-sm);
 }
 .tracker-add-form .value-inputs input[type=number] {
   background: transparent;
@@ -4971,14 +6792,14 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 .tracker-add-form .color-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--dh-space-sm);
 }
 .tracker-add-form .color-input-wrapper input[type=color] {
   width: 40px;
   height: 32px;
-  background: rgba(11, 10, 19, 0.6);
-  border: 1px solid #433f64;
-  border-radius: 6px;
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-md);
   cursor: pointer;
   padding: 2px;
 }
@@ -4987,31 +6808,31 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 }
 .tracker-add-form .color-input-wrapper input[type=color]::-webkit-color-swatch {
   border: none;
-  border-radius: 4px;
+  border-radius: var(--dh-radius-sm);
 }
 .tracker-add-form .color-input-wrapper .color-preview {
   width: 20px;
   height: 20px;
-  border-radius: 50%;
-  background-color: #f3c267;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: var(--dh-radius-full);
+  background-color: var(--dh-color-gold);
+  box-shadow: var(--dh-shadow-sm);
 }
 .tracker-add-form .tracker-add-button {
   background: rgba(243, 194, 103, 0.2);
   color: var(--dh-color-gold);
   border: 1px solid var(--dh-color-gold);
-  border-radius: 8px;
-  padding: 0.15rem 0rem;
+  border-radius: var(--dh-radius-lg);
+  padding: var(--dh-space-xs) 0;
   cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
+  font-weight: var(--dh-font-weight-bold);
+  transition: var(--dh-transition-normal);
+  font-size: var(--dh-font-size-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--dh-space-sm);
   width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--dh-shadow-sm);
 }
 .tracker-add-form .tracker-add-button:hover {
   background: var(--dh-color-gold);
@@ -7229,9 +9050,6 @@ input.trait-effects.resize-ta {
   border-color: #f44336;
   color: #ffcdd2;
 }
-.daggerheart-dialog .dialog-content {
-  padding: 1.5em 1em 0 1em;
-}
 .daggerheart-dialog .window-content {
   background: rgba(11, 10, 19, 0.85);
   backdrop-filter: blur(5px);
@@ -7239,15 +9057,6 @@ input.trait-effects.resize-ta {
   padding: 0.75rem 1rem 1rem 1rem;
   border: 1px solid #6d6795;
   border-top: none;
-}
-.daggerheart-dialog.window-app .window-header {
-  background: rgba(11, 10, 19, 0.85);
-  backdrop-filter: blur(5px);
-  border: 1px solid #6d6795;
-  border-bottom: none;
-  color: var(--dh-color-off-white);
-  text-transform: uppercase;
-  letter-spacing: 2px;
 }
 .daggerheart-dialog .dialog-buttons {
   display: flex;
@@ -7276,12 +9085,6 @@ input.trait-effects.resize-ta {
   background: rgba(67, 63, 100, 0.2);
   border-color: #433f64;
   color: #666;
-}
-.daggerheart-dialog.recovery-dialog .dialog-content {
-  background: rgba(11, 10, 19, 0.95);
-  border-radius: 15px;
-  padding: 0;
-  overflow: hidden;
 }
 .daggerheart-dialog.recovery-dialog .dialog-buttons {
   margin-top: 0.5em;
@@ -7451,9 +9254,6 @@ input.trait-effects.resize-ta {
   border-color: var(--dh-color-gold);
   color: var(--dh-color-gold);
   transform: translateY(-1px);
-}
-.daggerheart-dialog.daggerheart-roll-dialog .dialog-content {
-  padding-bottom: 0;
 }
 .daggerheart-dialog.daggerheart-roll-dialog .flex-row {
   align-content: center;
@@ -8651,33 +10451,6 @@ body.game .app a.content-link i,
 }
 
 /* Popup overlay styles */
-.trait-edit-popup-overlay, .attribute-edit-popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-}
-
-.trait-edit-popup, .attribute-edit-popup {
-  background: rgba(11, 10, 19, 0.8392156863);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2392156863);
-  border-radius: 15px;
-  padding: 0;
-  min-width: 320px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
-  transform: scale(0.8);
-  opacity: 0;
-  position: relative;
-  overflow: hidden;
-}
-
 .trait-edit-header, .attribute-edit-header {
   background: rgba(11, 10, 19, 0.5);
   border-bottom: 1px solid var(--dh-color-gold);
@@ -9160,9 +10933,6 @@ body.game .app a.content-link i,
   z-index: 100;
   transition: all 0.3s ease-in-out;
 }
-.sheet-tracker-sidebar.expanded {
-  /* Keep the same left position but show the panel */
-}
 
 /* Main tracker button */
 .tracker-main-button {
@@ -9226,7 +10996,7 @@ body.game .app a.content-link i,
 }
 .tracker-button .tracker-button-value {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-  text-stroke: 1px rgba(0, 0, 0, 0.8);
+  -webkit-text-stroke: 1px rgba(0, 0, 0, 0.8);
   font-size: 2.15em;
 }
 .tracker-button::after {
@@ -9259,34 +11029,6 @@ body.game .app a.content-link i,
 
 /* Tracker button hover tooltip */
 /* Manager panel */
-.tracker-manager-panel {
-  position: absolute;
-  left: 120%;
-  top: 0;
-  transform: translateY(0) scale(0.8);
-  width: 320px;
-  background: rgba(11, 10, 19, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--dh-color-gold);
-  border-radius: 15px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
-  max-height: 500px;
-  display: flex;
-  flex-direction: column;
-  margin-right: 8px;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  pointer-events: none;
-  overflow: hidden;
-}
-.tracker-manager-panel.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0) scale(1);
-  pointer-events: all;
-}
-
 /* Manager header */
 .tracker-manager-header {
   background: rgba(11, 10, 19, 0.5);
@@ -9595,7 +11337,8 @@ body.game .app a.content-link i,
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Dark mode compatibility */
-.daggerheart .sheet-tracker-sidebar {
-  /* Additional theme-specific styles can go here */
+body.game .app button:hover, body.game .app button:focus {
+  box-shadow: none !important;
 }
+
+/* Dark mode compatibility */
