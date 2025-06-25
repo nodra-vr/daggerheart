@@ -9,6 +9,7 @@ import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, crea
 import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
+import { CountdownTracker } from "./countdown-tracker.js";
 import { SheetTracker } from "./sheet-tracker.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
@@ -223,6 +224,16 @@ Hooks.once("init", async function() {
     config: false // Don't show in settings menu
   });
 
+  // Register countdown trackers setting
+  game.settings.register("daggerheart", "countdownTrackers", {
+    name: "Countdown Trackers",
+    hint: "Persistent countdown/progress tracker data",
+    scope: "world",
+    type: Array,
+    default: [],
+    config: false // Don't show in settings menu
+  });
+
   // init setting
   game.settings.register("daggerheart", "initFormula", {
     name: "SETTINGS.SimpleInitFormulaN",
@@ -296,6 +307,10 @@ Hooks.once("ready", async function() {
   // Initialize the token counter UI
   game.daggerheart.tokenCounter = new TokenCounterUI();
   await game.daggerheart.tokenCounter.initialize();
+
+  // Initialize the countdown tracker UI
+  game.daggerheart.countdownTracker = new CountdownTracker();
+  await game.daggerheart.countdownTracker.initialize();
   
   // Add global spendFear function
   window.spendFear = async function(amount) {

@@ -124,6 +124,14 @@
   }
 }
 
+/* NPC Sheet Specific Styling */
+.daggerheart .npc {
+  /* Make evasion defense text white for dark background */
+  .defense[data-trait="evasion"] label {
+    color: var(--dh-color-off-white) !important;
+  }
+}
+
 /* Item Sheet Specific Layouts */
 .item-bg {
 	position: absolute;
