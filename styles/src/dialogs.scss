@@ -219,6 +219,15 @@
     text-transform: uppercase;
     padding: var(--dh-space-sm) var(--dh-space-lg);
     font-weight: var(--dh-font-weight-semibold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+
+    i {
+      line-height: 1;
+      vertical-align: middle;
+    }
 
     &:hover:not(:disabled) {
       background: rgba(67, 63, 100, 0.8);

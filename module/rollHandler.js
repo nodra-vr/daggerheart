@@ -578,10 +578,9 @@ export async function _waitFor3dDice(msgId) {
 }
 
 export async function _dualityWithDialog(config) {
-  // Get actor
+  // Get actor (optional)
   const actor = config.actor || (canvas.tokens.controlled[0]?.actor ?? game.user.character);
-  if (!actor) return ui.notifications.warn("No character sheet found.");
-  const sheet = actor.sheet;
+  const sheet = actor?.sheet;
 
   config = config || {};
   let { title, traitValue, skipDialog, rollDetails } = config;
@@ -618,13 +617,13 @@ export async function _dualityWithDialog(config) {
     disadvantage,
     sendToChat: false,
     reaction,
-    speaker: ChatMessage.getSpeaker({ actor })
+    speaker: actor ? ChatMessage.getSpeaker({ actor }) : ChatMessage.getSpeaker()
   });
 
   const { isCrit, isHope, isFear } = result;
 
-  // Sheet updates
-  if (!reaction && sheet.handleDualityResult) {
+  // Sheet updates (only if we have a sheet)
+  if (!reaction && sheet?.handleDualityResult) {
     await sheet.handleDualityResult({
       isCrit,
       isHope,
@@ -661,12 +660,12 @@ export async function _dualityWithDialog(config) {
     finalFlavor += `</p>`;
   }
   
-  // Attack targeting
+  // Attack targeting (only if we have a sheet)
   if (sheet?.getPendingRollType && sheet.getPendingRollType() === "attack" && sheet._getTargetingResults) {
     finalFlavor += sheet._getTargetingResults(result.total);
   }
   
-  const pendingRollType = sheet?.getPendingRollType ? sheet.getPendingRollType() : "unknown";
+  const pendingRollType = sheet?.getPendingRollType ? sheet.getPendingRollType() : "duality";
   const pendingWeaponName = sheet?.getPendingWeaponName ? sheet.getPendingWeaponName() : "";
 
   // Send message
@@ -681,7 +680,7 @@ export async function _dualityWithDialog(config) {
     }
     
     const chatMessage = await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
+      speaker: actor ? ChatMessage.getSpeaker({ actor }) : ChatMessage.getSpeaker(),
       flavor: finalFlavor,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
       rolls: [result.roll],
@@ -689,8 +688,8 @@ export async function _dualityWithDialog(config) {
         daggerheart: {
           rollType: pendingRollType,
           weaponName: pendingWeaponName,
-          actorId: actor.id,
-          actorType: actor.type
+          actorId: actor?.id,
+          actorType: actor?.type
         }
       }
     });
