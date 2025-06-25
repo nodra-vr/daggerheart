@@ -687,7 +687,23 @@ Hooks.on("renderChatMessage", (message, html, data) => {
  */
 function _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritical) {
   const buttonText = isCritical ? "Critical Damage" : "Damage";
-  const damageButton = `<button class="damage-roll-button character ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+  
+  // Store structured damage data for proper handling
+  let damageDataJson;
+  if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
+    // New damage modifier system - store the complete structured data
+    damageDataJson = JSON.stringify(weaponData.damage);
+  } else {
+    // Legacy simple string format - convert to structure
+    const simpleFormula = weaponData.damage || '1d8';
+    damageDataJson = JSON.stringify({
+      baseValue: simpleFormula,
+      modifiers: [],
+      value: simpleFormula
+    });
+  }
+  
+  const damageButton = `<button class="damage-roll-button character ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage-structure="${damageDataJson}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
     <i class="fas fa-dice-d20"></i> ${buttonText}
   </button>`;
   
@@ -705,7 +721,23 @@ function _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritic
  */
 function _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritical) {
   const buttonText = isCritical ? "Critical Damage" : "Damage";
-  const damageButton = `<button class="damage-roll-button adversary ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage="${weaponData.damage}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
+  
+  // Store structured damage data for proper handling
+  let damageDataJson;
+  if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
+    // New damage modifier system - store the complete structured data
+    damageDataJson = JSON.stringify(weaponData.damage);
+  } else {
+    // Legacy simple string format - convert to structure
+    const simpleFormula = weaponData.damage || '1d8';
+    damageDataJson = JSON.stringify({
+      baseValue: simpleFormula,
+      modifiers: [],
+      value: simpleFormula
+    });
+  }
+  
+  const damageButton = `<button class="damage-roll-button adversary ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage-structure="${damageDataJson}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
     <i class="fas fa-dice-d20"></i> ${buttonText}
   </button>`;
   
