@@ -1071,7 +1071,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     
     overlay.find('.base-value-decrement').on('click', () => {
       const currentValue = parseInt(baseInput.val()) || 0;
-      const newValue = Math.max(0, currentValue - 1); // Prevent negative values
+      const newValue = Math.max(-3, currentValue - 1); // Allow values down to -3 for traits
       baseInput.val(newValue);
       this._updateTotal(overlay);
     });
