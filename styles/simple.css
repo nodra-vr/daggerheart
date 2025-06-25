@@ -60,6 +60,16 @@
   height: 5px !important;
 }
 
+/* Remove Foundry's built-in box shadow on focused inputs */
+body.game .app input[type=text]:focus,
+body.game .app input[type=number]:focus,
+body.game .app input[type=password]:focus,
+body.game .app input[type=date]:focus,
+body.game .app input[type=time]:focus,
+body.game .app input[type=search]:focus {
+  box-shadow: none;
+}
+
 /* ============================================
    DAGGERHEART GLOBAL DESIGN SYSTEM
    ============================================
@@ -1414,6 +1424,10 @@
   margin: 0px;
   width: 100%;
   padding: 0.5em 5em;
+}
+
+body.game .app button:hover, body.game .app button:focus {
+  box-shadow: none;
 }
 
 /* Components Layer */

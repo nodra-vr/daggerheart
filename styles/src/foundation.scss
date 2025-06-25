@@ -52,3 +52,13 @@
   width: 5px !important;
   height: 5px !important;
 }
+
+/* Remove Foundry's built-in box shadow on focused inputs */
+body.game .app input[type="text"]:focus, 
+body.game .app input[type="number"]:focus, 
+body.game .app input[type="password"]:focus, 
+body.game .app input[type="date"]:focus, 
+body.game .app input[type="time"]:focus, 
+body.game .app input[type="search"]:focus {
+  box-shadow: none;
+}
