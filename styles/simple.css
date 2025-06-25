@@ -2554,6 +2554,25 @@
 
 .daggerheart .item-list .item.expanded .item-description > * {
   opacity: 1;
+  height: auto;
+  width: 50%;
+}
+
+/* Fix image display in item descriptions */
+.daggerheart .item-list .item .item-description img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 5px;
+  margin: 0.5em 0;
+  display: block;
+  object-fit: contain;
+  max-height: 300px; /* Reasonable maximum height for card images */
+}
+
+/* Ensure images in expanded descriptions are properly scaled */
+.daggerheart .item-list .item.expanded .item-description img {
+  transform: none; /* Override any inherited transform that might squish the image */
 }
 
 .daggerheart .item-list .item .item-top-row {
