@@ -433,7 +433,7 @@
                                              data-field="system.weapon-main.damage"
                                              data-label="Primary Weapon Damage"
                                              data-has-modifiers="true"
-                                             data-edit-type="damage">{{#if systemData.weapon-main.damage.value}}{{systemData.weapon-main.damage.value}}{{else}}{{#if systemData.weapon-main.damage}}{{systemData.weapon-main.damage}}{{else}}1d8{{/if}}{{/if}}</div>
+                                             data-edit-type="damage">{{#if systemData.weapon-main.damage.baseValue}}{{systemData.weapon-main.damage.baseValue}}{{#if systemData.weapon-main.damage.modifiers}}{{#each systemData.weapon-main.damage.modifiers}}{{#if this.enabled}} {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if systemData.weapon-main.damage}}{{systemData.weapon-main.damage}}{{else}}1d8{{/if}}{{/if}}</div>
                                         <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
                                     </div>
                                 </div>
@@ -471,7 +471,7 @@
                                              data-field="system.weapon-off.damage"
                                              data-label="Secondary Weapon Damage"
                                              data-has-modifiers="true"
-                                             data-edit-type="damage">{{#if systemData.weapon-off.damage.value}}{{systemData.weapon-off.damage.value}}{{else}}{{#if systemData.weapon-off.damage}}{{systemData.weapon-off.damage}}{{else}}1d8{{/if}}{{/if}}</div>
+                                             data-edit-type="damage">{{#if systemData.weapon-off.damage.baseValue}}{{systemData.weapon-off.damage.baseValue}}{{#if systemData.weapon-off.damage.modifiers}}{{#each systemData.weapon-off.damage.modifiers}}{{#if this.enabled}} {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if systemData.weapon-off.damage}}{{systemData.weapon-off.damage}}{{else}}1d8{{/if}}{{/if}}</div>
                                         <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
                                     </div>
                                 </div>

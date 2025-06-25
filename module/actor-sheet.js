@@ -724,36 +724,51 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       config.label = 'Weapon Damage';
     }
     
-    // Get the current value using the field path
-    let currentValue = foundry.utils.getProperty(this.actor, config.field);
+    // Get the actual damage data using the field path
+    let damageData = foundry.utils.getProperty(this.actor, config.field);
     
-    // Handle both simple values and complex objects with .value
-    if (typeof currentValue === 'object' && currentValue !== null && 'value' in currentValue) {
-      currentValue = currentValue.value || '1d8';
+    // Normalize the damage data to structured format
+    if (typeof damageData === 'object' && damageData !== null && 'baseValue' in damageData) {
+      // Already structured - but check for corrupted baseValue that might contain flattened formula
+      const baseValue = damageData.baseValue || '1d8';
+      const modifiers = damageData.modifiers || [];
+      
+      // If baseValue contains spaces and we have no modifiers, it might be a flattened formula
+      // that got corrupted - try to extract the real base value
+      if (baseValue.includes(' ') && modifiers.length === 0) {
+        // Extract just the first dice part as the real base
+        const match = baseValue.match(/^(\d*d\d+)/);
+        if (match) {
+          damageData.baseValue = match[1];
+          damageData.modifiers = [];
+          damageData.value = match[1];
+        }
+      }
+    } else if (typeof damageData === 'object' && damageData !== null && 'value' in damageData) {
+      // Has .value but missing structure - this is a legacy mixed case
+      const displayValue = damageData.value || '1d8';
+      damageData = {
+        baseValue: displayValue, // Treat the existing value as base (might be flattened)
+        modifiers: damageData.modifiers || [],
+        value: displayValue
+      };
     } else {
-      currentValue = currentValue || '1d8';
-    }
-    
-    // Get attribute data for modifiers if applicable
-    const pathParts = config.field.split('.');
-    let attributeData = this.actor;
-    for (let i = 0; i < pathParts.length - 1; i++) {
-      attributeData = attributeData[pathParts[i]] || {};
-    }
-    
-    // For weapon damage, if the data is empty, get the actual field value
-    const isWeaponDamage = config.field.includes('weapon-main.damage') || config.field.includes('weapon-off.damage');
-    if (isWeaponDamage && (!attributeData || Object.keys(attributeData).length === 0)) {
-      attributeData = { value: currentValue, modifiers: [] };
+      // Simple string/primitive - convert to structure
+      const simpleValue = damageData || '1d8';
+      damageData = {
+        baseValue: simpleValue,
+        modifiers: [],
+        value: simpleValue
+      };
     }
     
     // Ensure modifiers is always an array
-    if (config.hasModifiers && !Array.isArray(attributeData.modifiers)) {
-      attributeData.modifiers = [];
+    if (!Array.isArray(damageData.modifiers)) {
+      damageData.modifiers = [];
     }
     
     // Show the damage modifier popup
-    this._showDamageModifierEditPopup(config, currentValue, attributeData, displayElement);
+    this._showDamageModifierEditPopup(config, damageData, displayElement);
   }
   
   /* -------------------------------------------- */
@@ -965,7 +980,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   
   /* -------------------------------------------- */
   
-  _showDamageModifierEditPopup(config, currentValue, attributeData, displayElement) {
+  _showDamageModifierEditPopup(config, damageData, displayElement) {
     // Create the damage popup HTML if it doesn't exist
     let overlay = this.element.find('.damage-edit-popup-overlay');
     if (overlay.length === 0) {
@@ -1009,22 +1024,11 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     // Set up the popup content
     overlay.find('.damage-edit-label').text(config.label);
     
-    // Set base value (fallback to current value if no baseValue exists)
+    // Set base value from structured damage data
     const baseInput = overlay.find('.damage-base-input');
-    let baseValue;
+    const baseValue = damageData.baseValue || '1d8';
     
-    // Handle weapon damage which might store data directly at the field path
-    if (typeof attributeData === 'object' && 'baseValue' in attributeData) {
-      baseValue = attributeData.baseValue;
-    } else if (typeof attributeData === 'object' && 'value' in attributeData && 'modifiers' in attributeData) {
-      // Already has complex structure but no baseValue - use current total as base
-      baseValue = currentValue;
-    } else {
-      // Simple value - use it as base
-      baseValue = currentValue;
-    }
-    
-    baseInput.val(baseValue || '1d8');
+    baseInput.val(baseValue);
     
     // Store config for later use
     overlay.data('config', config);
@@ -1033,7 +1037,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     overlay.data('display-element', displayElement);
     
     // Load existing modifiers
-    this._loadDamageModifiers(overlay, attributeData.modifiers || []);
+    this._loadDamageModifiers(overlay, damageData.modifiers || []);
     
     // Calculate and display total
     this._updateDamageTotal(overlay);
@@ -1315,13 +1319,11 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       totalFormula += ' ' + modifierParts.join(' ');
     }
     
+    // Update the popup preview total
     overlay.find('.damage-total-value').text(totalFormula);
     
-    // Update the display element immediately
-    const displayElement = overlay.data('display-element');
-    if (displayElement) {
-      $(displayElement).text(totalFormula);
-    }
+    // DO NOT update the display element during editing - only for preview
+    // This preserves the structured data for future editing
     
     return totalFormula;
   }
@@ -1355,8 +1357,20 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       }
     });
     
-    // Calculate final formula
-    const totalFormula = this._updateDamageTotal(overlay);
+    // Calculate final formula for the value field
+    let totalFormula = baseValue;
+    const enabledModifiers = modifiers.filter(mod => mod.enabled !== false && mod.value);
+    
+    if (enabledModifiers.length > 0) {
+      enabledModifiers.forEach(modifier => {
+        let modValue = modifier.value.trim();
+        // Ensure proper formatting - add + if it doesn't start with + or -
+        if (modValue && !modValue.startsWith('+') && !modValue.startsWith('-')) {
+          modValue = '+' + modValue;
+        }
+        totalFormula += ' ' + modValue;
+      });
+    }
     
     // Build update data based on the field path
     const updateData = {};
@@ -1379,9 +1393,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     
     await this.actor.update(updateData);
     
-    // Update the display element
-    const displayElement = overlay.data('display-element');
-    $(displayElement).text(totalFormula);
+    // DO NOT update the display element directly - let the sheet re-render
+    // This preserves the structured data for future editing
     
     this._hideDamageEditPopup(overlay);
   }
