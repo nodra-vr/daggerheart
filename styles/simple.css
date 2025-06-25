@@ -9058,15 +9058,6 @@ input.trait-effects.resize-ta {
   border: 1px solid #6d6795;
   border-top: none;
 }
-.daggerheart-dialog.window-app .window-header {
-  background: rgba(11, 10, 19, 0.85);
-  backdrop-filter: blur(5px);
-  border: 1px solid #6d6795;
-  border-bottom: none;
-  color: var(--dh-color-off-white);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
 .daggerheart-dialog .dialog-buttons {
   display: flex;
   gap: 1em;
