@@ -494,36 +494,6 @@ Hooks.on("renderChatLog", (app, html, data) => {
   // Try to find the chat controls in the entire document, not just the passed html
   const chatControls = $(document).find(".chat-controls");
   
-  // Add button to control-buttons section
-  const controlButtons = chatControls.find(".control-buttons");
-  
-  if (controlButtons.length) {
-    // Check if button already exists to avoid duplicates
-    if (!controlButtons.find('[data-action="roll-duality"]').length) {
-      // Create the Roll Duality Dice button
-      const dualityButton = $(`
-        <button type="button" class="ui-control icon fa-solid fa-dice" 
-                data-tooltip="Roll Duality Dice" 
-                aria-label="Roll Duality Dice" 
-                data-action="roll-duality">
-        </button>
-      `);
-      
-      // Add click handler
-      dualityButton.on("click", async (event) => {
-        event.preventDefault();
-        
-        // Use the rollHandler for the duality roll with dialog
-        await game.daggerheart.rollHandler.dualityWithDialog({
-          title: "Duality Dice Roll"
-        });
-      });
-      
-      // Insert the button before the export button (first in control-buttons)
-      controlButtons.prepend(dualityButton);
-    }
-  }
-  
   // Add to horizontal roll privacy section
   const horizontalRollPrivacy = chatControls.find("#roll-privacy.split-button:not(.vertical)");
   
@@ -555,6 +525,8 @@ Hooks.on("renderChatLog", (app, html, data) => {
       horizontalRollPrivacy.append(horizontalDualityButton);
     }
   }
+  
+
   
   // Add to vertical roll privacy section
   const verticalRollPrivacy = $(document).find("#roll-privacy.split-button.vertical");
@@ -589,32 +561,11 @@ Hooks.on("renderChatLog", (app, html, data) => {
   }
   
   // If we didn't find any controls, try again after a short delay
-  if (!controlButtons.length && !horizontalRollPrivacy.length && !verticalRollPrivacy.length) {
+  if (!horizontalRollPrivacy.length && !verticalRollPrivacy.length) {
     setTimeout(() => {
       const delayedChatControls = $(document).find(".chat-controls");
-      const delayedControlButtons = delayedChatControls.find(".control-buttons");
       const delayedHorizontalRollPrivacy = delayedChatControls.find("#roll-privacy.split-button:not(.vertical)");
       const delayedVerticalRollPrivacy = $(document).find("#roll-privacy.split-button.vertical");
-      
-      // Add to control buttons
-      if (delayedControlButtons.length && !delayedControlButtons.find('[data-action="roll-duality"]').length) {
-        const dualityButton = $(`
-          <button type="button" class="ui-control icon fa-solid fa-dice" 
-                  data-tooltip="Roll Duality Dice" 
-                  aria-label="Roll Duality Dice" 
-                  data-action="roll-duality">
-          </button>
-        `);
-        
-        dualityButton.on("click", async (event) => {
-          event.preventDefault();
-          await game.daggerheart.rollHandler.dualityWithDialog({
-            title: "Duality Dice Roll"
-          });
-        });
-        
-        delayedControlButtons.prepend(dualityButton);
-      }
       
       // Add to horizontal roll privacy
       if (delayedHorizontalRollPrivacy.length && !delayedHorizontalRollPrivacy.find('[data-action="roll-duality"]').length) {
