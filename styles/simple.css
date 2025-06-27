@@ -5106,52 +5106,6 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   margin-top: 8px;
 }
 
-/* Fear Gain Message Styling */
-.fear-gain-message {
-  background: linear-gradient(135deg, rgba(77, 38, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
-  border: 1px solid #8e24aa;
-  border-radius: 8px;
-  padding: 12px;
-  margin: 4px 0;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-.fear-gain-message h3 {
-  color: #ce93d8;
-  font-size: 1.1em;
-  font-weight: bold;
-  margin: 0 0 8px 0;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-bottom: none;
-}
-.fear-gain-message h3 i {
-  margin-right: 8px;
-  color: #ce93d8;
-}
-.fear-gain-message p {
-  color: var(--dh-color-off-white);
-  font-size: 0.95em;
-  margin: 4px 0;
-  line-height: 1.4;
-}
-.fear-gain-message p:last-child {
-  margin-bottom: 0;
-  color: #ba68c8;
-  font-weight: 600;
-}
-.fear-gain-message .fear-warning {
-  color: #e91e63 !important;
-  font-weight: bold !important;
-  font-style: italic;
-  background: rgba(233, 30, 99, 0.1);
-  border: 1px solid rgba(233, 30, 99, 0.3);
-  border-radius: 4px;
-  padding: 4px 8px;
-  margin-top: 8px;
-}
-
 /* Stress Spend Message Styling */
 .stress-spend-message {
   background: linear-gradient(135deg, rgba(77, 38, 38, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
@@ -5264,6 +5218,34 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   border-left: 3px solid #6d6795;
   font-style: italic;
   color: #b0b0b0;
+}
+
+/* Hope and Fear Dice Tooltip Styling */
+/* These styles will be applied via JavaScript by adding classes to dice elements */
+/* Using CSS filters to actually transform the dice icon appearance */
+/* Hope Die Styling - Golden appearance using filters */
+.dice-tooltip .dice-rolls .roll.die.hope-die,
+.dice-tooltip .dice-rolls .roll.die[data-flavor=Hope] {
+  color: #000 !important;
+  filter: sepia(1) hue-rotate(15deg) saturate(1.8) brightness(1.1) !important;
+  font-weight: bold !important;
+}
+
+/* Fear Die Styling - Red appearance using filters */
+.dice-tooltip .dice-rolls .roll.die.fear-die,
+.dice-tooltip .dice-rolls .roll.die[data-flavor=Fear] {
+  color: #000 !important;
+  filter: sepia(1) hue-rotate(-175deg) saturate(2) brightness(0.9) !important;
+  font-weight: bold !important;
+}
+
+/* Hope and Fear Flavor Text Styling */
+.dice-tooltip .tooltip-part .part-header .part-flavor.hope-flavor {
+  color: var(--dh-color-gold) !important;
+}
+
+.dice-tooltip .tooltip-part .part-header .part-flavor.fear-flavor {
+  color: #3b75c2 !important;
 }
 
 .rest-button {

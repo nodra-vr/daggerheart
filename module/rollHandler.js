@@ -12,6 +12,39 @@ Hooks.on("diceSoNiceRollStart", (messageId, context) => {
   _ensureDaggerheartColorsets();
 });
 
+// Hook to style dice tooltips with Hope and Fear colors
+Hooks.on("renderChatMessage", (message, html, data) => {
+  // Only process Daggerheart rolls
+  if (!message.flags?.daggerheart) return;
+  
+  // Add styling to dice tooltips
+  _styleDiceTooltips(html);
+});
+
+// Function to style dice tooltips based on flavor
+function _styleDiceTooltips(html) {
+  // Find all dice tooltips in the chat message
+  const tooltipParts = html.find('.dice-tooltip .tooltip-part');
+  
+  tooltipParts.each((index, part) => {
+    const $part = $(part);
+    const flavorSpan = $part.find('.part-flavor');
+    
+    if (flavorSpan.length > 0) {
+      const flavor = flavorSpan.text().trim();
+      const diceRolls = $part.find('.dice-rolls .roll.die');
+      
+      if (flavor === 'Hope') {
+        diceRolls.addClass('hope-die').attr('data-flavor', 'Hope');
+        flavorSpan.addClass('hope-flavor');
+      } else if (flavor === 'Fear') {
+        diceRolls.addClass('fear-die').attr('data-flavor', 'Fear');
+        flavorSpan.addClass('fear-flavor');
+      }
+    }
+  });
+}
+
 // Function to ensure Daggerheart colorsets are available
 export function _ensureDaggerheartColorsets() {
   if (!game.dice3d) return;
