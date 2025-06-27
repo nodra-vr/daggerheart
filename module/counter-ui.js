@@ -222,6 +222,13 @@ export class CounterUI {
    * @param {number} amount - The amount of fear to spend
    */
   async spendFear(amount = 1) {
+    // Check if game is paused
+    if (game.paused) {
+      console.log("Daggerheart | Fear spending skipped - game is paused");
+      ui.notifications.info("Fear spending skipped - game is paused");
+      return false;
+    }
+    
     // Check permissions
     if (!game.user.isGM && !game.user.hasRole("ASSISTANT")) {
       console.warn("Only GMs and Assistant GMs can spend fear");
@@ -294,6 +301,13 @@ export class CounterUI {
    * @param {number} amount - The amount of fear to gain
    */
   async gainFear(amount = 1) {
+    // Check if game is paused
+    if (game.paused) {
+      console.log("Daggerheart | Fear gain skipped - game is paused");
+      ui.notifications.info("Fear gain skipped - game is paused");
+      return false;
+    }
+    
     // Check permissions
     if (!game.user.isGM && !game.user.hasRole("ASSISTANT")) {
       console.warn("Only GMs and Assistant GMs can gain fear");
@@ -357,6 +371,83 @@ export class CounterUI {
     } catch (error) {
       console.error("Error gaining fear:", error);
       ui.notifications.error("Error gaining fear. Check console for details.");
+      return false;
+    } finally {
+      this.isUpdating = false;
+    }
+  }
+
+  /**
+   * Automatically gain fear from game mechanics (bypasses GM check)
+   * @param {number} amount - The amount of fear to gain
+   * @param {string} source - The source of the fear gain (for logging)
+   */
+  async autoGainFear(amount = 1, source = "game mechanics") {
+    // Check if game is paused
+    if (game.paused) {
+      console.log(`Daggerheart | Automatic fear gain from ${source} skipped - game is paused`);
+      return false;
+    }
+    
+    // Validate amount parameter
+    if (!Number.isInteger(amount) || amount <= 0) {
+      console.warn("Fear amount must be a positive integer");
+      return false;
+    }
+    
+    // Prevent concurrent operations
+    if (this.isUpdating) {
+      return false;
+    }
+    
+    // Check if we can add more fear (maximum is 12)
+    if (this.count >= 12) {
+      console.warn(`Cannot gain fear. Fear is already at maximum (12)`);
+      return false;
+    }
+    
+    this.isUpdating = true;
+    try {
+      const newCount = Math.min(12, this.count + amount);
+      const actualAmount = newCount - this.count;
+      await game.settings.set("daggerheart", "counterValue", newCount);
+      this.count = newCount;
+      this.updateDisplay();
+      
+      console.log(`Daggerheart | Automatic fear gain from ${source}: +${actualAmount} (Current: ${this.count})`);
+      
+      // Success notification (less intrusive for automatic gains)
+      const message = actualAmount === 1 ? 
+        `GM gained 1 fear from ${source}. Current fear: ${this.count}` : 
+        `GM gained ${actualAmount} fear from ${source}. Current fear: ${this.count}`;
+      ui.notifications.info(message);
+      
+      // Send to chat (only if someone other than GM triggered it)
+      if (!game.user.isGM) {
+        ChatMessage.create({
+          user: game.user.id,
+          speaker: ChatMessage.getSpeaker(),
+          content: `<div class="fear-gain-message">
+            <h3><i class="fas fa-skull"></i> Fear Gained</h3>
+            <p>The GM has gained <strong>${actualAmount}</strong> fear from <em>${source}</em>.</p>
+            <p>Current fear: <strong>${this.count}</strong></p>
+            ${this.count >= 12 ? '<p class="fear-warning"><em>Maximum fear reached!</em></p>' : ''}
+          </div>`,
+          flags: {
+            daggerheart: {
+              messageType: "fearGained",
+              amountGained: actualAmount,
+              currentFear: this.count,
+              source: source,
+              automatic: true
+            }
+          }
+        });
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error gaining fear automatically:", error);
       return false;
     } finally {
       this.isUpdating = false;

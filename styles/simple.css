@@ -5248,6 +5248,15 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   color: #3b75c2 !important;
 }
 
+/* Hope and Fear Text in Roll Results */
+.roll-flavor-line .hope-result {
+  color: var(--dh-color-gold) !important;
+}
+
+.roll-flavor-line .fear-result {
+  color: #3b75c2 !important;
+}
+
 .rest-button {
   display: flex;
   align-items: center;

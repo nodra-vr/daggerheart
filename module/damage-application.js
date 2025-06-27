@@ -587,15 +587,8 @@ export async function rollDamage(formula, options = {}) {
     const flavorText = config.flavor || `<p class="roll-flavor-line"><b>Damage Roll</b></p>`;
     
     try {
+      // Let Foundry handle the roll rendering automatically, then add damage/healing buttons
       const chatMessage = await ChatMessage.create({
-        content: `
-          <div class="dice-roll">
-            <div class="dice-result">
-              <div class="dice-formula">${roll.formula}</div>
-              <div class="dice-total">${roll.total}</div>
-            </div>
-          </div>
-        `,
         flavor: flavorText,
         user: game.user.id,
         speaker: config.sourceActor ? ChatMessage.getSpeaker({ actor: config.sourceActor }) : ChatMessage.getSpeaker(),
@@ -676,15 +669,8 @@ export async function rollHealing(formula, options = {}) {
     const flavorText = config.flavor || `<p class="roll-flavor-line"><b>Healing Roll</b></p>`;
     
     try {
+      // Let Foundry handle the roll rendering automatically, then add damage/healing buttons
       const chatMessage = await ChatMessage.create({
-        content: `
-          <div class="dice-roll">
-            <div class="dice-result">
-              <div class="dice-formula">${roll.formula}</div>
-              <div class="dice-total">${roll.total}</div>
-            </div>
-          </div>
-        `,
         flavor: flavorText,
         user: game.user.id,
         speaker: config.sourceActor ? ChatMessage.getSpeaker({ actor: config.sourceActor }) : ChatMessage.getSpeaker(),

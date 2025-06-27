@@ -1211,3 +1211,12 @@ body.game .app a.content-link, .content-link, .inline-roll {
 .dice-tooltip .tooltip-part .part-header .part-flavor.fear-flavor {
   color: #3b75c2 !important;
 }
+
+/* Hope and Fear Text in Roll Results */
+.roll-flavor-line .hope-result {
+  color: var(--dh-color-gold) !important;
+}
+
+.roll-flavor-line .fear-result {
+  color: #3b75c2 !important;
+}

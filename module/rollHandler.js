@@ -12,16 +12,19 @@ Hooks.on("diceSoNiceRollStart", (messageId, context) => {
   _ensureDaggerheartColorsets();
 });
 
-// Hook to style dice tooltips with Hope and Fear colors
+// Hook to style dice tooltips with Hope and Fear colors and add damage/healing buttons
 Hooks.on("renderChatMessage", (message, html, data) => {
   // Only process Daggerheart rolls
   if (!message.flags?.daggerheart) return;
   
   // Add styling to dice tooltips
   _styleDiceTooltips(html);
+  
+  // Add damage/healing buttons for manual rolls
+  _addDamageHealingButtons(message, html);
 });
 
-// Function to style dice tooltips based on flavor
+// Function to style dice tooltips and roll result text based on flavor
 function _styleDiceTooltips(html) {
   // Find all dice tooltips in the chat message
   const tooltipParts = html.find('.dice-tooltip .tooltip-part');
@@ -43,6 +46,57 @@ function _styleDiceTooltips(html) {
       }
     }
   });
+  
+  // Style Hope/Fear text in roll result messages
+  const rollFlavorLines = html.find('.roll-flavor-line');
+  rollFlavorLines.each((index, line) => {
+    const $line = $(line);
+    const boldElements = $line.find('b');
+    
+    boldElements.each((bIndex, boldEl) => {
+      const $bold = $(boldEl);
+      const text = $bold.text().trim();
+      
+      if (text === 'Hope') {
+        $bold.addClass('hope-result');
+      } else if (text === 'Fear') {
+        $bold.addClass('fear-result');
+      }
+    });
+  });
+}
+
+// Function to add damage/healing buttons to manual roll messages
+function _addDamageHealingButtons(message, html) {
+  const flags = message.flags?.daggerheart;
+  
+  // Only add buttons to manual damage/healing rolls
+  if (!flags?.isManualRoll || !flags?.rollType) return;
+  if (flags.rollType !== 'damage' && flags.rollType !== 'healing') return;
+  
+  // Get the roll total for the buttons
+  const rollTotal = flags.damageAmount || flags.healingAmount;
+  if (!rollTotal) return;
+  
+  // Find the message content area
+  const messageContent = html.find('.message-content');
+  if (messageContent.length === 0) return;
+  
+  // Create the buttons HTML
+  const sourceActorId = flags.actorId || '';
+  const buttonsHtml = `
+    <div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
+      <button class="apply-damage-button" data-damage="${rollTotal}" data-source-actor-id="${sourceActorId}" style="flex: 1;">
+        <i class="fas fa-sword"></i> Damage (${rollTotal})
+      </button>
+      <button class="apply-healing-button" data-healing="${rollTotal}" data-source-actor-id="${sourceActorId}" style="flex: 1;">
+        <i class="fas fa-heart"></i> Heal (${rollTotal})
+      </button>
+    </div>
+  `;
+  
+  // Append the buttons to the message content
+  messageContent.append(buttonsHtml);
 }
 
 // Function to ensure Daggerheart colorsets are available

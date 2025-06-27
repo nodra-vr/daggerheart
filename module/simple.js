@@ -968,15 +968,8 @@ async function _rollCharacterDamage(event) {
   await roll.evaluate();
   
       try {
+      // Let Foundry handle the roll rendering automatically, then add damage/healing buttons
       const chatMessage = await ChatMessage.create({
-        content: `
-          <div class="dice-roll">
-            <div class="dice-result">
-              <div class="dice-formula">${roll.formula}</div>
-              <div class="dice-total">${roll.total}</div>
-            </div>
-          </div>
-        `,
         flavor: flavorText,
         user: game.user.id,
         speaker: ChatMessage.getSpeaker({ actor: actor }),
@@ -991,7 +984,8 @@ async function _rollCharacterDamage(event) {
             weaponName: weaponName,
             weaponType: weaponType,
             isCritical: isCritical,
-            damageAmount: roll.total
+            damageAmount: roll.total,
+            isManualRoll: true
           }
         }
       });
@@ -1141,15 +1135,8 @@ async function _rollAdversaryDamage(event) {
   await roll.evaluate();
   
       try {
+      // Let Foundry handle the roll rendering automatically, then add damage/healing buttons
       const chatMessage = await ChatMessage.create({
-        content: `
-          <div class="dice-roll">
-            <div class="dice-result">
-              <div class="dice-formula">${roll.formula}</div>
-              <div class="dice-total">${roll.total}</div>
-            </div>
-          </div>
-        `,
         flavor: flavorText,
         user: game.user.id,
         speaker: ChatMessage.getSpeaker({ actor: actor }),
@@ -1164,7 +1151,8 @@ async function _rollAdversaryDamage(event) {
             weaponName: weaponName,
             weaponType: weaponType,
             isCritical: isCritical,
-            damageAmount: roll.total
+            damageAmount: roll.total,
+            isManualRoll: true
           }
         }
       });

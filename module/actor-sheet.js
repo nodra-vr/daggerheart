@@ -1937,6 +1937,12 @@ await game.daggerheart.rollHandler.dualityWithDialog({
    * @private
    */
   async _applyCriticalSuccess() {
+    // Check if game is paused
+    if (game.paused) {
+      console.log("Daggerheart | Critical success effects skipped - game is paused");
+      return;
+    }
+    
     const updateData = {};
     
     if (this.actor.type === "character") {
@@ -1967,6 +1973,12 @@ await game.daggerheart.rollHandler.dualityWithDialog({
    * @private
    */
   async _applyHopeGain() {
+    // Check if game is paused
+    if (game.paused) {
+      console.log("Daggerheart | Hope gain skipped - game is paused");
+      return;
+    }
+    
     if (this.actor.type === "character") {
       const currentHope = parseInt(this.actor.system.hope?.value) || 0;
       const maxHope = parseInt(this.actor.system.hope?.max) || 0;
@@ -1983,9 +1995,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
    * @private
    */
   async _applyFearGain() {
-    // Increase the global fear counter
+    // Increase the global fear counter using automatic gain (bypasses GM check)
     if (game.daggerheart?.counter) {
-      await game.daggerheart.counter.increase();
+      await game.daggerheart.counter.autoGainFear(1, "duality roll with Fear");
     }
   }
 
