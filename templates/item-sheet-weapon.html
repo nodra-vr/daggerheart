@@ -21,46 +21,49 @@
                 </div>
             </div>
 
-            {{!-- Weapon dropdown fields --}}
-            <div class="weapon-dropdowns">
-                <div class="weapon-dropdown-group">
-                    <label>{{localize "DH.WeaponTrait"}}</label>
-                    <select name="system.trait">
-                        {{#each traitOptions}}
-                        <option value="{{value}}" {{#if (eq ../systemData.trait value)}}selected{{/if}}>{{label}}</option>
-                        {{/each}}
-                    </select>
+            {{!-- Weapon fields arranged in 2x2 grid --}}
+            <div class="weapon-fields-grid">
+                {{!-- Top row: Trait and Range --}}
+                <div class="weapon-top-row">
+                    <div class="weapon-dropdown-group">
+                        <label>{{localize "DH.WeaponTrait"}}</label>
+                        <select name="system.trait">
+                            {{#each traitOptions}}
+                            <option value="{{value}}" {{#if (eq ../systemData.trait value)}}selected{{/if}}>{{label}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+
+                    <div class="weapon-dropdown-group">
+                        <label>{{localize "DH.WeaponRange"}}</label>
+                        <select name="system.range">
+                            {{#each rangeOptions}}
+                            <option value="{{value}}" {{#if (eq ../systemData.range value)}}selected{{/if}}>{{label}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
                 </div>
 
-                <div class="weapon-dropdown-group">
-                    <label>{{localize "DH.WeaponRange"}}</label>
-                    <select name="system.range">
-                        {{#each rangeOptions}}
-                        <option value="{{value}}" {{#if (eq ../systemData.range value)}}selected{{/if}}>{{label}}</option>
-                        {{/each}}
-                    </select>
-                </div>
+                {{!-- Bottom row: Damage and Damage Type --}}
+                <div class="weapon-bottom-row">
+                    <div class="weapon-damage-group">
+                        <label>{{localize "DH.Damage"}}</label>
+                        <div class="weapon-damage-display damage-value-display"
+                             data-field="system.damage"
+                             data-label="Weapon Damage"
+                             data-has-modifiers="true"
+                             data-edit-type="damage">
+                            {{#if systemData.damage.value}}{{systemData.damage.value}}{{else}}{{#if systemData.damage.baseValue}}{{systemData.damage.baseValue}}{{else}}1d8{{/if}}{{/if}}
+                        </div>
+                    </div>
 
-                <div class="weapon-dropdown-group">
-                    <label>{{localize "DH.DamageType"}}</label>
-                    <select name="system.damageType">
-                        {{#each damageTypeOptions}}
-                        <option value="{{value}}" {{#if (eq ../systemData.damageType value)}}selected{{/if}}>{{label}}</option>
-                        {{/each}}
-                    </select>
-                </div>
-            </div>
-
-            {{!-- Damage field with modifier system --}}
-            <div class="weapon-damage-section">
-                <div class="weapon-damage-group">
-                    <label>{{localize "DH.Damage"}}</label>
-                    <div class="weapon-damage-display damage-value-display"
-                         data-field="system.damage"
-                         data-label="Weapon Damage"
-                         data-has-modifiers="true"
-                         data-edit-type="damage">
-                        {{#if systemData.damage.value}}{{systemData.damage.value}}{{else}}{{#if systemData.damage.baseValue}}{{systemData.damage.baseValue}}{{else}}1d8{{/if}}{{/if}}
+                    <div class="weapon-dropdown-group">
+                        <label>{{localize "DH.DamageType"}}</label>
+                        <select name="system.damageType">
+                            {{#each damageTypeOptions}}
+                            <option value="{{value}}" {{#if (eq ../systemData.damageType value)}}selected{{/if}}>{{label}}</option>
+                            {{/each}}
+                        </select>
                     </div>
                 </div>
             </div>

@@ -7319,27 +7319,35 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   opacity: 0.8;
   font-weight: bold;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdowns {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 15px;
+.daggerheart.sheet.weapon .weapon-fields .weapon-fields-grid {
   margin-bottom: 20px;
   padding: 15px 0;
   border-bottom: 1px solid #433f64;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdowns .weapon-dropdown-group {
+.daggerheart.sheet.weapon .weapon-fields .weapon-top-row,
+.daggerheart.sheet.weapon .weapon-fields .weapon-bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-top-row:last-child,
+.daggerheart.sheet.weapon .weapon-fields .weapon-bottom-row:last-child {
+  margin-bottom: 0;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdowns .weapon-dropdown-group label {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group label {
   font-size: 0.8em;
   color: var(--dh-color-gold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: bold;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdowns .weapon-dropdown-group select {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select {
   background: rgba(67, 63, 100, 0.3);
   border: 1px solid #433f64;
   border-radius: 4px;
@@ -7349,43 +7357,37 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   transition: all 0.3s ease;
   cursor: pointer;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdowns .weapon-dropdown-group select:focus {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select:focus {
   outline: none;
   border-color: var(--dh-color-gold);
   background: rgba(67, 63, 100, 0.5);
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdowns .weapon-dropdown-group select:hover {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select:hover {
   background: rgba(67, 63, 100, 0.4);
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdowns .weapon-dropdown-group select option {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select option {
   background: rgba(11, 10, 19, 0.95);
   color: var(--dh-color-off-white);
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-section {
-  margin-bottom: 20px;
-  padding: 15px 0;
-  border-bottom: 1px solid #433f64;
-}
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-section .weapon-damage-group {
+.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-section .weapon-damage-group label {
+.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group label {
   font-size: 0.8em;
   color: var(--dh-color-gold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: bold;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-section .weapon-damage-group .weapon-damage-display {
+.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group .weapon-damage-display {
   background: rgba(243, 194, 103, 0.15);
   border: 1px solid var(--dh-color-gold);
   border-radius: 4px;
   padding: 10px 15px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: "Courier New", monospace;
   font-size: 1.1em;
   font-weight: bold;
   color: var(--dh-color-gold);
@@ -7394,19 +7396,20 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   display: flex;
   align-items: center;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-section .weapon-damage-group .weapon-damage-display:hover {
+.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group .weapon-damage-display:hover {
   background: rgba(243, 194, 103, 0.25);
   transform: translateY(-1px);
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-section .weapon-damage-group .weapon-damage-display:empty::before {
+.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group .weapon-damage-display:empty::before {
   content: "1d8";
   opacity: 0.6;
 }
 
 /* Responsive adjustments for weapons */
 @media (max-width: 768px) {
-  .daggerheart.sheet.weapon .weapon-fields .weapon-dropdowns {
+  .daggerheart.sheet.weapon .weapon-fields .weapon-top-row,
+  .daggerheart.sheet.weapon .weapon-fields .weapon-bottom-row {
     grid-template-columns: 1fr;
     gap: 10px;
   }
