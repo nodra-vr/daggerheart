@@ -56,12 +56,12 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
     html.find('.damage-value-display').on('click', this._onDamageValueClick.bind(this));
   }
 
-  // Copy damage modifier system methods from actor sheet
+  // Damage stuff
   async _onDamageValueClick(event) {
     event.preventDefault();
     const displayElement = event.currentTarget;
     
-    // Get configuration from data attributes or derive from context
+    // Get config
     const config = {
       field: displayElement.dataset.field,
       label: displayElement.dataset.label,
@@ -71,24 +71,23 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
       max: displayElement.dataset.max ? parseInt(displayElement.dataset.max) : null
     };
     
-    // If no label provided, use a default
+    // Default label
     if (!config.label) {
       config.label = 'Weapon Damage';
     }
     
-    // Get the actual damage data using the field path
+    // Get damage data
     let damageData = foundry.utils.getProperty(this.item, config.field);
     
-    // Normalize the damage data to structured format
+    // Fix format
     if (typeof damageData === 'object' && damageData !== null && 'baseValue' in damageData) {
-      // Already structured - but check for corrupted baseValue that might contain flattened formula
+      // Check corruption
       const baseValue = damageData.baseValue || '1d8';
       const modifiers = damageData.modifiers || [];
       
-      // If baseValue contains spaces and we have no modifiers, it might be a flattened formula
-      // that got corrupted - try to extract the real base value
+      // Fix corrupted base
       if (baseValue.includes(' ') && modifiers.length === 0) {
-        // Extract just the first dice part as the real base
+        // Extract dice
         const match = baseValue.match(/^(\d*d\d+)/);
         if (match) {
           damageData.baseValue = match[1];
@@ -97,15 +96,15 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
         }
       }
     } else if (typeof damageData === 'object' && damageData !== null && 'value' in damageData) {
-      // Has .value but missing structure - this is a legacy mixed case
+      // Legacy case
       const displayValue = damageData.value || '1d8';
       damageData = {
-        baseValue: displayValue, // Treat the existing value as base (might be flattened)
+        baseValue: displayValue,
         modifiers: damageData.modifiers || [],
         value: displayValue
       };
     } else {
-      // Simple string/primitive - convert to structure
+      // String case
       const simpleValue = damageData || '1d8';
       damageData = {
         baseValue: simpleValue,
@@ -114,17 +113,17 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
       };
     }
     
-    // Ensure modifiers is always an array
+    // Fix modifiers
     if (!Array.isArray(damageData.modifiers)) {
       damageData.modifiers = [];
     }
     
-    // Show the damage modifier popup
+    // Show popup
     this._showDamageModifierEditPopup(config, damageData, displayElement);
   }
 
   _showDamageModifierEditPopup(config, damageData, displayElement) {
-    // Create the damage popup HTML if it doesn't exist
+    // Create popup
     let overlay = this.element.find('.damage-edit-popup-overlay');
     if (overlay.length === 0) {
       const popupHtml = `

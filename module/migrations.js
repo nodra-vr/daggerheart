@@ -1,32 +1,21 @@
-/**
- * Data Migration System for Daggerheart
- * Based on Foundry VTT System Development Guide
- * https://foundryvtt.com/article/system-development/
- */
+
 
 export class DaggerheartMigrations {
   
-  /**
-   * Current migration version
-   * Increment this when adding new migrations
-   */
+  // Current version
   static CURRENT_VERSION = "1.1.1";
   
-  /**
-   * Run all necessary migrations
-   * @param {Actor|Item} document - The document to migrate
-   * @returns {boolean} - Whether migration was needed
-   */
+  // Run migrations
   static async migrateDocument(document) {
     let needsUpdate = false;
     const systemData = document.system;
     const currentVersion = document.getFlag('daggerheart', 'migrationVersion') || "1.0.0";
     
-    // Only migrate if we haven't already migrated to current version
+    // Check version
     if (this.compareVersions(currentVersion, this.CURRENT_VERSION) < 0) {
       console.log(`🔄 Migrating ${document.documentName} "${document.name}" from v${currentVersion} to v${this.CURRENT_VERSION}`);
       
-      // Run migrations in order
+      // Run updates
       if (this.compareVersions(currentVersion, "1.1.0") < 0) {
         needsUpdate = this._migrateToLocationBased(document) || needsUpdate;
       }
@@ -35,7 +24,7 @@ export class DaggerheartMigrations {
         needsUpdate = this._migrateWeaponEquipped(document) || needsUpdate;
       }
       
-      // Mark as migrated
+      // Mark done
       if (needsUpdate) {
         await document.setFlag('daggerheart', 'migrationVersion', this.CURRENT_VERSION);
       }
@@ -44,16 +33,12 @@ export class DaggerheartMigrations {
     return needsUpdate;
   }
   
-  /**
-   * Migrate to location-based inventory system (v1.1.0)
-   * @param {Actor|Item} document 
-   * @returns {boolean}
-   */
+  // Add locations
   static _migrateToLocationBased(document) {
     let needsUpdate = false;
     const updates = {};
     
-    // Only migrate Items that don't have a location field
+    // Fix items without location
     if (document.documentName === "Item" && !document.system.location) {
       const location = this._getDefaultLocationForType(document.type);
       updates["system.location"] = location;
@@ -64,7 +49,7 @@ export class DaggerheartMigrations {
     
 
     
-    // Apply updates if needed
+    // Apply updates
     if (needsUpdate && Object.keys(updates).length > 0) {
       document.updateSource(updates);
     }
@@ -72,16 +57,12 @@ export class DaggerheartMigrations {
     return needsUpdate;
   }
   
-  /**
-   * Migrate weapons to add equipped field (v1.1.1)
-   * @param {Actor|Item} document 
-   * @returns {boolean}
-   */
+  // Add equipped
   static _migrateWeaponEquipped(document) {
     let needsUpdate = false;
     const updates = {};
     
-    // Add equipped field to weapons that don't have it
+    // Fix weapons without equipped
     if (document.documentName === "Item" && document.type === "weapon" && document.system.equipped === undefined) {
       updates["system.equipped"] = false;
       needsUpdate = true;
@@ -89,7 +70,7 @@ export class DaggerheartMigrations {
       console.log(`⚔️ Adding equipped field to weapon "${document.name}" → false`);
     }
     
-    // Apply updates if needed
+    // Apply updates
     if (needsUpdate && Object.keys(updates).length > 0) {
       document.updateSource(updates);
     }
@@ -97,11 +78,7 @@ export class DaggerheartMigrations {
     return needsUpdate;
   }
   
-  /**
-   * Get default location based on item type
-   * @param {string} type - The item type
-   * @returns {string} - The default location
-   */
+  // Get location
   static _getDefaultLocationForType(type) {
     switch (type) {
       case "worn":
@@ -129,12 +106,7 @@ export class DaggerheartMigrations {
     }
   }
   
-  /**
-   * Compare two version strings
-   * @param {string} v1 - First version
-   * @param {string} v2 - Second version
-   * @returns {number} - -1 if v1 < v2, 0 if equal, 1 if v1 > v2
-   */
+  // Compare versions
   static compareVersions(v1, v2) {
     const parts1 = v1.split('.').map(Number);
     const parts2 = v2.split('.').map(Number);
@@ -150,31 +122,28 @@ export class DaggerheartMigrations {
     return 0;
   }
   
-  /**
-   * Migrate all documents in the world
-   * Called during system initialization
-   */
+  // Migrate world
   static async migrateWorld() {
     console.log("🌍 Starting world migration...");
     
     const migrationPromises = [];
     
-    // Migrate all actors and their items
+    // Fix actors
     for (const actor of game.actors) {
       migrationPromises.push(this.migrateDocument(actor));
       
-      // Migrate actor's items
+      // Fix items
       for (const item of actor.items) {
         migrationPromises.push(this.migrateDocument(item));
       }
     }
     
-    // Migrate world-level items
+    // Fix world items
     for (const item of game.items) {
       migrationPromises.push(this.migrateDocument(item));
     }
     
-    // Wait for all migrations to complete
+    // Wait for finish
     const results = await Promise.all(migrationPromises);
     const migratedCount = results.filter(Boolean).length;
     

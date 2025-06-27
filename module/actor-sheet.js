@@ -182,7 +182,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.find(".item-control").click(this._onItemControl.bind(this));
     html.find(".rollable").on("click", this._onItemRoll.bind(this));
     
-    // Weapon toggle equip functionality (placeholder)
+    // Weapon equip toggle
     html.find('.weapon-toggle-equip').click(this._onToggleWeaponEquip.bind(this));
     
     // Handle toggling item description visibility
@@ -408,11 +408,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
   /* -------------------------------------------- */
   
-  /**
-   * Handle toggle equip for weapon items
-   * @param {Event} event The click event
-   * @private
-   */
+  // Toggle weapon equip
   async _onToggleWeaponEquip(event) {
     event.preventDefault();
     
@@ -420,12 +416,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const itemId = button.dataset.itemId;
     const item = this.actor.items.get(itemId);
     
-    if (!item || item.type !== "weapon") {
-      console.warn("Toggle equip called on non-weapon item");
-      return;
-    }
+    if (!item || item.type !== "weapon") return;
     
-    // Toggle the equipped state
+    // Flip equipped
     const newEquippedState = !item.system.equipped;
     
     try {
@@ -433,7 +426,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         "system.equipped": newEquippedState
       });
       
-      // Update button visual state immediately
+      // Update button
       if (newEquippedState) {
         button.classList.add('equipped');
         button.title = 'Unequip';
@@ -442,17 +435,14 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         button.title = 'Equip';
       }
       
-      console.log(`${item.name} ${newEquippedState ? 'equipped' : 'unequipped'}`);
-      
     } catch (error) {
-      console.error("Failed to toggle weapon equipped state:", error);
       ui.notifications.error(`Failed to ${newEquippedState ? 'equip' : 'unequip'} ${item.name}`);
     }
   }
 
   /* -------------------------------------------- */
   
-  // Migration system has been moved to module/migrations.js and runs at system level
+  // Migration moved
 
   /* -------------------------------------------- */
   
