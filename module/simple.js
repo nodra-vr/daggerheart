@@ -12,6 +12,7 @@ import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
 import { CountdownTracker } from "./countdown-tracker.js";
 import { SheetTracker } from "./sheet-tracker.js";
+import { DaggerheartMigrations } from "./migrations.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
 import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
@@ -305,9 +306,14 @@ Hooks.on("hotbarDrop", (bar, data, slot) => {
 });
 
 /**
- * Ready hook to initialize the counter UI
+ * Ready hook to initialize the counter UI and run migrations
  */
 Hooks.once("ready", async function() {
+  // Run system migrations first (only for GMs)
+  if (game.user.isGM) {
+    await DaggerheartMigrations.migrateWorld();
+  }
+  
   // Initialize the counter UI
   game.daggerheart.counter = new CounterUI();
   await game.daggerheart.counter.initialize();

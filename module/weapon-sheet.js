@@ -7,8 +7,8 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["daggerheart", "sheet", "item", "weapon"],
       template: "systems/daggerheart/templates/item-sheet-weapon.html",
-      width: 520,
-      height: 600,
+      width: 350,
+      height: 650,
       resizable: true,
       scrollY: [".card-description"],
     });

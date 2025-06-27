@@ -7406,6 +7406,39 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   opacity: 0.6;
 }
 
+/* Weapon toggle equip button styling */
+.daggerheart.sheet.actor .weapon-toggle-equip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border-radius: 2px;
+  margin: 0 2px;
+}
+.daggerheart.sheet.actor .weapon-toggle-equip:hover {
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+.daggerheart.sheet.actor .weapon-toggle-equip.equipped {
+  color: var(--dh-color-gold);
+  text-shadow: 0 0 5px rgba(243, 194, 103, 0.7);
+}
+.daggerheart.sheet.actor .weapon-toggle-equip.equipped:hover {
+  color: var(--dh-color-gold);
+  text-shadow: 0 0 8px rgba(243, 194, 103, 0.9);
+  transform: scale(1.1);
+}
+.daggerheart.sheet.actor .weapon-toggle-equip i {
+  font-size: 12px;
+  line-height: 1;
+}
+
 /* Responsive adjustments for weapons */
 @media (max-width: 768px) {
   .daggerheart.sheet.weapon .weapon-fields .weapon-top-row,

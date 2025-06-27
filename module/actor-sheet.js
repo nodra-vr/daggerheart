@@ -78,6 +78,8 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       async: true
     });
 
+    // Migration is now handled by the system-level migration system
+
     // Enrich item descriptions
     for (let item of context.data.items) {
       item.system.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(item.system.description, {
@@ -117,7 +119,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     // Load and restore persistent vault state
     await this._loadVaultState();
 
-    const vaultList = html.find('.item-list[data-item-type="vault"]');
+    const vaultList = html.find('.item-list[data-location="vault"]');
     const icon = html.find('.vault-toggle i');
 
     if (this._vaultOpen) {
@@ -133,7 +135,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     const categories = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack'];
     categories.forEach(category => {
-      const categoryList = html.find(`.item-list[data-item-type="${this._getCategoryDataType(category)}"]`);
+      const categoryList = html.find(`.item-list[data-location="${this._getCategoryDataType(category)}"]`);
       const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
       const categoryHeader = html.find(`.category-toggle[data-category="${category}"]`).closest('.tab-category');
 
@@ -179,6 +181,9 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     // Item Controls
     html.find(".item-control").click(this._onItemControl.bind(this));
     html.find(".rollable").on("click", this._onItemRoll.bind(this));
+    
+    // Weapon toggle equip functionality (placeholder)
+    html.find('.weapon-toggle-equip').click(this._onToggleWeaponEquip.bind(this));
     
     // Handle toggling item description visibility
     html.find(".item-name[data-action=\"toggle-description\"]").click(this._onToggleDescription.bind(this));
@@ -404,6 +409,54 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   /* -------------------------------------------- */
   
   /**
+   * Handle toggle equip for weapon items
+   * @param {Event} event The click event
+   * @private
+   */
+  async _onToggleWeaponEquip(event) {
+    event.preventDefault();
+    
+    const button = event.currentTarget;
+    const itemId = button.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    
+    if (!item || item.type !== "weapon") {
+      console.warn("Toggle equip called on non-weapon item");
+      return;
+    }
+    
+    // Toggle the equipped state
+    const newEquippedState = !item.system.equipped;
+    
+    try {
+      await item.update({
+        "system.equipped": newEquippedState
+      });
+      
+      // Update button visual state immediately
+      if (newEquippedState) {
+        button.classList.add('equipped');
+        button.title = 'Unequip';
+      } else {
+        button.classList.remove('equipped');
+        button.title = 'Equip';
+      }
+      
+      console.log(`${item.name} ${newEquippedState ? 'equipped' : 'unequipped'}`);
+      
+    } catch (error) {
+      console.error("Failed to toggle weapon equipped state:", error);
+      ui.notifications.error(`Failed to ${newEquippedState ? 'equip' : 'unequip'} ${item.name}`);
+    }
+  }
+
+  /* -------------------------------------------- */
+  
+  // Migration system has been moved to module/migrations.js and runs at system level
+
+  /* -------------------------------------------- */
+  
+  /**
    * Setup drag and drop visual feedback
    * @param {jQuery} html The rendered HTML
    * @private
@@ -524,29 +577,58 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     }
     
     const type = button.dataset.type; // Ensure type is read for create actions
+    const location = button.dataset.location; // Get location for new items
     
     switch (action) {
       case "create":
       const clsi = getDocumentClass("Item");
-      return clsi.create({name: "New Ability", type: type}, {parent: this.actor}); // Use the type variable here
+      return clsi.create({
+        name: "New Ability", 
+        type: type,
+        system: { location: location || "abilities" }
+      }, {parent: this.actor});
       case "create-item":
       const cls = getDocumentClass("Item");
-      return cls.create({name: "New Item", type: type}, {parent: this.actor}); // Use the type variable here
+      return cls.create({
+        name: "New Item", 
+        type: type,
+        system: { location: location || "backpack" }
+      }, {parent: this.actor});
       case "create-domain":
       const clsd = getDocumentClass("Item");
-      return clsd.create({name: "New Domain", type: type}, {parent: this.actor}); // Use the type variable here
+      return clsd.create({
+        name: "New Domain", 
+        type: type,
+        system: { location: location || "abilities" }
+      }, {parent: this.actor});
       case "create-ancestry":
       const clsa = getDocumentClass("Item");
-      return clsa.create({name: "New Ancestry", type: type}, {parent: this.actor}); // Use the type variable here
+      return clsa.create({
+        name: "New Ancestry", 
+        type: type,
+        system: { location: location || "ancestry" }
+      }, {parent: this.actor});
       case "create-community":
       const clscom = getDocumentClass("Item");
-      return clscom.create({name: "New Community", type: type}, {parent: this.actor}); // Use the type variable here
+      return clscom.create({
+        name: "New Community", 
+        type: type,
+        system: { location: location || "community" }
+      }, {parent: this.actor});
       case "create-class":
       const clscl = getDocumentClass("Item");
-      return clscl.create({name: "New Class", type: type}, {parent: this.actor}); // Use the type variable here
+      return clscl.create({
+        name: "New Class", 
+        type: type,
+        system: { location: location || "class" }
+      }, {parent: this.actor});
       case "create-subclass":
       const clssc = getDocumentClass("Item");
-      return clssc.create({name: "New Subclass", type: type}, {parent: this.actor}); // Use the type variable here
+      return clssc.create({
+        name: "New Subclass", 
+        type: type,
+        system: { location: location || "subclass" }
+      }, {parent: this.actor});
       case "edit": // edit icon
         if (item) return item.sheet.render(true);
         break;
@@ -555,32 +637,18 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         break;
       case "send-to-vault":
         if (item) {
-          // Create a new vault item with the same data
-          const itemData = {
-            name: item.name,
-            type: "vault",
-            img: item.img,
-            system: item.system
-          };
-          // Create the new vault item
-          await getDocumentClass("Item").create(itemData, {parent: this.actor});
-          // Delete the original domain item
-          return item.delete();
+          // Simply change location to vault - preserve item type and all other data
+          return item.update({
+            "system.location": "vault"
+          });
         }
         break;
       case "send-to-domain":
-        if (item && item.type === "vault") {
-          // Create a new domain item with the same data
-          const itemData = {
-            name: item.name,
-            type: "domain",
-            img: item.img,
-            system: item.system
-          };
-          // Create the new domain item
-          await getDocumentClass("Item").create(itemData, {parent: this.actor});
-          // Delete the original vault item
-          return item.delete();
+        if (item && item.system.location === "vault") {
+          // Simply change location to abilities - preserve item type and all other data
+          return item.update({
+            "system.location": "abilities"
+          });
         }
         break;
     }
@@ -627,8 +695,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const targetList = event.target.closest('.item-list');
     if (!targetList) return false;
 
-    const newType = targetList.dataset.itemType;
-    if (!newType) return false;
+    // Use location instead of type for organization
+    const newLocation = targetList.dataset.location;
+    if (!newLocation) return false;
 
     const item = await Item.implementation.fromDropData(data);
     
@@ -638,25 +707,38 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       el.classList.remove('drag-over');
     });
     
-    // same actor move
+    // same actor move - only change location, preserve type
     if (this.actor.items.has(item.id)) {
         const existingItem = this.actor.items.get(item.id);
-        // same type check
-        if (existingItem.type === newType) return;
-
-        // new item with data
-        const newItemData = existingItem.toObject();
-        newItemData.type = newType;
         
-        // Delete the old item and create the new one
-        await existingItem.delete();
-        return this.actor.createEmbeddedDocuments("Item", [newItemData]);
+        // Check if location is already the same
+        if (existingItem.system.location === newLocation) {
+          return;
+        }
+
+        // Update location only - preserve item type and all other data
+        try {
+          const result = await existingItem.update({
+            "system.location": newLocation
+          });
+          return result;
+        } catch (error) {
+          ui.notifications?.error(`Failed to move ${item.name}: ${error.message}`);
+          return false;
+        }
 
     } else {
-      // Otherwise, we are creating a new item from a drop
+      // Creating a new item from external drop - set location but preserve type
       const newItemData = item.toObject();
-      newItemData.type = newType;
-      return this.actor.createEmbeddedDocuments("Item", [newItemData]);
+      newItemData.system.location = newLocation;
+      
+      try {
+        const result = await this.actor.createEmbeddedDocuments("Item", [newItemData]);
+        return result;
+      } catch (error) {
+        ui.notifications?.error(`Failed to create ${item.name}: ${error.message}`);
+        return false;
+      }
     }
   }
   /* -------------------------------------------- */
@@ -1967,7 +2049,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     event.preventDefault();
     const button = $(event.currentTarget);
     const icon = button.find('i');
-    const vaultList = this.element.find('.item-list[data-item-type="vault"]');
+    const vaultList = this.element.find('.item-list[data-location="vault"]');
 
     if (vaultList.hasClass('vault-collapsed')) {
         // Expanding
@@ -1991,7 +2073,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const icon = button.find('i');
     const category = button.data('category');
     const dataType = this._getCategoryDataType(category);
-    const categoryList = this.element.find(`.item-list[data-item-type="${dataType}"]`);
+    const categoryList = this.element.find(`.item-list[data-location="${dataType}"]`);
     const categoryHeader = button.closest('.tab-category');
 
     if (!this._categoryStates) {
@@ -2169,9 +2251,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       'subclass': 'subclass',
       'ancestry': 'ancestry',
       'community': 'community',
-      'abilities': 'item',
+      'abilities': 'abilities',
       'worn': 'worn',
-      'backpack': 'inventory'
+      'backpack': 'backpack'
     };
     return mapping[category] || category;
   }

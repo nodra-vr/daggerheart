@@ -1,16 +1,10 @@
 {
   "id": "daggerheart",
-  "version": "2.5.8",
+  "version": "2.6.1",
   "title": "Daggerheart",
   "url": "",
   "description": "Unofficial Daggerheart Game System",
   "license": "LICENSE.txt",
-  "documentTypes": {
-    "Item": {
-      "types": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass", "weapon"],
-      "htmlFields": ["description"]
-    }
-  },
   "authors": [
     {
       "name": "featureJosh",
@@ -54,5 +48,5 @@
   "primaryTokenAttribute": "barHealth",
   "secondaryTokenAttribute": "barStress",
   "manifest": "https://raw.githubusercontent.com/featureJosh/daggerheart-swb/master/system.json",
-  "download"  : "https://github.com/featureJosh/daggerheart-swb/archive/refs/tags/v2.5.8.zip"
+  "download"  : "https://github.com/featureJosh/daggerheart-swb/archive/refs/tags/v2.5.9.zip"
 }
