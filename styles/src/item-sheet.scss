@@ -309,7 +309,177 @@
   }
 }
 
-/* Responsive adjustments */
+/* ============================================
+   WEAPON SHEET SPECIFIC STYLES
+   ============================================ */
+
+/* Extend existing item sheet styles to weapon sheets */
+.daggerheart.sheet.item,
+.daggerheart.sheet.weapon {
+  /* All existing item sheet styles automatically apply */
+}
+
+/* Weapon-specific field styling */
+.daggerheart.sheet.weapon .weapon-fields {
+  .card-subtitle {
+    .category-tier-inputs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9em;
+
+      .category-input,
+      .tier-input {
+        background: rgba(67, 63, 100, 0.3);
+        border: 1px solid #433f64;
+        border-radius: 4px;
+        color: var(--dh-color-gray);
+        padding: 8px 12px;
+        font-size: 0.85em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+
+        &::placeholder {
+          color: rgba(170, 170, 170, 0.6);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: var(--dh-color-gold);
+          background: rgba(67, 63, 100, 0.5);
+          color: var(--dh-color-off-white);
+        }
+      }
+
+      .separator {
+        color: var(--dh-color-gray);
+        opacity: 0.8;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .weapon-dropdowns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #433f64;
+
+    .weapon-dropdown-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      label {
+        font-size: 0.8em;
+        color: var(--dh-color-gold);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: bold;
+      }
+
+      select {
+        background: rgba(67, 63, 100, 0.3);
+        border: 1px solid #433f64;
+        border-radius: 4px;
+        color: var(--dh-color-off-white);
+        padding: 8px 12px;
+        font-size: 0.9em;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:focus {
+          outline: none;
+          border-color: var(--dh-color-gold);
+          background: rgba(67, 63, 100, 0.5);
+        }
+
+        &:hover {
+          background: rgba(67, 63, 100, 0.4);
+        }
+
+        option {
+          background: rgba(11, 10, 19, 0.95);
+          color: var(--dh-color-off-white);
+        }
+      }
+    }
+  }
+
+  .weapon-damage-section {
+    margin-bottom: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #433f64;
+
+    .weapon-damage-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      label {
+        font-size: 0.8em;
+        color: var(--dh-color-gold);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: bold;
+      }
+
+      .weapon-damage-display {
+        background: rgba(243, 194, 103, 0.15);
+        border: 1px solid var(--dh-color-gold);
+        border-radius: 4px;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Courier New', monospace;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: var(--dh-color-gold);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+        min-height: 20px;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+          background: rgba(243, 194, 103, 0.25);
+          transform: translateY(-1px);
+          box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
+        }
+
+        &:empty::before {
+          content: "1d8";
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+}
+
+/* Responsive adjustments for weapons */
+@media (max-width: 768px) {
+  .daggerheart.sheet.weapon .weapon-fields .weapon-dropdowns {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .daggerheart.sheet.weapon .weapon-fields {
+    .card-subtitle .category-tier-inputs {
+      flex-direction: column;
+      gap: 8px;
+      
+      .separator {
+        display: none;
+      }
+    }
+  }
+}
+
+/* Original responsive adjustments */
 @media (max-width: 600px) {
   .daggerheart.sheet.item .card-image-container {
     height: 150px;

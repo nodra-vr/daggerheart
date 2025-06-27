@@ -5,6 +5,12 @@
   "url": "",
   "description": "Unofficial Daggerheart Game System",
   "license": "LICENSE.txt",
+  "documentTypes": {
+    "Item": {
+      "types": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass", "weapon"],
+      "htmlFields": ["description"]
+    }
+  },
   "authors": [
     {
       "name": "featureJosh",

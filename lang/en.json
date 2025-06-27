@@ -35,11 +35,13 @@
   "ITEM.TypeCommunity": "Community",
   "ITEM.TypeClass": "Class",
   "ITEM.TypeSubclass": "Subclass",
+  "ITEM.TypeWeapon": "Weapon",
 
   "SHEET.Actor.character": "Character Sheet",
   "SHEET.Actor.npc": "Adversary Sheet",
   "SHEET.Actor.companion": "Companion Sheet",
   "SHEET.Item.default": "Item Sheet",
+  "SHEET.Item.weapon": "Weapon Sheet",
 
   "SIMPLE.DefineTemplate": "Define as Template",
   "SIMPLE.UnsetTemplate": "Unset Template",
@@ -143,5 +145,16 @@
   "DH.GroupLabel": "Group Label",
   "DH.ShortRest": "Short Rest",
   "DH.LongRest": "Long Rest",
-  "DH.RestComingSoon": "Rest functionality will be added in a future update."
+  "DH.RestComingSoon": "Rest functionality will be added in a future update.",
+  "DH.WeaponTrait": "Trait",
+  "DH.WeaponRange": "Range",
+  "DH.DamageType": "Damage Type",
+  "DH.Tier": "Tier",
+  "DH.Physical": "Physical",
+  "DH.Magical": "Magical",
+  "DH.Melee": "Melee",
+  "DH.VeryClose": "Very Close",
+  "DH.Close": "Close",
+  "DH.Far": "Far",
+  "DH.VeryFar": "Very Far"
 }

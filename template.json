@@ -253,7 +253,7 @@
     }
   },
   "Item": {
-    "types": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass"],
+    "types": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass", "weapon"],
     "htmlFields": ["description"],
     "item": {
       "description": "",
@@ -339,6 +339,24 @@
       "description": "",
       "category": "",
       "rarity": "",
+      "quantity": 1,
+      "weight": 0,
+      "attributes": {},
+      "groups": {},
+      "resourceTrackers": []
+    },
+    "weapon": {
+      "description": "",
+      "category": "",
+      "tier": "",
+      "trait": "",
+      "range": "",
+      "damageType": "",
+      "damage": {
+        "baseValue": "1d8",
+        "modifiers": [],
+        "value": "1d8"
+      },
       "quantity": 1,
       "weight": 0,
       "attributes": {},

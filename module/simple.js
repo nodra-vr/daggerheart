@@ -2,6 +2,7 @@
 import { SimpleActor } from "./actor.js";
 import { SimpleItem } from "./item.js";
 import { SimpleItemSheet } from "./item-sheet.js";
+import { SimpleWeaponSheet } from "./weapon-sheet.js";
 import { SimpleActorSheet, NPCActorSheet } from "./actor-sheet.js";
 import { CompanionActorSheet } from "./actor-sheet-companion.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
@@ -176,7 +177,8 @@ Hooks.once("init", async function() {
     ancestry: "ITEM.TypeAncestry",
     community: "ITEM.TypeCommunity",
     class: "ITEM.TypeClass",
-    subclass: "ITEM.TypeSubclass"
+    subclass: "ITEM.TypeSubclass",
+    weapon: "ITEM.TypeWeapon"
   };
   CONFIG.Token.documentClass = SimpleTokenDocument;
   CONFIG.Token.objectClass = SimpleToken;
@@ -200,8 +202,14 @@ Hooks.once("init", async function() {
   });
   foundry.documents.collections.Items.unregisterSheet("core", foundry.applications.sheets.ItemSheetV2);
   foundry.documents.collections.Items.registerSheet("daggerheart", SimpleItemSheet, {
+    types: ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass"],
     makeDefault: true,
     label: "SHEET.Item.default"
+  });
+  foundry.documents.collections.Items.registerSheet("daggerheart", SimpleWeaponSheet, {
+    types: ["weapon"],
+    makeDefault: true,
+    label: "SHEET.Item.weapon"
   });
 
   // Register system settings
