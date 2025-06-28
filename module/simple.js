@@ -435,11 +435,13 @@ Hooks.once("ready", async function() {
       return;
     }
     
-    console.log("=== Weapon Equip Test ===");
+    console.log("=== Weapon Equip Test (Dual System) ===");
     console.log("Actor:", actor.name);
-    console.log("Weapons:", weapons.map(w => `${w.name} (equipped: ${w.system.equipped})`));
+    console.log("Weapons:", weapons.map(w => `${w.name} (equipped: ${w.system.equipped}, slot: ${w.system.weaponSlot})`));
     console.log("Current weapon-main damage:", actor.system["weapon-main"]?.damage);
     console.log("Current weapon-main to-hit:", actor.system["weapon-main"]?.["to-hit"]);
+    console.log("Current weapon-off damage:", actor.system["weapon-off"]?.damage);
+    console.log("Current weapon-off to-hit:", actor.system["weapon-off"]?.["to-hit"]);
     
     const weapon = weapons[0];
     console.log("Testing with weapon:", weapon.name);
@@ -448,6 +450,7 @@ Hooks.once("ready", async function() {
     console.log("Weapon damage type:", typeof weapon.system.damage);
     console.log("Weapon damage structure:", JSON.stringify(weapon.system.damage, null, 2));
     console.log("Weapon trait:", weapon.system.trait);
+    console.log("Current weapon slot:", weapon.system.weaponSlot);
     
     // Get the actor sheet
     const sheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
@@ -456,21 +459,69 @@ Hooks.once("ready", async function() {
       return;
     }
     
-    // Toggle the weapon
-    const success = await EquipmentHandler.toggleWeaponEquip(actor, weapon);
-    if (success) {
-      console.log("Weapon toggled successfully");
+    // Test equipping as primary
+    console.log("=== Testing Primary Weapon Equip ===");
+    const successPrimary = await EquipmentHandler.equipPrimaryWeapon(actor, weapon);
+    if (successPrimary) {
+      console.log("Primary weapon equip successful");
       await EquipmentHandler.syncEquippedWeapons(actor, sheet);
-      console.log("Weapon sync completed");
+      console.log("Primary weapon sync completed");
       sheet.render(true, { immediate: true });
       console.log("Sheet rendered");
       
       // Log the results
       console.log("New weapon-main damage:", actor.system["weapon-main"]?.damage);
       console.log("New weapon-main to-hit:", actor.system["weapon-main"]?.["to-hit"]);
-      console.log("Weapon equip test completed - check the sheet!");
+      console.log("Updated weapon slot:", weapon.system.weaponSlot);
+      console.log("Primary weapon test completed - check the sheet!");
     } else {
-      console.log("Weapon toggle failed");
+      console.log("Primary weapon equip failed");
+    }
+  };
+  
+  // Add test function for secondary weapon
+  window.testSecondaryWeapon = async function() {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+    
+    const actor = selectedTokens[0].actor;
+    const weapons = actor.items.filter(i => i.type === "weapon");
+    
+    if (weapons.length < 2) {
+      ui.notifications.warn("This actor needs at least 2 weapons to test secondary");
+      return;
+    }
+    
+    const weapon = weapons[1]; // Use second weapon
+    console.log("=== Testing Secondary Weapon Equip ===");
+    console.log("Testing with weapon:", weapon.name);
+    
+    // Get the actor sheet
+    const sheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
+    if (!sheet) {
+      ui.notifications.warn("Please open the character sheet first");
+      return;
+    }
+    
+    // Test equipping as secondary
+    const successSecondary = await EquipmentHandler.equipSecondaryWeapon(actor, weapon);
+    if (successSecondary) {
+      console.log("Secondary weapon equip successful");
+      await EquipmentHandler.syncEquippedWeapons(actor, sheet);
+      console.log("Secondary weapon sync completed");
+      sheet.render(true, { immediate: true });
+      console.log("Sheet rendered");
+      
+      // Log the results
+      console.log("New weapon-off damage:", actor.system["weapon-off"]?.damage);
+      console.log("New weapon-off to-hit:", actor.system["weapon-off"]?.["to-hit"]);
+      console.log("Updated weapon slot:", weapon.system.weaponSlot);
+      console.log("Secondary weapon test completed - check the sheet!");
+    } else {
+      console.log("Secondary weapon equip failed");
     }
   };
   
@@ -490,34 +541,6 @@ Hooks.once("ready", async function() {
     console.log("weapon-off damage:", JSON.stringify(actor.system["weapon-off"]?.damage, null, 2));
     console.log("weapon-off to-hit:", JSON.stringify(actor.system["weapon-off"]?.["to-hit"], null, 2));
     console.log("Base value restrictions:", JSON.stringify(actor.flags?.daggerheart?.baseValueRestrictions, null, 2));
-  };
-  
-  // Add test function for weapon slot dialog
-  window.testWeaponSlotDialog = async function() {
-    const selectedTokens = canvas.tokens.controlled;
-    if (selectedTokens.length === 0) {
-      ui.notifications.warn("Please select a token first");
-      return;
-    }
-    
-    const actor = selectedTokens[0].actor;
-    const weapons = actor.items.filter(i => i.type === "weapon" && !i.system.equipped);
-    
-    if (weapons.length === 0) {
-      ui.notifications.warn("This actor has no unequipped weapons to test with");
-      return;
-    }
-    
-    const weapon = weapons[0];
-    console.log("Testing weapon slot dialog with:", weapon.name);
-    
-    const selectedSlot = await EquipmentHandler.showWeaponSlotDialog(actor, weapon);
-    console.log("Selected slot:", selectedSlot);
-    
-    if (selectedSlot) {
-      const success = await EquipmentHandler.equipWeaponToSlot(actor, weapon, selectedSlot);
-      console.log("Equip result:", success);
-    }
   };
   
   // Also add to the game.daggerheart object for consistency
@@ -591,7 +614,7 @@ Hooks.once("ready", async function() {
   game.daggerheart.cleanupDuplicateMacros = window.cleanupDuplicateMacros;
   
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), and testWeaponSlotDialog() functions are now available globally.");
+  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), and testWeaponEquip() functions are now available globally.");
   
   // Clean up any existing duplicate macros from previous versions, but don't create new ones
   if (game.user.isGM) {

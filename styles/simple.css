@@ -1159,30 +1159,6 @@ body.game .app input[type=search]:focus {
   outline-offset: 2px;
 }
 
-/* ================================
-   WEAPON SLOT DIALOG
-   ================================ */
-.weapon-slot-dialog .dialog-content {
-  padding: 0;
-}
-.weapon-slot-dialog .weapon-slot-option {
-  padding: var(--dh-space-lg);
-  background: var(--dh-glass-secondary);
-  border: 1px solid var(--dh-border-purple-subtle);
-  border-radius: var(--dh-border-radius-md);
-  transition: all 0.2s ease;
-}
-.weapon-slot-dialog .weapon-slot-option:hover {
-  background: var(--dh-glass-accent);
-  border-color: var(--dh-border-purple-light);
-  transform: translateY(-1px);
-  box-shadow: var(--dh-shadow-md);
-}
-.weapon-slot-dialog .slot-select-btn {
-  min-width: 80px;
-}
-
-/* ================================ */
 /* Core Daggerheart System Styles */
 .daggerheart {
   /* Base styles */
@@ -2679,6 +2655,60 @@ body.game .app button:hover, body.game .app button:focus {
 
 .daggerheart .vault-content .item-control {
   display: flex;
+}
+
+/* Weapon slot label styling */
+.weapon-slot-label {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: var(--color-bg-dark);
+  color: var(--color-text-light);
+  font-size: 8px;
+  font-weight: bold;
+  line-height: 1;
+  padding: 1px 2px;
+  border-radius: 2px;
+  border: 1px solid var(--color-border);
+  min-width: 8px;
+  text-align: center;
+}
+
+.weapon-equip-primary.equipped .weapon-slot-label,
+.weapon-equip-secondary.equipped .weapon-slot-label {
+  background: var(--color-accent);
+  color: var(--color-text-dark);
+  border-color: var(--color-accent);
+}
+
+/* Adjust weapon button positioning to accommodate labels */
+.weapon-equip-primary,
+.weapon-equip-secondary {
+  position: relative;
+  margin-right: 2px;
+}
+
+/* Weapon slot tag styling for equipped weapons in item names */
+.weapon-slot-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-left: 6px;
+  text-transform: uppercase;
+}
+
+.weapon-slot-tag.primary {
+  background: rgba(var(--color-accent-rgb), 0.2);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+}
+
+.weapon-slot-tag.secondary {
+  background: rgba(var(--color-secondary-rgb), 0.2);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-secondary);
 }
 
 /* Feature Layer */

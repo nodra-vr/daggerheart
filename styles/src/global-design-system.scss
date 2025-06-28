@@ -979,34 +979,3 @@
   outline: 2px solid var(--dh-color-gold);
   outline-offset: 2px;
 }
-
-/* ================================
-   WEAPON SLOT DIALOG
-   ================================ */
-
-.weapon-slot-dialog {
-  .dialog-content {
-    padding: 0;
-  }
-  
-  .weapon-slot-option {
-    padding: var(--dh-space-lg);
-    background: var(--dh-glass-secondary);
-    border: 1px solid var(--dh-border-purple-subtle);
-    border-radius: var(--dh-border-radius-md);
-    transition: all 0.2s ease;
-    
-    &:hover {
-      background: var(--dh-glass-accent);
-      border-color: var(--dh-border-purple-light);
-      transform: translateY(-1px);
-      box-shadow: var(--dh-shadow-md);
-    }
-  }
-  
-  .slot-select-btn {
-    min-width: 80px;
-  }
-}
-
-/* ================================ */

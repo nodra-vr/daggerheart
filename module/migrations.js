@@ -267,4 +267,87 @@ export class DaggerheartMigrations {
 
     return needsUpdate ? updateData : null;
   }
+
+  /**
+   * Migrate to version 1.2.1 - Add weapon slot system
+   * @param {Actor} actor
+   * @private
+   */
+  static async _migrateToV121(actor) {
+    console.log(`Daggerheart | Migrating ${actor.name} to v1.2.1 (weapon slots)`);
+    
+    const updateData = {};
+    let hasChanges = false;
+    
+    // Migrate weapon items to include weaponSlot field
+    for (let item of actor.items) {
+      if (item.type === "weapon") {
+        const itemUpdateData = {};
+        
+        // Add weaponSlot field if missing
+        if (item.system.weaponSlot === undefined) {
+          // If weapon is equipped but has no slot, assign to primary (first come, first served)
+          if (item.system.equipped) {
+            const equippedWeapons = actor.items.filter(i => 
+              i.type === "weapon" && 
+              i.system.equipped && 
+              i.system.weaponSlot
+            );
+            
+            // Assign to primary if no primary exists, otherwise secondary
+            const hasPrimary = equippedWeapons.some(w => w.system.weaponSlot === "primary");
+            const hasSecondary = equippedWeapons.some(w => w.system.weaponSlot === "secondary");
+            
+            if (!hasPrimary) {
+              itemUpdateData["system.weaponSlot"] = "primary";
+            } else if (!hasSecondary) {
+              itemUpdateData["system.weaponSlot"] = "secondary";
+            } else {
+              // Both slots taken, unequip this weapon
+              itemUpdateData["system.equipped"] = false;
+              itemUpdateData["system.weaponSlot"] = null;
+            }
+          } else {
+            itemUpdateData["system.weaponSlot"] = null;
+          }
+          
+          // Apply item updates
+          if (Object.keys(itemUpdateData).length > 0) {
+            await item.update(itemUpdateData);
+            console.log(`Daggerheart | Updated weapon ${item.name} with slot data:`, itemUpdateData);
+          }
+        }
+      }
+    }
+    
+    // Update system version
+    updateData["system.version"] = "1.2.1";
+    hasChanges = true;
+    
+    if (hasChanges) {
+      await actor.update(updateData);
+      console.log(`Daggerheart | ${actor.name} migrated to v1.2.1`);
+    }
+  }
+
+  /**
+   * Migrate a single actor to the latest version
+   * @param {Actor} actor
+   */
+  static async migrateActor(actor) {
+    const currentVersion = actor.system.version || "1.0.0";
+    console.log(`Daggerheart | Checking migration for ${actor.name}, current version: ${currentVersion}`);
+    
+    // Version 1.2.0 migration - weapon data structure
+    if (foundry.utils.isNewerVersion("1.2.0", currentVersion)) {
+      await this._migrateToV120(actor);
+    }
+    
+    // Version 1.2.1 migration - weapon slot system
+    if (foundry.utils.isNewerVersion("1.2.1", currentVersion)) {
+      await this._migrateToV121(actor);
+    }
+    
+    console.log(`Daggerheart | Migration complete for ${actor.name}`);
+  }
 } 

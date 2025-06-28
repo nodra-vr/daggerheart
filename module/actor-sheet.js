@@ -329,6 +329,10 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     // Weapon equip toggle
     html.find('.weapon-toggle-equip').click(this._onToggleWeaponEquip.bind(this));
     
+    // New dual weapon equip buttons
+    html.find('.weapon-equip-primary').click(this._onEquipPrimaryWeapon.bind(this));
+    html.find('.weapon-equip-secondary').click(this._onEquipSecondaryWeapon.bind(this));
+    
     // Handle toggling item description visibility
     html.find(".item-name[data-action=\"toggle-description\"]").click(this._onToggleDescription.bind(this));
     
@@ -578,6 +582,58 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         button.classList.remove('equipped');
         button.title = 'Equip';
       }
+      
+      // Force immediate render after a brief delay to ensure all data is propagated
+      setTimeout(() => {
+        this.render(true, { immediate: true });
+      }, 150);
+    }
+  }
+
+  /* -------------------------------------------- */
+  
+  // Equip weapon to primary slot
+  async _onEquipPrimaryWeapon(event) {
+    event.preventDefault();
+    
+    const button = event.currentTarget;
+    const itemId = button.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    
+    if (!item || item.type !== "weapon") return;
+    
+    // Use the equipment handler to equip as primary
+    const success = await EquipmentHandler.equipPrimaryWeapon(this.actor, item);
+    
+    if (success) {
+      // Wait for the weapon sync to complete
+      await EquipmentHandler.syncEquippedWeapons(this.actor, this);
+      
+      // Force immediate render after a brief delay to ensure all data is propagated
+      setTimeout(() => {
+        this.render(true, { immediate: true });
+      }, 150);
+    }
+  }
+
+  /* -------------------------------------------- */
+  
+  // Equip weapon to secondary slot
+  async _onEquipSecondaryWeapon(event) {
+    event.preventDefault();
+    
+    const button = event.currentTarget;
+    const itemId = button.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    
+    if (!item || item.type !== "weapon") return;
+    
+    // Use the equipment handler to equip as secondary
+    const success = await EquipmentHandler.equipSecondaryWeapon(this.actor, item);
+    
+    if (success) {
+      // Wait for the weapon sync to complete
+      await EquipmentHandler.syncEquippedWeapons(this.actor, this);
       
       // Force immediate render after a brief delay to ensure all data is propagated
       setTimeout(() => {
