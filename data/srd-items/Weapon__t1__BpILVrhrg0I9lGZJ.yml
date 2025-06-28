@@ -1,0 +1,41 @@
+name: Weapon (t1)
+type: weapon
+folder: ZZzaj9H7e3r7CVaw
+_id: BpILVrhrg0I9lGZJ
+img: icons/svg/item-bag.svg
+system:
+  description: ''
+  category: ''
+  tier: ''
+  trait: ''
+  range: ''
+  damageType: ''
+  location: backpack
+  equipped: false
+  weaponSlot: null
+  damage:
+    baseValue: 1d8
+    modifiers: []
+    value: 1d8
+  quantity: 1
+  weight: 0
+  attributes: {}
+  groups: {}
+  resourceTrackers: []
+effects: []
+sort: 0
+ownership:
+  default: 0
+  cNNQ5puNzwCihPuH: 3
+flags: {}
+_stats:
+  compendiumSource: null
+  duplicateSource: null
+  exportSource: null
+  coreVersion: '13.345'
+  systemId: daggerheart
+  systemVersion: 2.7.4
+  createdTime: 1751120697176
+  modifiedTime: 1751120697176
+  lastModifiedBy: cNNQ5puNzwCihPuH
+_key: '!items!BpILVrhrg0I9lGZJ'

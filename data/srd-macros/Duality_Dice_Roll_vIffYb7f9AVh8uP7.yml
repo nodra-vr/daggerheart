@@ -1,0 +1,31 @@
+name: Duality Dice Roll
+type: script
+scope: global
+img: https://i.imgur.com/VSTKJWt.png
+command: |-
+  // Duality Dice Roll Macro
+  // Uses the centralized rollHandler system for consistent dice rolling
+  // Will use selected token's actor or the user's assigned character
+
+  await game.daggerheart.rollHandler.dualityWithDialog({
+    title: "Duality Dice Roll"
+  });
+author: cNNQ5puNzwCihPuH
+folder: null
+ownership:
+  default: 0
+  cNNQ5puNzwCihPuH: 3
+flags: {}
+_stats:
+  compendiumSource: null
+  duplicateSource: null
+  exportSource: null
+  coreVersion: '13.345'
+  systemId: daggerheart
+  systemVersion: 2.7.4
+  createdTime: 1751124148812
+  modifiedTime: 1751124148812
+  lastModifiedBy: cNNQ5puNzwCihPuH
+_id: vIffYb7f9AVh8uP7
+sort: 0
+_key: '!macros!vIffYb7f9AVh8uP7'

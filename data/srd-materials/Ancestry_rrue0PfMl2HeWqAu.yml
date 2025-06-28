@@ -1,0 +1,32 @@
+name: Ancestry
+type: ancestry
+folder: 6HFYZrMH1OFh0mvr
+_id: rrue0PfMl2HeWqAu
+img: icons/svg/item-bag.svg
+system:
+  description: ''
+  category: ''
+  rarity: ''
+  location: ancestry
+  quantity: 1
+  weight: 0
+  attributes: {}
+  groups: {}
+  resourceTrackers: []
+effects: []
+sort: 0
+ownership:
+  default: 0
+  cNNQ5puNzwCihPuH: 3
+flags: {}
+_stats:
+  compendiumSource: null
+  duplicateSource: null
+  exportSource: null
+  coreVersion: '13.345'
+  systemId: daggerheart
+  systemVersion: 2.7.4
+  createdTime: 1751122926096
+  modifiedTime: 1751122926096
+  lastModifiedBy: cNNQ5puNzwCihPuH
+_key: '!items!rrue0PfMl2HeWqAu'

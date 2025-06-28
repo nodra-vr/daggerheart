@@ -1,3 +1,5 @@
+const fs = require('fs-extra');
+const path = require('path');
 const gulp = require('gulp');
 const shell = require('gulp-shell');
 const sass = require('gulp-sass')(require('sass'));

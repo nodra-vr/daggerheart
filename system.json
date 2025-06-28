@@ -19,6 +19,17 @@
   ],
   "packs": [
     {
+      "name": "srd-adversaries",
+      "label": "srd-adversaries",
+      "path": "packs/srd-adversaries",
+      "type": "Actor",
+      "system": "daggerheart",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
       "name": "srd-frames",
       "label": "srd-frames",
       "path": "packs/srd-frames",

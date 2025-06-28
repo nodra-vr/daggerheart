@@ -1,0 +1,32 @@
+name: Armor (t4)
+type: worn
+folder: gWdWwDhEP15vxaYj
+img: icons/svg/item-bag.svg
+system:
+  description: ''
+  category: ''
+  rarity: ''
+  location: worn
+  quantity: 1
+  weight: 0
+  attributes: {}
+  groups: {}
+  resourceTrackers: []
+effects: []
+sort: 100000
+ownership:
+  default: 0
+  cNNQ5puNzwCihPuH: 3
+flags: {}
+_stats:
+  compendiumSource: Item.rJtvrpnKePwzJ2Tl
+  duplicateSource: Item.rJtvrpnKePwzJ2Tl
+  exportSource: null
+  coreVersion: '13.345'
+  systemId: daggerheart
+  systemVersion: 2.7.4
+  createdTime: 1751120537757
+  modifiedTime: 1751120749933
+  lastModifiedBy: cNNQ5puNzwCihPuH
+_id: pFNhe4dqzppumoWu
+_key: '!items!pFNhe4dqzppumoWu'

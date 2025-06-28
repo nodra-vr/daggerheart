@@ -1,0 +1,32 @@
+name: Class
+type: class
+folder: WpN6W0wyYE3XeeYu
+_id: 0rPbxEcn96yRnPYJ
+img: icons/svg/item-bag.svg
+system:
+  description: ''
+  category: ''
+  rarity: ''
+  location: class
+  quantity: 1
+  weight: 0
+  attributes: {}
+  groups: {}
+  resourceTrackers: []
+effects: []
+sort: 0
+ownership:
+  default: 0
+  cNNQ5puNzwCihPuH: 3
+flags: {}
+_stats:
+  compendiumSource: null
+  duplicateSource: null
+  exportSource: null
+  coreVersion: '13.345'
+  systemId: daggerheart
+  systemVersion: 2.7.4
+  createdTime: 1751122929219
+  modifiedTime: 1751122929219
+  lastModifiedBy: cNNQ5puNzwCihPuH
+_key: '!items!0rPbxEcn96yRnPYJ'
