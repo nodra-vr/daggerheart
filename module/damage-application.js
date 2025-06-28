@@ -79,16 +79,8 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
       continue;
     }
 
-    // Check permissions
-    const canModify = game.user.isGM || 
-                     game.user.hasRole("ASSISTANT") || 
-                     target.isOwner;
-    
-    if (!canModify) {
-      console.warn(`User does not have permission to modify ${target.name}'s health`);
-      ui.notifications.warn(`You do not have permission to modify ${target.name}'s health.`);
-      continue;
-    }
+    // Allow all users to apply damage for collaborative gameplay
+    // Note: Removed permission restrictions to allow any player to apply damage/healing
 
     const currentHealth = parseInt(target.system.health.value) || 0;
     const maxHealth = parseInt(target.system.health.max) || 6;
@@ -236,16 +228,8 @@ export async function applyHealing(targetActors = null, healAmount, sourceActor 
       continue;
     }
 
-    // Check permissions
-    const canModify = game.user.isGM || 
-                     game.user.hasRole("ASSISTANT") || 
-                     target.isOwner;
-    
-    if (!canModify) {
-      console.warn(`User does not have permission to modify ${target.name}'s health`);
-      ui.notifications.warn(`You do not have permission to modify ${target.name}'s health.`);
-      continue;
-    }
+    // Allow all users to apply healing for collaborative gameplay
+    // Note: Removed permission restrictions to allow any player to apply damage/healing
 
     const currentHealth = parseInt(target.system.health.value) || 0;
     const maxHealth = parseInt(target.system.health.max) || 6;
@@ -455,7 +439,7 @@ export async function undoDamageHealing(undoId) {
 /**
  * Get target actors for damage/healing application (supports multiple targets)
  * Priority: Targeted tokens > Selected tokens > Error
- * @returns {Actor[]} Array of target actors
+ * @returns {Actor[]} Array of target actors with token reference
  * @throws {Error} If no valid targets are found
  */
 function _getTargetActors() {
@@ -468,7 +452,16 @@ function _getTargetActors() {
       if (!token.actor) {
         throw new Error("One or more targeted tokens have no associated actor.");
       }
-      actors.push(token.actor);
+      // Create a wrapper object that includes both actor and token for permission checking
+      const actorWrapper = Object.create(token.actor);
+      actorWrapper._sourceToken = token;
+      // Add a getter for token that returns the source token
+      Object.defineProperty(actorWrapper, 'token', {
+        get: function() { return this._sourceToken; },
+        enumerable: true,
+        configurable: true
+      });
+      actors.push(actorWrapper);
     }
     return actors;
   }
@@ -480,7 +473,16 @@ function _getTargetActors() {
       if (!token.actor) {
         throw new Error("One or more selected tokens have no associated actor.");
       }
-      actors.push(token.actor);
+      // Create a wrapper object that includes both actor and token for permission checking
+      const actorWrapper = Object.create(token.actor);
+      actorWrapper._sourceToken = token;
+      // Add a getter for token that returns the source token
+      Object.defineProperty(actorWrapper, 'token', {
+        get: function() { return this._sourceToken; },
+        enumerable: true,
+        configurable: true
+      });
+      actors.push(actorWrapper);
     }
     return actors;
   }
@@ -499,12 +501,20 @@ function _calculateDamageToHP(damageAmount, thresholds) {
   const severeThreshold = parseInt(thresholds.severe) || 0;
   const majorThreshold = parseInt(thresholds.major) || 0;
   
-  if (damageAmount >= severeThreshold && severeThreshold > 0) {
+  // Check severe threshold first
+  // If severe threshold is 0, it means always severe damage
+  // Otherwise, check if damage meets the threshold
+  if (severeThreshold === 0 || (severeThreshold > 0 && damageAmount >= severeThreshold)) {
     return 3; // Severe damage
   }
-  if (damageAmount >= majorThreshold && majorThreshold > 0) {
+  
+  // Check major threshold
+  // If major threshold is 0, it means always major damage (when not severe)
+  // Otherwise, check if damage meets the threshold
+  if (majorThreshold === 0 || (majorThreshold > 0 && damageAmount >= majorThreshold)) {
     return 2; // Major damage
   }
+  
   return 1; // Minor damage
 }
 
@@ -520,11 +530,24 @@ function _getThresholdDescription(damageAmount, thresholds, hpDamage) {
   const majorThreshold = parseInt(thresholds.major) || 0;
   
   if (hpDamage === 3) {
-    return `${damageAmount} ≥ ${severeThreshold} (Severe Threshold) = 3 HP`;
+    if (severeThreshold === 0) {
+      return `Always Severe Damage (Severe Threshold: 0) = 3 HP`;
+    } else {
+      return `${damageAmount} ≥ ${severeThreshold} (Severe Threshold) = 3 HP`;
+    }
   } else if (hpDamage === 2) {
-    return `${damageAmount} ≥ ${majorThreshold} (Major Threshold) = 2 HP`;
+    if (majorThreshold === 0) {
+      return `Always Major+ Damage (Major Threshold: 0) = 2 HP`;
+    } else {
+      return `${damageAmount} ≥ ${majorThreshold} (Major Threshold) = 2 HP`;
+    }
   } else {
-    return `${damageAmount} < ${majorThreshold} (Minor Threshold) = 1 HP`;
+    if (majorThreshold === 0) {
+      // This shouldn't happen with the new logic, but just in case
+      return `${damageAmount} (Minor Damage) = 1 HP`;
+    } else {
+      return `${damageAmount} < ${majorThreshold} (Minor Threshold) = 1 HP`;
+    }
   }
 }
 

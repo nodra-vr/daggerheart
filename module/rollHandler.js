@@ -22,7 +22,80 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   
   // Add damage/healing buttons for manual rolls
   _addDamageHealingButtons(message, html);
+  
+  // Handle automatic fear gain for fear-related rolls
+  _handleAutomaticFearGain(message);
 });
+
+/**
+ * Handle automatic hope and fear processing from ALL duality rolls
+ * @param {ChatMessage} message - The chat message to process
+ * @private
+ */
+async function _handleAutomaticFearGain(message) {
+  const flags = message.flags?.daggerheart;
+  if (!flags) return;
+  
+  // Skip if game is paused
+  if (game.paused) return;
+  
+  // Handle fear rolls (standalone or duality with fear)
+  if (flags.rollType === "fear" || (flags.rollType === "duality" && flags.isFear && !flags.reaction)) {
+    if (game.daggerheart?.counter) {
+      await game.daggerheart.counter.autoGainFear(1, "roll with Fear");
+      console.log("Daggerheart | +1 Fear from roll");
+    }
+  }
+  
+  // Handle hope/critical from duality rolls
+  if (flags.rollType === "duality" && !flags.reaction && (flags.isHope || flags.isCrit)) {
+    // Find the character for hope automation
+    let targetActor = null;
+    
+    if (flags.actorId) targetActor = game.actors.get(flags.actorId);
+    if (!targetActor && message.speaker?.actor) targetActor = game.actors.get(message.speaker.actor);
+    if (!targetActor && canvas.tokens?.controlled?.length > 0) targetActor = canvas.tokens.controlled[0].actor;
+    if (!targetActor && game.user.character) targetActor = game.user.character;
+    
+    if (targetActor && targetActor.type === "character") {
+      const updateData = {};
+      
+      if (flags.isCrit) {
+        // Critical: +1 Hope, -1 Stress
+        const currentHope = parseInt(targetActor.system.hope?.value) || 0;
+        const maxHope = parseInt(targetActor.system.hope?.max) || 0;
+        updateData["system.hope.value"] = Math.min(maxHope, currentHope + 1);
+        
+        const currentStress = parseInt(targetActor.system.stress?.value) || 0;
+        updateData["system.stress.value"] = Math.max(0, currentStress - 1);
+        
+        console.log(`Daggerheart | +1 Hope, -1 Stress for ${targetActor.name} (Critical)`);
+      } else if (flags.isHope) {
+        // Hope: +1 Hope
+        const currentHope = parseInt(targetActor.system.hope?.value) || 0;
+        const maxHope = parseInt(targetActor.system.hope?.max) || 0;
+        updateData["system.hope.value"] = Math.min(maxHope, currentHope + 1);
+        
+        console.log(`Daggerheart | +1 Hope for ${targetActor.name}`);
+      }
+      
+      if (Object.keys(updateData).length > 0) {
+        await targetActor.update(updateData);
+      }
+    } else {
+      // No character found - send notice
+      const effectText = flags.isCrit ? "gain 1 Hope and clear 1 Stress" : "gain 1 Hope";
+      await ChatMessage.create({
+        content: `<div class="hope-automation-notice">
+          <p><i class="fas fa-info-circle"></i> <strong>Hope Automation Notice</strong></p>
+          <p>This roll would ${effectText}, but no character could be identified.</p>
+          <p><em>Tip: Select a token or ensure the roll is made from a character sheet.</em></p>
+        </div>`,
+        speaker: ChatMessage.getSpeaker()
+      });
+    }
+  }
+}
 
 // Function to style dice tooltips and roll result text based on flavor
 function _styleDiceTooltips(html) {
@@ -74,6 +147,10 @@ function _addDamageHealingButtons(message, html) {
   if (!flags?.isManualRoll || !flags?.rollType) return;
   if (flags.rollType !== 'damage' && flags.rollType !== 'healing') return;
   
+  // Check for existing buttons to avoid duplicates
+  const existingButtons = html.find(".apply-damage-button, .apply-healing-button").length;
+  if (existingButtons > 0) return;
+  
   // Get the roll total for the buttons
   const rollTotal = flags.damageAmount || flags.healingAmount;
   if (!rollTotal) return;
@@ -97,6 +174,50 @@ function _addDamageHealingButtons(message, html) {
   
   // Append the buttons to the message content
   messageContent.append(buttonsHtml);
+  
+  // Add click handlers for the buttons
+  html.find(".apply-damage-button").click(async (event) => {
+    event.preventDefault();
+    await _handleDamageApplicationButton(event, "damage");
+  });
+  
+  html.find(".apply-healing-button").click(async (event) => {
+    event.preventDefault();
+    await _handleDamageApplicationButton(event, "healing");
+  });
+}
+
+/**
+ * Handle clicks on damage/healing application buttons
+ */
+async function _handleDamageApplicationButton(event, type) {
+  const button = event.currentTarget;
+  const amount = parseInt(button.dataset[type]) || 0;
+  const sourceActorId = button.dataset.sourceActorId;
+  
+  if (amount <= 0) {
+    ui.notifications.error("Invalid amount for application.");
+    return;
+  }
+  
+  const sourceActor = sourceActorId ? game.actors.get(sourceActorId) : null;
+  
+  try {
+    let result = { success: false, undoId: null };
+    if (type === "damage") {
+      result = await game.daggerheart.damageApplication.applyDamage(null, amount, sourceActor);
+    } else if (type === "healing") {
+      result = await game.daggerheart.damageApplication.applyHealing(null, amount, sourceActor);
+    }
+    
+    // Note: No longer disabling buttons after use to allow multiple applications
+    if (!result.success) {
+      console.warn(`Failed to apply ${type}`);
+    }
+  } catch (error) {
+    console.error(`Error applying ${type}:`, error);
+    ui.notifications.error(`Error applying ${type}. Check console for details.`);
+  }
 }
 
 // Function to ensure Daggerheart colorsets are available
@@ -711,11 +832,10 @@ export async function _dualityWithDialog(config) {
 
   // Sheet updates (only if we have a sheet)
   if (!reaction && sheet?.handleDualityResult) {
-    await sheet.handleDualityResult({
-      isCrit,
-      isHope,
-      isFear
-    });
+    // Only handle non-automation effects (like targeting, UI updates, etc.)
+    // Automation is now handled globally by the chat hook
+    // Note: We could remove handleDualityResult entirely if it only did automation
+    console.log("Daggerheart | Sheet-based automation disabled - using global automation instead");
   }
 
   // Flavor text
@@ -749,10 +869,14 @@ export async function _dualityWithDialog(config) {
   
   // Attack targeting (only if we have a sheet)
   if (sheet?.getPendingRollType && sheet.getPendingRollType() === "attack" && sheet._getTargetingResults) {
+    // Store the critical result for targeting
+    sheet._lastRollResult = { isCrit, isHope, isFear };
     finalFlavor += sheet._getTargetingResults(result.total);
+    // Clear the result after use
+    sheet._lastRollResult = null;
   }
   
-  const pendingRollType = sheet?.getPendingRollType ? sheet.getPendingRollType() : "duality";
+  const pendingRollType = sheet?.getPendingRollType ? sheet.getPendingRollType() : null;
   const pendingWeaponName = sheet?.getPendingWeaponName ? sheet.getPendingWeaponName() : "";
 
   // Send message
@@ -773,10 +897,15 @@ export async function _dualityWithDialog(config) {
       rolls: [result.roll],
       flags: {
         daggerheart: {
-          rollType: pendingRollType,
+          rollType: "duality", // Always set to duality for duality rolls
           weaponName: pendingWeaponName,
           actorId: actor?.id,
-          actorType: actor?.type
+          actorType: actor?.type,
+          isCrit,
+          isHope,
+          isFear,
+          reaction,
+          automationHandled: false
         }
       }
     });
@@ -874,9 +1003,13 @@ export async function _npcRollWithDialog(config) {
     finalFlavor += `</p>`;
   }
   
-  // Attack targeting
+  // Attack targeting (only if we have a sheet)
   if (sheet?.getPendingRollType && sheet.getPendingRollType() === "attack" && sheet._getTargetingResults) {
+    // Store the critical result for targeting
+    sheet._lastRollResult = { isCrit, isHope: false, isFear: false };
     finalFlavor += sheet._getTargetingResults(result.total);
+    // Clear the result after use
+    sheet._lastRollResult = null;
   }
   
   const pendingRollType = sheet?.getPendingRollType ? sheet.getPendingRollType() : "unknown";
@@ -916,7 +1049,7 @@ export async function _npcRollWithDialog(config) {
     sheet.setPendingWeaponName(null);
   }
   
-  return { isCrit, isFear, isHope, result };
+  return { isCrit, isFear: false, isHope: false, result };
 }
 
 // Global export

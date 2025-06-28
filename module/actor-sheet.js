@@ -85,23 +85,53 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     if (field.includes('weapon-main.damage') || field.includes('weapon-off.damage')) {
       // For weapon damage, update the damage structure
       updateData[`${field}.baseValue`] = value;
-      updateData[`${field}.value`] = value; // Reset to just base value
       
-      // Ensure modifiers array exists
+      // Preserve existing modifiers and recalculate value
       const currentData = foundry.utils.getProperty(this.actor, field);
-      if (!currentData || !Array.isArray(currentData.modifiers)) {
-        updateData[`${field}.modifiers`] = [];
+      const existingModifiers = (currentData && Array.isArray(currentData.modifiers)) ? currentData.modifiers : [];
+      
+      // NEVER overwrite existing modifiers - only initialize if truly missing
+      // This preserves modifiers like ally bonuses, spell effects, etc.
+      if (!currentData || currentData.modifiers === undefined) {
+        updateData[`${field}.modifiers`] = existingModifiers;
       }
+      
+      // Recalculate value with existing modifiers
+      let calculatedValue = value;
+      if (existingModifiers.length > 0) {
+        // For damage, modifiers are typically added as strings like "+2" or "+1d4"
+        const modifierStrings = existingModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
+        if (modifierStrings.length > 0) {
+          calculatedValue = `${value} + ${modifierStrings.join(' + ')}`;
+        }
+      }
+      updateData[`${field}.value`] = calculatedValue;
+      
     } else if (field.includes('weapon-main.to-hit') || field.includes('weapon-off.to-hit')) {
       // For weapon attack modifiers, update the to-hit structure
       updateData[`${field}.baseValue`] = value;
-      updateData[`${field}.value`] = value; // Reset to just base value
       
-      // Ensure modifiers array exists
+      // Preserve existing modifiers and recalculate value
       const currentData = foundry.utils.getProperty(this.actor, field);
-      if (!currentData || !Array.isArray(currentData.modifiers)) {
-        updateData[`${field}.modifiers`] = [];
+      const existingModifiers = (currentData && Array.isArray(currentData.modifiers)) ? currentData.modifiers : [];
+      
+      // NEVER overwrite existing modifiers - only initialize if truly missing
+      // This preserves modifiers like ally bonuses, spell effects, etc.
+      if (!currentData || currentData.modifiers === undefined) {
+        updateData[`${field}.modifiers`] = existingModifiers;
       }
+      
+      // Recalculate value with existing modifiers
+      let calculatedValue = value;
+      if (existingModifiers.length > 0) {
+        // For to-hit, modifiers are typically numeric
+        const modifierTotal = existingModifiers.reduce((total, mod) => {
+          const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
+          return total + modValue;
+        }, 0);
+        calculatedValue = value + modifierTotal;
+      }
+      updateData[`${field}.value`] = calculatedValue;
     } else {
       // Handle other modifier structures
       let basePath = field;
@@ -111,10 +141,27 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       
       // Create/update the modifier structure
       updateData[`${basePath}.baseValue`] = value;
-      updateData[`${basePath}.value`] = value; // Start with just the base value
-      if (!foundry.utils.getProperty(this.actor, `${basePath}.modifiers`)) {
-        updateData[`${basePath}.modifiers`] = [];
+      
+      // Preserve existing modifiers and recalculate value
+      const currentData = foundry.utils.getProperty(this.actor, basePath);
+      const existingModifiers = (currentData && Array.isArray(currentData.modifiers)) ? currentData.modifiers : [];
+      
+      // NEVER overwrite existing modifiers - only initialize if truly missing
+      if (!currentData || currentData.modifiers === undefined) {
+        updateData[`${basePath}.modifiers`] = existingModifiers;
       }
+      
+      // Recalculate value with existing modifiers
+      let calculatedValue = value;
+      if (existingModifiers.length > 0) {
+        // For general modifiers, try to add them numerically
+        const modifierTotal = existingModifiers.reduce((total, mod) => {
+          const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
+          return total + modValue;
+        }, 0);
+        calculatedValue = value + modifierTotal;
+      }
+      updateData[`${basePath}.value`] = calculatedValue;
     }
     
     console.log("Daggerheart | Base value update data:", updateData);
@@ -1086,16 +1133,28 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     }
     
     // Get attribute data for modifiers if applicable
-    const pathParts = config.field.split('.');
-    let attributeData = this.actor;
-    for (let i = 0; i < pathParts.length - 1; i++) {
-      attributeData = attributeData[pathParts[i]] || {};
-    }
-    
-    // For weapon modifiers, if the data is empty, get the actual field value
     const isWeaponModifier = config.field.includes('weapon-main.to-hit') || config.field.includes('weapon-off.to-hit');
-    if (isWeaponModifier && (!attributeData || Object.keys(attributeData).length === 0)) {
-      attributeData = currentValue;
+    let attributeData;
+    
+    if (isWeaponModifier) {
+      // For weapon modifiers, get the full structured data at the field path
+      attributeData = foundry.utils.getProperty(this.actor, config.field);
+      
+      // If it's not structured yet, create the structure
+      if (typeof attributeData !== 'object' || attributeData === null || !('baseValue' in attributeData)) {
+        attributeData = {
+          baseValue: currentValue,
+          modifiers: [],
+          value: currentValue
+        };
+      }
+    } else {
+      // For other attributes, navigate to the parent object
+      const pathParts = config.field.split('.');
+      attributeData = this.actor;
+      for (let i = 0; i < pathParts.length - 1; i++) {
+        attributeData = attributeData[pathParts[i]] || {};
+      }
     }
     
     // Ensure modifiers is always an array
@@ -1175,10 +1234,10 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const baseInput = overlay.find('.attribute-base-input');
     let baseValue;
     
-    // Handle weapon modifiers which might store data directly at the field path
-    if (typeof attributeData === 'object' && 'baseValue' in attributeData) {
+    // Handle weapon modifiers and other structured data
+    if (typeof attributeData === 'object' && attributeData !== null && 'baseValue' in attributeData) {
       baseValue = attributeData.baseValue;
-    } else if (typeof attributeData === 'object' && 'value' in attributeData && 'modifiers' in attributeData) {
+    } else if (typeof attributeData === 'object' && attributeData !== null && 'value' in attributeData && 'modifiers' in attributeData) {
       // Already has complex structure but no baseValue - use current total as base
       baseValue = currentValue;
     } else {
@@ -1802,11 +1861,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const total = baseValue + modifierTotal;
     overlay.find('.attribute-total-value').text(total);
     
-    // Update the display element immediately
-    const displayElement = overlay.data('display-element');
-    if (displayElement) {
-      $(displayElement).text(total);
-    }
+    // DO NOT update the display element during editing - only update the popup total
+    // The actual display will be updated when the sheet re-renders after actor.update()
     
     return total;
   }
@@ -1881,9 +1937,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     
     await this.actor.update(updateData);
     
-    // Update the display element
-    const displayElement = overlay.data('display-element');
-    $(displayElement).text(totalValue);
+    // DO NOT update the display element directly - let the sheet re-render
+    // This preserves the structured data for future editing
     
     this._hideAttributeEditPopup(overlay);
   }
@@ -2220,15 +2275,22 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   /**
    * Handle hope/fear/crit results, depending on roll.
    * @param {{isCrit,isFear,isHope}} config 
+   * @deprecated Automation is now handled globally via chat hooks. This method is kept for compatibility but may be removed in future versions.
    */
   async handleDualityResult({isCrit, isFear, isHope}) {
-    if (isCrit) {
-      await this._applyCriticalSuccess();
-    } else if (isHope) {
-      await this._applyHopeGain();
-    } else if (isFear) {
-      await this._applyFearGain();
-    }
+    console.log("Daggerheart | handleDualityResult called but automation is now handled globally");
+    // Automation is now handled globally via chat hooks in rollHandler.js
+    // This method is kept for compatibility but no longer performs automation
+    return;
+    
+    // Old code preserved for reference:
+    // if (isCrit) {
+    //   await this._applyCriticalSuccess();
+    // } else if (isHope) {
+    //   await this._applyHopeGain();
+    // } else if (isFear) {
+    //   await this._applyFearGain();
+    // }
   }
 
   /**
@@ -2333,13 +2395,33 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         continue; // Unknown actor type
       }
       
-      // Compare attack total to defense
-      const hit = attackTotal >= defenseValue;
+      // Check if this is a critical success by looking at the pending roll type and flavor
+      const isCritical = this.getPendingRollType() === "attack" && 
+                         (this._lastRollResult?.isCrit || false);
+      
+      // Critical successes always hit, regardless of defense value
+      const hit = isCritical || attackTotal >= defenseValue;
       
       if (hit) {
         targetingText += `</p><p><b class="roll-outcome success">Success!</b></p>`;
+        // Add hidden information for GMs including HP and threshold info
+        if (targetActor.type === "npc") {
+          const currentHP = parseInt(targetActor.system.health?.value) || 0;
+          const maxHP = parseInt(targetActor.system.health?.max) || 6;
+          const majorThreshold = parseInt(targetActor.system.threshold?.major) || 0;
+          const severeThreshold = parseInt(targetActor.system.threshold?.severe) || 0;
+          targetingText += `<section class="secret"><p><strong>Target Info:</strong> ${targetActor.name} - HP: ${currentHP}/${maxHP}, Thresholds: ${majorThreshold}/${severeThreshold}</p></section>`;
+        }
       } else {
         targetingText += `</p><p><b class="roll-outcome failure">Failure!</b></p>`;
+        // Add hidden information for GMs even on failures
+        if (targetActor.type === "npc") {
+          const currentHP = parseInt(targetActor.system.health?.value) || 0;
+          const maxHP = parseInt(targetActor.system.health?.max) || 6;
+          const majorThreshold = parseInt(targetActor.system.threshold?.major) || 0;
+          const severeThreshold = parseInt(targetActor.system.threshold?.severe) || 0;
+          targetingText += `<section class="secret"><p><strong>Target Info:</strong> ${targetActor.name} - HP: ${currentHP}/${maxHP}, Thresholds: ${majorThreshold}/${severeThreshold}</p></section>`;
+        }
       }
     }
     

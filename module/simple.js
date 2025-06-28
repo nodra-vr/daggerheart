@@ -419,6 +419,42 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.spendStress(actor, amount);
   };
   
+  // Add test function for fear automation
+  window.testFearAutomation = async function() {
+    console.log("=== Daggerheart | Starting Global Automation Test ===");
+    
+    // Test standalone fear roll
+    console.log("\n--- Test 1: Standalone Fear Roll ---");
+    await game.daggerheart.rollHandler.rollFear({
+      sendToChat: true,
+      flavor: "<p class='roll-flavor-line'><b>Test Fear Roll</b> (should trigger +1 Fear globally)</p>"
+    });
+    
+    // Wait a moment for processing
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Test duality roll
+    console.log("\n--- Test 2: Duality Roll ---");
+    await game.daggerheart.rollHandler.rollDuality({
+      sendToChat: true,
+      flavor: "<p class='roll-flavor-line'><b>Test Duality Roll</b> (automation depends on result)</p>"
+    });
+    
+    // Wait a moment for processing
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Test duality roll from dialog (no actor context)
+    console.log("\n--- Test 3: Duality Dialog (No Actor) ---");
+    await game.daggerheart.rollHandler.dualityWithDialog({
+      title: "Test Duality (No Actor)",
+      skipDialog: true,
+      rollDetails: { modifier: 0, advantage: 0, disadvantage: 0 }
+    });
+    
+    console.log("\n=== Test completed! Check the console output above and look for automation messages ===");
+    ui.notifications.info("Global automation test completed. Check console for detailed output.");
+  };
+  
   // Add global test function for weapon equipping
   window.testWeaponEquip = async function() {
     const selectedTokens = canvas.tokens.controlled;
@@ -614,7 +650,11 @@ Hooks.once("ready", async function() {
   game.daggerheart.cleanupDuplicateMacros = window.cleanupDuplicateMacros;
   
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), and testWeaponEquip() functions are now available globally.");
+  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), and testFearAutomation() functions are now available globally.");
+  console.log("🎲 Global Hope/Fear automation is now active for ALL duality rolls!");
+  
+  // Add test function to game object
+  game.daggerheart.testFearAutomation = window.testFearAutomation;
   
   // Clean up any existing duplicate macros from previous versions, but don't create new ones
   if (game.user.isGM) {

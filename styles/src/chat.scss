@@ -1220,3 +1220,37 @@ body.game .app a.content-link, .content-link, .inline-roll {
 .roll-flavor-line .fear-result {
   color: #3b75c2 !important;
 }
+
+/* Hope Automation Notice Styling */
+.hope-automation-notice {
+  background: linear-gradient(135deg, rgba(255, 187, 0, 0.1) 0%, rgba(129, 204, 195, 0.1) 100%);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  p {
+    color: var(--dh-color-off-white);
+    font-size: 0.9em;
+    margin: 4px 0;
+    line-height: 1.4;
+
+    &:first-child {
+      color: var(--dh-color-gold);
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    em {
+      color: #6c6a85;
+      font-size: 0.85em;
+    }
+
+    i {
+      margin-right: 6px;
+      color: var(--dh-color-gold);
+    }
+  }
+}
