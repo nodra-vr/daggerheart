@@ -2,6 +2,7 @@ import { EntitySheetHelper } from "./helper.js";
 import {ATTRIBUTE_TYPES} from "./constants.js";
 import { DaggerheartDialogHelper } from "./dialog-helper.js";
 import { SheetTracker } from "./sheet-tracker.js";
+import { EquipmentHandler } from "./equipmentHandler.js";
 
 /**
 * Extend the basic ActorSheet with some very simple modifications
@@ -26,6 +27,136 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     this._pendingWeaponName = newValue;
   }
 
+  constructor(...args) {
+    super(...args);
+    
+    // Debounced render to prevent multiple rapid renders
+    this._debouncedRender = foundry.utils.debounce(this._performRender.bind(this), 100);
+  }
+  
+  /**
+   * Perform the actual render
+   */
+  _performRender(force = false) {
+    super.render(force);
+  }
+  
+  /**
+   * Override render to use debounced version
+   */
+  render(force = false, options = {}) {
+    if (options.immediate) {
+      // Allow immediate renders when explicitly requested
+      return super.render(force, options);
+    } else {
+      // Use debounced render for normal calls
+      this._debouncedRender(force);
+      return this;
+    }
+  }
+
+  /**
+   * Set a base value programmatically with optional editability restrictions
+   * @param {string} field - The field path (e.g., "system.finesse.value" or "system.weapon-main.damage")
+   * @param {number|string} value - The base value to set (number for modifiers, string for damage formulas)
+   * @param {boolean} editable - Whether the base value should be editable in the UI (default: true)
+   * @returns {Promise} - Promise that resolves when the update is complete
+   */
+  async baseValue(field, value, editable = true) {
+    console.log("Daggerheart | Setting base value:", field, "=", value, "editable:", editable);
+    
+    const updateData = {};
+    
+    // Store restriction in actor flags for persistence
+    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
+    if (!editable) {
+      updateData[restrictionPath] = {
+        value: value,
+        editable: false,
+        timestamp: Date.now()
+      };
+      console.log("Daggerheart | Creating restriction:", restrictionPath, updateData[restrictionPath]);
+    } else {
+      updateData[restrictionPath] = null; // Remove restriction
+      console.log("Daggerheart | Removing restriction:", restrictionPath);
+    }
+    
+    // Handle weapon damage and attack modifiers specially
+    if (field.includes('weapon-main.damage') || field.includes('weapon-off.damage')) {
+      // For weapon damage, update the damage structure
+      updateData[`${field}.baseValue`] = value;
+      updateData[`${field}.value`] = value; // Reset to just base value
+      
+      // Ensure modifiers array exists
+      const currentData = foundry.utils.getProperty(this.actor, field);
+      if (!currentData || !Array.isArray(currentData.modifiers)) {
+        updateData[`${field}.modifiers`] = [];
+      }
+    } else if (field.includes('weapon-main.to-hit') || field.includes('weapon-off.to-hit')) {
+      // For weapon attack modifiers, update the to-hit structure
+      updateData[`${field}.baseValue`] = value;
+      updateData[`${field}.value`] = value; // Reset to just base value
+      
+      // Ensure modifiers array exists
+      const currentData = foundry.utils.getProperty(this.actor, field);
+      if (!currentData || !Array.isArray(currentData.modifiers)) {
+        updateData[`${field}.modifiers`] = [];
+      }
+    } else {
+      // Handle other modifier structures
+      let basePath = field;
+      if (field.endsWith('.value')) {
+        basePath = field.substring(0, field.lastIndexOf('.'));
+      }
+      
+      // Create/update the modifier structure
+      updateData[`${basePath}.baseValue`] = value;
+      updateData[`${basePath}.value`] = value; // Start with just the base value
+      if (!foundry.utils.getProperty(this.actor, `${basePath}.modifiers`)) {
+        updateData[`${basePath}.modifiers`] = [];
+      }
+    }
+    
+    console.log("Daggerheart | Base value update data:", updateData);
+    
+    // Apply the update
+    await this.actor.update(updateData);
+    
+    console.log("Daggerheart | Base value update complete for:", field);
+    return true;
+  }
+  
+  /**
+   * Remove base value restrictions for a specific field
+   * @param {string} field - The field path to remove restrictions from
+   */
+  async removeBaseValueRestriction(field) {
+    console.log("Daggerheart | Removing base value restriction for:", field);
+    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
+    await this.actor.update({[restrictionPath]: null});
+    console.log("Daggerheart | Base value restriction removed for:", field);
+  }
+  
+  /**
+   * Check if a field has base value restrictions
+   * @param {string} field - The field path to check
+   * @returns {boolean} - Whether the field has restrictions
+   */
+  hasBaseValueRestriction(field) {
+    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
+    const restriction = foundry.utils.getProperty(this.actor, restrictionPath);
+    return restriction && !restriction.editable;
+  }
+  
+  /**
+   * Get base value restriction data for a field
+   * @param {string} field - The field path to check
+   * @returns {object|null} - The restriction data or null
+   */
+  getBaseValueRestriction(field) {
+    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
+    return foundry.utils.getProperty(this.actor, restrictionPath);
+  }
   
   /** @inheritdoc */
   static get defaultOptions() {
@@ -43,6 +174,8 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     });
   }
   
+  /* -------------------------------------------- */
+
   /* -------------------------------------------- */
   
   /** @inheritdoc */
@@ -86,9 +219,20 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
         secrets: this.document.isOwner,
         async: true
       });
+      
+      // Add weapon slot information for equipped weapons
+      if (item.type === "weapon") {
+        item.equippedSlot = EquipmentHandler.getWeaponEquippedSlot(this.actor, item);
+      }
     }
     
+    // Sort items with weapons at the top for each location
+    context.data.items = this._sortItemsWithWeaponsFirst(context.data.items);
+    
     context.actor = this.actor; // Add this line to include the actor object in the context
+    
+    // Add weapon display data
+    context.weaponDisplay = EquipmentHandler.getWeaponDisplayData(this.actor);
     
     const imageLink = context.data.img;
     context.imageStyle = `background: url(${imageLink});`;
@@ -418,15 +562,15 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     
     if (!item || item.type !== "weapon") return;
     
-    // Flip equipped
-    const newEquippedState = !item.system.equipped;
+    // Use the equipment handler to toggle the weapon
+    const success = await EquipmentHandler.toggleWeaponEquip(this.actor, item);
     
-    try {
-      await item.update({
-        "system.equipped": newEquippedState
-      });
+    if (success) {
+      // Wait for the weapon sync to complete
+      await EquipmentHandler.syncEquippedWeapons(this.actor, this);
       
-      // Update button
+      // Update button appearance immediately
+      const newEquippedState = item.system.equipped;
       if (newEquippedState) {
         button.classList.add('equipped');
         button.title = 'Unequip';
@@ -435,8 +579,10 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         button.title = 'Equip';
       }
       
-    } catch (error) {
-      ui.notifications.error(`Failed to ${newEquippedState ? 'equip' : 'unequip'} ${item.name}`);
+      // Force immediate render after a brief delay to ensure all data is propagated
+      setTimeout(() => {
+        this.render(true, { immediate: true });
+      }, 150);
     }
   }
 
@@ -839,6 +985,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       damageData.modifiers = [];
     }
     
+    // Check if this is from an equipped weapon
+    config.isFromEquippedWeapon = damageData.isFromEquippedWeapon || false;
+    
     // Show the damage modifier popup
     this._showDamageModifierEditPopup(config, damageData, displayElement);
   }
@@ -898,6 +1047,15 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       attributeData.modifiers = [];
     }
     
+    // Check if this is from an equipped weapon (for attack modifiers)
+    const isWeaponAttack = config.field.includes('weapon-main.to-hit') || config.field.includes('weapon-off.to-hit');
+    if (isWeaponAttack && typeof attributeData === 'object' && attributeData !== null) {
+      config.isFromEquippedWeapon = attributeData.isFromEquippedWeapon || false;
+      config.weaponTrait = attributeData.weaponTrait || null;
+    } else {
+      config.isFromEquippedWeapon = false;
+    }
+    
     // Show the appropriate popup
     if (config.hasModifiers) {
       this._showModifierEditPopup(config, currentValue, attributeData, displayElement);
@@ -921,11 +1079,14 @@ await game.daggerheart.rollHandler.dualityWithDialog({
             </div>
             <div class="attribute-edit-content trait-edit-content">
               <div class="attribute-base-value trait-base-value">
-                <label>Base Value</label>
+                <label class="base-value-label">Base Value</label>
                 <div class="base-value-controls">
                   <button type="button" class="base-value-decrement">-</button>
                   <input type="number" class="attribute-base-input trait-base-input" />
                   <button type="button" class="base-value-increment">+</button>
+                  <div class="equipped-weapon-indicator" style="display: none;">
+                    <span class="equipped-weapon-text">From equipped weapon trait</span>
+                  </div>
                 </div>
               </div>
               <div class="attribute-modifiers-section trait-modifiers-section">
@@ -970,6 +1131,34 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     }
     
     baseInput.val(baseValue);
+    
+    // Handle equipped weapon case for attack modifiers
+    const equippedIndicator = overlay.find('.equipped-weapon-indicator');
+    const incrementBtn = overlay.find('.base-value-increment');
+    const decrementBtn = overlay.find('.base-value-decrement');
+    
+    // Check for base value restrictions
+    const hasRestriction = this.hasBaseValueRestriction(config.field);
+    const restriction = this.getBaseValueRestriction(config.field);
+    
+    if (hasRestriction && restriction && !restriction.editable) {
+      // Apply restriction - disable base value editing
+      baseInput.prop('readonly', true).addClass('restriction-locked');
+      incrementBtn.prop('disabled', true).addClass('restriction-locked');
+      decrementBtn.prop('disabled', true).addClass('restriction-locked');
+      equippedIndicator.show();
+      overlay.find('.equipped-weapon-text').text('Base value locked by equipped weapon');
+      overlay.find('.base-value-label').text('Base Value (From Equipped Weapon)');
+      
+      // Override the displayed base value with the restricted value
+      baseInput.val(restriction.value);
+    } else {
+      baseInput.prop('readonly', false).removeClass('weapon-locked restriction-locked');
+      incrementBtn.prop('disabled', false).removeClass('weapon-locked restriction-locked');
+      decrementBtn.prop('disabled', false).removeClass('weapon-locked restriction-locked');
+      equippedIndicator.hide();
+      overlay.find('.base-value-label').text('Base Value');
+    }
     
     // Apply min/max constraints if specified
     if (config.min !== null) baseInput.attr('min', config.min);
@@ -1065,9 +1254,12 @@ await game.daggerheart.rollHandler.dualityWithDialog({
             </div>
             <div class="damage-edit-content attribute-edit-content">
               <div class="damage-base-value attribute-base-value">
-                <label>Base Formula</label>
+                <label class="base-value-label">Base Formula</label>
                 <div class="base-value-controls">
                   <input type="text" class="damage-base-input attribute-base-input" placeholder="1d8" />
+                  <div class="equipped-weapon-indicator" style="display: none;">
+                    <span class="equipped-weapon-text">From equipped weapon</span>
+                  </div>
                 </div>
               </div>
               <div class="damage-modifiers-section attribute-modifiers-section">
@@ -1101,6 +1293,28 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const baseValue = damageData.baseValue || '1d8';
     
     baseInput.val(baseValue);
+    
+    // Handle equipped weapon case
+    const equippedIndicator = overlay.find('.equipped-weapon-indicator');
+    
+              // Check for base value restrictions
+     const hasRestriction = this.hasBaseValueRestriction(config.field);
+     const restriction = this.getBaseValueRestriction(config.field);
+     
+     if (hasRestriction && restriction && !restriction.editable) {
+       // Apply restriction - disable base value editing
+       baseInput.prop('readonly', true).addClass('restriction-locked');
+       equippedIndicator.show();
+        overlay.find('.equipped-weapon-text').text('Base formula locked by equipped weapon');
+        overlay.find('.base-value-label').text('Base Formula (From Equipped Weapon)');
+       
+       // Override the displayed base value with the restricted value
+       baseInput.val(restriction.value);
+     } else {
+       baseInput.prop('readonly', false).removeClass('weapon-locked restriction-locked');
+       equippedIndicator.hide();
+       overlay.find('.base-value-label').text('Base Formula');
+     }
     
     // Store config for later use
     overlay.data('config', config);
@@ -1405,7 +1619,19 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   async _submitDamageEdit(overlay) {
     const config = overlay.data('config');
     const attributeName = overlay.data('attribute-name');
-    const baseValue = overlay.find('.damage-base-input').val().trim() || '1d8';
+    
+         // Check if base value is restricted
+     const hasRestriction = this.hasBaseValueRestriction(config.field);
+     const restriction = this.getBaseValueRestriction(config.field);
+     
+     let baseValue;
+     if (hasRestriction && restriction && !restriction.editable) {
+       // Use the restricted value, don't allow user input to override
+       baseValue = String(restriction.value) || '1d8';
+     } else {
+       // Use the user-entered value
+       baseValue = overlay.find('.damage-base-input').val().trim() || '1d8';
+     }
     
     // Collect modifiers
     const modifiers = [];
@@ -1429,7 +1655,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       }
     });
     
-    // Calculate final formula for the value field
+    // Calculate final formula for the value field using the correct base value
     let totalFormula = baseValue;
     const enabledModifiers = modifiers.filter(mod => mod.enabled !== false && mod.value);
     
@@ -1534,7 +1760,19 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   async _submitAttributeEdit(overlay) {
     const config = overlay.data('config');
     const attributeName = overlay.data('attribute-name');
-    const baseValue = parseInt(overlay.find('.attribute-base-input').val()) || 0;
+    
+         // Check if base value is restricted
+     const hasRestriction = this.hasBaseValueRestriction(config.field);
+     const restriction = this.getBaseValueRestriction(config.field);
+     
+     let baseValue;
+     if (hasRestriction && restriction && !restriction.editable) {
+       // Use the restricted value, don't allow user input to override
+       baseValue = typeof restriction.value === 'number' ? restriction.value : parseInt(restriction.value) || 0;
+     } else {
+       // Use the user-entered value
+       baseValue = parseInt(overlay.find('.attribute-base-input').val()) || 0;
+     }
     
     // Collect modifiers
     const modifiers = [];
@@ -1558,8 +1796,13 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       }
     });
     
-    // Calculate final value
-    const totalValue = this._updateTotal(overlay);
+    // Calculate final value using the correct base value
+    let totalValue = baseValue;
+    modifiers.forEach(modifier => {
+      if (modifier.enabled !== false) {
+        totalValue += modifier.value;
+      }
+    });
     
     // Build update data based on the field path
     const updateData = {};
@@ -2435,6 +2678,39 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       "system.health.value": newHP
     });
   }
+  
+  /**
+   * Sort items with weapons at the top for better UX
+   * @param {Array} items - Array of items to sort
+   * @returns {Array} Sorted items array
+   * @private
+   */
+  _sortItemsWithWeaponsFirst(items) {
+    return items.sort((a, b) => {
+      // First sort by weapon type - weapons first
+      const aIsWeapon = a.type === "weapon" ? 0 : 1;
+      const bIsWeapon = b.type === "weapon" ? 0 : 1;
+      
+      if (aIsWeapon !== bIsWeapon) {
+        return aIsWeapon - bIsWeapon;
+      }
+      
+      // Within weapons, sort equipped weapons first
+      if (a.type === "weapon" && b.type === "weapon") {
+        const aEquipped = a.system.equipped ? 0 : 1;
+        const bEquipped = b.system.equipped ? 0 : 1;
+        
+        if (aEquipped !== bEquipped) {
+          return aEquipped - bEquipped;
+        }
+      }
+      
+      // Finally sort alphabetically by name
+      return a.name.localeCompare(b.name);
+    });
+  }
+
+
 }
 
 
@@ -2505,6 +2781,12 @@ export class NPCActorSheet extends SimpleActorSheet {
         secrets: this.document.isOwner,
         async: true
       });
+      
+      // Add weapon slot information for equipped weapons
+      if (item.type === "weapon") {
+        item.equippedSlot = EquipmentHandler.getWeaponEquippedSlot(this.actor, item);
+        console.log(`Weapon ${item.name}: equipped=${item.system.equipped}, slot=${item.equippedSlot}`);
+      }
     }
     
     context.actor = this.actor; // Add this line to include the actor object in the context

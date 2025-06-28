@@ -201,6 +201,28 @@
     transform: scale(0.95);
     box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
   }
+
+  &.weapon-locked,
+  &.restriction-locked {
+    background: rgba(0, 0, 0, 0.3);
+    color: rgba(242, 243, 244, 0.4);
+    border-color: rgba(67, 63, 100, 0.4);
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.3);
+      color: rgba(242, 243, 244, 0.4);
+      border-color: rgba(67, 63, 100, 0.4);
+      transform: none;
+      box-shadow: none;
+    }
+
+    &:active {
+      transform: none;
+      box-shadow: none;
+    }
+  }
 }
 
 /* Base input */
@@ -222,6 +244,34 @@
     border-color: var(--dh-color-gold);
     background: var(--dh-bg-input-focus);
     box-shadow: var(--dh-shadow-focus);
+  }
+
+  &.weapon-locked,
+  &.restriction-locked {
+    background: rgba(0, 0, 0, 0.4);
+    color: rgba(242, 243, 244, 0.6);
+    border-color: rgba(67, 63, 100, 0.6);
+    cursor: not-allowed;
+
+    &:focus {
+      border-color: rgba(67, 63, 100, 0.6);
+      background: rgba(0, 0, 0, 0.4);
+      box-shadow: none;
+    }
+  }
+
+  &.restriction-locked {
+    border-color: rgba(243, 194, 103, 0.3);
+    
+    &::after {
+      content: "🔒";
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      opacity: 0.7;
+    }
   }
 }
 
@@ -888,4 +938,55 @@
   font-weight: var(--dh-font-weight-bold);
   font-size: var(--dh-font-size-2xl);
   text-shadow: var(--dh-shadow-glow);
+}
+
+/* ============================================
+   EQUIPPED WEAPON MODIFIER SYSTEM STYLES
+   ============================================ */
+
+/* Equipped weapon indicator */
+.equipped-weapon-indicator {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(243, 194, 103, 0.1);
+  border: 1px solid rgba(243, 194, 103, 0.3);
+  border-radius: var(--dh-radius-lg);
+  text-align: center;
+  
+  .equipped-weapon-text {
+    font-size: 0.8rem;
+    color: var(--dh-color-gold);
+    font-style: italic;
+  }
+}
+
+/* Locked weapon inputs */
+.weapon-locked {
+  background: rgba(67, 63, 100, 0.2) !important;
+  border-color: rgba(67, 63, 100, 0.5) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  cursor: not-allowed !important;
+  
+  &:hover {
+    background: rgba(67, 63, 100, 0.2) !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  &:focus {
+    outline: none !important;
+    border-color: rgba(67, 63, 100, 0.5) !important;
+  }
+}
+
+/* Locked buttons */
+button.weapon-locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  
+  &:hover {
+    background: rgba(67, 63, 100, 0.2) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    transform: none !important;
+  }
 }

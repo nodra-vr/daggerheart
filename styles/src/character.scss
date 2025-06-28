@@ -385,6 +385,10 @@ input.trait-effects.resize-ta {
     padding: 0px;
     margin: 0px;
     height: fit-content;
+    
+    &.weapon-field-hidden {
+      display: none;
+    }
   }
 
   input::placeholder {
@@ -400,6 +404,13 @@ input.trait-effects.resize-ta {
     padding: 2px 25px;
     padding-top: 3px;
     justify-content: center;
+    text-align: center;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%; 
+    margin: auto;
   }
 
   .weapon-desc {
@@ -474,9 +485,41 @@ input.trait-effects.resize-ta {
       color: white;
       font-size: inherit;
     }
+    
+    /* Primary weapon styling - blue gradient to match tag */
+    &.primary-weapon {
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      
+      &:hover {
+        background: linear-gradient(135deg, #1d4ed8, #60a5fa);
+        color: white;
+      }
+    }
+    
+    /* Secondary weapon styling - purple gradient to match tag */
+    &.secondary-weapon {
+      background: linear-gradient(135deg, #8a2be2, #9370db);
+      
+      &:hover {
+        background: linear-gradient(135deg, #9333ea, #a855f7);
+        color: white;
+      }
+    }
   }
 
-
+  /* Primary weapon field styling */
+  .weapon-to-hit.primary-weapon,
+  .weapon-damage.primary-weapon {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+  }
+  
+  /* Secondary weapon field styling */
+  .weapon-to-hit.secondary-weapon,
+  .weapon-damage.secondary-weapon {
+    border-color: #9370db;
+    box-shadow: 0 0 0 1px rgba(147, 112, 219, 0.3);
+  }
 
   .weapon-infobox {
     display: flex;

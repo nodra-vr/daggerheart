@@ -258,6 +258,34 @@
   color: var(--dh-color-gold);
 }
 
+/* Weapon slot tags */
+.daggerheart .item-list .item .item-name .weapon-slot-tag {
+  display: inline-block;
+  font-size: 0.7em;
+  font-weight: 600;
+  padding: 0.2em 0.5em;
+  margin-left: 0.5em;
+  border-radius: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  vertical-align: middle;
+  
+  &.primary {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    border: 1px solid #1d4ed8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  &.secondary {
+    background: linear-gradient(135deg, #8a2be2, #9370db);
+    color: white;
+    border: 1px solid #6a1b9a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
 .daggerheart .item-list .item img {
   flex: 0 0 24px;
   margin-right: 5px;

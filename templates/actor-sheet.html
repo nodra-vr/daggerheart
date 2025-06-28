@@ -404,14 +404,14 @@
             <div class="weapons">
                 <div class="weapon-group">
                     <div class="weapon-row">
-                        <label class="weapon-label">{{localize "DH.PrimaryWeapon"}}</label>
+                        <label class="weapon-label">{{weaponDisplay.primary.name}}</label>
                         <div class="weapon-box click-rollable-group basic-rollable-group">
-                            <button type="button" class="weapon-attack-button click-rollable" data-roll-type="attack" title="Roll Attack">
+                            <button type="button" class="weapon-attack-button {{#if weaponDisplay.primary.hasWeapon}}primary-weapon{{/if}} click-rollable" data-roll-type="attack" title="Roll Attack">
                                 <i class="fas fa-sword"></i>
                             </button>
                             <div class="weapon-box-inner">
                                 <div class="weapon-infobox-first">
-                                    <input class="weapon-field basic-rollable-name click-rollable-name"
+                                    <input class="weapon-field basic-rollable-name click-rollable-name {{#if weaponDisplay.primary.hasWeapon}}weapon-field-hidden{{/if}}"
                                         name="system.weapon-main.name" type="text"
                                         value="{{systemData.weapon-main.name}}" placeholder="{{localize "DH.Weapon"}}" />
                                         <div class="textarea-container">
@@ -422,14 +422,14 @@
                                 </div>
                                 <div class="weapon-roller-box">
                                     <div class="weapon-infobox">
-                                        <div class="attribute-value-display weapon-modifier-display"
+                                        <div class="attribute-value-display weapon-modifier-display {{#if weaponDisplay.primary.hasWeapon}}primary-weapon{{/if}}"
                                              data-field="system.weapon-main.to-hit"
                                              data-label="Primary Weapon Attack"
                                              data-has-modifiers="true">{{#if systemData.weapon-main.to-hit.value}}{{systemData.weapon-main.to-hit.value}}{{else}}0{{/if}}</div>
                                         <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
                                     </div>
                                     <div class="weapon-infobox">
-                                        <div class="weapon-damage-display damage-value-display"
+                                        <div class="weapon-damage-display damage-value-display {{#if weaponDisplay.primary.hasWeapon}}primary-weapon{{/if}}"
                                              data-field="system.weapon-main.damage"
                                              data-label="Primary Weapon Damage"
                                              data-has-modifiers="true"
@@ -442,14 +442,14 @@
                     </div>
 
                     <div class="weapon-row">
-                        <label class="weapon-label">{{localize "DH.SecondaryWeapon"}}</label>
+                        <label class="weapon-label">{{weaponDisplay.secondary.name}}</label>
                         <div class="weapon-box click-rollable-group basic-rollable-group">
-                            <button type="button" class="weapon-attack-button click-rollable" data-roll-type="attack" title="Roll Attack">
+                            <button type="button" class="weapon-attack-button {{#if weaponDisplay.secondary.hasWeapon}}secondary-weapon{{/if}} click-rollable" data-roll-type="attack" title="Roll Attack">
                                 <i class="fas fa-sword"></i>
                             </button>
                             <div class="weapon-box-inner">
                                 <div class="weapon-infobox-first">
-                                    <input class="weapon-field basic-rollable-name click-rollable-name"
+                                    <input class="weapon-field basic-rollable-name click-rollable-name {{#if weaponDisplay.secondary.hasWeapon}}weapon-field-hidden{{/if}}"
                                         name="system.weapon-off.name" type="text"
                                         value="{{systemData.weapon-off.name}}" placeholder="{{localize "DH.Weapon"}}" />
                                         <div class="textarea-container">
@@ -460,14 +460,14 @@
                                 </div>
                                 <div class="weapon-roller-box">
                                     <div class="weapon-infobox">
-                                        <div class="attribute-value-display weapon-modifier-display"
+                                        <div class="attribute-value-display weapon-modifier-display {{#if weaponDisplay.secondary.hasWeapon}}secondary-weapon{{/if}}"
                                              data-field="system.weapon-off.to-hit"
                                              data-label="Secondary Weapon Attack"
                                              data-has-modifiers="true">{{#if systemData.weapon-off.to-hit.value}}{{systemData.weapon-off.to-hit.value}}{{else}}0{{/if}}</div>
                                         <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
                                     </div>
                                     <div class="weapon-infobox">
-                                        <div class="weapon-damage-display damage-value-display"
+                                        <div class="weapon-damage-display damage-value-display {{#if weaponDisplay.secondary.hasWeapon}}secondary-weapon{{/if}}"
                                              data-field="system.weapon-off.damage"
                                              data-label="Secondary Weapon Damage"
                                              data-has-modifiers="true"
@@ -535,7 +535,14 @@
                             <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.equippedSlot}}
+                                    <span class="weapon-slot-tag {{item.equippedSlot}}">
+                                        {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
+                                        {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
+                                    </span>
+                                    {{/if}}
+                                </h4>
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
@@ -573,7 +580,14 @@
                             <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.equippedSlot}}
+                                    <span class="weapon-slot-tag {{item.equippedSlot}}">
+                                        {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
+                                        {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
+                                    </span>
+                                    {{/if}}
+                                </h4>
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
@@ -617,7 +631,14 @@
                              <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.equippedSlot}}
+                                    <span class="weapon-slot-tag {{item.equippedSlot}}">
+                                        {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
+                                        {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
+                                    </span>
+                                    {{/if}}
+                                </h4>
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
@@ -653,7 +674,14 @@
                              <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.equippedSlot}}
+                                    <span class="weapon-slot-tag {{item.equippedSlot}}">
+                                        {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
+                                        {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
+                                    </span>
+                                    {{/if}}
+                                </h4>
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
@@ -690,7 +718,14 @@
                              <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.equippedSlot}}
+                                    <span class="weapon-slot-tag {{item.equippedSlot}}">
+                                        {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
+                                        {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
+                                    </span>
+                                    {{/if}}
+                                </h4>
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
@@ -727,7 +762,14 @@
                              <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.equippedSlot}}
+                                    <span class="weapon-slot-tag {{item.equippedSlot}}">
+                                        {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
+                                        {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
+                                    </span>
+                                    {{/if}}
+                                </h4>
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
@@ -764,7 +806,14 @@
                             <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.equippedSlot}}
+                                    <span class="weapon-slot-tag {{item.equippedSlot}}">
+                                        {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
+                                        {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
+                                    </span>
+                                    {{/if}}
+                                </h4>
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
@@ -803,7 +852,14 @@
                             <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.equippedSlot}}
+                                    <span class="weapon-slot-tag {{item.equippedSlot}}">
+                                        {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
+                                        {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
+                                    </span>
+                                    {{/if}}
+                                </h4>
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}

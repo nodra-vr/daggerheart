@@ -66,8 +66,16 @@
       "weapon-main": {
         "name": "",
         "description": "Range | 1H | Trait",
-        "damage": "",
-        "to-hit": "",
+        "damage": {
+          "baseValue": "1d8",
+          "modifiers": [],
+          "value": "1d8"
+        },
+        "to-hit": {
+          "baseValue": 0,
+          "modifiers": [],
+          "value": 0
+        },
         "range": "",
         "modifier": "",
         "dmgType": ""
@@ -75,8 +83,16 @@
       "weapon-off": {
         "name": "",
         "description": "Range | 1H | Trait",
-        "damage": "",
-        "to-hit": "",
+        "damage": {
+          "baseValue": "1d8",
+          "modifiers": [],
+          "value": "1d8"
+        },
+        "to-hit": {
+          "baseValue": 0,
+          "modifiers": [],
+          "value": 0
+        },
         "range": "",
         "modifier": "",
         "dmgType": ""
@@ -201,8 +217,16 @@
       "weapon-main": {
         "name": "",
         "description": "Range | 1H | Trait",
-        "damage": "",
-        "to-hit": "",
+        "damage": {
+          "baseValue": "1d8",
+          "modifiers": [],
+          "value": "1d8"
+        },
+        "to-hit": {
+          "baseValue": 0,
+          "modifiers": [],
+          "value": 0
+        },
         "range": "",
         "modifier": "",
         "dmgType": ""
@@ -243,8 +267,16 @@
       "weapon-main": {
         "name": "",
         "description": "Input your weapon abilities, description, passive and other relevant notes here.",
-        "damage": "d6",
-        "to-hit": "",
+        "damage": {
+          "baseValue": "d6",
+          "modifiers": [],
+          "value": "d6"
+        },
+        "to-hit": {
+          "baseValue": 0,
+          "modifiers": [],
+          "value": 0
+        },
         "range": "melee",
         "modifier": "",
         "dmgType": "physical"

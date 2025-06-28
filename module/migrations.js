@@ -1,9 +1,7 @@
-
-
 export class DaggerheartMigrations {
   
   // Current version
-  static CURRENT_VERSION = "1.1.1";
+  static CURRENT_VERSION = "1.2.0";
   
   // Run migrations
   static async migrateDocument(document) {
@@ -22,6 +20,22 @@ export class DaggerheartMigrations {
       
       if (this.compareVersions(currentVersion, "1.1.1") < 0) {
         needsUpdate = this._migrateWeaponEquipped(document) || needsUpdate;
+      }
+      
+      if (this.compareVersions(currentVersion, "1.2.0") < 0 && document.documentName === "Actor") {
+        const weaponMigration = this._migrateWeaponDataStructure(document);
+        if (weaponMigration) {
+          document.updateSource(weaponMigration);
+          needsUpdate = true;
+        }
+      }
+      
+      if (this.compareVersions(currentVersion, "1.2.0") < 0 && document.documentName === "Item") {
+        const weaponItemMigration = this._migrateWeaponItemDataStructure(document);
+        if (weaponItemMigration) {
+          document.updateSource(weaponItemMigration);
+          needsUpdate = true;
+        }
       }
       
       // Mark done
@@ -153,5 +167,104 @@ export class DaggerheartMigrations {
     } else {
       console.log("✅ No migration needed - all documents up to date.");
     }
+  }
+
+  /**
+   * Migrate weapon data structures to new format
+   * @param {Actor} actor 
+   */
+  static _migrateWeaponDataStructure(actor) {
+    const updateData = {};
+    let needsUpdate = false;
+
+    // Migrate weapon-main damage structure
+    if (actor.system["weapon-main"]?.damage) {
+      const damage = actor.system["weapon-main"].damage;
+      if (typeof damage === 'string' || typeof damage === 'number') {
+        updateData["system.weapon-main.damage"] = {
+          baseValue: damage || "1d8",
+          modifiers: [],
+          value: damage || "1d8"
+        };
+        needsUpdate = true;
+      }
+    }
+
+    // Migrate weapon-main to-hit structure
+    if (actor.system["weapon-main"]?.["to-hit"]) {
+      const toHit = actor.system["weapon-main"]["to-hit"];
+      if (typeof toHit === 'string' || typeof toHit === 'number') {
+        updateData["system.weapon-main.to-hit"] = {
+          baseValue: parseInt(toHit) || 0,
+          modifiers: [],
+          value: parseInt(toHit) || 0
+        };
+        needsUpdate = true;
+      }
+    }
+
+    // Migrate weapon-off damage structure
+    if (actor.system["weapon-off"]?.damage) {
+      const damage = actor.system["weapon-off"].damage;
+      if (typeof damage === 'string' || typeof damage === 'number') {
+        updateData["system.weapon-off.damage"] = {
+          baseValue: damage || "1d8",
+          modifiers: [],
+          value: damage || "1d8"
+        };
+        needsUpdate = true;
+      }
+    }
+
+    // Migrate weapon-off to-hit structure
+    if (actor.system["weapon-off"]?.["to-hit"]) {
+      const toHit = actor.system["weapon-off"]["to-hit"];
+      if (typeof toHit === 'string' || typeof toHit === 'number') {
+        updateData["system.weapon-off.to-hit"] = {
+          baseValue: parseInt(toHit) || 0,
+          modifiers: [],
+          value: parseInt(toHit) || 0
+        };
+        needsUpdate = true;
+      }
+    }
+
+    return needsUpdate ? updateData : null;
+  }
+
+  /**
+   * Migrate weapon item data structures to new format
+   * @param {Item} item 
+   */
+  static _migrateWeaponItemDataStructure(item) {
+    const updateData = {};
+    let needsUpdate = false;
+
+    if (item.type === "weapon") {
+      // Migrate weapon damage structure
+      if (item.system.damage) {
+        const damage = item.system.damage;
+        if (typeof damage === 'string' || typeof damage === 'number') {
+          updateData["system.damage"] = {
+            baseValue: damage || "1d8",
+            modifiers: [],
+            value: damage || "1d8"
+          };
+          needsUpdate = true;
+          console.log(`⚔️ Migrating weapon "${item.name}" damage from "${damage}" to structured format`);
+        }
+      } else {
+        // Weapon has no damage - set default structure
+        updateData["system.damage"] = {
+          baseValue: "1d8",
+          modifiers: [],
+          value: "1d8"
+        };
+        needsUpdate = true;
+        console.log(`⚔️ Adding default damage structure to weapon "${item.name}"`);
+      }
+    }
+
+    return needsUpdate ? updateData : null;
   }
 } 

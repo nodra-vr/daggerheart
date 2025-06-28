@@ -1159,6 +1159,30 @@ body.game .app input[type=search]:focus {
   outline-offset: 2px;
 }
 
+/* ================================
+   WEAPON SLOT DIALOG
+   ================================ */
+.weapon-slot-dialog .dialog-content {
+  padding: 0;
+}
+.weapon-slot-dialog .weapon-slot-option {
+  padding: var(--dh-space-lg);
+  background: var(--dh-glass-secondary);
+  border: 1px solid var(--dh-border-purple-subtle);
+  border-radius: var(--dh-border-radius-md);
+  transition: all 0.2s ease;
+}
+.weapon-slot-dialog .weapon-slot-option:hover {
+  background: var(--dh-glass-accent);
+  border-color: var(--dh-border-purple-light);
+  transform: translateY(-1px);
+  box-shadow: var(--dh-shadow-md);
+}
+.weapon-slot-dialog .slot-select-btn {
+  min-width: 80px;
+}
+
+/* ================================ */
 /* Core Daggerheart System Styles */
 .daggerheart {
   /* Base styles */
@@ -2608,6 +2632,32 @@ body.game .app button:hover, body.game .app button:focus {
   color: var(--dh-color-gold);
 }
 
+/* Weapon slot tags */
+.daggerheart .item-list .item .item-name .weapon-slot-tag {
+  display: inline-block;
+  font-size: 0.7em;
+  font-weight: 600;
+  padding: 0.2em 0.5em;
+  margin-left: 0.5em;
+  border-radius: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  vertical-align: middle;
+}
+.daggerheart .item-list .item .item-name .weapon-slot-tag.primary {
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  color: white;
+  border: 1px solid #1d4ed8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.daggerheart .item-list .item .item-name .weapon-slot-tag.secondary {
+  background: linear-gradient(135deg, #8a2be2, #9370db);
+  color: white;
+  border: 1px solid #6a1b9a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .daggerheart .item-list .item img {
   flex: 0 0 24px;
   margin-right: 5px;
@@ -3277,6 +3327,8 @@ input.trait-effects.resize-ta {
   flex-direction: column;
   display: flex;
   margin-bottom: 5px;
+  /* Primary weapon field styling */
+  /* Secondary weapon field styling */
 }
 .weapon-row .weapon-field {
   display: flex;
@@ -3288,6 +3340,9 @@ input.trait-effects.resize-ta {
   padding: 0px;
   margin: 0px;
   height: fit-content;
+}
+.weapon-row .weapon-field.weapon-field-hidden {
+  display: none;
 }
 .weapon-row input::placeholder {
   color: rgba(159, 159, 159, 0.4117647059);
@@ -3301,6 +3356,13 @@ input.trait-effects.resize-ta {
   padding: 2px 25px;
   padding-top: 3px;
   justify-content: center;
+  text-align: center;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  margin: auto;
 }
 .weapon-row .weapon-desc {
   font-size: 12px;
@@ -3354,6 +3416,8 @@ input.trait-effects.resize-ta {
   margin: 0;
   transition: all 0.2s ease;
   font-size: 18px;
+  /* Primary weapon styling - blue gradient to match tag */
+  /* Secondary weapon styling - purple gradient to match tag */
 }
 .weapon-row .weapon-attack-button:hover {
   background: rgb(67, 63, 100);
@@ -3367,6 +3431,30 @@ input.trait-effects.resize-ta {
 .weapon-row .weapon-attack-button i {
   color: white;
   font-size: inherit;
+}
+.weapon-row .weapon-attack-button.primary-weapon {
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+}
+.weapon-row .weapon-attack-button.primary-weapon:hover {
+  background: linear-gradient(135deg, #1d4ed8, #60a5fa);
+  color: white;
+}
+.weapon-row .weapon-attack-button.secondary-weapon {
+  background: linear-gradient(135deg, #8a2be2, #9370db);
+}
+.weapon-row .weapon-attack-button.secondary-weapon:hover {
+  background: linear-gradient(135deg, #9333ea, #a855f7);
+  color: white;
+}
+.weapon-row .weapon-to-hit.primary-weapon,
+.weapon-row .weapon-damage.primary-weapon {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+}
+.weapon-row .weapon-to-hit.secondary-weapon,
+.weapon-row .weapon-damage.secondary-weapon {
+  border-color: #9370db;
+  box-shadow: 0 0 0 1px rgba(147, 112, 219, 0.3);
 }
 .weapon-row .weapon-infobox {
   display: flex;
@@ -5869,6 +5957,30 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   transform: scale(0.95);
   box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
 }
+.base-value-decrement.weapon-locked, .base-value-decrement.restriction-locked,
+.base-value-increment.weapon-locked,
+.base-value-increment.restriction-locked {
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(242, 243, 244, 0.4);
+  border-color: rgba(67, 63, 100, 0.4);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.base-value-decrement.weapon-locked:hover, .base-value-decrement.restriction-locked:hover,
+.base-value-increment.weapon-locked:hover,
+.base-value-increment.restriction-locked:hover {
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(242, 243, 244, 0.4);
+  border-color: rgba(67, 63, 100, 0.4);
+  transform: none;
+  box-shadow: none;
+}
+.base-value-decrement.weapon-locked:active, .base-value-decrement.restriction-locked:active,
+.base-value-increment.weapon-locked:active,
+.base-value-increment.restriction-locked:active {
+  transform: none;
+  box-shadow: none;
+}
 
 /* Base input */
 .trait-base-input,
@@ -5890,6 +6002,35 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   border-color: var(--dh-color-gold);
   background: var(--dh-bg-input-focus);
   box-shadow: var(--dh-shadow-focus);
+}
+.trait-base-input.weapon-locked, .trait-base-input.restriction-locked,
+.attribute-base-input.weapon-locked,
+.attribute-base-input.restriction-locked {
+  background: rgba(0, 0, 0, 0.4);
+  color: rgba(242, 243, 244, 0.6);
+  border-color: rgba(67, 63, 100, 0.6);
+  cursor: not-allowed;
+}
+.trait-base-input.weapon-locked:focus, .trait-base-input.restriction-locked:focus,
+.attribute-base-input.weapon-locked:focus,
+.attribute-base-input.restriction-locked:focus {
+  border-color: rgba(67, 63, 100, 0.6);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: none;
+}
+.trait-base-input.restriction-locked,
+.attribute-base-input.restriction-locked {
+  border-color: rgba(243, 194, 103, 0.3);
+}
+.trait-base-input.restriction-locked::after,
+.attribute-base-input.restriction-locked::after {
+  content: "🔒";
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: 0.7;
 }
 
 /* Modifiers section */
@@ -6516,6 +6657,52 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   font-weight: var(--dh-font-weight-bold);
   font-size: var(--dh-font-size-2xl);
   text-shadow: var(--dh-shadow-glow);
+}
+
+/* ============================================
+   EQUIPPED WEAPON MODIFIER SYSTEM STYLES
+   ============================================ */
+/* Equipped weapon indicator */
+.equipped-weapon-indicator {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(243, 194, 103, 0.1);
+  border: 1px solid rgba(243, 194, 103, 0.3);
+  border-radius: var(--dh-radius-lg);
+  text-align: center;
+}
+.equipped-weapon-indicator .equipped-weapon-text {
+  font-size: 0.8rem;
+  color: var(--dh-color-gold);
+  font-style: italic;
+}
+
+/* Locked weapon inputs */
+.weapon-locked {
+  background: rgba(67, 63, 100, 0.2) !important;
+  border-color: rgba(67, 63, 100, 0.5) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  cursor: not-allowed !important;
+}
+.weapon-locked:hover {
+  background: rgba(67, 63, 100, 0.2) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+.weapon-locked:focus {
+  outline: none !important;
+  border-color: rgba(67, 63, 100, 0.5) !important;
+}
+
+/* Locked buttons */
+button.weapon-locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+button.weapon-locked:hover {
+  background: rgba(67, 63, 100, 0.2) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  transform: none !important;
 }
 
 /* Sheet Tracker Styles */

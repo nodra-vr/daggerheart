@@ -13,6 +13,7 @@ import { TokenCounterUI } from "./token-counter-ui.js";
 import { CountdownTracker } from "./countdown-tracker.js";
 import { SheetTracker } from "./sheet-tracker.js";
 import { DaggerheartMigrations } from "./migrations.js";
+import { EquipmentHandler } from "./equipmentHandler.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
 import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
@@ -135,6 +136,7 @@ Hooks.once("init", async function() {
     createSpendStressMacro,
     spendStress,
     SheetTracker,
+    EquipmentHandler,
     rollHandler: {
       rollHope: _rollHope,
       rollFear: _rollFear,
@@ -158,7 +160,8 @@ Hooks.once("init", async function() {
       undoDamageHealing: undoDamageHealing,
       debugUndoData: debugUndoData
     },
-    getTierOfPlay: _getTierOfPlay
+    getTierOfPlay: _getTierOfPlay,
+    EquipmentHandler: EquipmentHandler
   };
 
   // Define custom Document classes
@@ -285,13 +288,73 @@ Hooks.once("init", async function() {
   await preloadHandlebarsTemplates();
 });
 
+/**
+ * Hook to refresh actor sheets when base value restrictions change
+ */
+Hooks.on("updateActor", (actor, data, options, userId) => {
+  // Check if base value restrictions were updated
+  if (data.flags?.daggerheart?.baseValueRestrictions) {
+    console.log("Daggerheart | Base value restrictions updated, refreshing sheets for actor:", actor.name);
+    
+    // Force refresh all open sheets for this actor (debounced)
+    Object.values(actor.apps).forEach(app => {
+      if (app.render) {
+        console.log("Daggerheart | Refreshing sheet:", app.constructor.name);
+        try {
+          app.render(true); // This will use debounced render
+        } catch (error) {
+          console.warn("Daggerheart | Failed to refresh sheet:", error);
+        }
+      }
+    });
+  }
+  
+  // Also check for weapon data changes that might need sheet refresh
+  if (data.system && (
+    data.system["weapon-main"] || 
+    data.system["weapon-off"] ||
+    data.flags?.daggerheart // Any daggerheart flags
+  )) {
+    console.log("Daggerheart | Weapon or system data updated, refreshing sheets for actor:", actor.name);
+    
+    // Force refresh all open sheets for this actor (debounced)
+    Object.values(actor.apps).forEach(app => {
+      if (app.render) {
+        try {
+          app.render(true); // This will use debounced render
+        } catch (error) {
+          console.warn("Daggerheart | Failed to refresh sheet:", error);
+        }
+      }
+    });
+  }
+});
 
-
-
-
-
-
-
+/**
+ * Hook to handle weapon equipped state changes
+ */
+Hooks.on("updateItem", async (item, data, options, userId) => {
+  // Only handle weapon items with equipped state changes
+  if (item.type === "weapon" && data.system?.equipped !== undefined) {
+    const actor = item.parent;
+    if (!actor) return;
+    
+    console.log("Daggerheart | Weapon equipped state changed:", item.name, "equipped:", data.system.equipped);
+    
+    // Get the actor sheet if it's open
+    const actorSheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
+    
+    if (actorSheet) {
+      // Sync equipped weapons and force refresh (debounced)
+      try {
+        await EquipmentHandler.syncEquippedWeapons(actor, actorSheet);
+        actorSheet.render(true); // This will use debounced render
+      } catch (error) {
+        console.warn("Daggerheart | Failed to sync weapons after item update:", error);
+      }
+    }
+  }
+});
 
 /**
  * Macrobar hook.
@@ -354,6 +417,107 @@ Hooks.once("ready", async function() {
       return false;
     }
     return await game.daggerheart.spendStress(actor, amount);
+  };
+  
+  // Add global test function for weapon equipping
+  window.testWeaponEquip = async function() {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+    
+    const actor = selectedTokens[0].actor;
+    const weapons = actor.items.filter(i => i.type === "weapon");
+    
+    if (weapons.length === 0) {
+      ui.notifications.warn("This actor has no weapons");
+      return;
+    }
+    
+    console.log("=== Weapon Equip Test ===");
+    console.log("Actor:", actor.name);
+    console.log("Weapons:", weapons.map(w => `${w.name} (equipped: ${w.system.equipped})`));
+    console.log("Current weapon-main damage:", actor.system["weapon-main"]?.damage);
+    console.log("Current weapon-main to-hit:", actor.system["weapon-main"]?.["to-hit"]);
+    
+    const weapon = weapons[0];
+    console.log("Testing with weapon:", weapon.name);
+    console.log("Weapon system data:", weapon.system);
+    console.log("Weapon damage (raw):", weapon.system.damage);
+    console.log("Weapon damage type:", typeof weapon.system.damage);
+    console.log("Weapon damage structure:", JSON.stringify(weapon.system.damage, null, 2));
+    console.log("Weapon trait:", weapon.system.trait);
+    
+    // Get the actor sheet
+    const sheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
+    if (!sheet) {
+      ui.notifications.warn("Please open the character sheet first");
+      return;
+    }
+    
+    // Toggle the weapon
+    const success = await EquipmentHandler.toggleWeaponEquip(actor, weapon);
+    if (success) {
+      console.log("Weapon toggled successfully");
+      await EquipmentHandler.syncEquippedWeapons(actor, sheet);
+      console.log("Weapon sync completed");
+      sheet.render(true, { immediate: true });
+      console.log("Sheet rendered");
+      
+      // Log the results
+      console.log("New weapon-main damage:", actor.system["weapon-main"]?.damage);
+      console.log("New weapon-main to-hit:", actor.system["weapon-main"]?.["to-hit"]);
+      console.log("Weapon equip test completed - check the sheet!");
+    } else {
+      console.log("Weapon toggle failed");
+    }
+  };
+  
+  // Add debug function to check current weapon data
+  window.debugWeaponData = function() {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+    
+    const actor = selectedTokens[0].actor;
+    console.log("=== Weapon Data Debug ===");
+    console.log("Actor:", actor.name);
+    console.log("weapon-main damage:", JSON.stringify(actor.system["weapon-main"]?.damage, null, 2));
+    console.log("weapon-main to-hit:", JSON.stringify(actor.system["weapon-main"]?.["to-hit"], null, 2));
+    console.log("weapon-off damage:", JSON.stringify(actor.system["weapon-off"]?.damage, null, 2));
+    console.log("weapon-off to-hit:", JSON.stringify(actor.system["weapon-off"]?.["to-hit"], null, 2));
+    console.log("Base value restrictions:", JSON.stringify(actor.flags?.daggerheart?.baseValueRestrictions, null, 2));
+  };
+  
+  // Add test function for weapon slot dialog
+  window.testWeaponSlotDialog = async function() {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+    
+    const actor = selectedTokens[0].actor;
+    const weapons = actor.items.filter(i => i.type === "weapon" && !i.system.equipped);
+    
+    if (weapons.length === 0) {
+      ui.notifications.warn("This actor has no unequipped weapons to test with");
+      return;
+    }
+    
+    const weapon = weapons[0];
+    console.log("Testing weapon slot dialog with:", weapon.name);
+    
+    const selectedSlot = await EquipmentHandler.showWeaponSlotDialog(actor, weapon);
+    console.log("Selected slot:", selectedSlot);
+    
+    if (selectedSlot) {
+      const success = await EquipmentHandler.equipWeaponToSlot(actor, weapon, selectedSlot);
+      console.log("Equip result:", success);
+    }
   };
   
   // Also add to the game.daggerheart object for consistency
@@ -427,7 +591,7 @@ Hooks.once("ready", async function() {
   game.daggerheart.cleanupDuplicateMacros = window.cleanupDuplicateMacros;
   
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), and cleanupDuplicateMacros() functions are now available globally.");
+  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), and testWeaponSlotDialog() functions are now available globally.");
   
   // Clean up any existing duplicate macros from previous versions, but don't create new ones
   if (game.user.isGM) {
