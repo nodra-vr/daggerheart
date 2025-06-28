@@ -764,8 +764,6 @@ async function _sendDamageApplicationMessages(results, sourceActor, damageAmount
       <p><strong>${target.name}</strong> takes <strong>${actualDamage} HP</strong> damage${sourceText}.</p>
       <div class="damage-details">
         <p><strong>Damage Roll:</strong> ${damageAmount}</p>
-        <section class="secret"><p><strong>Threshold Result:</strong> ${_getThresholdDescription(damageAmount, thresholds, hpDamage)}</p></section>
-        <p><strong>Current Damage:</strong> ${newHealth}/${maxHealth}</p>
       </div>
       ${newHealth >= maxHealth ? '<p class="damage-warning"><em><i class="fas fa-skull"></i> Character is dying!</em></p>' : ''}
       ${undoId ? `<div class="damage-undo-container" style="margin-top: 0.5em;">
@@ -775,6 +773,7 @@ async function _sendDamageApplicationMessages(results, sourceActor, damageAmount
       </div>` : ''}
     </div>`;
 
+    // Send the main damage message (visible to all players)
     await ChatMessage.create({
       user: game.user.id,
       speaker: sourceActor ? ChatMessage.getSpeaker({ actor: sourceActor }) : ChatMessage.getSpeaker(),
@@ -790,6 +789,27 @@ async function _sendDamageApplicationMessages(results, sourceActor, damageAmount
           currentHealth: newHealth,
           maxHealth: maxHealth,
           undoId: undoId
+        }
+      }
+    });
+
+    // Send GM-only message with mechanical details
+    const gmContent = `<div class="damage-gm-info">
+      <h4><i class="fas fa-eye"></i> GM Info: ${target.name}</h4>
+      <p><strong>Threshold Result:</strong> ${_getThresholdDescription(damageAmount, thresholds, hpDamage)}</p>
+      <p><strong>Current Damage:</strong> ${newHealth}/${maxHealth}</p>
+    </div>`;
+
+    await ChatMessage.create({
+      user: game.user.id,
+      speaker: sourceActor ? ChatMessage.getSpeaker({ actor: sourceActor }) : ChatMessage.getSpeaker(),
+      content: gmContent,
+      whisper: ChatMessage.getWhisperRecipients("GM"),
+      flags: {
+        daggerheart: {
+          messageType: "damageGMInfo",
+          targetActorId: target.id,
+          sourceActorId: sourceActor?.id || null
         }
       }
     });
@@ -814,7 +834,6 @@ async function _sendHealingApplicationMessages(results, sourceActor, healAmount,
       <p><strong>${target.name}</strong> heals <strong>${actualHealing} HP</strong>${sourceText}.</p>
       <div class="healing-details">
         <p><strong>Healing Roll:</strong> ${healAmount}</p>
-        <p><strong>Current Damage:</strong> ${newHealth}/${maxHealth}</p>
       </div>
       ${newHealth === 0 ? '<p class="healing-success"><em><i class="fas fa-sparkles"></i> Fully healed!</em></p>' : ''}
       ${undoId ? `<div class="healing-undo-container" style="margin-top: 0.5em;">
@@ -824,6 +843,7 @@ async function _sendHealingApplicationMessages(results, sourceActor, healAmount,
       </div>` : ''}
     </div>`;
 
+    // Send the main healing message (visible to all players)
     await ChatMessage.create({
       user: game.user.id,
       speaker: sourceActor ? ChatMessage.getSpeaker({ actor: sourceActor }) : ChatMessage.getSpeaker(),
@@ -838,6 +858,26 @@ async function _sendHealingApplicationMessages(results, sourceActor, healAmount,
           currentHealth: newHealth,
           maxHealth: maxHealth,
           undoId: undoId
+        }
+      }
+    });
+
+    // Send GM-only message with mechanical details
+    const gmContent = `<div class="healing-gm-info">
+      <h4><i class="fas fa-eye"></i> GM Info: ${target.name}</h4>
+      <p><strong>Current Damage:</strong> ${newHealth}/${maxHealth}</p>
+    </div>`;
+
+    await ChatMessage.create({
+      user: game.user.id,
+      speaker: sourceActor ? ChatMessage.getSpeaker({ actor: sourceActor }) : ChatMessage.getSpeaker(),
+      content: gmContent,
+      whisper: ChatMessage.getWhisperRecipients("GM"),
+      flags: {
+        daggerheart: {
+          messageType: "healingGMInfo",
+          targetActorId: target.id,
+          sourceActorId: sourceActor?.id || null
         }
       }
     });

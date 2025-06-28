@@ -660,6 +660,53 @@ Hooks.once("ready", async function() {
   if (game.user.isGM) {
     await _cleanupDuplicateMacros();
   }
+
+  // Socket listener for fear gain requests
+  game.socket.on("system.daggerheart", async (data) => {
+    // Only GM should process these requests
+    if (!game.user.isGM) return;
+    
+    if (data.type === "requestFearGain") {
+      console.log(`Daggerheart | Processing fear gain request from ${data.userName}: +${data.amount} from ${data.source}`);
+      
+      if (game.daggerheart?.counter) {
+        try {
+          // Use the regular gainFear method which includes proper notifications
+          await game.daggerheart.counter.gainFear(data.amount);
+          
+          // Send confirmation back to the requesting user
+          game.socket.emit("system.daggerheart", {
+            type: "fearGainConfirmation",
+            amount: data.amount,
+            source: data.source,
+            success: true,
+            targetUserId: data.userId
+          });
+        } catch (error) {
+          console.error("Daggerheart | Error processing fear gain request:", error);
+          
+          // Send error back to the requesting user
+          game.socket.emit("system.daggerheart", {
+            type: "fearGainConfirmation",
+            amount: data.amount,
+            source: data.source,
+            success: false,
+            error: error.message,
+            targetUserId: data.userId
+          });
+        }
+      }
+    }
+    
+    // Handle confirmation messages (for non-GM users)
+    if (data.type === "fearGainConfirmation" && data.targetUserId === game.user.id) {
+      if (data.success) {
+        console.log(`Daggerheart | Fear gain confirmed: +${data.amount} from ${data.source}`);
+      } else {
+        console.warn(`Daggerheart | Fear gain failed: ${data.error}`);
+      }
+    }
+  });
 });
 
 /**

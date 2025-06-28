@@ -41,10 +41,8 @@ async function _handleAutomaticFearGain(message) {
   
   // Handle fear rolls (standalone or duality with fear)
   if (flags.rollType === "fear" || (flags.rollType === "duality" && flags.isFear && !flags.reaction)) {
-    if (game.daggerheart?.counter) {
-      await game.daggerheart.counter.autoGainFear(1, "roll with Fear");
-      console.log("Daggerheart | +1 Fear from roll");
-    }
+    // Use socket-based fear gain to avoid permission issues
+    await _requestFearGain(1, "roll with Fear");
   }
   
   // Handle hope/critical from duality rolls
@@ -95,6 +93,48 @@ async function _handleAutomaticFearGain(message) {
       });
     }
   }
+}
+
+/**
+ * Request fear gain via socket to avoid permission issues
+ * @param {number} amount - Amount of fear to gain
+ * @param {string} source - Source of the fear gain
+ * @private
+ */
+async function _requestFearGain(amount, source) {
+  // If current user is GM, just do it directly
+  if (game.user.isGM) {
+    if (game.daggerheart?.counter) {
+      try {
+        await game.daggerheart.counter.autoGainFear(amount, source);
+        console.log("Daggerheart | +1 Fear from roll");
+      } catch (error) {
+        console.warn("Daggerheart | Error with direct fear gain, falling back to socket");
+        _sendFearGainRequest(amount, source);
+      }
+    }
+    return;
+  }
+  
+  // For non-GM users, send a socket request
+  _sendFearGainRequest(amount, source);
+}
+
+/**
+ * Send fear gain request via socket
+ * @param {number} amount - Amount of fear to gain
+ * @param {string} source - Source of the fear gain
+ * @private
+ */
+function _sendFearGainRequest(amount, source) {
+  game.socket.emit("system.daggerheart", {
+    type: "requestFearGain",
+    amount: amount,
+    source: source,
+    userId: game.user.id,
+    userName: game.user.name
+  });
+  console.log(`Daggerheart | Requested +${amount} Fear from ${source} via socket`);
 }
 
 // Function to style dice tooltips and roll result text based on flavor

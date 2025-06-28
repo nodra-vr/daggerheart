@@ -2404,24 +2404,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       
       if (hit) {
         targetingText += `</p><p><b class="roll-outcome success">Success!</b></p>`;
-        // Add hidden information for GMs including HP and threshold info
-        if (targetActor.type === "npc") {
-          const currentHP = parseInt(targetActor.system.health?.value) || 0;
-          const maxHP = parseInt(targetActor.system.health?.max) || 6;
-          const majorThreshold = parseInt(targetActor.system.threshold?.major) || 0;
-          const severeThreshold = parseInt(targetActor.system.threshold?.severe) || 0;
-          targetingText += `<section class="secret"><p><strong>Target Info:</strong> ${targetActor.name} - HP: ${currentHP}/${maxHP}, Thresholds: ${majorThreshold}/${severeThreshold}</p></section>`;
-        }
       } else {
         targetingText += `</p><p><b class="roll-outcome failure">Failure!</b></p>`;
-        // Add hidden information for GMs even on failures
-        if (targetActor.type === "npc") {
-          const currentHP = parseInt(targetActor.system.health?.value) || 0;
-          const maxHP = parseInt(targetActor.system.health?.max) || 6;
-          const majorThreshold = parseInt(targetActor.system.threshold?.major) || 0;
-          const severeThreshold = parseInt(targetActor.system.threshold?.severe) || 0;
-          targetingText += `<section class="secret"><p><strong>Target Info:</strong> ${targetActor.name} - HP: ${currentHP}/${maxHP}, Thresholds: ${majorThreshold}/${severeThreshold}</p></section>`;
-        }
       }
     }
     
