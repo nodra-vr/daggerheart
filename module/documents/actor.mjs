@@ -1,29 +1,29 @@
-import { EntitySheetHelper } from "./helper.js";
+import { EntitySheetHelper } from "../helper.js";
 
 /**
  * Extend the base Actor document to support attributes and groups with a custom template creation dialog.
  * @extends {Actor}
  */
-export class SimpleActor extends Actor {
+export class ActorDocument extends Actor {
 
   /** @inheritdoc */
   prepareDerivedData() {
     super.prepareDerivedData();
-    
+
     // Initialize missing properties with defaults
     this.system.health = this.system.health || { value: 6, min: 0, max: 6 };
     this.system.stress = this.system.stress || { value: 0, min: 0, max: 6 };
-    this.system.defenses = this.system.defenses || { 
-      armor: { value: 0 }, 
-      'armor-slots': { value: 0 } 
+    this.system.defenses = this.system.defenses || {
+      armor: { value: 0 },
+      'armor-slots': { value: 0 }
     };
     this.system.groups = this.system.groups || {};
     this.system.attributes = this.system.attributes || {};
-    
+
     // Ensure nested properties exist
     if (!this.system.defenses.armor) this.system.defenses.armor = { value: 0 };
     if (!this.system.defenses['armor-slots']) this.system.defenses['armor-slots'] = { value: 0 };
-    
+
     // Enforce min/max constraints for health, stress, and hope
     if (this.system.health?.value !== undefined) {
       this.system.health.value = Math.max(0, Math.min(this.system.health.value, this.system.health.max || 0));
@@ -34,7 +34,7 @@ export class SimpleActor extends Actor {
     if (this.system.hope?.value !== undefined) {
       this.system.hope.value = Math.max(0, Math.min(this.system.hope.value, this.system.hope.max || 0));
     }
-    
+
     this.system.barHealth = {
       max: this.system.health.max || 6,
       min: 0,
@@ -50,7 +50,7 @@ export class SimpleActor extends Actor {
       min: 0,
       value: (this.system.defenses.armor.value || 0) - (this.system.defenses['armor-slots'].value || 0)
     }
-    
+
     EntitySheetHelper.clampResourceValues(this.system.attributes);
   }
 
@@ -83,14 +83,14 @@ export class SimpleActor extends Actor {
     // Check if actor is dying/dead (hit points maxed out)
     const health = this.system.health;
     const isDying = health && health.value === health.max && health.max > 0;
-    
+
     // Get the dead status effect
     const deadEffect = CONFIG.statusEffects.find(e => e.id === "dead");
     if (!deadEffect) return; // No dead effect configured
-    
+
     // Check if actor currently has the dead effect
     const hasDeadEffect = this.effects.some(e => e.statuses.has("dead"));
-    
+
     // Apply or remove dead effect based on dying state
     if (isDying && !hasDeadEffect) {
       // Apply dead status effect
@@ -107,12 +107,12 @@ export class SimpleActor extends Actor {
     } else if (!isDying && hasDeadEffect) {
       // Remove dead status effect
       const deadEffectToRemove = this.effects.find(e => e.statuses.has("dead"));
-      console.log({deadEffectToRemove});
+      console.log({ deadEffectToRemove });
       if (deadEffectToRemove) {
         await deadEffectToRemove.delete();
       }
     }
-    
+
     // Handle token tinting for all associated tokens
     const tokens = this.getActiveTokens();
     for (const token of tokens) {
@@ -131,7 +131,7 @@ export class SimpleActor extends Actor {
   /** @override */
   _onUpdate(changed, options, userId) {
     super._onUpdate(changed, options, userId);
-    
+
     // Check if health values changed and handle dead state accordingly
     if (changed.system?.health) {
       this._scheduleDeadStateUpdate();
@@ -141,7 +141,7 @@ export class SimpleActor extends Actor {
   /* -------------------------------------------- */
 
   /** @override */
-  static async createDialog(data={}, options={}) {
+  static async createDialog(data = {}, options = {}) {
     return EntitySheetHelper.createDialog.call(this, data, options);
   }
 
@@ -218,7 +218,7 @@ export class SimpleActor extends Actor {
     if (data.resourceTrackers && Array.isArray(data.resourceTrackers)) {
       data.trackers = {};
       data.tracker = {}; // Alternative syntax
-      
+
       for (const tracker of data.resourceTrackers) {
         if (tracker.name) {
           // Create safe key names for formula access
@@ -226,7 +226,7 @@ export class SimpleActor extends Actor {
           if (safeKey) {
             data.trackers[safeKey] = tracker.value || 0;
             data.tracker[safeKey] = tracker.value || 0;
-            
+
             // Also allow access by exact name if it's a valid identifier
             if (/^[a-zA-Z][a-zA-Z0-9]*$/.test(tracker.name)) {
               data.trackers[tracker.name] = tracker.value || 0;
@@ -250,7 +250,7 @@ export class SimpleActor extends Actor {
     this._applyFormulaReplacements(data, formulaAttributes, shorthand);
 
     // cleanup attributes
-    if ( !!shorthand ) {
+    if (!!shorthand) {
       delete data.attributes;
       delete data.attr;
       delete data.groups;
@@ -268,22 +268,22 @@ export class SimpleActor extends Actor {
    */
   _applyShorthand(data, formulaAttributes, shorthand) {
     // formula attrs processing
-    for ( let [k, v] of Object.entries(data.attributes || {}) ) {
+    for (let [k, v] of Object.entries(data.attributes || {})) {
       // formula array
-      if ( v.dtype === "Formula" ) formulaAttributes.push(k);
+      if (v.dtype === "Formula") formulaAttributes.push(k);
       // shorthand attrs
-      if ( !!shorthand ) {
-        if ( !(k in data) ) {
+      if (!!shorthand) {
+        if (!(k in data)) {
           // non-grouped
-          if ( v.dtype ) {
+          if (v.dtype) {
             data[k] = v.value;
           }
           // grouped
           else {
             data[k] = {};
-            for ( let [gk, gv] of Object.entries(v) ) {
+            for (let [gk, gv] of Object.entries(v)) {
               data[k][gk] = gv.value;
-              if ( gv.dtype === "Formula" ) formulaAttributes.push(`${k}.${gk}`);
+              if (gv.dtype === "Formula") formulaAttributes.push(`${k}.${gk}`);
             }
           }
         }
@@ -303,44 +303,44 @@ export class SimpleActor extends Actor {
   _applyItems(data, itemAttributes, shorthand) {
     // Map all items data using their slugified names
     data.items = this.items.reduce((obj, item) => {
-      const key = item.name.slugify({strict: true});
+      const key = item.name.slugify({ strict: true });
       const itemData = item.toObject(false).system;
 
       // item attrs & formulas
-      for ( let [k, v] of Object.entries(itemData.attributes) ) {
+      for (let [k, v] of Object.entries(itemData.attributes)) {
         // prepend item name
-        if ( v.dtype === "Formula" ) itemAttributes.push(`${key}..${k}`);
+        if (v.dtype === "Formula") itemAttributes.push(`${key}..${k}`);
         // shorthand attrs
-        if ( !!shorthand ) {
-          if ( !(k in itemData) ) {
+        if (!!shorthand) {
+          if (!(k in itemData)) {
             // non-grouped item
-            if ( v.dtype ) {
+            if (v.dtype) {
               itemData[k] = v.value;
             }
             // grouped item
             else {
-              if ( !itemData[k] ) itemData[k] = {};
-              for ( let [gk, gv] of Object.entries(v) ) {
+              if (!itemData[k]) itemData[k] = {};
+              for (let [gk, gv] of Object.entries(v)) {
                 itemData[k][gk] = gv.value;
-                if ( gv.dtype === "Formula" ) itemAttributes.push(`${key}..${k}.${gk}`);
+                if (gv.dtype === "Formula") itemAttributes.push(`${key}..${k}.${gk}`);
               }
             }
           }
         }
         // non-shorthand grouped
         else {
-          if ( !v.dtype ) {
-            if ( !itemData[k] ) itemData[k] = {};
-            for ( let [gk, gv] of Object.entries(v) ) {
+          if (!v.dtype) {
+            if (!itemData[k]) itemData[k] = {};
+            for (let [gk, gv] of Object.entries(v)) {
               itemData[k][gk] = gv.value;
-              if ( gv.dtype === "Formula" ) itemAttributes.push(`${key}..${k}.${gk}`);
+              if (gv.dtype === "Formula") itemAttributes.push(`${key}..${k}.${gk}`);
             }
           }
         }
       }
 
       // cleanup shorthand
-      if ( !!shorthand ) {
+      if (!!shorthand) {
         delete itemData.attributes;
       }
       obj[key] = itemData;
@@ -351,7 +351,7 @@ export class SimpleActor extends Actor {
   /* -------------------------------------------- */
 
   _applyItemsFormulaReplacements(data, itemAttributes, shorthand) {
-    for ( let k of itemAttributes ) {
+    for (let k of itemAttributes) {
       // parse item & key
       let item = null;
       let itemKey = k.split('..');
@@ -360,33 +360,33 @@ export class SimpleActor extends Actor {
 
       // group keys
       let gk = null;
-      if ( k.includes('.') ) {
+      if (k.includes('.')) {
         let attrKey = k.split('.');
         k = attrKey[0];
         gk = attrKey[1];
       }
 
       let formula = '';
-      if ( !!shorthand ) {
+      if (!!shorthand) {
         // grouped first
-        if ( data.items[item][k][gk] ) {
+        if (data.items[item][k][gk]) {
           formula = data.items[item][k][gk].replace('@item.', `@items.${item}.`);
           data.items[item][k][gk] = Roll.replaceFormulaData(formula, data);
         }
         // non-grouped
-        else if ( data.items[item][k] ) {
+        else if (data.items[item][k]) {
           formula = data.items[item][k].replace('@item.', `@items.${item}.`);
           data.items[item][k] = Roll.replaceFormulaData(formula, data);
         }
       }
       else {
         // grouped first
-        if ( data.items[item]['attributes'][k][gk] ) {
+        if (data.items[item]['attributes'][k][gk]) {
           formula = data.items[item]['attributes'][k][gk]['value'].replace('@item.', `@items.${item}.attributes.`);
           data.items[item]['attributes'][k][gk]['value'] = Roll.replaceFormulaData(formula, data);
         }
         // non-grouped
-        else if ( data.items[item]['attributes'][k]['value'] ) {
+        else if (data.items[item]['attributes'][k]['value']) {
           formula = data.items[item]['attributes'][k]['value'].replace('@item.', `@items.${item}.attributes.`);
           data.items[item]['attributes'][k]['value'] = Roll.replaceFormulaData(formula, data);
         }
@@ -404,34 +404,34 @@ export class SimpleActor extends Actor {
    */
   _applyFormulaReplacements(data, formulaAttributes, shorthand) {
     // eval formula attrs
-    for ( let k of formulaAttributes ) {
+    for (let k of formulaAttributes) {
       // split group.attr
       let attr = null;
-      if ( k.includes('.') ) {
+      if (k.includes('.')) {
         let attrKey = k.split('.');
         k = attrKey[0];
         attr = attrKey[1];
       }
       // non-grouped
-      if ( data.attributes[k]?.value ) {
+      if (data.attributes[k]?.value) {
         data.attributes[k].value = Roll.replaceFormulaData(String(data.attributes[k].value), data);
       }
       // grouped
-      else if ( attr ) {
+      else if (attr) {
         data.attributes[k][attr].value = Roll.replaceFormulaData(String(data.attributes[k][attr].value), data);
       }
 
       // shorthand values
-      if ( !!shorthand ) {
+      if (!!shorthand) {
         // non-grouped
-        if ( data.attributes[k]?.value ) {
+        if (data.attributes[k]?.value) {
           data[k] = data.attributes[k].value;
         }
         // grouped
         else {
-          if ( attr ) {
+          if (attr) {
             // init group key
-            if ( !data[k] ) {
+            if (!data[k]) {
               data[k] = {};
             }
             data[k][attr] = data.attributes[k][attr].value;
@@ -446,20 +446,20 @@ export class SimpleActor extends Actor {
   /** @inheritdoc */
   async modifyTokenAttribute(attribute, value, isDelta = false, isBar = true) {
     const current = foundry.utils.getProperty(this.system, attribute);
-    if ( !isBar || !isDelta || (current?.dtype !== "Resource") ) {
+    if (!isBar || !isDelta || (current?.dtype !== "Resource")) {
       return super.modifyTokenAttribute(attribute, value, isDelta, isBar);
     }
-    const updates = {[`system.${attribute}.value`]: Math.clamped(current.value + value, current.min, current.max)};
-    const allowed = Hooks.call("modifyTokenAttribute", {attribute, value, isDelta, isBar}, updates);
+    const updates = { [`system.${attribute}.value`]: Math.clamped(current.value + value, current.min, current.max) };
+    const allowed = Hooks.call("modifyTokenAttribute", { attribute, value, isDelta, isBar }, updates);
     return allowed !== false ? this.update(updates) : this;
   }
 
   async clearAllStress() {
-    return this.update({"system.stress.value":0});
+    return this.update({ "system.stress.value": 0 });
   }
 
-  async clearAllHP() { 
+  async clearAllHP() {
     this.system.health.value = 0;
-    return this.update({"system.health.value":0});
+    return this.update({ "system.health.value": 0 });
   }
 }
