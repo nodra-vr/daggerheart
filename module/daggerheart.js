@@ -1,6 +1,8 @@
 // Import Modules
 import { ActorDocument } from "./documents/actor.mjs"
 
+import { AdversaryDataModel } from "./data/actor-adversary.mjs"
+
 import { SimpleItem } from "./item.js";
 import { SimpleItemSheet } from "./item-sheet.js";
 import { SimpleWeaponSheet } from "./weapon-sheet.js";
@@ -165,8 +167,11 @@ Hooks.once("init", async function () {
     EquipmentHandler: EquipmentHandler
   };
 
-  // Define custom Document classes
+  // Define custom Document and Model classes
   CONFIG.Actor.documentClass = ActorDocument;
+  CONFIG.Actor.dataModels = {
+    Adversary: AdversaryDataModel
+  };
   CONFIG.Actor.typeLabels = {
     character: "ACTOR.TypeCharacter",
     npc: "ACTOR.TypeNpc",

@@ -26,6 +26,8 @@
   "ACTOR.TypeNpc": "Adversary",
   "ACTOR.TypeCompanion": "Ranger Companion",
 
+  "TYPES.Actor.Adversary": "Adversary v2",
+
   "ITEM.TypeItem": "Item",
   "ITEM.TypeInventory": "Inventory",
   "ITEM.TypeWorn": "Worn",
