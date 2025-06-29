@@ -1176,7 +1176,7 @@ body.game .app input[type=search]:focus {
 .daggerheart input[type=text], .daggerheart input[type=number], .daggerheart input[type=password], .daggerheart input[type=date], .daggerheart input[type=time], .daggerheart input[type=datetime-local], .daggerheart input[type=search], .daggerheart input[type=file], .daggerheart select {
   box-shadow: none !important;
 }
-.daggerheart h1 {
+.daggerheart h1:not(.window-header h1) {
   font-size: 1.2em;
   border-bottom: initial;
   text-transform: uppercase;
@@ -7791,7 +7791,7 @@ button.weapon-locked:hover {
 .daggerheart select {
   box-shadow: none !important;
 }
-.daggerheart h1 {
+.daggerheart h1:not(.window-header h1) {
   font-size: 1.2em;
   border-bottom: initial;
   text-transform: uppercase;

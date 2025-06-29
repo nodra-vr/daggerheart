@@ -9,15 +9,28 @@
     text-shadow: none;
   }
 
-  input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus, input[type="date"]:focus, input[type="time"]:focus, input[type="search"]:focus {
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="password"]:focus,
+  input[type="date"]:focus,
+  input[type="time"]:focus,
+  input[type="search"]:focus {
     box-shadow: none !important;
   }
 
-  input[type=text], input[type=number], input[type=password], input[type=date], input[type=time], input[type=datetime-local], input[type=search], input[type=file], select {
+  input[type=text],
+  input[type=number],
+  input[type=password],
+  input[type=date],
+  input[type=time],
+  input[type=datetime-local],
+  input[type=search],
+  input[type=file],
+  select {
     box-shadow: none !important;
   }
 
-  h1 {
+  h1:not(.window-header h1) {
     font-size: 1.2em;
     border-bottom: initial;
     text-transform: uppercase;
@@ -75,7 +88,8 @@
     }
   }
 
-  .click-rollable:hover, .basic-rollable:hover {
+  .click-rollable:hover,
+  .basic-rollable:hover {
     cursor: pointer;
     filter: brightness(0.8);
     color: var(--dh-color-gold);
