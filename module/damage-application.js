@@ -12,21 +12,13 @@ const undoData = new Map();
  * @param {number} damageAmount - The amount of damage rolled
  * @param {Actor|null} sourceActor - The actor causing the damage (optional)
  * @param {boolean} createUndo - Whether to create undo data (default: true)
- * @param {number} armorSlotsUsed - Number of armor slots to use for damage reduction (default: 0)
  * @returns {Promise<Object>} Result object with success status and undo data
  */
-export async function applyDamage(targetActors = null, damageAmount, sourceActor = null, createUndo = true, armorSlotsUsed = 0) {
+export async function applyDamage(targetActors = null, damageAmount, sourceActor = null, createUndo = true) {
   // Validate damage amount
   if (!Number.isInteger(damageAmount) || damageAmount <= 0) {
     console.error("Damage amount must be a positive integer");
     ui.notifications.error("Damage amount must be a positive integer.");
-    return { success: false, undoId: null };
-  }
-  
-  // Validate armor slots used
-  if (!Number.isInteger(armorSlotsUsed) || armorSlotsUsed < 0) {
-    console.error("Armor slots used must be a non-negative integer");
-    ui.notifications.error("Armor slots used must be a non-negative integer.");
     return { success: false, undoId: null };
   }
 
@@ -65,7 +57,6 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
       type: "damage",
       actors: [],
       damageAmount: damageAmount,
-      armorSlotsUsed: armorSlotsUsed,
       sourceActorId: sourceActor?.id || null,
       timestamp: Date.now()
     };
@@ -95,30 +86,11 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
     const maxHealth = parseInt(target.system.health.max) || 6;
     const thresholds = target.system.threshold;
     
-    // Get current armor slots for characters
-    let currentArmorSlots = 0;
-    let maxArmorSlots = 0;
-    let armorSlotsToApply = 0;
-    const isCharacter = target.type === 'character';
-    
-    if (isCharacter && armorSlotsUsed > 0) {
-      currentArmorSlots = parseInt(target.system.defenses?.["armor-slots"]?.value) || 0;
-      maxArmorSlots = parseInt(target.system.defenses?.["armor-slots"]?.max) || 0;
-      
-      // Calculate how many armor slots can actually be used
-      const availableSlots = maxArmorSlots - currentArmorSlots;
-      armorSlotsToApply = Math.min(armorSlotsUsed, availableSlots);
-      
-      if (armorSlotsToApply < armorSlotsUsed) {
-        console.warn(`${target.name} only has ${availableSlots} armor slots available, using ${armorSlotsToApply} instead of requested ${armorSlotsUsed}`);
-      }
-    }
-    
-    // Store original health and armor for undo - work with tokens directly (only if creating undo)
+    // Store original health for undo - work with tokens directly (only if creating undo)
     if (createUndo && undoRecord) {
       const isFromToken = !!target.token;
       
-      const actorData = {
+      undoRecord.actors.push({
         originalHealth: currentHealth,
         actorName: target.name,
         actorType: target.type,
@@ -126,59 +98,32 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
         tokenId: target.token?.id || null,
         sceneId: target.token?.scene?.id || null,
         actorId: isFromToken ? null : target.id  // Only store actor ID for non-token actors
-      };
-      
-      // Add armor slot data for characters
-      if (isCharacter) {
-        actorData.originalArmorSlots = currentArmorSlots;
-        actorData.armorSlotsApplied = armorSlotsToApply;
-      }
-      
-      undoRecord.actors.push(actorData);
+      });
     }
     
     // Calculate HP damage based on thresholds
     const hpDamage = _calculateDamageToHP(damageAmount, thresholds);
-    
-    // Apply armor reduction for characters
-    let finalHpDamage = hpDamage;
-    if (isCharacter && armorSlotsToApply > 0) {
-      finalHpDamage = Math.max(0, hpDamage - armorSlotsToApply);
-      console.log(`${target.name} armor reduction: ${hpDamage} HP - ${armorSlotsToApply} armor = ${finalHpDamage} HP final damage`);
-    }
-    
-    const newHealth = Math.min(maxHealth, currentHealth + finalHpDamage);
+    const newHealth = Math.min(maxHealth, currentHealth + hpDamage);
     const actualDamage = newHealth - currentHealth;
 
     // Check if we can actually apply damage
-    if (actualDamage <= 0 && armorSlotsToApply <= 0) {
-      console.warn(`${target.name} already has maximum damage (${maxHealth}) and no armor slots to consume`);
+    if (actualDamage <= 0) {
+      console.warn(`${target.name} already has maximum damage (${maxHealth})`);
       ui.notifications.warn(`${target.name} is already at maximum damage.`);
       continue;
     }
 
     try {
-      // Prepare update data
-      const updateData = {
+      // Update the actor's health
+      await target.update({
         "system.health.value": newHealth
-      };
-      
-      // Update armor slots for characters
-      if (isCharacter && armorSlotsToApply > 0) {
-        const newArmorSlots = currentArmorSlots + armorSlotsToApply;
-        updateData["system.defenses.armor-slots.value"] = newArmorSlots;
-      }
-      
-      // Update the actor
-      await target.update(updateData);
+      });
 
       successfulApplications++;
       results.push({
         target: target,
         actualDamage: actualDamage,
         hpDamage: hpDamage,
-        finalHpDamage: finalHpDamage,
-        armorSlotsUsed: armorSlotsToApply,
         newHealth: newHealth,
         maxHealth: maxHealth,
         thresholds: thresholds
@@ -410,31 +355,18 @@ export async function undoDamageHealing(undoId) {
       const targetHealth = actorData.originalHealth;
       const healthDifference = currentHealth - targetHealth;
       
-      // Get armor slot data if present
-      let armorData = null;
-      if (actorData.originalArmorSlots !== undefined && actorData.armorSlotsApplied !== undefined) {
-        const currentArmorSlots = parseInt(targetActor.system.defenses?.["armor-slots"]?.value) || 0;
-        armorData = {
-          current: currentArmorSlots,
-          original: actorData.originalArmorSlots,
-          applied: actorData.armorSlotsApplied
-        };
-      }
-      
       console.log("Daggerheart | Health analysis:", {
         actorName: targetActor.name,
         currentHealth: currentHealth,
         targetHealth: targetHealth,
-        difference: healthDifference,
-        armorData: armorData
+        difference: healthDifference
       });
       
       targets.push({
         actor: targetActor,
         originalHealth: targetHealth,
         currentHealth: currentHealth,
-        healthDifference: healthDifference,
-        armorData: armorData
+        healthDifference: healthDifference
       });
     }
   }
@@ -444,19 +376,14 @@ export async function undoDamageHealing(undoId) {
     return false;
   }
 
-  // Apply the reverse effects
+  // Apply the reverse effects using the existing damage/healing system
   let successfulUndos = 0;
   const results = [];
 
   for (const targetData of targets) {
-    const { actor, originalHealth, currentHealth, healthDifference, armorData } = targetData;
+    const { actor, originalHealth, currentHealth, healthDifference } = targetData;
     
     try {
-      // Prepare update data
-      const updateData = {};
-      let needsUpdate = false;
-      
-      // Handle health restoration
       if (healthDifference > 0) {
         // Actor took damage, so heal them back
         console.log(`Daggerheart | Healing ${actor.name} by ${healthDifference} to restore to ${originalHealth}`);
@@ -469,31 +396,17 @@ export async function undoDamageHealing(undoId) {
         // Actor was healed, so damage them back
         const damageAmount = Math.abs(healthDifference);
         console.log(`Daggerheart | Damaging ${actor.name} by ${damageAmount} to restore to ${originalHealth}`);
-        const damageResult = await applyDamage([actor], damageAmount, null, false, 0); // Don't use armor for undo
+        const damageResult = await applyDamage([actor], damageAmount, null, false);
         if (damageResult.success) {
           successfulUndos++;
           results.push({ actor: actor, restoredHealth: originalHealth });
         }
       } else {
-        // No health change needed
+        // No change needed
         console.log(`Daggerheart | ${actor.name} already at target health ${originalHealth}`);
         successfulUndos++;
         results.push({ actor: actor, restoredHealth: originalHealth });
       }
-      
-      // Handle armor slot restoration separately
-      if (armorData && armorData.applied > 0) {
-        console.log(`Daggerheart | Restoring ${actor.name} armor slots from ${armorData.current} to ${armorData.original}`);
-        updateData["system.defenses.armor-slots.value"] = armorData.original;
-        needsUpdate = true;
-      }
-      
-      // Apply armor updates if needed
-      if (needsUpdate) {
-        await actor.update(updateData);
-        console.log(`Daggerheart | Restored armor slots for ${actor.name}`);
-      }
-      
     } catch (error) {
       console.error(`Error undoing changes for ${actor.name}:`, error);
       ui.notifications.error(`Error undoing changes for ${actor.name}.`);
@@ -820,123 +733,86 @@ export async function rollHealing(formula, options = {}) {
 }
 
 /**
- * Send chat messages for damage application (supports multiple targets)
- * @private
+ * Send damage application chat messages for multiple targets
+ * @param {Array} results - Array of damage application results
+ * @param {Actor|null} sourceActor - The source actor
+ * @param {number} damageAmount - The original damage amount
+ * @param {string} undoId - The undo ID for this application
  */
 async function _sendDamageApplicationMessages(results, sourceActor, damageAmount, undoId) {
-  // Group results for batch messaging
-  let publicMessages = [];
-  let gmMessages = [];
+  const sourceText = sourceActor ? ` from <strong>${sourceActor.name}</strong>` : "";
   
   for (const result of results) {
-    const { target, actualDamage, hpDamage, finalHpDamage, armorSlotsUsed, newHealth, maxHealth, thresholds } = result;
+    const { target, actualDamage, hpDamage, newHealth, maxHealth, thresholds } = result;
     
     // Determine damage severity for message
     let severityText = "";
     let severityClass = "";
-    let severityLevel = 1;
-    
-    if (hpDamage >= 3) {
-      severityText = "Severe";
-      severityClass = "severe-damage";
-      severityLevel = 3;
-    } else if (hpDamage >= 2) {
-      severityText = "Major";
-      severityClass = "major-damage";
-      severityLevel = 2;
+    if (hpDamage === 3) {
+      severityText = "Severe Damage";
+      severityClass = "damage-severe";
+    } else if (hpDamage === 2) {
+      severityText = "Major Damage"; 
+      severityClass = "damage-major";
     } else {
-      severityText = "Minor";
-      severityClass = "minor-damage";
-      severityLevel = 1;
+      severityText = "Minor Damage";
+      severityClass = "damage-minor";
     }
     
-    // Check if character is dead
-    const isDead = newHealth >= maxHealth;
-    const deathWarning = isDead ? `<p class="death-warning"><i class="fas fa-skull"></i> ${target.name} has fallen!</p>` : "";
-    
-    // Build armor reduction text
-    let armorReductionText = "";
-    if (armorSlotsUsed > 0) {
-      const damageReduction = hpDamage - finalHpDamage;
-      if (damageReduction > 0) {
-        armorReductionText = ` (${hpDamage} reduced by ${armorSlotsUsed} armor)`;
-      }
-    }
-    
-    // Public message content (visible to all)
-    let publicContent = `
-      <div class="damage-application-result ${severityClass}">
-        <p class="damage-summary">
-          <i class="fas fa-sword"></i> <strong>${severityText} Damage Applied</strong>
-        </p>
-        <p class="target-info">
-          ${target.name} takes <strong>${finalHpDamage} HP damage</strong>${armorReductionText}${sourceActor ? ` from ${sourceActor.name}` : ''}.
-        </p>
-        <p class="damage-roll">Damage Roll: ${damageAmount}</p>
-        ${armorSlotsUsed > 0 ? `<p class="armor-used">Armor Slots Used: ${armorSlotsUsed}</p>` : ''}
-        ${deathWarning}
-        ${undoId ? `<button class="undo-damage-button" data-undo-id="${undoId}"><i class="fas fa-undo"></i> Undo</button>` : ''}
+    const chatContent = `<div class="damage-application-message ${severityClass}">
+      <h3><i class="fas fa-sword"></i> ${severityText} Applied</h3>
+      <p><strong>${target.name}</strong> takes <strong>${actualDamage} HP</strong> damage${sourceText}.</p>
+      <div class="damage-details">
+        <p><strong>Damage Roll:</strong> ${damageAmount}</p>
       </div>
-    `;
-    
-    publicMessages.push({
-      content: publicContent,
-      target: target
-    });
-    
-    // GM-only detailed message
-    const detailedThresholdInfo = _getThresholdDescription(damageAmount, thresholds, hpDamage);
-    let gmContent = `
-      <div class="damage-application-detail gm-only">
-        <p class="threshold-calculation">
-          <i class="fas fa-calculator"></i> <strong>Threshold Calculation</strong>
-        </p>
-        <p>${detailedThresholdInfo}</p>
-        ${armorSlotsUsed > 0 ? `<p>Armor Reduction: ${hpDamage} HP - ${armorSlotsUsed} armor = ${finalHpDamage} HP final</p>` : ''}
-        <p>Current HP: ${newHealth}/${maxHealth}</p>
-      </div>
-    `;
-    
-    gmMessages.push({
-      content: gmContent,
-      target: target
-    });
-  }
-  
-  // Send public messages
-  for (const msg of publicMessages) {
+      ${newHealth >= maxHealth ? '<p class="damage-warning"><em><i class="fas fa-skull"></i> Character is dying!</em></p>' : ''}
+      ${undoId ? `<div class="damage-undo-container" style="margin-top: 0.5em;">
+        <button class="undo-damage-button" data-undo-id="${undoId}" style="width: 100%;">
+          <i class="fas fa-undo"></i> Undo
+        </button>
+      </div>` : ''}
+    </div>`;
+
+    // Send the main damage message (visible to all players)
     await ChatMessage.create({
-      content: msg.content,
       user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: msg.target }),
+      speaker: sourceActor ? ChatMessage.getSpeaker({ actor: sourceActor }) : ChatMessage.getSpeaker(),
+      content: chatContent,
       flags: {
         daggerheart: {
           messageType: "damageApplied",
-          targetActorId: msg.target.id,
+          targetActorId: target.id,
           sourceActorId: sourceActor?.id || null,
           damageRoll: damageAmount,
+          hpDamage: actualDamage,
+          severityLevel: hpDamage,
+          currentHealth: newHealth,
+          maxHealth: maxHealth,
           undoId: undoId
         }
       }
     });
-  }
-  
-  // Send GM-only messages
-  if (game.user.isGM || gmMessages.length > 0) {
-    for (const msg of gmMessages) {
-      await ChatMessage.create({
-        content: msg.content,
-        user: game.user.id,
-        speaker: ChatMessage.getSpeaker({ actor: msg.target }),
-        whisper: game.users.filter(u => u.isGM).map(u => u.id),
-        flags: {
-          daggerheart: {
-            messageType: "damageAppliedDetail",
-            targetActorId: msg.target.id
-          }
+
+    // Send GM-only message with mechanical details
+    const gmContent = `<div class="damage-gm-info">
+      <h4><i class="fas fa-eye"></i> GM Info: ${target.name}</h4>
+      <p><strong>Threshold Result:</strong> ${_getThresholdDescription(damageAmount, thresholds, hpDamage)}</p>
+      <p><strong>Current Damage:</strong> ${newHealth}/${maxHealth}</p>
+    </div>`;
+
+    await ChatMessage.create({
+      user: game.user.id,
+      speaker: sourceActor ? ChatMessage.getSpeaker({ actor: sourceActor }) : ChatMessage.getSpeaker(),
+      content: gmContent,
+      whisper: ChatMessage.getWhisperRecipients("GM"),
+      flags: {
+        daggerheart: {
+          messageType: "damageGMInfo",
+          targetActorId: target.id,
+          sourceActorId: sourceActor?.id || null
         }
-      });
-    }
+      }
+    });
   }
 }
 
@@ -1041,39 +917,8 @@ async function _sendUndoMessage(record, results) {
 }
 
 /**
- * Get available armor slots for an actor
- * @param {Actor} actor - The actor to check
- * @returns {Object} Object with current, max, and available armor slots
- */
-export function getActorArmorSlots(actor) {
-  if (!actor || actor.type !== 'character') {
-    return { current: 0, max: 0, available: 0 };
-  }
-  
-  const current = parseInt(actor.system.defenses?.["armor-slots"]?.value) || 0;
-  const max = parseInt(actor.system.defenses?.["armor-slots"]?.max) || 0;
-  const available = max - current;
-  
-  return { current, max, available };
-}
-
-/**
- * Check if an actor can use armor slots
- * @param {Actor} actor - The actor to check
- * @returns {boolean} True if actor can use armor slots
- */
-export function canUseArmorSlots(actor) {
-  if (!actor || actor.type !== 'character') {
-    return false;
-  }
-  
-  const armorSlots = getActorArmorSlots(actor);
-  return armorSlots.available > 0;
-}
-
-/**
- * Debug undo data for a specific operation
- * @param {string} undoId - The undo ID to debug
+ * Debug function to analyze actor storage and retrieval
+ * @param {string} undoId - The undo ID to analyze
  */
 export function debugUndoData(undoId) {
   const record = undoData.get(undoId);
