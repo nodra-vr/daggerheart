@@ -5224,6 +5224,52 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   margin-top: 8px;
 }
 
+/* Hope Spend Message Styling */
+.hope-spend-message {
+  background: linear-gradient(135deg, rgba(243, 194, 103, 0.2) 0%, rgba(11, 10, 19, 0.9) 100%);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.hope-spend-message h3 {
+  color: var(--dh-color-gold);
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.hope-spend-message h3 i {
+  margin-right: 8px;
+  color: var(--dh-color-gold);
+}
+.hope-spend-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.hope-spend-message p:last-child {
+  margin-bottom: 0;
+  color: var(--dh-color-gold-light);
+  font-weight: 600;
+}
+.hope-spend-message .hope-warning {
+  color: #ff9800 !important;
+  font-weight: bold !important;
+  font-style: italic;
+  background: rgba(255, 152, 0, 0.1);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 8px;
+}
+
 /* Stress Spend Message Styling */
 .stress-spend-message {
   background: linear-gradient(135deg, rgba(77, 38, 38, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
@@ -5407,36 +5453,120 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 
 .multi-target-armor-container .multi-target-armor-header {
   text-align: center;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.75em;
 }
 .multi-target-armor-container .multi-target-armor-header label {
   font-weight: bold;
-  color: #333;
+  color: var(--dh-color-gold);
   font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(243, 194, 103, 0.6);
 }
 .multi-target-armor-container .armor-slots-ui {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 0.25em;
-  background-color: #f9f9f9;
+  background: rgba(11, 10, 19, 0.85);
+  backdrop-filter: blur(5px);
+  border: 1px solid #6d6795;
+  border-radius: 10px;
+  padding: 0.75em;
+  margin: 0.5em 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 .multi-target-armor-container .armor-slots-ui:hover {
-  background-color: #f0f0f0;
-  border-color: #bbb;
+  background: rgba(11, 10, 19, 0.9);
+  border-color: var(--dh-color-gold);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.multi-target-armor-container .armor-slots-ui .resource-content {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5em;
+}
+.multi-target-armor-container .armor-slots-ui .resource-content .resource-box {
+  background: #1c1c1c;
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 10px;
+  padding: 8px 15px;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 700;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  min-width: 60px;
+  justify-content: center;
+}
+.multi-target-armor-container .armor-slots-ui .resource-content .resource-box .armor-slots-current, .multi-target-armor-container .armor-slots-ui .resource-content .resource-box .armor-slots-max {
+  color: var(--dh-color-off-white);
+  text-align: center;
+  min-width: 1em;
+}
+.multi-target-armor-container .armor-slots-ui .resource-content .resource-box span {
+  color: var(--dh-color-gold);
+  font-weight: bold;
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
 }
 .multi-target-armor-container .armor-slots-ui .resource-label-controls label {
   font-size: 0.85em;
-  color: #444;
+  color: var(--dh-color-off-white);
+  text-align: center;
+  flex: 1;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
 }
 .multi-target-armor-container .armor-slots-ui .resource-label-controls label strong {
-  color: #222;
+  color: var(--dh-color-gold);
+  text-shadow: 0 0 5px rgba(243, 194, 103, 0.6);
 }
-.multi-target-armor-container .armor-slots-ui .resource-box {
-  background-color: #fff;
-  border: 1px solid #ccc;
+.multi-target-armor-container .armor-slots-ui .resource-label-controls label .armor-availability {
+  font-size: 1em;
+  color: #6c6a85;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.9;
 }
-.multi-target-armor-container .armor-slots-ui .resource-control:hover {
-  background-color: #e0e0e0;
+.multi-target-armor-container .armor-slots-ui .resource-label-controls .resource-control {
+  background: rgba(67, 63, 100, 0.5);
+  border: 1px solid #6d6795;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dh-color-off-white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls .resource-control:hover {
+  background: rgba(67, 63, 100, 0.8);
+  border-color: var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls .resource-control:active {
+  transform: scale(0.95);
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls .resource-control i {
+  color: inherit;
 }
 
 .rest-button {

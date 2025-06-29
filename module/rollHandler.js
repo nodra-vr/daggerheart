@@ -965,7 +965,7 @@ export async function _npcRollWithDialog(config) {
     sheet._lastRollResult = null;
   }
   
-  const pendingRollType = sheet?.getPendingRollType ? sheet.getPendingRollType() : "unknown";
+  const pendingRollType = sheet?.getPendingRollType ? sheet.getPendingRollType() : null;
   const pendingWeaponName = sheet?.getPendingWeaponName ? sheet.getPendingWeaponName() : "";
 
   // Send message
@@ -977,10 +977,12 @@ export async function _npcRollWithDialog(config) {
       rolls: [result.roll],
       flags: {
         daggerheart: {
-          rollType: pendingRollType,
+          rollType: pendingRollType || "npc",
           weaponName: pendingWeaponName,
           actorId: actor.id,
-          actorType: actor.type
+          actorType: actor.type,
+          isCrit,
+          reaction
         }
       }
     });

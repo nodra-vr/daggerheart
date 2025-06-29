@@ -6,7 +6,7 @@ import { SimpleWeaponSheet } from "./weapon-sheet.js";
 import { SimpleActorSheet, NPCActorSheet } from "./actor-sheet.js";
 import { CompanionActorSheet } from "./actor-sheet-companion.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
-import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, spendStress } from "./spending-system.js";
+import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, createSpendHopeMacro, spendStress, spendHope } from "./spending-system.js";
 import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
@@ -135,7 +135,9 @@ Hooks.once("init", async function() {
     createSpendFearMacro,
     createGainFearMacro,
     createSpendStressMacro,
+    createSpendHopeMacro,
     spendStress,
+    spendHope,
     SheetTracker,
     EquipmentHandler,
     rollHandler: {
@@ -296,39 +298,21 @@ Hooks.once("init", async function() {
 });
 
 /**
- * Hook to refresh actor sheets when base value restrictions change
+ * Hook to refresh actor sheets when weapon data changes
  */
 Hooks.on("updateActor", (actor, data, options, userId) => {
-  // Check if base value restrictions were updated
-  if (data.flags?.daggerheart?.baseValueRestrictions) {
-    console.log("Daggerheart | Base value restrictions updated, refreshing sheets for actor:", actor.name);
-    
-    // Force refresh all open sheets for this actor (debounced)
-    Object.values(actor.apps).forEach(app => {
-      if (app.render) {
-        console.log("Daggerheart | Refreshing sheet:", app.constructor.name);
-        try {
-          app.render(true); // This will use debounced render
-        } catch (error) {
-          console.warn("Daggerheart | Failed to refresh sheet:", error);
-        }
-      }
-    });
-  }
-  
-  // Also check for weapon data changes that might need sheet refresh
+  // Check for weapon data changes that need sheet refresh
   if (data.system && (
     data.system["weapon-main"] || 
-    data.system["weapon-off"] ||
-    data.flags?.daggerheart // Any daggerheart flags
+    data.system["weapon-off"]
   )) {
-    console.log("Daggerheart | Weapon or system data updated, refreshing sheets for actor:", actor.name);
+    console.log("Daggerheart | Weapon data updated, refreshing sheets for actor:", actor.name);
     
-    // Force refresh all open sheets for this actor (debounced)
+    // Force refresh all open sheets for this actor
     Object.values(actor.apps).forEach(app => {
       if (app.render) {
         try {
-          app.render(true); // This will use debounced render
+          app.render(true);
         } catch (error) {
           console.warn("Daggerheart | Failed to refresh sheet:", error);
         }
@@ -445,6 +429,16 @@ Hooks.once("ready", async function() {
       return false;
     }
     return await game.daggerheart.spendStress(actor, amount);
+  };
+
+  // Add global spendHope function
+  window.spendHope = async function(actor, amount) {
+    if (!game.daggerheart?.spendHope) {
+      console.error("spendHope function not initialized");
+      ui.notifications.error("spendHope function not available");
+      return false;
+    }
+    return await game.daggerheart.spendHope(actor, amount);
   };
   
   // Add test function for fear automation
@@ -607,8 +601,8 @@ Hooks.once("ready", async function() {
     console.log("Base value restrictions:", JSON.stringify(actor.flags?.daggerheart?.baseValueRestrictions, null, 2));
   };
   
-  // Add function to clear stuck weapon restrictions
-  window.clearWeaponRestrictions = async function() {
+  // Add function to test new weapon system
+  window.testWeaponSystem = function() {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
@@ -616,16 +610,118 @@ Hooks.once("ready", async function() {
     }
     
     const actor = selectedTokens[0].actor;
-    const sheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
-    
-    if (!sheet) {
-      ui.notifications.warn("Please open the character sheet first");
+    console.log("=== New Weapon System Test ===");
+    console.log("Actor:", actor.name);
+    console.log("Primary weapon data:", EquipmentHandler.getDynamicWeaponData(actor, "primary"));
+    console.log("Secondary weapon data:", EquipmentHandler.getDynamicWeaponData(actor, "secondary"));
+    console.log("Weapon display data:", EquipmentHandler.getWeaponDisplayData(actor));
+  };
+  
+  // Add comprehensive test function for the user's example scenario
+  window.testWeaponScenario = function() {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
       return;
     }
     
-    console.log("=== Clearing Weapon Restrictions ===");
-    await EquipmentHandler.clearWeaponRestrictions(actor, sheet);
-    ui.notifications.info(`Cleared weapon restrictions for ${actor.name}. Base values should now be editable.`);
+    const actor = selectedTokens[0].actor;
+    console.log("=== Weapon System Test Scenario ===");
+    console.log("Actor:", actor.name);
+    
+    // Character stats example
+    const strength = foundry.utils.getProperty(actor, 'system.strength.value') ?? 0;
+    console.log(`Character strength modifier: ${strength}`);
+    
+    // Get primary weapon if equipped
+    const primaryWeapon = EquipmentHandler.getPrimaryWeapon(actor);
+    if (primaryWeapon) {
+      console.log(`\nPrimary weapon: ${primaryWeapon.name}`);
+      
+      // Get weapon's complete damage (base + modifiers)
+      const weaponTotalDamage = EquipmentHandler.getWeaponTotalDamage(primaryWeapon, actor);
+      console.log(`Weapon total damage: ${weaponTotalDamage}`);
+      
+      // Get weapon trait value
+      const weaponTraitValue = EquipmentHandler.getWeaponTraitValue(primaryWeapon, actor);
+      console.log(`Weapon trait value: ${weaponTraitValue}`);
+      
+      // Get dynamic weapon data for character sheet
+      const weaponData = EquipmentHandler.getDynamicWeaponData(actor, "primary");
+      console.log("\nFinal character sheet data:");
+      console.log(`- Attack modifier base: ${weaponData["to-hit"].baseValue}`);
+      console.log(`- Attack modifier total: ${weaponData["to-hit"].value}`);
+      console.log(`- Damage base: ${weaponData.damage.baseValue}`);
+      console.log(`- Damage total: ${weaponData.damage.value}`);
+      console.log(`- Character modifiers preserved:`, weaponData["to-hit"].modifiers);
+      
+      console.log("\n✅ This demonstrates the correct separation:");
+      console.log("- Weapon damage (1d12 + 1d6 + 2) becomes character's base value");
+      console.log("- Character modifiers (+2 blessing) stay as character modifiers");
+      console.log("- Final result: (1d12 + 1d6 + 2) + 2");
+      
+    } else {
+      console.log("No primary weapon equipped");
+    }
+    
+    // Also test secondary weapon
+    const secondaryWeapon = EquipmentHandler.getSecondaryWeapon(actor);
+    if (secondaryWeapon) {
+      console.log(`\nSecondary weapon: ${secondaryWeapon.name}`);
+      const secondaryData = EquipmentHandler.getDynamicWeaponData(actor, "secondary");
+      console.log("Secondary weapon data:", secondaryData);
+    }
+  };
+  
+  // Add function to debug weapon damage formulas
+  window.debugWeaponDamage = function() {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+    
+    const actor = selectedTokens[0].actor;
+    console.log("=== Weapon Damage Debug ===");
+    console.log("Actor:", actor.name);
+    
+    // Check all weapons on the actor
+    const weapons = actor.items.filter(i => i.type === "weapon");
+    console.log("\n--- All Weapons ---");
+    weapons.forEach(weapon => {
+      console.log(`${weapon.name}:`);
+      console.log("  Raw damage data:", weapon.system.damage);
+      console.log("  Equipped:", weapon.system.equipped);
+      console.log("  Slot:", weapon.system.weaponSlot);
+      
+      if (typeof weapon.system.damage === 'object') {
+        console.log("  - baseValue:", weapon.system.damage.baseValue);
+        console.log("  - value:", weapon.system.damage.value);
+        console.log("  - modifiers:", weapon.system.damage.modifiers);
+      }
+    });
+    
+    // Check current weapon slots
+    console.log("\n--- Character Weapon Slots ---");
+    console.log("Primary weapon slot:", JSON.stringify(actor.system["weapon-main"], null, 2));
+    console.log("Secondary weapon slot:", JSON.stringify(actor.system["weapon-off"], null, 2));
+    
+    // Test dynamic resolution
+    console.log("\n--- Dynamic Resolution Test ---");
+    const primaryWeapon = EquipmentHandler.getPrimaryWeapon(actor);
+    const secondaryWeapon = EquipmentHandler.getSecondaryWeapon(actor);
+    
+    if (primaryWeapon) {
+      console.log("Primary weapon resolved data:");
+      const resolvedPrimary = EquipmentHandler.getResolvedWeaponData(actor, "primary");
+      console.log(JSON.stringify(resolvedPrimary, null, 2));
+    }
+    
+    if (secondaryWeapon) {
+      console.log("Secondary weapon resolved data:");
+      const resolvedSecondary = EquipmentHandler.getResolvedWeaponData(actor, "secondary");
+      console.log(JSON.stringify(resolvedSecondary, null, 2));
+    }
   };
   
   // Also add to the game.daggerheart object for consistency
@@ -699,7 +795,7 @@ Hooks.once("ready", async function() {
   game.daggerheart.cleanupDuplicateMacros = window.cleanupDuplicateMacros;
   
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), and testFearAutomation() functions are now available globally.");
+  console.log("spendFear(), gainFear(), spendStress(), spendHope(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), and testFearAutomation() functions are now available globally.");
   console.log("🎲 Global Hope/Fear automation is now active for ALL duality rolls!");
   
   // Add test function to game object
@@ -1000,7 +1096,7 @@ Hooks.on("renderChatMessage", (message, html, data) => {
     // Add damage button based on actor type
     if (actorType === "character") {
       _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritical);
-    } else if (actorType === "npc") {
+    } else if (actorType === "npc" || actorType === "companion") {
       _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritical);
     }
   }
@@ -1472,7 +1568,7 @@ async function _rollAdversaryDamage(event) {
           daggerheart: {
             rollType: "damage",
             actorId: actor.id,
-            actorType: "npc",
+            actorType: actor.type,
             weaponName: weaponName,
             weaponType: weaponType,
             isCritical: isCritical,
@@ -1991,7 +2087,10 @@ function _getMultiTargetArmorSlotsUI() {
           <a class="resource-control armor-slots-decrement" data-action="decrement" title="Decrease Armor Slots Used">
             <i class="fas fa-minus"></i>
           </a>
-          <label>${target.name} - Use Armor Slots (${target.availableSlots} available)</label>
+          <label>
+            <strong>${target.name}</strong> - Use Armor Slots
+            <span class="armor-availability">(${target.availableSlots} available)</span>
+          </label>
           <a class="resource-control armor-slots-increment" data-action="increment" title="Increase Armor Slots Used">
             <i class="fas fa-plus"></i>
           </a>
@@ -2015,7 +2114,10 @@ function _getMultiTargetArmorSlotsUI() {
             <a class="resource-control armor-slots-decrement" data-action="decrement" title="Decrease Armor Slots Used for ${target.name}">
               <i class="fas fa-minus"></i>
             </a>
-            <label><strong>${target.name}</strong> (${target.availableSlots} available)</label>
+            <label>
+              <strong>${target.name}</strong>
+              <span class="armor-availability">(${target.availableSlots} available)</span>
+            </label>
             <a class="resource-control armor-slots-increment" data-action="increment" title="Increase Armor Slots Used for ${target.name}">
               <i class="fas fa-plus"></i>
             </a>

@@ -42,9 +42,10 @@ export class EquipmentHandler {
   
   /**
    * Equip a weapon to the primary slot
-   * @param {Actor} actor - The actor
-   * @param {Item} weapon - The weapon to equip
+   * @param {foundry.documents.Actor} actor - The actor
+   * @param {foundry.documents.Item} weapon - The weapon to equip
    * @returns {Promise<boolean>} Success status
+   * @static
    */
   static async equipPrimaryWeapon(actor, weapon) {
     if (!weapon || weapon.type !== "weapon") {
@@ -62,6 +63,7 @@ export class EquipmentHandler {
           "system.equipped": false,
           "system.weaponSlot": null
         });
+        await this.updateWeaponSlots(actor);
         ui.notifications.info(`${weapon.name} unequipped from primary slot`);
         return true;
       }
@@ -75,7 +77,7 @@ export class EquipmentHandler {
       }
       
       // If this weapon is currently secondary, just change its slot
-      if (weapon.system.equipped && weapon.system.weaponSlot === "secondary") {
+      if (foundry.utils.getProperty(weapon, 'system.equipped') && foundry.utils.getProperty(weapon, 'system.weaponSlot') === "secondary") {
         await weapon.update({
           "system.weaponSlot": "primary"
         });
@@ -87,6 +89,7 @@ export class EquipmentHandler {
         });
       }
       
+      await this.updateWeaponSlots(actor);
       ui.notifications.info(`${weapon.name} equipped as primary weapon`);
       return true;
       
@@ -99,9 +102,10 @@ export class EquipmentHandler {
   
   /**
    * Equip a weapon to the secondary slot
-   * @param {Actor} actor - The actor
-   * @param {Item} weapon - The weapon to equip
+   * @param {foundry.documents.Actor} actor - The actor
+   * @param {foundry.documents.Item} weapon - The weapon to equip
    * @returns {Promise<boolean>} Success status
+   * @static
    */
   static async equipSecondaryWeapon(actor, weapon) {
     if (!weapon || weapon.type !== "weapon") {
@@ -119,6 +123,7 @@ export class EquipmentHandler {
           "system.equipped": false,
           "system.weaponSlot": null
         });
+        await this.updateWeaponSlots(actor);
         ui.notifications.info(`${weapon.name} unequipped from secondary slot`);
         return true;
       }
@@ -132,7 +137,7 @@ export class EquipmentHandler {
       }
       
       // If this weapon is currently primary, just change its slot
-      if (weapon.system.equipped && weapon.system.weaponSlot === "primary") {
+      if (foundry.utils.getProperty(weapon, 'system.equipped') && foundry.utils.getProperty(weapon, 'system.weaponSlot') === "primary") {
         await weapon.update({
           "system.weaponSlot": "secondary"
         });
@@ -144,6 +149,7 @@ export class EquipmentHandler {
         });
       }
       
+      await this.updateWeaponSlots(actor);
       ui.notifications.info(`${weapon.name} equipped as secondary weapon`);
       return true;
       
@@ -156,9 +162,10 @@ export class EquipmentHandler {
   
   /**
    * Legacy method for backward compatibility - now defaults to primary
-   * @param {Actor} actor - The actor
-   * @param {Item} weapon - The weapon to toggle
+   * @param {foundry.documents.Actor} actor - The actor
+   * @param {foundry.documents.Item} weapon - The weapon to toggle
    * @returns {Promise<boolean>} Success status
+   * @static
    */
   static async toggleWeaponEquip(actor, weapon) {
     // For backward compatibility, default to primary slot
@@ -167,22 +174,24 @@ export class EquipmentHandler {
   
   /**
    * Get the equipped slot for a specific weapon
-   * @param {Actor} actor - The actor to check
-   * @param {Item} weapon - The weapon to check
+   * @param {foundry.documents.Actor} actor - The actor to check
+   * @param {foundry.documents.Item} weapon - The weapon to check
    * @returns {string|null} - 'primary', 'secondary', or null if not equipped
+   * @static
    */
   static getWeaponEquippedSlot(actor, weapon) {
-    if (!weapon || weapon.type !== "weapon" || !weapon.system.equipped) {
+    if (!weapon || weapon.type !== "weapon" || !foundry.utils.getProperty(weapon, 'system.equipped')) {
       return null;
     }
     
-    return weapon.system.weaponSlot || null;
+    return foundry.utils.getProperty(weapon, 'system.weaponSlot') || null;
   }
   
   /**
    * Get weapon display data for the actor sheet
-   * @param {Actor} actor - The actor
+   * @param {foundry.documents.Actor} actor - The actor
    * @returns {Object} Object with primary and secondary weapon data
+   * @static
    */
   static getWeaponDisplayData(actor) {
     const primaryWeapon = this.getPrimaryWeapon(actor);
@@ -203,318 +212,189 @@ export class EquipmentHandler {
   }
   
   /**
-   * Sync equipped weapons with the actor's primary/secondary weapon data
-   * @param {foundry.documents.Actor} actor - The actor to sync
-   * @param {foundry.applications.sheets.ActorSheet} [sheet] - Optional sheet instance to use instead of actor.sheet
-   * @returns {Promise<void>}
+   * Get the complete weapon damage formula (all weapon modifiers combined)
+   * @param {foundry.documents.Item} weapon - The weapon item
+   * @param {foundry.documents.Actor} actor - The actor (for @prof processing)
+   * @returns {string} - Complete weapon damage formula
    * @static
    */
-  static async syncEquippedWeapons(actor, sheet = null) {
-    const primaryWeapon = this.getPrimaryWeapon(actor);
-    const secondaryWeapon = this.getSecondaryWeapon(actor);
-    const actorSheet = sheet || actor.sheet;
-    
-    console.log("Daggerheart | Syncing equipped weapons for actor:", actor.name);
-    console.log("Daggerheart | Primary weapon:", primaryWeapon?.name || "none");
-    console.log("Daggerheart | Secondary weapon:", secondaryWeapon?.name || "none");
-    
-    // Instead of snapshotting weapon data, we'll store weapon references
-    // and resolve them dynamically during rolls
-    const updateData = {};
-    
-    // Handle primary weapon - store reference data only
-    if (primaryWeapon) {
-      console.log("Daggerheart | Setting primary weapon reference:", primaryWeapon.name);
-      
-      updateData["system.weapon-main.name"] = primaryWeapon.name;
-      updateData["system.weapon-main.weaponId"] = primaryWeapon.id;
-      updateData["system.weapon-main.isDynamic"] = true; // Flag to indicate dynamic resolution
-      
-      // Clear any old snapshotted data to force dynamic resolution
-      updateData["system.weapon-main.damage"] = {
-        baseValue: null, // Clear snapshotted base value
-        modifiers: foundry.utils.getProperty(actor, 'system.weapon-main.damage.modifiers') || [], // Preserve existing modifiers
-        value: "Dynamic", // Placeholder to indicate dynamic resolution
-        isDynamic: true
-      };
-      
-      updateData["system.weapon-main.to-hit"] = {
-        baseValue: null, // Clear snapshotted base value
-        modifiers: foundry.utils.getProperty(actor, 'system.weapon-main.to-hit.modifiers') || [], // Preserve existing modifiers
-        value: "Dynamic", // Placeholder to indicate dynamic resolution
-        isDynamic: true
-      };
-    } else {
-      console.log("Daggerheart | Clearing primary weapon");
-      
-      // Clear weapon reference
-      updateData["system.weapon-main.name"] = "";
-      updateData["system.weapon-main.weaponId"] = null;
-      updateData["system.weapon-main.isDynamic"] = false;
-      
-      // Remove base value restrictions when no weapon equipped
-      if (actorSheet && actorSheet.removeBaseValueRestriction) {
-        await actorSheet.removeBaseValueRestriction("system.weapon-main.damage");
-        await actorSheet.removeBaseValueRestriction("system.weapon-main.to-hit");
-      }
-      
-      // Reset to default values while preserving existing modifiers
-      const currentDamage = foundry.utils.getProperty(actor, 'system.weapon-main.damage');
-      const existingDamageModifiers = (currentDamage && Array.isArray(currentDamage.modifiers)) ? currentDamage.modifiers : [];
-      
-      let damageValue = "1d8";
-      if (existingDamageModifiers.length > 0) {
-        const modifierStrings = existingDamageModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
-        if (modifierStrings.length > 0) {
-          damageValue = `1d8 + ${modifierStrings.join(' + ')}`;
-        }
-      }
-      
-      updateData["system.weapon-main.damage"] = {
-        baseValue: "1d8",
-        modifiers: existingDamageModifiers,
-        value: damageValue,
-        isDynamic: false
-      };
-      
-      // Reset to-hit
-      const currentToHit = foundry.utils.getProperty(actor, 'system.weapon-main.to-hit');
-      const existingToHitModifiers = (currentToHit && Array.isArray(currentToHit.modifiers)) ? currentToHit.modifiers : [];
-      
-      let toHitValue = 0;
-      if (existingToHitModifiers.length > 0) {
-        const modifierTotal = existingToHitModifiers.reduce((total, mod) => {
-          const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
-          return total + modValue;
-        }, 0);
-        toHitValue = 0 + modifierTotal;
-      }
-      
-      updateData["system.weapon-main.to-hit"] = {
-        baseValue: 0,
-        modifiers: existingToHitModifiers,
-        value: toHitValue,
-        isDynamic: false
-      };
+  static getWeaponTotalDamage(weapon, actor) {
+    if (!weapon || weapon.type !== "weapon") {
+      return "1d8";
     }
-    
-    // Handle secondary weapon - store reference data only
-    if (secondaryWeapon) {
-      console.log("Daggerheart | Setting secondary weapon reference:", secondaryWeapon.name);
-      
-      updateData["system.weapon-off.name"] = secondaryWeapon.name;
-      updateData["system.weapon-off.weaponId"] = secondaryWeapon.id;
-      updateData["system.weapon-off.isDynamic"] = true; // Flag to indicate dynamic resolution
-      
-      // Clear any old snapshotted data to force dynamic resolution
-      updateData["system.weapon-off.damage"] = {
-        baseValue: null, // Clear snapshotted base value
-        modifiers: foundry.utils.getProperty(actor, 'system.weapon-off.damage.modifiers') || [], // Preserve existing modifiers
-        value: "Dynamic", // Placeholder to indicate dynamic resolution
-        isDynamic: true
-      };
-      
-      updateData["system.weapon-off.to-hit"] = {
-        baseValue: null, // Clear snapshotted base value
-        modifiers: foundry.utils.getProperty(actor, 'system.weapon-off.to-hit.modifiers') || [], // Preserve existing modifiers
-        value: "Dynamic", // Placeholder to indicate dynamic resolution
-        isDynamic: true
-      };
-    } else {
-      console.log("Daggerheart | Clearing secondary weapon");
-      
-      // Clear weapon reference
-      updateData["system.weapon-off.name"] = "";
-      updateData["system.weapon-off.weaponId"] = null;
-      updateData["system.weapon-off.isDynamic"] = false;
-      
-      // Remove base value restrictions when no weapon equipped
-      if (actorSheet && actorSheet.removeBaseValueRestriction) {
-        await actorSheet.removeBaseValueRestriction("system.weapon-off.damage");
-        await actorSheet.removeBaseValueRestriction("system.weapon-off.to-hit");
-      }
-      
-      // Reset to default values while preserving existing modifiers
-      const currentDamage = foundry.utils.getProperty(actor, 'system.weapon-off.damage');
-      const existingDamageModifiers = (currentDamage && Array.isArray(currentDamage.modifiers)) ? currentDamage.modifiers : [];
-      
-      let damageValue = "1d8";
-      if (existingDamageModifiers.length > 0) {
-        const modifierStrings = existingDamageModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
-        if (modifierStrings.length > 0) {
-          damageValue = `1d8 + ${modifierStrings.join(' + ')}`;
-        }
-      }
-      
-      updateData["system.weapon-off.damage"] = {
-        baseValue: "1d8",
-        modifiers: existingDamageModifiers,
-        value: damageValue,
-        isDynamic: false
-      };
-      
-      // Reset to-hit
-      const currentToHit = foundry.utils.getProperty(actor, 'system.weapon-off.to-hit');
-      const existingToHitModifiers = (currentToHit && Array.isArray(currentToHit.modifiers)) ? currentToHit.modifiers : [];
-      
-      let toHitValue = 0;
-      if (existingToHitModifiers.length > 0) {
-        const modifierTotal = existingToHitModifiers.reduce((total, mod) => {
-          const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
-          return total + modValue;
-        }, 0);
-        toHitValue = 0 + modifierTotal;
-      }
-      
-      updateData["system.weapon-off.to-hit"] = {
-        baseValue: 0,
-        modifiers: existingToHitModifiers,
-        value: toHitValue,
-        isDynamic: false
-      };
-    }
-    
-    // Apply the consolidated update if there are changes
-    if (Object.keys(updateData).length > 0) {
-      console.log("Daggerheart | Applying weapon sync updates:", updateData);
-      await actor.update(updateData);
-    }
-    
-    console.log("Daggerheart | Weapon sync complete - using dynamic resolution");
-  }
 
+    // Get the weapon's damage data
+    const weaponDamage = foundry.utils.getProperty(weapon, 'system.damage');
+    
+    let weaponFormula = "1d8";
+    let weaponModifiers = [];
+
+    if (typeof weaponDamage === 'object' && weaponDamage !== null) {
+      // Structured damage system
+      weaponFormula = weaponDamage.baseValue || weaponDamage.value || "1d8";
+      weaponModifiers = Array.isArray(weaponDamage.modifiers) ? weaponDamage.modifiers : [];
+    } else if (typeof weaponDamage === 'string' && weaponDamage.trim()) {
+      // Simple string damage
+      weaponFormula = weaponDamage.trim();
+    }
+
+    // Process inline references like @prof
+    const { EntitySheetHelper } = globalThis.daggerheart || {};
+    if (EntitySheetHelper) {
+      try {
+        weaponFormula = EntitySheetHelper.processInlineReferences(weaponFormula, actor);
+      } catch (error) {
+        console.warn("Daggerheart | Error processing inline references:", error);
+      }
+    }
+
+    // Combine weapon base + weapon modifiers into single formula
+    let totalWeaponDamage = weaponFormula;
+    if (weaponModifiers.length > 0) {
+      const enabledModifiers = weaponModifiers.filter(mod => mod.enabled !== false);
+      if (enabledModifiers.length > 0) {
+        const modifierStrings = enabledModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
+        if (modifierStrings.length > 0) {
+          totalWeaponDamage = `${weaponFormula} + ${modifierStrings.join(' + ')}`;
+        }
+      }
+    }
+
+    console.log(`Daggerheart | Weapon ${weapon.name} total damage: ${totalWeaponDamage}`);
+    return totalWeaponDamage;
+  }
+  
   /**
-   * Dynamically resolve weapon data for rolls
+   * Get the weapon's attack trait value from the actor
+   * @param {foundry.documents.Item} weapon - The weapon item
+   * @param {foundry.documents.Actor} actor - The actor
+   * @returns {number} - The trait value for attack rolls
+   * @static
+   */
+  static getWeaponTraitValue(weapon, actor) {
+    if (!weapon || weapon.type !== "weapon") {
+      return 0;
+    }
+
+    const traitName = foundry.utils.getProperty(weapon, 'system.trait');
+    if (!traitName) {
+      return 0;
+    }
+
+    const traitValue = foundry.utils.getProperty(actor, `system.${traitName}.value`) ?? 0;
+    console.log(`Daggerheart | Weapon ${weapon.name} trait ${traitName}: ${traitValue}`);
+    return traitValue;
+  }
+  
+  /**
+   * Get dynamically resolved weapon data for a slot
    * @param {foundry.documents.Actor} actor - The actor
    * @param {string} slot - Either "primary" or "secondary"
-   * @returns {Object|null} - Resolved weapon data with damage and to-hit
+   * @returns {Object} - Weapon data with calculated damage and to-hit
    * @static
    */
-  static getResolvedWeaponData(actor, slot) {
-    const weaponSlotKey = slot === "primary" ? "weapon-main" : "weapon-off";
-    const weaponData = foundry.utils.getProperty(actor, `system.${weaponSlotKey}`);
+  static getDynamicWeaponData(actor, slot) {
+    const weapon = slot === "primary" ? this.getPrimaryWeapon(actor) : this.getSecondaryWeapon(actor);
+    const slotKey = slot === "primary" ? "weapon-main" : "weapon-off";
     
-    // If not dynamic, return current data as-is
-    if (!weaponData?.isDynamic || !weaponData?.weaponId) {
-      return weaponData;
+    if (!weapon) {
+      // No weapon equipped - return default structure with character modifiers preserved
+      const currentData = foundry.utils.getProperty(actor, `system.${slotKey}`) || {};
+      return {
+        name: "",
+        weaponId: null,
+        damage: {
+          baseValue: "1d8",
+          modifiers: currentData.damage?.modifiers || [],
+          value: this._calculateTotal("1d8", currentData.damage?.modifiers || [])
+        },
+        "to-hit": {
+          baseValue: 0,
+          modifiers: currentData["to-hit"]?.modifiers || [],
+          value: this._calculateTotal(0, currentData["to-hit"]?.modifiers || [])
+        }
+      };
     }
+
+    // Weapon equipped - weapon total becomes base value, character modifiers preserved
+    const currentData = foundry.utils.getProperty(actor, `system.${slotKey}`) || {};
+    const weaponTotalDamage = this.getWeaponTotalDamage(weapon, actor);
+    const weaponTraitValue = this.getWeaponTraitValue(weapon, actor);
     
-    // Find the actual weapon item
-    const weapon = actor.items.get(weaponData.weaponId);
-    if (!weapon || weapon.type !== "weapon") {
-      console.warn(`Daggerheart | Weapon not found for ${slot} slot:`, weaponData.weaponId);
-      return weaponData;
-    }
-    
-    // Import the helper class (this will be synchronous since it's already loaded)
-    const { EntitySheetHelper } = globalThis.daggerheart || {};
-    if (!EntitySheetHelper) {
-      console.warn("Daggerheart | EntitySheetHelper not available, falling back to basic resolution");
-      return weaponData;
-    }
-    
-    // Extract weapon damage formula using safe property access
-    let damageFormula = foundry.utils.getProperty(weapon, 'system.damage');
-    if (typeof damageFormula === 'object' && damageFormula !== null) {
-      if (damageFormula.baseValue) {
-        damageFormula = damageFormula.baseValue;
-      } else if (damageFormula.value) {
-        damageFormula = damageFormula.value;
-      } else {
-        damageFormula = "1d8";
-      }
-    } else if (typeof damageFormula === 'string' && damageFormula.trim()) {
-      damageFormula = damageFormula.trim();
-    } else {
-      damageFormula = "1d8";
-    }
-    
-    // Process inline references like @prof using Foundry VTT safe API
-    try {
-      damageFormula = EntitySheetHelper.processInlineReferences(damageFormula, actor);
-    } catch (error) {
-      console.warn("Daggerheart | Error processing inline references:", error);
-      // Continue with unprocessed formula if there's an error
-    }
-    
-    // Add existing modifiers
-    const existingModifiers = weaponData.damage?.modifiers || [];
-    let finalDamageValue = damageFormula;
-    if (existingModifiers.length > 0) {
-      const modifierStrings = existingModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
-      if (modifierStrings.length > 0) {
-        finalDamageValue = `${damageFormula} + ${modifierStrings.join(' + ')}`;
-      }
-    }
-    
-    // Calculate to-hit using safe property access
-    const traitName = foundry.utils.getProperty(weapon, 'system.trait');
-    let toHitValue = 0;
-    if (traitName && foundry.utils.hasProperty(actor, `system.${traitName}`)) {
-      toHitValue = foundry.utils.getProperty(actor, `system.${traitName}.value`) ?? 0;
-    }
-    
-    // Add existing to-hit modifiers
-    const existingToHitModifiers = weaponData["to-hit"]?.modifiers || [];
-    let finalToHitValue = toHitValue;
-    if (existingToHitModifiers.length > 0) {
-      const modifierTotal = existingToHitModifiers.reduce((total, mod) => {
-        const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
-        return total + modValue;
-      }, 0);
-      finalToHitValue = toHitValue + modifierTotal;
-    }
-    
+    // Preserve existing character modifiers (spells, blessings, etc.)
+    const characterDamageModifiers = currentData.damage?.modifiers || [];
+    const characterAttackModifiers = currentData["to-hit"]?.modifiers || [];
+
     return {
-      ...weaponData,
+      name: weapon.name,
+      weaponId: weapon.id,
       damage: {
-        baseValue: damageFormula,
-        modifiers: existingModifiers,
-        value: finalDamageValue,
-        isDynamic: true
+        baseValue: weaponTotalDamage, // Complete weapon damage as base
+        modifiers: characterDamageModifiers, // Character bonuses only
+        value: this._calculateTotal(weaponTotalDamage, characterDamageModifiers)
       },
       "to-hit": {
-        baseValue: toHitValue,
-        modifiers: existingToHitModifiers,
-        value: finalToHitValue,
-        isDynamic: true
+        baseValue: weaponTraitValue, // Weapon trait value as base
+        modifiers: characterAttackModifiers, // Character bonuses only
+        value: this._calculateTotal(weaponTraitValue, characterAttackModifiers)
       }
     };
   }
-
+  
   /**
-   * Clear any lingering weapon base value restrictions for an actor
-   * Useful for fixing characters that have stuck restrictions after unequipping weapons
-   * @param {foundry.documents.Actor} actor - The actor to clear restrictions for
-   * @param {foundry.applications.sheets.ActorSheet} [sheet] - Optional sheet instance
+   * Calculate total value from base + modifiers
+   * @param {string|number} baseValue - The base value
+   * @param {Array} modifiers - Array of modifier objects
+   * @returns {string|number} - Calculated total
+   * @private
+   * @static
+   */
+  static _calculateTotal(baseValue, modifiers) {
+    if (!modifiers || modifiers.length === 0) {
+      return baseValue;
+    }
+
+    const enabledModifiers = modifiers.filter(mod => mod.enabled !== false);
+    if (enabledModifiers.length === 0) {
+      return baseValue;
+    }
+
+    if (typeof baseValue === 'number') {
+      // Numeric base - add modifiers numerically
+      const modifierTotal = enabledModifiers.reduce((total, mod) => {
+        const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
+        return total + modValue;
+      }, 0);
+      return baseValue + modifierTotal;
+    } else {
+      // String base (damage formula) - concatenate modifiers
+      const modifierStrings = enabledModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
+      if (modifierStrings.length > 0) {
+        return `${baseValue} + ${modifierStrings.join(' + ')}`;
+      }
+      return baseValue;
+    }
+  }
+  
+  /**
+   * Update the actor's weapon slots with current equipped weapon data
+   * This replaces the complex baseValue system with simple data updates
+   * @param {foundry.documents.Actor} actor - The actor to update
    * @returns {Promise<void>}
    * @static
    */
-  static async clearWeaponRestrictions(actor, sheet = null) {
-    const actorSheet = sheet || actor.sheet;
-    
-    if (!actorSheet || !actorSheet.removeBaseValueRestriction) {
-      console.warn("Daggerheart | Actor sheet or removeBaseValueRestriction method not available");
-      return;
-    }
-    
-    console.log("Daggerheart | Clearing weapon base value restrictions for:", actor.name);
-    
-    // Clear all weapon-related base value restrictions
-    try {
-      await actorSheet.removeBaseValueRestriction("system.weapon-main.damage");
-      await actorSheet.removeBaseValueRestriction("system.weapon-main.to-hit");
-      await actorSheet.removeBaseValueRestriction("system.weapon-off.damage");
-      await actorSheet.removeBaseValueRestriction("system.weapon-off.to-hit");
-      
-      console.log("Daggerheart | Weapon restrictions cleared successfully");
-      
-      // Force a sheet refresh to show the unlocked fields
-      if (actorSheet.render) {
-        actorSheet.render(true);
-      }
-    } catch (error) {
-      console.warn("Daggerheart | Error clearing weapon restrictions:", error);
-    }
+  static async updateWeaponSlots(actor) {
+    console.log("Daggerheart | Updating weapon slots for:", actor.name);
+
+    const primaryData = this.getDynamicWeaponData(actor, "primary");
+    const secondaryData = this.getDynamicWeaponData(actor, "secondary");
+
+    const updateData = {
+      "system.weapon-main": primaryData,
+      "system.weapon-off": secondaryData
+    };
+
+    console.log("Daggerheart | Weapon slot updates:", updateData);
+    await actor.update(updateData);
   }
 } 

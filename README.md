@@ -8,6 +8,58 @@ This is an unofficial, fan-created FoundryVTT system for the Daggerheart TTRPG. 
 ### Installation
 Install the system using this manifest link: `https://raw.githubusercontent.com/unofficial-daggerheart/daggerheart/master/system.json`
 
+## Weapon System
+
+### Dynamic Weapon Resolution
+
+The weapon system uses dynamic resolution to ensure weapon stats are always current. When weapons are equipped, they store a reference to the weapon item rather than copying static values. This means:
+
+- Weapon modifications are immediately reflected in equipped weapons
+- No need to unequip/re-equip weapons to see changes
+- Inline references like `@prof` and `@str` work properly in weapon damage formulas
+
+### Weapon Modifiers vs Character Modifiers
+
+The system correctly separates weapon modifiers from character modifiers:
+
+**Weapon Modifiers**: All damage dice and bonuses that come from the weapon itself (including weapon traits, enchantments, etc.) are combined into a single base damage formula.
+
+**Character Modifiers**: Bonuses from spells, blessings, and other character effects remain as separate modifiers.
+
+**Example**:
+- Weapon: "1d12 + 1d6 + 2" (base + weapon traits)
+- Character blessing: "+2 damage"
+- Final result: "(1d12 + 1d6 + 2) + 2"
+
+### Inline References in Weapons
+
+Weapons can use inline references in their damage formulas:
+
+| Reference | Description | Example |
+|-----------|-------------|---------|
+| `@prof` | Character's proficiency value | `1d8 + @prof` |
+| `@str` | Strength modifier | `1d12 + @str` |
+| `@agi` | Agility modifier | `1d10 + @agi` |
+| `@fin` | Finesse modifier | `1d8 + @fin` |
+| `@ins` | Instinct modifier | `1d6 + @ins` |
+| `@pre` | Presence modifier | `1d4 + @pre` |
+| `@kno` | Knowledge modifier | `1d6 + @kno` |
+
+### Debug Functions
+
+The system includes several debug functions accessible from the browser console:
+
+```javascript
+// Clear stuck weapon base value restrictions
+clearWeaponRestrictions();
+
+// Show current weapon data and restrictions for debugging
+debugWeaponData();
+
+// Detailed weapon damage formula debugging
+debugWeaponDamage();
+```
+
 ### Core Character Stats for Inline Rolling
 
 | Property | Description | Example |

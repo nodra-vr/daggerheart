@@ -204,6 +204,184 @@ export async function spendStress(actor = null, amount = 1) {
 }
 
 /**
+ * Spend hope on an actor
+ * @param {Actor|null} actor - The actor to spend hope from (optional)
+ * @param {number} amount - The amount of hope to spend (default: 1)
+ * @returns {Promise<boolean>}
+ */
+export async function spendHope(actor = null, amount = 1) {
+  // Check if game is paused
+  if (game.paused) {
+    console.log("Daggerheart | Hope spending skipped - game is paused");
+    ui.notifications.info("Hope spending skipped - game is paused");
+    return false;
+  }
+  
+  // Validate amount parameter
+  if (!Number.isInteger(amount) || amount <= 0) {
+    console.error("Hope amount must be a positive integer");
+    ui.notifications.error("Hope amount must be a positive integer.");
+    return false;
+  }
+
+  let targetActor = actor;
+
+  // If no actor provided, try to determine the target actor
+  if (!targetActor) {
+    console.log("Daggerheart | spendHope: No actor provided, attempting to find target actor");
+    
+    // First, check if we're on a character sheet
+    const activeSheet = Object.values(ui.windows).find(app => 
+      app instanceof ActorSheet && app.rendered
+    );
+    
+    console.log("Daggerheart | spendHope: Active sheet found:", activeSheet ? activeSheet.constructor.name : "none");
+    console.log("Daggerheart | spendHope: Active sheet actor:", activeSheet?.actor?.name || "none");
+    
+    if (activeSheet?.actor) {
+      targetActor = activeSheet.actor;
+      console.log(`Daggerheart | spendHope: Using actor from active sheet: ${targetActor.name} (type: ${targetActor.type})`);
+    } else {
+      // Check for selected tokens
+      const selectedTokens = canvas.tokens?.controlled || [];
+      console.log("Daggerheart | spendHope: Selected tokens count:", selectedTokens.length);
+      
+      if (selectedTokens.length === 1) {
+        targetActor = selectedTokens[0].actor;
+        console.log(`Daggerheart | spendHope: Using actor from selected token: ${targetActor.name} (type: ${targetActor.type})`);
+      } else if (selectedTokens.length > 1) {
+        console.error("Multiple tokens selected. Please select only one token or specify an actor.");
+        ui.notifications.error("Multiple tokens selected. Please select only one token.");
+        return false;
+      } else {
+        console.error("No actor specified, no active character sheet, and no token selected.");
+        ui.notifications.error("No target found. Please select a token, open a character sheet, or specify an actor.");
+        return false;
+      }
+    }
+  }
+
+  // Validate that we have a valid actor
+  if (!targetActor) {
+    console.error("Daggerheart | spendHope: No valid actor found for hope spending");
+    ui.notifications.error("No valid actor found.");
+    return false;
+  }
+
+  console.log("Daggerheart | spendHope: Final targetActor:", targetActor ? `${targetActor.name} (${targetActor.type})` : "undefined");
+  console.log("Daggerheart | spendHope: targetActor.system:", targetActor.system ? "exists" : "undefined");
+  console.log("Daggerheart | spendHope: targetActor.system.hope:", targetActor.system?.hope ? "exists" : "undefined");
+
+  // Check if actor has hope system
+  if (!targetActor.system?.hope) {
+    console.error(`Actor ${targetActor.name} does not have a hope system`);
+    ui.notifications.error(`${targetActor.name} does not have a hope system.`);
+    return false;
+  }
+
+  // Check permissions - allow if user is GM, Assistant GM, or owns the actor
+  const canModify = game.user.isGM || 
+                   game.user.hasRole("ASSISTANT") || 
+                   targetActor.isOwner;
+  
+  if (!canModify) {
+    console.warn(`User does not have permission to modify ${targetActor.name}'s hope`);
+    ui.notifications.warn(`You do not have permission to modify ${targetActor.name}'s hope.`);
+    return false;
+  }
+
+  const currentHope = parseInt(targetActor.system.hope.value) || 0;
+  const maxHope = parseInt(targetActor.system.hope.max) || 6;
+  const newHope = Math.max(0, currentHope - amount);
+  const actualAmount = currentHope - newHope;
+
+  // Check if we can actually spend hope
+  if (actualAmount <= 0) {
+    console.warn(`${targetActor.name} doesn't have enough hope to spend (${currentHope} available)`);
+    ui.notifications.warn(`${targetActor.name} doesn't have enough hope to spend.`);
+    return false;
+  }
+
+  try {
+    // Update the actor's hope
+    await targetActor.update({
+      "system.hope.value": newHope
+    });
+
+    // Success notification
+    const message = actualAmount === 1 ? 
+      `${targetActor.name} spends 1 hope. Current hope: ${newHope}/${maxHope}` : 
+      `${targetActor.name} spends ${actualAmount} hope. Current hope: ${newHope}/${maxHope}`;
+    
+    ui.notifications.info(message);
+
+    // Send to chat
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: targetActor }),
+      content: `<div class="hope-spend-message">
+        <h3><i class="fas fa-star"></i> Hope Spent</h3>
+        <p><strong>${targetActor.name}</strong> spends <strong>${actualAmount}</strong> hope.</p>
+        <p>Current hope: <strong>${newHope}/${maxHope}</strong></p>
+        ${newHope === 0 ? '<p class="hope-warning"><em>No hope remaining!</em></p>' : ''}
+      </div>`,
+      flags: {
+        daggerheart: {
+          messageType: "hopeSpent",
+          actorId: targetActor.id,
+          amountSpent: actualAmount,
+          currentHope: newHope,
+          maxHope: maxHope
+        }
+      }
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error spending hope:", error);
+    ui.notifications.error("Error spending hope. Check console for details.");
+    return false;
+  }
+}
+
+/**
+ * Create a spendHope macro
+ * @param {number} amount - The amount of hope to spend (default: 1)
+ * @param {number} slot - The hotbar slot to use
+ * @returns {Promise}
+ */
+export async function createSpendHopeMacro(amount = 1, slot = null) {
+  const command = `// Spend Hope Macro
+const amount = ${amount};
+if (typeof spendHope === 'function') {
+  await spendHope(null, amount);
+} else {
+  ui.notifications.error("spendHope function not available. Make sure the Daggerheart system is properly loaded.");
+}`;
+
+  const macroName = amount === 1 ? "Spend Hope" : `Spend ${amount} Hope`;
+  // Improved duplicate detection: check by name and flag first, then by command as fallback
+  let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.spendHopeMacro"]) ||
+              game.macros.find(m => m.name === macroName && m.command === command);
+  
+  if (!macro) {
+    macro = await Macro.create({
+      name: macroName,
+      type: "script",
+      img: "icons/svg/sun.svg", // Use sun icon for hope
+      command: command,
+      flags: { "daggerheart.spendHopeMacro": true }
+    });
+  }
+  
+  if (slot !== null) {
+    game.user.assignHotbarMacro(macro, slot);
+  }
+  
+  return macro;
+}
+
+/**
  * Create a spendStress macro
  * @param {number} amount - The amount of stress to apply (default: 1)
  * @param {number} slot - The hotbar slot to use

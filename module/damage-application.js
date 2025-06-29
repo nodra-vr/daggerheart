@@ -698,7 +698,9 @@ export async function rollDamage(formula, options = {}) {
   // Create and evaluate the roll
   let roll;
   try {
-    roll = new Roll(formula);
+    // Use sourceActor's roll data to support @prof, @str, etc. references
+    const rollData = config.sourceActor ? config.sourceActor.getRollData() : {};
+    roll = new Roll(formula, rollData);
     await roll.evaluate();
   } catch (error) {
     console.error("Invalid damage roll formula:", error);
@@ -780,7 +782,9 @@ export async function rollHealing(formula, options = {}) {
   // Create and evaluate the roll
   let roll;
   try {
-    roll = new Roll(formula);
+    // Use sourceActor's roll data to support @prof, @str, etc. references
+    const rollData = config.sourceActor ? config.sourceActor.getRollData() : {};
+    roll = new Roll(formula, rollData);
     await roll.evaluate();
   } catch (error) {
     console.error("Invalid healing roll formula:", error);

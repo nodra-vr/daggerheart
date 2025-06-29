@@ -55,155 +55,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     }
   }
 
-  /**
-   * Set a base value programmatically with optional editability restrictions
-   * @param {string} field - The field path (e.g., "system.finesse.value" or "system.weapon-main.damage")
-   * @param {number|string} value - The base value to set (number for modifiers, string for damage formulas)
-   * @param {boolean} editable - Whether the base value should be editable in the UI (default: true)
-   * @returns {Promise} - Promise that resolves when the update is complete
-   */
-  async baseValue(field, value, editable = true) {
-    console.log("Daggerheart | Setting base value:", field, "=", value, "editable:", editable);
-    
-    const updateData = {};
-    
-    // Store restriction in actor flags for persistence
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    if (!editable) {
-      updateData[restrictionPath] = {
-        value: value,
-        editable: false,
-        timestamp: Date.now()
-      };
-      console.log("Daggerheart | Creating restriction:", restrictionPath, updateData[restrictionPath]);
-    } else {
-      updateData[restrictionPath] = null; // Remove restriction
-      console.log("Daggerheart | Removing restriction:", restrictionPath);
-    }
-    
-    // Handle weapon damage and attack modifiers specially
-    if (field.includes('weapon-main.damage') || field.includes('weapon-off.damage')) {
-      // For weapon damage, update the damage structure
-      updateData[`${field}.baseValue`] = value;
-      
-      // Preserve existing modifiers and recalculate value
-      const currentData = foundry.utils.getProperty(this.actor, field);
-      const existingModifiers = (currentData && Array.isArray(currentData.modifiers)) ? currentData.modifiers : [];
-      
-      // NEVER overwrite existing modifiers - only initialize if truly missing
-      // This preserves modifiers like ally bonuses, spell effects, etc.
-      if (!currentData || currentData.modifiers === undefined) {
-        updateData[`${field}.modifiers`] = existingModifiers;
-      }
-      
-      // Recalculate value with existing modifiers
-      let calculatedValue = value;
-      if (existingModifiers.length > 0) {
-        // For damage, modifiers are typically added as strings like "+2" or "+1d4"
-        const modifierStrings = existingModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
-        if (modifierStrings.length > 0) {
-          calculatedValue = `${value} + ${modifierStrings.join(' + ')}`;
-        }
-      }
-      updateData[`${field}.value`] = calculatedValue;
-      
-    } else if (field.includes('weapon-main.to-hit') || field.includes('weapon-off.to-hit')) {
-      // For weapon attack modifiers, update the to-hit structure
-      updateData[`${field}.baseValue`] = value;
-      
-      // Preserve existing modifiers and recalculate value
-      const currentData = foundry.utils.getProperty(this.actor, field);
-      const existingModifiers = (currentData && Array.isArray(currentData.modifiers)) ? currentData.modifiers : [];
-      
-      // NEVER overwrite existing modifiers - only initialize if truly missing
-      // This preserves modifiers like ally bonuses, spell effects, etc.
-      if (!currentData || currentData.modifiers === undefined) {
-        updateData[`${field}.modifiers`] = existingModifiers;
-      }
-      
-      // Recalculate value with existing modifiers
-      let calculatedValue = value;
-      if (existingModifiers.length > 0) {
-        // For to-hit, modifiers are typically numeric
-        const modifierTotal = existingModifiers.reduce((total, mod) => {
-          const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
-          return total + modValue;
-        }, 0);
-        calculatedValue = value + modifierTotal;
-      }
-      updateData[`${field}.value`] = calculatedValue;
-    } else {
-      // Handle other modifier structures
-      let basePath = field;
-      if (field.endsWith('.value')) {
-        basePath = field.substring(0, field.lastIndexOf('.'));
-      }
-      
-      // Create/update the modifier structure
-      updateData[`${basePath}.baseValue`] = value;
-      
-      // Preserve existing modifiers and recalculate value
-      const currentData = foundry.utils.getProperty(this.actor, basePath);
-      const existingModifiers = (currentData && Array.isArray(currentData.modifiers)) ? currentData.modifiers : [];
-      
-      // NEVER overwrite existing modifiers - only initialize if truly missing
-      if (!currentData || currentData.modifiers === undefined) {
-        updateData[`${basePath}.modifiers`] = existingModifiers;
-      }
-      
-      // Recalculate value with existing modifiers
-      let calculatedValue = value;
-      if (existingModifiers.length > 0) {
-        // For general modifiers, try to add them numerically
-        const modifierTotal = existingModifiers.reduce((total, mod) => {
-          const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
-          return total + modValue;
-        }, 0);
-        calculatedValue = value + modifierTotal;
-      }
-      updateData[`${basePath}.value`] = calculatedValue;
-    }
-    
-    console.log("Daggerheart | Base value update data:", updateData);
-    
-    // Apply the update
-    await this.actor.update(updateData);
-    
-    console.log("Daggerheart | Base value update complete for:", field);
-    return true;
-  }
-  
-  /**
-   * Remove base value restrictions for a specific field
-   * @param {string} field - The field path to remove restrictions from
-   */
-  async removeBaseValueRestriction(field) {
-    console.log("Daggerheart | Removing base value restriction for:", field);
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    await this.actor.update({[restrictionPath]: null});
-    console.log("Daggerheart | Base value restriction removed for:", field);
-  }
-  
-  /**
-   * Check if a field has base value restrictions
-   * @param {string} field - The field path to check
-   * @returns {boolean} - Whether the field has restrictions
-   */
-  hasBaseValueRestriction(field) {
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    const restriction = foundry.utils.getProperty(this.actor, restrictionPath);
-    return restriction && !restriction.editable;
-  }
-  
-  /**
-   * Get base value restriction data for a field
-   * @param {string} field - The field path to check
-   * @returns {object|null} - The restriction data or null
-   */
-  getBaseValueRestriction(field) {
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    return foundry.utils.getProperty(this.actor, restrictionPath);
-  }
+  // Removed baseValue restriction system - now using simple dynamic weapon resolution
   
   /** @inheritdoc */
   static get defaultOptions() {
@@ -234,19 +86,11 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;
     
-    // Resolve dynamic weapon data before passing to template
-    if (context.systemData["weapon-main"]?.isDynamic) {
-      const resolvedPrimary = EquipmentHandler.getResolvedWeaponData(this.actor, "primary");
-      if (resolvedPrimary) {
-        context.systemData["weapon-main"] = resolvedPrimary;
-      }
-    }
-    
-    if (context.systemData["weapon-off"]?.isDynamic) {
-      const resolvedSecondary = EquipmentHandler.getResolvedWeaponData(this.actor, "secondary");
-      if (resolvedSecondary) {
-        context.systemData["weapon-off"] = resolvedSecondary;
-      }
+    // Only apply dynamic weapon system to character actors (not NPCs or Companions)
+    if (this.actor.type === "character") {
+      // Get dynamic weapon data - this replaces the complex baseValue system for PCs
+      context.systemData["weapon-main"] = EquipmentHandler.getDynamicWeaponData(this.actor, "primary");
+      context.systemData["weapon-off"] = EquipmentHandler.getDynamicWeaponData(this.actor, "secondary");
     }
     
     // Ensure tooltip properties exist for resources (migration fallback)
@@ -282,8 +126,8 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
         async: true
       });
       
-      // Add weapon slot information for equipped weapons
-      if (item.type === "weapon") {
+      // Add weapon slot information for equipped weapons (character actors only)
+      if (item.type === "weapon" && this.actor.type === "character") {
         item.equippedSlot = EquipmentHandler.getWeaponEquippedSlot(this.actor, item);
       }
     }
@@ -293,8 +137,10 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     
     context.actor = this.actor; // Add this line to include the actor object in the context
     
-    // Add weapon display data
-    context.weaponDisplay = EquipmentHandler.getWeaponDisplayData(this.actor);
+    // Add weapon display data (character actors only)
+    if (this.actor.type === "character") {
+      context.weaponDisplay = EquipmentHandler.getWeaponDisplayData(this.actor);
+    }
     
     const imageLink = context.data.img;
     context.imageStyle = `background: url(${imageLink});`;
@@ -388,12 +234,15 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.find(".item-control").click(this._onItemControl.bind(this));
     html.find(".rollable").on("click", this._onItemRoll.bind(this));
     
-    // Weapon equip toggle
-    html.find('.weapon-toggle-equip').click(this._onToggleWeaponEquip.bind(this));
-    
-    // New dual weapon equip buttons
-    html.find('.weapon-equip-primary').click(this._onEquipPrimaryWeapon.bind(this));
-    html.find('.weapon-equip-secondary').click(this._onEquipSecondaryWeapon.bind(this));
+    // Weapon equip functionality (character actors only)
+    if (this.actor.type === "character") {
+      // Weapon equip toggle
+      html.find('.weapon-toggle-equip').click(this._onToggleWeaponEquip.bind(this));
+      
+      // New dual weapon equip buttons
+      html.find('.weapon-equip-primary').click(this._onEquipPrimaryWeapon.bind(this));
+      html.find('.weapon-equip-secondary').click(this._onEquipSecondaryWeapon.bind(this));
+    }
     
     // Handle toggling item description visibility
     html.find(".item-name[data-action=\"toggle-description\"]").click(this._onToggleDescription.bind(this));
@@ -632,23 +481,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const success = await EquipmentHandler.toggleWeaponEquip(this.actor, item);
     
     if (success) {
-      // Wait for the weapon sync to complete
-      await EquipmentHandler.syncEquippedWeapons(this.actor, this);
-      
-      // Update button appearance immediately
-      const newEquippedState = item.system.equipped;
-      if (newEquippedState) {
-        button.classList.add('equipped');
-        button.title = 'Unequip';
-      } else {
-        button.classList.remove('equipped');
-        button.title = 'Equip';
-      }
-      
-      // Force immediate render after a brief delay to ensure all data is propagated
-      setTimeout(() => {
-        this.render(true, { immediate: true });
-      }, 150);
+      // The equipment handler now automatically updates weapon slots
+      // Force immediate render to show the changes
+      this.render(true);
     }
   }
 
@@ -668,13 +503,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const success = await EquipmentHandler.equipPrimaryWeapon(this.actor, item);
     
     if (success) {
-      // Wait for the weapon sync to complete
-      await EquipmentHandler.syncEquippedWeapons(this.actor, this);
-      
-      // Force immediate render after a brief delay to ensure all data is propagated
-      setTimeout(() => {
-        this.render(true, { immediate: true });
-      }, 150);
+      // The equipment handler now automatically updates weapon slots
+      // Force immediate render to show the changes
+      this.render(true);
     }
   }
 
@@ -694,13 +525,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const success = await EquipmentHandler.equipSecondaryWeapon(this.actor, item);
     
     if (success) {
-      // Wait for the weapon sync to complete
-      await EquipmentHandler.syncEquippedWeapons(this.actor, this);
-      
-      // Force immediate render after a brief delay to ensure all data is propagated
-      setTimeout(() => {
-        this.render(true, { immediate: true });
-      }, 150);
+      // The equipment handler now automatically updates weapon slots
+      // Force immediate render to show the changes
+      this.render(true);
     }
   }
 
@@ -2200,8 +2027,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
    * @private
    */
   _buildDamageFormulaFromStructure(damageData, proficiency = null) {
-    // Check if this is a dynamic weapon slot
-    if (damageData?.isDynamic && damageData?.baseValue === null) {
+    // Check if this is a dynamic weapon slot (character actors only)
+    if (this.actor.type === "character" && damageData?.isDynamic && damageData?.baseValue === null) {
       // Determine which weapon slot this is
       const weaponSlot = this._determineWeaponSlot(damageData);
       if (weaponSlot) {
@@ -2869,6 +2696,110 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     });
   }
 
+  /**
+   * Check if a field has a base value restriction due to equipped weapons
+   * @param {string} field - The field path to check (e.g., "system.weapon-main.damage")
+   * @returns {boolean} - True if the field has a restriction
+   */
+  hasBaseValueRestriction(field) {
+    if (!field) return false;
+    
+    // Base value restrictions only apply to character actors
+    if (this.actor.type !== "character") return false;
+    
+    // Check if this is a weapon field
+    const isWeaponMainDamage = field.includes('weapon-main.damage');
+    const isWeaponOffDamage = field.includes('weapon-off.damage');
+    const isWeaponMainToHit = field.includes('weapon-main.to-hit');
+    const isWeaponOffToHit = field.includes('weapon-off.to-hit');
+    
+    if (!isWeaponMainDamage && !isWeaponOffDamage && !isWeaponMainToHit && !isWeaponOffToHit) {
+      return false;
+    }
+    
+    // Check if relevant weapon is equipped
+    const { EquipmentHandler } = globalThis.daggerheart || {};
+    if (!EquipmentHandler) {
+      return false;
+    }
+    
+    const primaryWeapon = EquipmentHandler.getPrimaryWeapon(this.actor);
+    const secondaryWeapon = EquipmentHandler.getSecondaryWeapon(this.actor);
+    
+    if ((isWeaponMainDamage || isWeaponMainToHit) && primaryWeapon) {
+      return true;
+    }
+    
+    if ((isWeaponOffDamage || isWeaponOffToHit) && secondaryWeapon) {
+      return true;
+    }
+    
+    return false;
+  }
+  
+  /**
+   * Get base value restriction data for a field
+   * @param {string} field - The field path to check
+   * @returns {Object|null} - Restriction data with {value, editable, reason} or null
+   */
+  getBaseValueRestriction(field) {
+    // Base value restrictions only apply to character actors
+    if (this.actor.type !== "character") return null;
+    
+    if (!this.hasBaseValueRestriction(field)) {
+      return null;
+    }
+    
+    const { EquipmentHandler } = globalThis.daggerheart || {};
+    if (!EquipmentHandler) {
+      return null;
+    }
+    
+    const isWeaponMainDamage = field.includes('weapon-main.damage');
+    const isWeaponOffDamage = field.includes('weapon-off.damage');
+    const isWeaponMainToHit = field.includes('weapon-main.to-hit');
+    const isWeaponOffToHit = field.includes('weapon-off.to-hit');
+    
+    let weapon = null;
+    let restrictedValue = null;
+    let reason = "";
+    
+    if (isWeaponMainDamage || isWeaponMainToHit) {
+      weapon = EquipmentHandler.getPrimaryWeapon(this.actor);
+      if (weapon) {
+        if (isWeaponMainDamage) {
+          restrictedValue = EquipmentHandler.getWeaponTotalDamage(weapon, this.actor);
+          reason = `Base damage locked by ${weapon.name}`;
+        } else {
+          restrictedValue = EquipmentHandler.getWeaponTraitValue(weapon, this.actor);
+          reason = `Base attack locked by ${weapon.name}`;
+        }
+      }
+    } else if (isWeaponOffDamage || isWeaponOffToHit) {
+      weapon = EquipmentHandler.getSecondaryWeapon(this.actor);
+      if (weapon) {
+        if (isWeaponOffDamage) {
+          restrictedValue = EquipmentHandler.getWeaponTotalDamage(weapon, this.actor);
+          reason = `Base damage locked by ${weapon.name}`;
+        } else {
+          restrictedValue = EquipmentHandler.getWeaponTraitValue(weapon, this.actor);
+          reason = `Base attack locked by ${weapon.name}`;
+        }
+      }
+    }
+    
+    if (weapon && restrictedValue !== null) {
+      return {
+        value: restrictedValue,
+        editable: false, // Base values are not editable when weapons are equipped
+        reason: reason,
+        weaponName: weapon.name,
+        weaponId: weapon.id
+      };
+    }
+    
+    return null;
+  }
 
 }
 
@@ -2924,19 +2855,11 @@ export class NPCActorSheet extends SimpleActorSheet {
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;
     
-    // Resolve dynamic weapon data before passing to template
-    if (context.systemData["weapon-main"]?.isDynamic) {
-      const resolvedPrimary = EquipmentHandler.getResolvedWeaponData(this.actor, "primary");
-      if (resolvedPrimary) {
-        context.systemData["weapon-main"] = resolvedPrimary;
-      }
-    }
-    
-    if (context.systemData["weapon-off"]?.isDynamic) {
-      const resolvedSecondary = EquipmentHandler.getResolvedWeaponData(this.actor, "secondary");
-      if (resolvedSecondary) {
-        context.systemData["weapon-off"] = resolvedSecondary;
-      }
+    // Only apply dynamic weapon system to character actors (not NPCs or Companions)
+    if (this.actor.type === "character") {
+      // Get dynamic weapon data - this replaces the complex baseValue system for PCs
+      context.systemData["weapon-main"] = EquipmentHandler.getDynamicWeaponData(this.actor, "primary");
+      context.systemData["weapon-off"] = EquipmentHandler.getDynamicWeaponData(this.actor, "secondary");
     }
     
     // Ensure tooltip properties exist for resources (migration fallback)
@@ -2972,11 +2895,7 @@ export class NPCActorSheet extends SimpleActorSheet {
         async: true
       });
       
-      // Add weapon slot information for equipped weapons
-      if (item.type === "weapon") {
-        item.equippedSlot = EquipmentHandler.getWeaponEquippedSlot(this.actor, item);
-        console.log(`Weapon ${item.name}: equipped=${item.system.equipped}, slot=${item.equippedSlot}`);
-      }
+      // NPCs don't use the equipment slot system
     }
     
     context.actor = this.actor; // Add this line to include the actor object in the context
