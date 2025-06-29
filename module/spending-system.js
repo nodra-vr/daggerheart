@@ -79,13 +79,6 @@ if (typeof gainFear === 'function') {
  * @returns {Promise<boolean>}
  */
 export async function spendStress(actor = null, amount = 1) {
-  // Check if game is paused
-  if (game.paused) {
-    console.log("Daggerheart | Stress spending skipped - game is paused");
-    ui.notifications.info("Stress spending skipped - game is paused");
-    return false;
-  }
-  
   // Validate amount parameter
   if (!Number.isInteger(amount) || amount <= 0) {
     console.error("Stress amount must be a positive integer");
