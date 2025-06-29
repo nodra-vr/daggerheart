@@ -283,8 +283,6 @@
   margin-top: 0.5em;
 }
 
-
-
 .apply-damage-button,
 .apply-healing-button {
   flex: 1;
@@ -1253,6 +1251,55 @@ body.game .app a.content-link, .content-link, .inline-roll {
     i {
       margin-right: 6px;
       color: var(--dh-color-gold);
+    }
+  }
+}
+
+// Multi-target armor slots styling
+.multi-target-armor-container {
+  .multi-target-armor-header {
+    text-align: center;
+    margin-bottom: 0.5em;
+    
+    label {
+      font-weight: bold;
+      color: #333;
+      font-size: 0.9em;
+    }
+  }
+  
+  // Individual armor slot containers in multi-target view
+  .armor-slots-ui {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.25em;
+    background-color: #f9f9f9;
+    
+    &:hover {
+      background-color: #f0f0f0;
+      border-color: #bbb;
+    }
+    
+    .resource-label-controls {
+      label {
+        font-size: 0.85em;
+        color: #444;
+        
+        strong {
+          color: #222;
+        }
+      }
+    }
+    
+    .resource-box {
+      background-color: #fff;
+      border: 1px solid #ccc;
+    }
+    
+    .resource-control {
+      &:hover {
+        background-color: #e0e0e0;
+      }
     }
   }
 }

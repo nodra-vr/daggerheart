@@ -12,7 +12,7 @@ const undoData = new Map();
  * @param {number} damageAmount - The amount of damage rolled
  * @param {Actor|null} sourceActor - The actor causing the damage (optional)
  * @param {boolean} createUndo - Whether to create undo data (default: true)
- * @param {number} armorSlotsUsed - Number of armor slots to use for damage reduction (default: 0)
+ * @param {number|Object} armorSlotsUsed - Number of armor slots to use for damage reduction, or object mapping actor IDs to armor slots (default: 0)
  * @returns {Promise<Object>} Result object with success status and undo data
  */
 export async function applyDamage(targetActors = null, damageAmount, sourceActor = null, createUndo = true, armorSlotsUsed = 0) {
@@ -23,10 +23,11 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
     return { success: false, undoId: null };
   }
   
-  // Validate armor slots used
-  if (!Number.isInteger(armorSlotsUsed) || armorSlotsUsed < 0) {
-    console.error("Armor slots used must be a non-negative integer");
-    ui.notifications.error("Armor slots used must be a non-negative integer.");
+  // Validate armor slots used - can be number or object
+  const isArmorSlotsObject = typeof armorSlotsUsed === 'object' && armorSlotsUsed !== null;
+  if (!isArmorSlotsObject && (!Number.isInteger(armorSlotsUsed) || armorSlotsUsed < 0)) {
+    console.error("Armor slots used must be a non-negative integer or object mapping actor IDs to armor slots");
+    ui.notifications.error("Armor slots used must be a non-negative integer or object mapping actor IDs to armor slots.");
     return { success: false, undoId: null };
   }
 
@@ -88,29 +89,40 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
       continue;
     }
 
-    // Allow all users to apply damage for collaborative gameplay
-    // Note: Removed permission restrictions to allow any player to apply damage/healing
+
 
     const currentHealth = parseInt(target.system.health.value) || 0;
     const maxHealth = parseInt(target.system.health.max) || 6;
     const thresholds = target.system.threshold;
     
-    // Get current armor slots for characters
+
     let currentArmorSlots = 0;
     let maxArmorSlots = 0;
     let armorSlotsToApply = 0;
     const isCharacter = target.type === 'character';
     
-    if (isCharacter && armorSlotsUsed > 0) {
+    if (isCharacter) {
       currentArmorSlots = parseInt(target.system.defenses?.["armor-slots"]?.value) || 0;
       maxArmorSlots = parseInt(target.system.defenses?.["armor-slots"]?.max) || 0;
       
-      // Calculate how many armor slots can actually be used
-      const availableSlots = maxArmorSlots - currentArmorSlots;
-      armorSlotsToApply = Math.min(armorSlotsUsed, availableSlots);
+      let targetArmorSlots = 0;
+      if (isArmorSlotsObject) {
+        // Use per-target armor slots from object mapping
+        const targetKey = target.id || target.name;
+        targetArmorSlots = armorSlotsUsed[targetKey] || armorSlotsUsed[target.name] || 0;
+      } else {
+        // Use single armor slots value for all targets (backward compatibility)
+        targetArmorSlots = armorSlotsUsed;
+      }
       
-      if (armorSlotsToApply < armorSlotsUsed) {
-        console.warn(`${target.name} only has ${availableSlots} armor slots available, using ${armorSlotsToApply} instead of requested ${armorSlotsUsed}`);
+      if (targetArmorSlots > 0) {
+        // Calculate how many armor slots can actually be used
+        const availableSlots = maxArmorSlots - currentArmorSlots;
+        armorSlotsToApply = Math.min(targetArmorSlots, availableSlots);
+        
+        if (armorSlotsToApply < targetArmorSlots) {
+          console.warn(`${target.name} only has ${availableSlots} armor slots available, using ${armorSlotsToApply} instead of requested ${targetArmorSlots}`);
+        }
       }
     }
     
