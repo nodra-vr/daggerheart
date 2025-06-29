@@ -2,6 +2,7 @@
 import { ActorDocument } from "./documents/actor.mjs"
 
 import { AdversaryDataModel } from "./data/actor-adversary.mjs"
+import { AdversaryActorSheet } from "./sheets/actor-adversary.mjs"
 
 import { SimpleItem } from "./item.js";
 import { SimpleItemSheet } from "./item-sheet.js";
@@ -204,6 +205,11 @@ Hooks.once("init", async function () {
     types: ["npc"],
     makeDefault: true,
     label: "SHEET.Actor.npc"
+  });
+  foundry.documents.collections.Actors.registerSheet("daggerheart", AdversaryActorSheet, {
+    types: ["Adversary"],
+    makeDefault: true,
+    label: "Advesery Sheet V2"
   });
   foundry.documents.collections.Actors.registerSheet("daggerheart", CompanionActorSheet, {
     types: ["companion"],
