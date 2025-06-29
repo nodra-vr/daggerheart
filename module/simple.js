@@ -1866,20 +1866,11 @@ function _getMultiTargetArmorInfo() {
     // Get all character targets
     targets.forEach(token => {
       if (token.actor?.type === 'character') {
-        const armorData = token.actor.system.defenses?.["armor-slots"];
-        const maxSlots = parseInt(armorData?.max) || 3;
-        const currentSlots = parseInt(armorData?.value) || 0;
+        // New data structure: armor.value = max slots, armor-slots.value = current used slots
+        const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
+        const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
         const availableSlots = maxSlots - currentSlots; // How many slots they have available
         const usableSlots = Math.min(availableSlots, 3); // Cap at 3 due to damage threshold system
-        
-        // Debug logging for armor slot issues
-        console.log(`Daggerheart | Armor slots for ${token.actor.name}:`, {
-          maxSlots: maxSlots,
-          currentSlots: currentSlots,
-          availableSlots: availableSlots,
-          usableSlots: usableSlots,
-          rawData: token.actor.system.defenses?.["armor-slots"]
-        });
         
         characterTargets.push({
           actor: token.actor,
@@ -1898,20 +1889,11 @@ function _getMultiTargetArmorInfo() {
     
     controlled.forEach(token => {
       if (token.actor?.type === 'character') {
-        const armorData = token.actor.system.defenses?.["armor-slots"];
-        const maxSlots = parseInt(armorData?.max) || 3;
-        const currentSlots = parseInt(armorData?.value) || 0;
+        // New data structure: armor.value = max slots, armor-slots.value = current used slots
+        const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
+        const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
         const availableSlots = maxSlots - currentSlots; // How many slots they have available
         const usableSlots = Math.min(availableSlots, 3); // Cap at 3 due to damage threshold system
-        
-        // Debug logging for armor slot issues
-        console.log(`Daggerheart | Armor slots for ${token.actor.name}:`, {
-          maxSlots: maxSlots,
-          currentSlots: currentSlots,
-          availableSlots: availableSlots,
-          usableSlots: usableSlots,
-          rawData: token.actor.system.defenses?.["armor-slots"]
-        });
         
         characterTargets.push({
           actor: token.actor,

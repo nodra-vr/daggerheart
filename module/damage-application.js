@@ -102,8 +102,9 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
     const isCharacter = target.type === 'character';
     
     if (isCharacter) {
+      // New data structure: armor.value = max slots, armor-slots.value = current used slots
+      maxArmorSlots = parseInt(target.system.defenses?.armor?.value) || 0;
       currentArmorSlots = parseInt(target.system.defenses?.["armor-slots"]?.value) || 0;
-      maxArmorSlots = parseInt(target.system.defenses?.["armor-slots"]?.max) || 0;
       
       let targetArmorSlots = 0;
       if (isArmorSlotsObject) {
