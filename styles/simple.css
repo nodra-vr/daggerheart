@@ -5405,6 +5405,40 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   color: var(--dh-color-gold);
 }
 
+.multi-target-armor-container .multi-target-armor-header {
+  text-align: center;
+  margin-bottom: 0.5em;
+}
+.multi-target-armor-container .multi-target-armor-header label {
+  font-weight: bold;
+  color: #333;
+  font-size: 0.9em;
+}
+.multi-target-armor-container .armor-slots-ui {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.25em;
+  background-color: #f9f9f9;
+}
+.multi-target-armor-container .armor-slots-ui:hover {
+  background-color: #f0f0f0;
+  border-color: #bbb;
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls label {
+  font-size: 0.85em;
+  color: #444;
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls label strong {
+  color: #222;
+}
+.multi-target-armor-container .armor-slots-ui .resource-box {
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+.multi-target-armor-container .armor-slots-ui .resource-control:hover {
+  background-color: #e0e0e0;
+}
+
 .rest-button {
   display: flex;
   align-items: center;

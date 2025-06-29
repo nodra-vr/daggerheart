@@ -14,6 +14,7 @@ import { CountdownTracker } from "./countdown-tracker.js";
 import { SheetTracker } from "./sheet-tracker.js";
 import { DaggerheartMigrations } from "./migrations.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
+import { EntitySheetHelper } from "./helper.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
 import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
@@ -161,7 +162,13 @@ Hooks.once("init", async function() {
       debugUndoData: debugUndoData
     },
     getTierOfPlay: _getTierOfPlay,
-    EquipmentHandler: EquipmentHandler
+    EquipmentHandler: EquipmentHandler,
+    EntitySheetHelper: EntitySheetHelper
+  };
+
+  // Make EntitySheetHelper available globally for other modules
+  globalThis.daggerheart = {
+    EntitySheetHelper
   };
 
   // Define custom Document classes
@@ -331,16 +338,36 @@ Hooks.on("updateActor", (actor, data, options, userId) => {
 });
 
 /**
- * Hook to handle weapon equipped state changes
+ * Hook to handle weapon equipped state changes and weapon data updates
  */
 Hooks.on("updateItem", async (item, data, options, userId) => {
-  // Only handle weapon items with equipped state changes
-  if (item.type === "weapon" && data.system?.equipped !== undefined) {
-    const actor = item.parent;
-    if (!actor) return;
-    
+  // Only handle weapon items
+  if (item.type !== "weapon") return;
+  
+  const actor = item.parent;
+  if (!actor) return;
+  
+  // Check if this is an equipped weapon that might need dynamic resolution refresh
+  const isEquipped = item.system.equipped;
+  const hasDataChanges = data.system && (
+    data.system.damage !== undefined ||
+    data.system.trait !== undefined ||
+    data.system.range !== undefined ||
+    data.system.damageType !== undefined ||
+    data.system.category !== undefined ||
+    data.system.tier !== undefined
+  );
+  
+  if (data.system?.equipped !== undefined) {
     console.log("Daggerheart | Weapon equipped state changed:", item.name, "equipped:", data.system.equipped);
-    
+  }
+  
+  if (hasDataChanges && isEquipped) {
+    console.log("Daggerheart | Equipped weapon data changed:", item.name, "changes:", Object.keys(data.system || {}));
+  }
+  
+  // If equipped state changed OR if an equipped weapon's data changed, sync and refresh
+  if (data.system?.equipped !== undefined || (hasDataChanges && isEquipped)) {
     // Get the actor sheet if it's open
     const actorSheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
     
@@ -349,6 +376,7 @@ Hooks.on("updateItem", async (item, data, options, userId) => {
       try {
         await EquipmentHandler.syncEquippedWeapons(actor, actorSheet);
         actorSheet.render(true); // This will use debounced render
+        console.log("Daggerheart | Actor sheet refreshed after weapon update");
       } catch (error) {
         console.warn("Daggerheart | Failed to sync weapons after item update:", error);
       }
@@ -579,6 +607,27 @@ Hooks.once("ready", async function() {
     console.log("Base value restrictions:", JSON.stringify(actor.flags?.daggerheart?.baseValueRestrictions, null, 2));
   };
   
+  // Add function to clear stuck weapon restrictions
+  window.clearWeaponRestrictions = async function() {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+    
+    const actor = selectedTokens[0].actor;
+    const sheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
+    
+    if (!sheet) {
+      ui.notifications.warn("Please open the character sheet first");
+      return;
+    }
+    
+    console.log("=== Clearing Weapon Restrictions ===");
+    await EquipmentHandler.clearWeaponRestrictions(actor, sheet);
+    ui.notifications.info(`Cleared weapon restrictions for ${actor.name}. Base values should now be editable.`);
+  };
+  
   // Also add to the game.daggerheart object for consistency
   game.daggerheart.spendFear = window.spendFear;
   game.daggerheart.gainFear = window.gainFear;
@@ -707,6 +756,8 @@ Hooks.once("ready", async function() {
       }
     }
   });
+
+  console.log("Daggerheart | System ready with dynamic weapon resolution");
 });
 
 /**

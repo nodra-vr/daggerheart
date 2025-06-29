@@ -234,6 +234,21 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;
     
+    // Resolve dynamic weapon data before passing to template
+    if (context.systemData["weapon-main"]?.isDynamic) {
+      const resolvedPrimary = EquipmentHandler.getResolvedWeaponData(this.actor, "primary");
+      if (resolvedPrimary) {
+        context.systemData["weapon-main"] = resolvedPrimary;
+      }
+    }
+    
+    if (context.systemData["weapon-off"]?.isDynamic) {
+      const resolvedSecondary = EquipmentHandler.getResolvedWeaponData(this.actor, "secondary");
+      if (resolvedSecondary) {
+        context.systemData["weapon-off"] = resolvedSecondary;
+      }
+    }
+    
     // Ensure tooltip properties exist for resources (migration fallback)
     if (!context.systemData.health?.tooltip) {
       context.systemData.health = context.systemData.health || {};
@@ -2178,63 +2193,85 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   /* -------------------------------------------- */
   
   /**
-   * Build damage formula from structured damage data
-   * @param {Object} damageData - The damage data object with baseValue and modifiers
-   * @param {number|null} proficiency - The character's proficiency value (null for NPCs)
-   * @returns {string} - The complete damage formula for rolling
+   * Build damage formula from structure, using dynamic weapon resolution if available
+   * @param {Object} damageData - The damage data structure 
+   * @param {number} [proficiency] - Optional proficiency modifier
+   * @returns {string} - The final damage formula
    * @private
    */
   _buildDamageFormulaFromStructure(damageData, proficiency = null) {
-    let baseFormula = damageData.baseValue || '1d8';
-    
-    // Apply proficiency to base formula if character
-    if (proficiency) {
-      baseFormula = this._applyProficiencyToDamageFormula(baseFormula, proficiency);
-    }
-    
-    // Add enabled modifiers
-    const modifiers = damageData.modifiers || [];
-    const enabledModifiers = modifiers.filter(mod => mod.enabled !== false && mod.value);
-    
-    if (enabledModifiers.length === 0) {
-      return baseFormula;
-    }
-    
-    let formula = baseFormula;
-    enabledModifiers.forEach(modifier => {
-      let modValue = modifier.value.trim();
-      // Ensure proper formatting - add + if it doesn't start with + or -
-      if (modValue && !modValue.startsWith('+') && !modValue.startsWith('-')) {
-        modValue = '+' + modValue;
+    // Check if this is a dynamic weapon slot
+    if (damageData?.isDynamic && damageData?.baseValue === null) {
+      // Determine which weapon slot this is
+      const weaponSlot = this._determineWeaponSlot(damageData);
+      if (weaponSlot) {
+        // Get dynamically resolved weapon data
+        const resolvedData = EquipmentHandler.getResolvedWeaponData(this.actor, weaponSlot);
+        if (resolvedData && resolvedData.damage) {
+          damageData = resolvedData.damage;
+        }
       }
-      formula += ' ' + modValue;
-    });
+    }
     
-    return formula;
+    let baseFormula = "";
+    
+    // Extract base formula using safe property access
+    if (typeof damageData === 'string') {
+      baseFormula = damageData;
+    } else if (typeof damageData === 'object' && damageData !== null) {
+      baseFormula = damageData.baseValue || damageData.value || "1d8";
+    } else {
+      baseFormula = "1d8";
+    }
+    
+    // Process inline references if available using Foundry VTT global
+    if (globalThis.daggerheart?.EntitySheetHelper) {
+      try {
+        baseFormula = globalThis.daggerheart.EntitySheetHelper.processInlineReferences(baseFormula, this.actor);
+      } catch (error) {
+        console.warn("Daggerheart | Error processing inline references in damage formula:", error);
+        // Continue with unprocessed formula
+      }
+    }
+    
+    // Apply proficiency if provided and formula contains @prof placeholder
+    if (proficiency !== null && baseFormula.includes('@prof')) {
+      baseFormula = baseFormula.replace(/@prof/g, proficiency);
+    }
+    
+    // Handle modifiers
+    let finalFormula = baseFormula;
+    if (typeof damageData === 'object' && damageData !== null && Array.isArray(damageData.modifiers)) {
+      const enabledModifiers = damageData.modifiers.filter(mod => mod.enabled !== false);
+      if (enabledModifiers.length > 0) {
+        const modifierStrings = enabledModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
+        if (modifierStrings.length > 0) {
+          finalFormula = `${baseFormula} + ${modifierStrings.join(' + ')}`;
+        }
+      }
+    }
+    
+    return finalFormula;
   }
 
   /**
-   * Apply proficiency logic to damage formulas for characters
-   * @param {string} damageFormula - The damage formula (e.g., "1d8 + 1 + 1d4")
-   * @param {number} proficiency - The character's proficiency value
-   * @returns {string} - The modified damage formula with proficiency applied
+   * Determine which weapon slot a damage data structure belongs to
+   * @param {Object} damageData - The damage data structure
+   * @returns {string|null} - "primary" or "secondary" or null
    * @private
    */
-  _applyProficiencyToDamageFormula(damageFormula, proficiency) {
-    // Use the same logic as the original weapon damage handling
-    // Parse dice notation at the beginning of the formula
-    const diceMatch = damageFormula.match(/^(\d*)d(\d+)(.*)$/i);
-    
-    if (diceMatch) {
-      const diceCount = diceMatch[1] || proficiency; // Use proficiency if no count specified
-      const dieType = diceMatch[2]; // Die type (8, 6, etc.)
-      const remainder = diceMatch[3] || ""; // Everything after the first dice (modifiers, additional dice, etc.)
-      
-      return `${diceCount}d${dieType}${remainder}`;
-    } else {
-      // If it doesn't match dice notation, return as-is
-      return damageFormula;
+  _determineWeaponSlot(damageData) {
+    // Check if this damage data matches the primary weapon slot using safe property access
+    const primaryWeaponDamage = foundry.utils.getProperty(this.actor, 'system.weapon-main.damage');
+    if (primaryWeaponDamage === damageData) {
+      return "primary";
     }
+    // Check if this damage data matches the secondary weapon slot using safe property access
+    const secondaryWeaponDamage = foundry.utils.getProperty(this.actor, 'system.weapon-off.damage');
+    if (secondaryWeaponDamage === damageData) {
+      return "secondary";
+    }
+    return null;
   }
   
   /* -------------------------------------------- */
@@ -2887,6 +2924,35 @@ export class NPCActorSheet extends SimpleActorSheet {
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;
     
+    // Resolve dynamic weapon data before passing to template
+    if (context.systemData["weapon-main"]?.isDynamic) {
+      const resolvedPrimary = EquipmentHandler.getResolvedWeaponData(this.actor, "primary");
+      if (resolvedPrimary) {
+        context.systemData["weapon-main"] = resolvedPrimary;
+      }
+    }
+    
+    if (context.systemData["weapon-off"]?.isDynamic) {
+      const resolvedSecondary = EquipmentHandler.getResolvedWeaponData(this.actor, "secondary");
+      if (resolvedSecondary) {
+        context.systemData["weapon-off"] = resolvedSecondary;
+      }
+    }
+    
+    // Ensure tooltip properties exist for resources (migration fallback)
+    if (!context.systemData.health?.tooltip) {
+      context.systemData.health = context.systemData.health || {};
+      context.systemData.health.tooltip = "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic.";
+    }
+    if (!context.systemData.stress?.tooltip) {
+      context.systemData.stress = context.systemData.stress || {};
+      context.systemData.stress.tooltip = "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic.";
+    }
+    if (!context.systemData.hope?.tooltip) {
+      context.systemData.hope = context.systemData.hope || {};
+      context.systemData.hope.tooltip = "Hope and Fear are currencies used by the players and the GM to represent the way fate turns for or against the characters during the game.";
+    }
+    
     // htmlFields
     context.biographyHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.systemData.biography, {
       secrets: this.document.isOwner,
@@ -2896,6 +2962,8 @@ export class NPCActorSheet extends SimpleActorSheet {
       secrets: this.document.isOwner,
       async: true
     });
+
+    // Migration is now handled by the system-level migration system
 
     // Enrich item descriptions
     for (let item of context.data.items) {

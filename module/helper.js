@@ -643,4 +643,66 @@ export class EntitySheetHelper {
     if ( clean !== key ) ui.notifications.error("SIMPLE.NotifyAttrInvalid", { localize: true });
     return clean;
   }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Process inline rolling references in a formula string
+   * @param {string} formula - The formula string that may contain inline references
+   * @param {foundry.documents.Actor} actor - The actor to get data from
+   * @returns {string} - The processed formula with inline references replaced
+   * @static
+   */
+  static processInlineReferences(formula, actor) {
+    if (!formula || typeof formula !== 'string' || !actor) {
+      return formula;
+    }
+
+    let processedFormula = formula;
+
+    // Define inline reference mappings based on Foundry actor system data structure
+    const references = {
+      '@prof': () => foundry.utils.getProperty(actor, 'system.proficiency.value') ?? 0,
+      '@proficiency_value': () => foundry.utils.getProperty(actor, 'system.proficiency.value') ?? 0,
+      '@lvl': () => foundry.utils.getProperty(actor, 'system.level.value') ?? 1,
+      '@level_value': () => foundry.utils.getProperty(actor, 'system.level.value') ?? 1,
+      '@tier': () => foundry.utils.getProperty(actor, 'system.tier.value') ?? 1,
+      '@agi': () => foundry.utils.getProperty(actor, 'system.agility.value') ?? 0,
+      '@str': () => foundry.utils.getProperty(actor, 'system.strength.value') ?? 0,
+      '@fin': () => foundry.utils.getProperty(actor, 'system.finesse.value') ?? 0,
+      '@ins': () => foundry.utils.getProperty(actor, 'system.instinct.value') ?? 0,
+      '@pre': () => foundry.utils.getProperty(actor, 'system.presence.value') ?? 0,
+      '@kno': () => foundry.utils.getProperty(actor, 'system.knowledge.value') ?? 0,
+      '@hp': () => foundry.utils.getProperty(actor, 'system.health.value') ?? 0,
+      '@hp_max': () => foundry.utils.getProperty(actor, 'system.health.max') ?? 0,
+      '@stress_value': () => foundry.utils.getProperty(actor, 'system.stress.value') ?? 0,
+      '@stress_max': () => foundry.utils.getProperty(actor, 'system.stress.max') ?? 0,
+      '@hope_value': () => foundry.utils.getProperty(actor, 'system.hope.value') ?? 0,
+      '@hope_max': () => foundry.utils.getProperty(actor, 'system.hope.max') ?? 0,
+      '@evasion': () => foundry.utils.getProperty(actor, 'system.evasion.value') ?? 0,
+      '@armor': () => foundry.utils.getProperty(actor, 'system.armor.value') ?? 0,
+      '@armor_slots': () => foundry.utils.getProperty(actor, 'system.armorSlots.value') ?? 0,
+      '@severe': () => foundry.utils.getProperty(actor, 'system.severe.value') ?? 0,
+      '@major': () => foundry.utils.getProperty(actor, 'system.major.value') ?? 0,
+      '@minor': () => foundry.utils.getProperty(actor, 'system.minor.value') ?? 0
+    };
+
+    // Process each reference using safe property access
+    for (const [reference, valueGetter] of Object.entries(references)) {
+      if (processedFormula.includes(reference)) {
+        try {
+          const value = valueGetter();
+          // Replace all instances of the reference with the actual value
+          // Use proper regex escaping for special characters
+          const escapedReference = reference.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          processedFormula = processedFormula.replace(new RegExp(escapedReference, 'g'), value);
+        } catch (error) {
+          console.warn(`Daggerheart | Failed to process inline reference ${reference}:`, error);
+          // Leave the reference as-is if there's an error
+        }
+      }
+    }
+
+    return processedFormula;
+  }
 }
