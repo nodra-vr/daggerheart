@@ -589,12 +589,8 @@ export class TokenCounterUI {
 
     // hp display
     const hpValue = this.hpElement.querySelector(".hp-value");
-    const hpLabel = this.hpElement.querySelector(".counter-label");
     if (hpValue) {
       hpValue.textContent = `${this.hp.current}/${this.hp.max}`;
-    }
-    if (hpLabel && this.selectedToken?.actor?.name) {
-      hpLabel.textContent = `${this.selectedToken.actor.name}'s HP`;
     }
 
     // hope/stress display
@@ -614,24 +610,16 @@ export class TokenCounterUI {
     // armor slots display (characters only)
     if (this.armorSlotsElement && this.actorType === 'character') {
       const armorSlotsValue = this.armorSlotsElement.querySelector(".armor-slots-value");
-      const armorSlotsLabel = this.armorSlotsElement.querySelector(".counter-label");
       if (armorSlotsValue) {
         armorSlotsValue.textContent = `${this.armorSlots.current}/${this.armorSlots.max}`;
-      }
-      if (armorSlotsLabel && this.selectedToken?.actor?.name) {
-        armorSlotsLabel.textContent = `${this.selectedToken.actor.name}'s Armor`;
       }
     }
 
     // character stress display (characters only)
     if (this.characterStressElement && this.actorType === 'character') {
       const characterStressValue = this.characterStressElement.querySelector(".character-stress-value");
-      const characterStressLabel = this.characterStressElement.querySelector(".counter-label");
       if (characterStressValue) {
         characterStressValue.textContent = `${this.characterStress.current}/${this.characterStress.max}`;
-      }
-      if (characterStressLabel && this.selectedToken?.actor?.name) {
-        characterStressLabel.textContent = `${this.selectedToken.actor.name}'s Stress`;
       }
     }
   }
