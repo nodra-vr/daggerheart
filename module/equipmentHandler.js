@@ -271,17 +271,46 @@ export class EquipmentHandler {
       await actorSheet.removeBaseValueRestriction("system.weapon-main.damage");
       await actorSheet.removeBaseValueRestriction("system.weapon-main.to-hit");
       
-      // Reset to default values
+      // Reset to default values while preserving existing modifiers
       updateData["system.weapon-main.name"] = "";
+      
+      // Preserve existing modifiers for damage
+      const currentDamage = actor.system["weapon-main"]?.damage;
+      const existingDamageModifiers = (currentDamage && Array.isArray(currentDamage.modifiers)) ? currentDamage.modifiers : [];
+      
+      // Recalculate damage value with existing modifiers
+      let damageValue = "1d8";
+      if (existingDamageModifiers.length > 0) {
+        const modifierStrings = existingDamageModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
+        if (modifierStrings.length > 0) {
+          damageValue = `1d8 + ${modifierStrings.join(' + ')}`;
+        }
+      }
+      
       updateData["system.weapon-main.damage"] = {
         baseValue: "1d8",
-        modifiers: [],
-        value: "1d8"
+        modifiers: existingDamageModifiers,
+        value: damageValue
       };
+      
+      // Preserve existing modifiers for to-hit
+      const currentToHit = actor.system["weapon-main"]?.["to-hit"];
+      const existingToHitModifiers = (currentToHit && Array.isArray(currentToHit.modifiers)) ? currentToHit.modifiers : [];
+      
+      // Recalculate to-hit value with existing modifiers
+      let toHitValue = 0;
+      if (existingToHitModifiers.length > 0) {
+        const modifierTotal = existingToHitModifiers.reduce((total, mod) => {
+          const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
+          return total + modValue;
+        }, 0);
+        toHitValue = 0 + modifierTotal;
+      }
+      
       updateData["system.weapon-main.to-hit"] = {
         baseValue: 0,
-        modifiers: [],
-        value: 0
+        modifiers: existingToHitModifiers,
+        value: toHitValue
       };
     }
     
@@ -335,17 +364,46 @@ export class EquipmentHandler {
       await actorSheet.removeBaseValueRestriction("system.weapon-off.damage");
       await actorSheet.removeBaseValueRestriction("system.weapon-off.to-hit");
       
-      // Reset to default values
+      // Reset to default values while preserving existing modifiers
       updateData["system.weapon-off.name"] = "";
+      
+      // Preserve existing modifiers for damage
+      const currentDamage = actor.system["weapon-off"]?.damage;
+      const existingDamageModifiers = (currentDamage && Array.isArray(currentDamage.modifiers)) ? currentDamage.modifiers : [];
+      
+      // Recalculate damage value with existing modifiers
+      let damageValue = "1d8";
+      if (existingDamageModifiers.length > 0) {
+        const modifierStrings = existingDamageModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
+        if (modifierStrings.length > 0) {
+          damageValue = `1d8 + ${modifierStrings.join(' + ')}`;
+        }
+      }
+      
       updateData["system.weapon-off.damage"] = {
         baseValue: "1d8",
-        modifiers: [],
-        value: "1d8"
+        modifiers: existingDamageModifiers,
+        value: damageValue
       };
+      
+      // Preserve existing modifiers for to-hit
+      const currentToHit = actor.system["weapon-off"]?.["to-hit"];
+      const existingToHitModifiers = (currentToHit && Array.isArray(currentToHit.modifiers)) ? currentToHit.modifiers : [];
+      
+      // Recalculate to-hit value with existing modifiers
+      let toHitValue = 0;
+      if (existingToHitModifiers.length > 0) {
+        const modifierTotal = existingToHitModifiers.reduce((total, mod) => {
+          const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
+          return total + modValue;
+        }, 0);
+        toHitValue = 0 + modifierTotal;
+      }
+      
       updateData["system.weapon-off.to-hit"] = {
         baseValue: 0,
-        modifiers: [],
-        value: 0
+        modifiers: existingToHitModifiers,
+        value: toHitValue
       };
     }
     
