@@ -12,11 +12,26 @@
     }
   ],
   "esmodules": [
-    "module/simple.js"
+    "module/daggerheart.js"
   ],
   "styles": [
-    "styles/simple.css"
+    "styles/daggerheart.css"
   ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "primaryTokenAttribute": "barHealth",
+  "secondaryTokenAttribute": "barStress",
+  "manifest": "https://raw.githubusercontent.com/featureJosh/daggerheart-swb/master/system.json",
+  "download": "https://github.com/featureJosh/daggerheart-swb/archive/refs/tags/v2.7.4.zip",
   "packs": [
     {
       "name": "srd-adversaries",
@@ -85,19 +100,15 @@
       }
     }
   ],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json"
+  "documentTypes": {
+    "Actor": {
+      "Adversary": {
+        "htmlFields": [
+          "notes",
+          "biography",
+          "description"
+        ]
+      }
     }
-  ],
-  "compatibility": {
-    "minimum": "13",
-    "verified": "13"
-  },
-  "primaryTokenAttribute": "barHealth",
-  "secondaryTokenAttribute": "barStress",
-  "manifest": "https://raw.githubusercontent.com/featureJosh/daggerheart-swb/master/system.json",
-  "download": "https://github.com/featureJosh/daggerheart-swb/archive/refs/tags/v2.7.4.zip"
+  }
 }

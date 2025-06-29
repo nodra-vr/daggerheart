@@ -1,5 +1,6 @@
 // Import Modules
-import { SimpleActor } from "./actor.js";
+import { ActorDocument } from "./documents/actor.mjs"
+
 import { SimpleItem } from "./item.js";
 import { SimpleItemSheet } from "./item-sheet.js";
 import { SimpleWeaponSheet } from "./weapon-sheet.js";
@@ -26,7 +27,7 @@ import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing, u
 
 function _getTierOfPlay(actor = null, level = null) {
   let characterLevel = level;
-  
+
   if (characterLevel === null || characterLevel === undefined) {
     if (!actor) {
       console.warn("Daggerheart | getTierOfPlay: No actor or level provided, defaulting to tier 1");
@@ -34,15 +35,15 @@ function _getTierOfPlay(actor = null, level = null) {
     }
     characterLevel = actor.system?.level?.value || 1;
   }
-  
+
   characterLevel = parseInt(characterLevel) || 1;
   characterLevel = Math.max(1, Math.min(10, characterLevel));
-  
+
   if (characterLevel === 1) return 1;
   if (characterLevel >= 2 && characterLevel <= 4) return 2;
   if (characterLevel >= 5 && characterLevel <= 7) return 3;
   if (characterLevel >= 8 && characterLevel <= 10) return 4;
-  
+
   return 1;
 }
 
@@ -53,7 +54,7 @@ function _getTierOfPlay(actor = null, level = null) {
 /**
  * Init hook.
  */
-Hooks.once("init", async function() {
+Hooks.once("init", async function () {
   console.log(`Initializing Simple Daggerheart System`);
 
   // Initialize Dice So Nice colorsets for all players
@@ -71,11 +72,11 @@ Hooks.once("init", async function() {
       material: "glass",
       font: "Modesto Condensed",
     });
-    
+
     // Fear Die
     game.dice3d.addColorset({
       name: "Fear",
-      category: "Fear Die", 
+      category: "Fear Die",
       description: "Fear",
       texture: "fire",
       foreground: "#FFFFFF",
@@ -85,7 +86,7 @@ Hooks.once("init", async function() {
       material: "metal",
       font: "Modesto Condensed",
     });
-    
+
     // Modifier Die
     game.dice3d.addColorset({
       name: "Modifier",
@@ -129,7 +130,7 @@ Hooks.once("init", async function() {
   };
 
   game.daggerheart = {
-    SimpleActor,
+    ActorDocument,
     createDaggerheartMacro,
     createSpendFearMacro,
     createGainFearMacro,
@@ -165,7 +166,7 @@ Hooks.once("init", async function() {
   };
 
   // Define custom Document classes
-  CONFIG.Actor.documentClass = SimpleActor;
+  CONFIG.Actor.documentClass = ActorDocument;
   CONFIG.Actor.typeLabels = {
     character: "ACTOR.TypeCharacter",
     npc: "ACTOR.TypeNpc",
@@ -270,8 +271,8 @@ Hooks.once("init", async function() {
    */
   function _simpleUpdateInit(formula, notify = false) {
     const isValid = Roll.validate(formula);
-    if ( !isValid ) {
-      if ( notify ) ui.notifications.error(`${game.i18n.localize("SIMPLE.NotifyInitFormulaInvalid")}: ${formula}`);
+    if (!isValid) {
+      if (notify) ui.notifications.error(`${game.i18n.localize("SIMPLE.NotifyInitFormulaInvalid")}: ${formula}`);
       return;
     }
     CONFIG.Combat.initiative.formula = formula;
@@ -280,8 +281,8 @@ Hooks.once("init", async function() {
   /**
    * Slugify a string.
    */
-  Handlebars.registerHelper('slugify', function(value) {
-    return value.slugify({strict: true});
+  Handlebars.registerHelper('slugify', function (value) {
+    return value.slugify({ strict: true });
   });
 
   // Preload template partials
@@ -295,7 +296,7 @@ Hooks.on("updateActor", (actor, data, options, userId) => {
   // Check if base value restrictions were updated
   if (data.flags?.daggerheart?.baseValueRestrictions) {
     console.log("Daggerheart | Base value restrictions updated, refreshing sheets for actor:", actor.name);
-    
+
     // Force refresh all open sheets for this actor (debounced)
     Object.values(actor.apps).forEach(app => {
       if (app.render) {
@@ -308,15 +309,15 @@ Hooks.on("updateActor", (actor, data, options, userId) => {
       }
     });
   }
-  
+
   // Also check for weapon data changes that might need sheet refresh
   if (data.system && (
-    data.system["weapon-main"] || 
+    data.system["weapon-main"] ||
     data.system["weapon-off"] ||
     data.flags?.daggerheart // Any daggerheart flags
   )) {
     console.log("Daggerheart | Weapon or system data updated, refreshing sheets for actor:", actor.name);
-    
+
     // Force refresh all open sheets for this actor (debounced)
     Object.values(actor.apps).forEach(app => {
       if (app.render) {
@@ -338,12 +339,12 @@ Hooks.on("updateItem", async (item, data, options, userId) => {
   if (item.type === "weapon" && data.system?.equipped !== undefined) {
     const actor = item.parent;
     if (!actor) return;
-    
+
     console.log("Daggerheart | Weapon equipped state changed:", item.name, "equipped:", data.system.equipped);
-    
+
     // Get the actor sheet if it's open
     const actorSheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
-    
+
     if (actorSheet) {
       // Sync equipped weapons and force refresh (debounced)
       try {
@@ -371,16 +372,16 @@ Hooks.on("hotbarDrop", (bar, data, slot) => {
 /**
  * Ready hook to initialize the counter UI and run migrations
  */
-Hooks.once("ready", async function() {
+Hooks.once("ready", async function () {
   // Run system migrations first (only for GMs)
   if (game.user.isGM) {
     await DaggerheartMigrations.migrateWorld();
   }
-  
+
   // Initialize the counter UI
   game.daggerheart.counter = new CounterUI();
   await game.daggerheart.counter.initialize();
-  
+
   // Initialize the token counter UI
   game.daggerheart.tokenCounter = new TokenCounterUI();
   await game.daggerheart.tokenCounter.initialize();
@@ -388,9 +389,9 @@ Hooks.once("ready", async function() {
   // Initialize the countdown tracker UI
   game.daggerheart.countdownTracker = new CountdownTracker();
   await game.daggerheart.countdownTracker.initialize();
-  
+
   // Add global spendFear function
-  window.spendFear = async function(amount) {
+  window.spendFear = async function (amount) {
     if (!game.daggerheart?.counter) {
       console.error("Fear counter not initialized");
       ui.notifications.error("Fear counter not available");
@@ -398,9 +399,9 @@ Hooks.once("ready", async function() {
     }
     return await game.daggerheart.counter.spendFear(amount);
   };
-  
+
   // Add global gainFear function
-  window.gainFear = async function(amount) {
+  window.gainFear = async function (amount) {
     if (!game.daggerheart?.counter) {
       console.error("Fear counter not initialized");
       ui.notifications.error("Fear counter not available");
@@ -408,9 +409,9 @@ Hooks.once("ready", async function() {
     }
     return await game.daggerheart.counter.gainFear(amount);
   };
-  
+
   // Add global spendStress function
-  window.spendStress = async function(actor, amount) {
+  window.spendStress = async function (actor, amount) {
     if (!game.daggerheart?.spendStress) {
       console.error("spendStress function not initialized");
       ui.notifications.error("spendStress function not available");
@@ -418,23 +419,23 @@ Hooks.once("ready", async function() {
     }
     return await game.daggerheart.spendStress(actor, amount);
   };
-  
+
   // Add global test function for weapon equipping
-  window.testWeaponEquip = async function() {
+  window.testWeaponEquip = async function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
       return;
     }
-    
+
     const actor = selectedTokens[0].actor;
     const weapons = actor.items.filter(i => i.type === "weapon");
-    
+
     if (weapons.length === 0) {
       ui.notifications.warn("This actor has no weapons");
       return;
     }
-    
+
     console.log("=== Weapon Equip Test (Dual System) ===");
     console.log("Actor:", actor.name);
     console.log("Weapons:", weapons.map(w => `${w.name} (equipped: ${w.system.equipped}, slot: ${w.system.weaponSlot})`));
@@ -442,7 +443,7 @@ Hooks.once("ready", async function() {
     console.log("Current weapon-main to-hit:", actor.system["weapon-main"]?.["to-hit"]);
     console.log("Current weapon-off damage:", actor.system["weapon-off"]?.damage);
     console.log("Current weapon-off to-hit:", actor.system["weapon-off"]?.["to-hit"]);
-    
+
     const weapon = weapons[0];
     console.log("Testing with weapon:", weapon.name);
     console.log("Weapon system data:", weapon.system);
@@ -451,14 +452,14 @@ Hooks.once("ready", async function() {
     console.log("Weapon damage structure:", JSON.stringify(weapon.system.damage, null, 2));
     console.log("Weapon trait:", weapon.system.trait);
     console.log("Current weapon slot:", weapon.system.weaponSlot);
-    
+
     // Get the actor sheet
     const sheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
     if (!sheet) {
       ui.notifications.warn("Please open the character sheet first");
       return;
     }
-    
+
     // Test equipping as primary
     console.log("=== Testing Primary Weapon Equip ===");
     const successPrimary = await EquipmentHandler.equipPrimaryWeapon(actor, weapon);
@@ -468,7 +469,7 @@ Hooks.once("ready", async function() {
       console.log("Primary weapon sync completed");
       sheet.render(true, { immediate: true });
       console.log("Sheet rendered");
-      
+
       // Log the results
       console.log("New weapon-main damage:", actor.system["weapon-main"]?.damage);
       console.log("New weapon-main to-hit:", actor.system["weapon-main"]?.["to-hit"]);
@@ -478,34 +479,34 @@ Hooks.once("ready", async function() {
       console.log("Primary weapon equip failed");
     }
   };
-  
+
   // Add test function for secondary weapon
-  window.testSecondaryWeapon = async function() {
+  window.testSecondaryWeapon = async function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
       return;
     }
-    
+
     const actor = selectedTokens[0].actor;
     const weapons = actor.items.filter(i => i.type === "weapon");
-    
+
     if (weapons.length < 2) {
       ui.notifications.warn("This actor needs at least 2 weapons to test secondary");
       return;
     }
-    
+
     const weapon = weapons[1]; // Use second weapon
     console.log("=== Testing Secondary Weapon Equip ===");
     console.log("Testing with weapon:", weapon.name);
-    
+
     // Get the actor sheet
     const sheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
     if (!sheet) {
       ui.notifications.warn("Please open the character sheet first");
       return;
     }
-    
+
     // Test equipping as secondary
     const successSecondary = await EquipmentHandler.equipSecondaryWeapon(actor, weapon);
     if (successSecondary) {
@@ -514,7 +515,7 @@ Hooks.once("ready", async function() {
       console.log("Secondary weapon sync completed");
       sheet.render(true, { immediate: true });
       console.log("Sheet rendered");
-      
+
       // Log the results
       console.log("New weapon-off damage:", actor.system["weapon-off"]?.damage);
       console.log("New weapon-off to-hit:", actor.system["weapon-off"]?.["to-hit"]);
@@ -524,15 +525,15 @@ Hooks.once("ready", async function() {
       console.log("Secondary weapon equip failed");
     }
   };
-  
+
   // Add debug function to check current weapon data
-  window.debugWeaponData = function() {
+  window.debugWeaponData = function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
       return;
     }
-    
+
     const actor = selectedTokens[0].actor;
     console.log("=== Weapon Data Debug ===");
     console.log("Actor:", actor.name);
@@ -542,13 +543,13 @@ Hooks.once("ready", async function() {
     console.log("weapon-off to-hit:", JSON.stringify(actor.system["weapon-off"]?.["to-hit"], null, 2));
     console.log("Base value restrictions:", JSON.stringify(actor.flags?.daggerheart?.baseValueRestrictions, null, 2));
   };
-  
+
   // Also add to the game.daggerheart object for consistency
   game.daggerheart.spendFear = window.spendFear;
   game.daggerheart.gainFear = window.gainFear;
-  
+
   // Add global damage application functions
-  window.applyDamage = async function(targetActor, damageAmount, sourceActor) {
+  window.applyDamage = async function (targetActor, damageAmount, sourceActor) {
     if (!game.daggerheart?.damageApplication?.applyDamage) {
       console.error("Damage application not initialized");
       ui.notifications.error("Damage application not available");
@@ -556,8 +557,8 @@ Hooks.once("ready", async function() {
     }
     return await game.daggerheart.damageApplication.applyDamage(targetActor, damageAmount, sourceActor);
   };
-  
-  window.applyHealing = async function(targetActor, healAmount, sourceActor) {
+
+  window.applyHealing = async function (targetActor, healAmount, sourceActor) {
     if (!game.daggerheart?.damageApplication?.applyHealing) {
       console.error("Healing application not initialized");
       ui.notifications.error("Healing application not available");
@@ -565,8 +566,8 @@ Hooks.once("ready", async function() {
     }
     return await game.daggerheart.damageApplication.applyHealing(targetActor, healAmount, sourceActor);
   };
-  
-  window.rollDamage = async function(formula, options) {
+
+  window.rollDamage = async function (formula, options) {
     if (!game.daggerheart?.damageApplication?.rollDamage) {
       console.error("Damage rolling not initialized");
       ui.notifications.error("Damage rolling not available");
@@ -574,8 +575,8 @@ Hooks.once("ready", async function() {
     }
     return await game.daggerheart.damageApplication.rollDamage(formula, options);
   };
-  
-  window.rollHealing = async function(formula, options) {
+
+  window.rollHealing = async function (formula, options) {
     if (!game.daggerheart?.damageApplication?.rollHealing) {
       console.error("Healing rolling not initialized");
       ui.notifications.error("Healing rolling not available");
@@ -583,8 +584,8 @@ Hooks.once("ready", async function() {
     }
     return await game.daggerheart.damageApplication.rollHealing(formula, options);
   };
-  
-  window.undoDamageHealing = async function(undoId) {
+
+  window.undoDamageHealing = async function (undoId) {
     if (!game.daggerheart?.damageApplication?.undoDamageHealing) {
       console.error("Undo functionality not initialized");
       ui.notifications.error("Undo functionality not available");
@@ -592,15 +593,15 @@ Hooks.once("ready", async function() {
     }
     return await game.daggerheart.damageApplication.undoDamageHealing(undoId);
   };
-  
-  window.debugUndoData = function(undoId) {
+
+  window.debugUndoData = function (undoId) {
     if (!game.daggerheart?.damageApplication?.debugUndoData) {
       console.error("Debug functionality not initialized");
       return;
     }
     return game.daggerheart.damageApplication.debugUndoData(undoId);
   };
-  
+
   // Also add to the game.daggerheart object for consistency
   game.daggerheart.applyDamage = window.applyDamage;
   game.daggerheart.applyHealing = window.applyHealing;
@@ -608,14 +609,14 @@ Hooks.once("ready", async function() {
   game.daggerheart.rollHealing = window.rollHealing;
   game.daggerheart.undoDamageHealing = window.undoDamageHealing;
   game.daggerheart.debugUndoData = window.debugUndoData;
-  
+
   // Add cleanup function for users
   window.cleanupDuplicateMacros = _cleanupDuplicateMacros;
   game.daggerheart.cleanupDuplicateMacros = window.cleanupDuplicateMacros;
-  
+
   console.log("Counter UI initialized and displayed above the hotbar.");
   console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), and testWeaponEquip() functions are now available globally.");
-  
+
   // Clean up any existing duplicate macros from previous versions, but don't create new ones
   if (game.user.isGM) {
     await _cleanupDuplicateMacros();
@@ -637,18 +638,18 @@ async function _cleanupDuplicateMacros() {
     { name: "Gain Fear", flag: "daggerheart.gainFearMacro" },
     { name: "Apply Stress", flag: "daggerheart.spendStressMacro" }
   ];
-  
+
   let totalCleaned = 0;
-  
+
   for (const config of macroConfigs) {
     const duplicates = game.macros.filter(m => m.name === config.name);
-    
+
     if (duplicates.length > 1) {
       console.log(`Found ${duplicates.length} duplicate macros named "${config.name}", cleaning up...`);
-      
+
       // Keep the first one with the proper flag, or just the first one if none have flags
       let macroToKeep = duplicates.find(m => m.flags?.[config.flag.split('.')[0]]?.[config.flag.split('.')[1]]) || duplicates[0];
-      
+
       // Delete the rest
       const macrosToDelete = duplicates.filter(m => m.id !== macroToKeep.id);
       for (const macro of macrosToDelete) {
@@ -656,7 +657,7 @@ async function _cleanupDuplicateMacros() {
         console.log(`Deleted duplicate macro: ${config.name} (${macro.id})`);
         totalCleaned++;
       }
-      
+
       // Ensure the kept macro has the proper flag
       if (!macroToKeep.flags?.[config.flag.split('.')[0]]?.[config.flag.split('.')[1]]) {
         const flagParts = config.flag.split('.');
@@ -664,7 +665,7 @@ async function _cleanupDuplicateMacros() {
       }
     }
   }
-  
+
   if (totalCleaned > 0) {
     ui.notifications.info(`Cleaned up ${totalCleaned} duplicate macros.`);
     console.log(`Daggerheart | Cleaned up ${totalCleaned} duplicate macros.`);
@@ -676,12 +677,12 @@ async function _cleanupDuplicateMacros() {
 /**
  * Hook to set default prototype token settings for actors
  */
-Hooks.on("preCreateActor", function(document, data, options, userId) {
+Hooks.on("preCreateActor", function (document, data, options, userId) {
   // Set default prototype token settings
   const prototypeToken = {
     actorLink: true
   };
-  
+
   // Merge with any existing prototype token data
   document.updateSource({
     "prototypeToken": foundry.utils.mergeObject(document.prototypeToken?.toObject() || {}, prototypeToken)
@@ -694,10 +695,10 @@ Hooks.on("preCreateActor", function(document, data, options, userId) {
 Hooks.on("renderChatLog", (app, html, data) => {
   // Try to find the chat controls in the entire document, not just the passed html
   const chatControls = $(document).find(".chat-controls");
-  
+
   // Add to horizontal roll privacy section
   const horizontalRollPrivacy = chatControls.find("#roll-privacy.split-button:not(.vertical)");
-  
+
   if (horizontalRollPrivacy.length) {
     // Check if button already exists
     if (!horizontalRollPrivacy.find('[data-action="roll-duality"]').length) {
@@ -711,27 +712,25 @@ Hooks.on("renderChatLog", (app, html, data) => {
                 aria-label="Roll Duality Dice">
         </button>
       `);
-      
+
       // Add click handler
       horizontalDualityButton.on("click", async (event) => {
         event.preventDefault();
-        
+
         // Use the rollHandler for the duality roll with dialog
         await game.daggerheart.rollHandler.dualityWithDialog({
           title: "Duality Dice Roll"
         });
       });
-      
+
       // Append to the horizontal roll privacy section
       horizontalRollPrivacy.append(horizontalDualityButton);
     }
   }
-  
 
-  
   // Add to vertical roll privacy section
   const verticalRollPrivacy = $(document).find("#roll-privacy.split-button.vertical");
-  
+
   if (verticalRollPrivacy.length) {
     // Check if button already exists
     if (!verticalRollPrivacy.find('[data-action="roll-duality"]').length) {
@@ -745,29 +744,29 @@ Hooks.on("renderChatLog", (app, html, data) => {
                 aria-label="Roll Duality Dice">
         </button>
       `);
-      
+
       // Add click handler
       verticalDualityButton.on("click", async (event) => {
         event.preventDefault();
-        
+
         // Use the rollHandler for the duality roll with dialog
         await game.daggerheart.rollHandler.dualityWithDialog({
           title: "Duality Dice Roll"
         });
       });
-      
+
       // Append to the vertical roll privacy section
       verticalRollPrivacy.append(verticalDualityButton);
     }
   }
-  
+
   // If we didn't find any controls, try again after a short delay
   if (!horizontalRollPrivacy.length && !verticalRollPrivacy.length) {
     setTimeout(() => {
       const delayedChatControls = $(document).find(".chat-controls");
       const delayedHorizontalRollPrivacy = delayedChatControls.find("#roll-privacy.split-button:not(.vertical)");
       const delayedVerticalRollPrivacy = $(document).find("#roll-privacy.split-button.vertical");
-      
+
       // Add to horizontal roll privacy
       if (delayedHorizontalRollPrivacy.length && !delayedHorizontalRollPrivacy.find('[data-action="roll-duality"]').length) {
         const horizontalDualityButton = $(`
@@ -779,17 +778,17 @@ Hooks.on("renderChatLog", (app, html, data) => {
                   aria-label="Roll Duality Dice">
           </button>
         `);
-        
+
         horizontalDualityButton.on("click", async (event) => {
           event.preventDefault();
           await game.daggerheart.rollHandler.dualityWithDialog({
             title: "Duality Dice Roll"
           });
         });
-        
+
         delayedHorizontalRollPrivacy.append(horizontalDualityButton);
       }
-      
+
       // Add to vertical roll privacy
       if (delayedVerticalRollPrivacy.length && !delayedVerticalRollPrivacy.find('[data-action="roll-duality"]').length) {
         const verticalDualityButton = $(`
@@ -801,14 +800,14 @@ Hooks.on("renderChatLog", (app, html, data) => {
                   aria-label="Roll Duality Dice">
           </button>
         `);
-        
+
         verticalDualityButton.on("click", async (event) => {
           event.preventDefault();
           await game.daggerheart.rollHandler.dualityWithDialog({
             title: "Duality Dice Roll"
           });
         });
-        
+
         delayedVerticalRollPrivacy.append(verticalDualityButton);
       }
     }, 100);
@@ -822,29 +821,29 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   // Get roll type and actor information from message flags
   const flags = message.flags?.daggerheart;
   if (!flags) return;
-  
+
   const rollType = flags.rollType;
   const actorId = flags.actorId;
   const actorType = flags.actorType;
   const weaponName = flags.weaponName;
-  
+
   // Add damage buttons to attack rolls (existing functionality)
   if (rollType === "attack") {
     // Check for existing button
     const existingButton = html.find(".damage-roll-button").length;
     if (existingButton > 0) return;
-    
+
     // Get the actor
     const actor = game.actors.get(actorId);
     if (!actor) return;
-    
+
     // Get weapon data
     let weaponData = null;
     let weaponType = null;
-    
+
     const primaryWeapon = actor.system["weapon-main"];
     const secondaryWeapon = actor.system["weapon-off"];
-    
+
     if (primaryWeapon?.name === weaponName) {
       weaponData = primaryWeapon;
       weaponType = "primary";
@@ -852,13 +851,13 @@ Hooks.on("renderChatMessage", (message, html, data) => {
       weaponData = secondaryWeapon;
       weaponType = "secondary";
     }
-    
+
     if (!weaponData || !weaponData.damage) return;
-    
+
     // Check if this was a critical success
     const flavor = message.flavor || '';
     const isCritical = flavor.includes("Critical") && flavor.includes("Success");
-    
+
     // Add damage button based on actor type
     if (actorType === "character") {
       _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritical);
@@ -866,17 +865,17 @@ Hooks.on("renderChatMessage", (message, html, data) => {
       _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritical);
     }
   }
-  
+
   // Add damage/healing application buttons to damage rolls
   if (rollType === "damage") {
     _addDamageApplicationButtons(message, html, flags);
   }
-  
+
   // Add damage/healing application buttons to healing rolls
   if (rollType === "healing") {
     _addHealingApplicationButtons(message, html, flags);
   }
-  
+
   // Add undo button handlers for damage/healing applied messages
   if (flags.messageType === "damageApplied" || flags.messageType === "healingApplied") {
     _addUndoButtonHandlers(html, flags);
@@ -888,7 +887,7 @@ Hooks.on("renderChatMessage", (message, html, data) => {
  */
 function _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritical) {
   const buttonText = isCritical ? "Critical Damage" : "Damage";
-  
+
   // Store structured damage data for proper handling
   let damageDataJson;
   if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
@@ -903,13 +902,13 @@ function _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritic
       value: simpleFormula
     });
   }
-  
+
   const damageButton = `<button class="damage-roll-button character ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage-structure="${damageDataJson}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
     <i class="fas fa-dice-d20"></i> ${buttonText}
   </button>`;
-  
+
   html.find(".message-content").append(damageButton);
-  
+
   // Add click handler for character damage
   html.find(".damage-roll-button.character").click(async (event) => {
     event.preventDefault();
@@ -922,7 +921,7 @@ function _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritic
  */
 function _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritical) {
   const buttonText = isCritical ? "Critical Damage" : "Damage";
-  
+
   // Store structured damage data for proper handling
   let damageDataJson;
   if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
@@ -937,13 +936,13 @@ function _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritic
       value: simpleFormula
     });
   }
-  
+
   const damageButton = `<button class="damage-roll-button adversary ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage-structure="${damageDataJson}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
     <i class="fas fa-dice-d20"></i> ${buttonText}
   </button>`;
-  
+
   html.find(".message-content").append(damageButton);
-  
+
   // Add click handler for adversary damage
   html.find(".damage-roll-button.adversary").click(async (event) => {
     event.preventDefault();
@@ -957,11 +956,11 @@ function _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritic
 function _handleCharacterDamageButton(message, html, actor, flavor) {
   let weaponData = null;
   let weaponType = null;
-  
+
   // Check if the flavor contains a weapon name that matches actor's weapons
   const primaryWeapon = actor.system["weapon-main"];
   const secondaryWeapon = actor.system["weapon-off"];
-  
+
   if (primaryWeapon?.name && flavor.includes(primaryWeapon.name)) {
     weaponData = primaryWeapon;
     weaponType = "primary";
@@ -969,26 +968,26 @@ function _handleCharacterDamageButton(message, html, actor, flavor) {
     weaponData = secondaryWeapon;
     weaponType = "secondary";
   }
-  
+
   // Check for existing button
   const existingButton = html.find(".damage-roll-button").length;
-  
+
   // If we found a matching weapon and it has damage defined
   if (weaponData && weaponData.damage && !existingButton) {
     // Check if this appears to be a damage roll (exclude damage rolls)
-    const isDamageRoll = flavor.includes("Damage") || 
-                        flavor.includes("damage") || 
-                        flavor.toLowerCase().includes("- damage") ||
-                        flavor.includes("Critical Damage") ||
-                        flavor.includes("critical damage");
-    
+    const isDamageRoll = flavor.includes("Damage") ||
+      flavor.includes("damage") ||
+      flavor.toLowerCase().includes("- damage") ||
+      flavor.includes("Critical Damage") ||
+      flavor.includes("critical damage");
+
     // Check if this appears to be an attack roll (has Hope/Fear dice) but NOT a damage roll
     const hasHopeFear = flavor.includes("Hope") || flavor.includes("Fear");
-    
+
     if (hasHopeFear && !isDamageRoll) {
       // Check if this was a critical success
       const isCritical = flavor.includes("Critical") && flavor.includes("Success");
-      
+
       // Store structured damage data for proper handling
       let damageDataJson;
       if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
@@ -1003,17 +1002,17 @@ function _handleCharacterDamageButton(message, html, actor, flavor) {
           value: simpleFormula
         });
       }
-      
+
       // Add damage button to the message
       const buttonText = isCritical ? "Critical Damage" : "Damage";
       const damageButton = `<button class="damage-roll-button character ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage-structure="${damageDataJson}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
         <i class="fas fa-dice-d20"></i> ${buttonText}
       </button>`;
-      
+
       // Find message content and append button
       const messageContent = html.find(".message-content");
       messageContent.append(damageButton);
-      
+
       // Add click handler for character damage
       html.find(".damage-roll-button.character").click(async (event) => {
         event.preventDefault();
@@ -1029,11 +1028,11 @@ function _handleCharacterDamageButton(message, html, actor, flavor) {
 function _handleAdversaryDamageButton(message, html, actor, flavor) {
   let weaponData = null;
   let weaponType = null;
-  
+
   // Check if the flavor contains a weapon name that matches actor's attacks
   const primaryAttack = actor.system["weapon-main"];
   const secondaryAttack = actor.system["weapon-off"];
-  
+
   if (primaryAttack?.name && flavor.includes(primaryAttack.name)) {
     weaponData = primaryAttack;
     weaponType = "primary";
@@ -1041,26 +1040,26 @@ function _handleAdversaryDamageButton(message, html, actor, flavor) {
     weaponData = secondaryAttack;
     weaponType = "secondary";
   }
-  
+
   // Check for existing button
   const existingButton = html.find(".damage-roll-button").length;
-  
+
   // If we found a matching attack and it has damage defined
   if (weaponData && weaponData.damage && !existingButton) {
     // Check if this appears to be a damage roll (exclude damage rolls)
-    const isDamageRoll = flavor.includes("Damage") || 
-                        flavor.includes("damage") || 
-                        flavor.toLowerCase().includes("- damage") ||
-                        flavor.includes("Critical Damage") ||
-                        flavor.includes("critical damage");
-    
+    const isDamageRoll = flavor.includes("Damage") ||
+      flavor.includes("damage") ||
+      flavor.toLowerCase().includes("- damage") ||
+      flavor.includes("Critical Damage") ||
+      flavor.includes("critical damage");
+
     // Check if this appears to be an attack roll (NOT a damage roll)
     const isAttackRoll = flavor.includes(weaponData.name) && !isDamageRoll;
-    
+
     if (isAttackRoll) {
       // Check if this was a critical success (NPCs crit on natural 20)
       const isCritical = flavor.includes("Critical Success");
-      
+
       // Store structured damage data for proper handling
       let damageDataJson;
       if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
@@ -1075,17 +1074,17 @@ function _handleAdversaryDamageButton(message, html, actor, flavor) {
           value: simpleFormula
         });
       }
-      
+
       // Add damage button to the message
       const buttonText = isCritical ? "Critical Damage" : "Damage";
       const damageButton = `<button class="damage-roll-button adversary ${isCritical ? 'critical' : ''}" data-actor-id="${actor.id}" data-weapon-type="${weaponType}" data-weapon-name="${weaponData.name}" data-weapon-damage-structure="${damageDataJson}" data-is-critical="${isCritical}" style="margin-top: 0.5em; width: 100%;">
         <i class="fas fa-dice-d20"></i> ${buttonText}
       </button>`;
-      
+
       // Find message content and append button
       const messageContent = html.find(".message-content");
       messageContent.append(damageButton);
-      
+
       // Add click handler for adversary damage
       html.find(".damage-roll-button.adversary").click(async (event) => {
         event.preventDefault();
@@ -1105,13 +1104,13 @@ async function _rollCharacterDamage(event) {
   const weaponName = button.dataset.weaponName;
   const damageStructureJson = button.dataset.weaponDamageStructure;
   const isCritical = button.dataset.isCritical === "true";
-  
+
   const actor = game.actors.get(actorId);
   if (!actor) {
     console.error("Daggerheart | Actor not found for character damage roll");
     return;
   }
-  
+
   // Parse structured damage data
   let damageData;
   try {
@@ -1121,7 +1120,7 @@ async function _rollCharacterDamage(event) {
     // Fallback: get fresh data from actor
     const weaponField = weaponType === "primary" ? "weapon-main" : "weapon-off";
     const weaponData = actor.system[weaponField];
-    
+
     if (weaponData && weaponData.damage) {
       if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
         damageData = weaponData.damage;
@@ -1142,49 +1141,49 @@ async function _rollCharacterDamage(event) {
       };
     }
   }
-  
+
   // Get proficiency value
   const proficiency = Math.max(1, parseInt(actor.system.proficiency?.value) || 1);
-  
+
   // Build roll formula from structured data
   let rollValue = _buildCharacterDamageFormula(damageData, proficiency, isCritical);
   let flavorText = isCritical ? `${weaponName} - Critical Damage!` : `${weaponName} - Damage`;
-  
+
   // Create and send the damage roll
   const roll = new Roll(rollValue);
   await roll.evaluate();
-  
-      try {
-      // Let Foundry handle the roll rendering automatically, then add damage/healing buttons
-      const chatMessage = await ChatMessage.create({
-        flavor: flavorText,
-        user: game.user.id,
-        speaker: ChatMessage.getSpeaker({ actor: actor }),
-        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-        rolls: [roll],
-        rollMode: "roll",
-        flags: {
-          daggerheart: {
-            rollType: "damage",
-            actorId: actor.id,
-            actorType: "character",
-            weaponName: weaponName,
-            weaponType: weaponType,
-            isCritical: isCritical,
-            damageAmount: roll.total,
-            isManualRoll: true
-          }
+
+  try {
+    // Let Foundry handle the roll rendering automatically, then add damage/healing buttons
+    const chatMessage = await ChatMessage.create({
+      flavor: flavorText,
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      rolls: [roll],
+      rollMode: "roll",
+      flags: {
+        daggerheart: {
+          rollType: "damage",
+          actorId: actor.id,
+          actorType: "character",
+          weaponName: weaponName,
+          weaponType: weaponType,
+          isCritical: isCritical,
+          damageAmount: roll.total,
+          isManualRoll: true
         }
-      });
-      
-      // Wait for Dice So Nice! animation to complete
-      if (chatMessage?.id && game.dice3d) {
-        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
       }
-    } catch (error) {
-      console.error("Error creating character damage chat message:", error);
-      ui.notifications.warn("Chat message failed to send, but damage was rolled.");
+    });
+
+    // Wait for Dice So Nice! animation to complete
+    if (chatMessage?.id && game.dice3d) {
+      await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
     }
+  } catch (error) {
+    console.error("Error creating character damage chat message:", error);
+    ui.notifications.warn("Chat message failed to send, but damage was rolled.");
+  }
 }
 
 /**
@@ -1196,7 +1195,7 @@ async function _rollCharacterDamage(event) {
  */
 function _buildCharacterDamageFormula(damageData, proficiency, isCritical) {
   let baseFormula = damageData.baseValue || '1d8';
-  
+
   // Apply proficiency logic to base formula
   const diceMatch = baseFormula.match(/^(\d*)d(\d+)(.*)$/i);
   if (diceMatch) {
@@ -1205,11 +1204,11 @@ function _buildCharacterDamageFormula(damageData, proficiency, isCritical) {
     const remainder = diceMatch[3] || "";
     baseFormula = `${diceCount}d${dieType}${remainder}`;
   }
-  
+
   // Add enabled modifiers
   const modifiers = damageData.modifiers || [];
   const enabledModifiers = modifiers.filter(mod => mod.enabled !== false && mod.value);
-  
+
   let formula = baseFormula;
   enabledModifiers.forEach(modifier => {
     let modValue = modifier.value.trim();
@@ -1219,18 +1218,18 @@ function _buildCharacterDamageFormula(damageData, proficiency, isCritical) {
     }
     formula += ' ' + modValue;
   });
-  
+
   // Handle critical damage
   if (isCritical && diceMatch) {
     const diceCount = parseInt(diceMatch[1]) || proficiency;
     const dieType = parseInt(diceMatch[2]);
     const maxDamage = diceCount * dieType;
-    
+
     // Critical: max value + normal roll + modifiers
     let criticalFormula = `${maxDamage} + ${formula}`;
     return criticalFormula;
   }
-  
+
   return formula;
 }
 
@@ -1242,11 +1241,11 @@ function _buildCharacterDamageFormula(damageData, proficiency, isCritical) {
  */
 function _buildAdversaryDamageFormula(damageData, isCritical) {
   let baseFormula = damageData.baseValue || '1d8';
-  
+
   // Add enabled modifiers
   const modifiers = damageData.modifiers || [];
   const enabledModifiers = modifiers.filter(mod => mod.enabled !== false && mod.value);
-  
+
   let formula = baseFormula;
   enabledModifiers.forEach(modifier => {
     let modValue = modifier.value.trim();
@@ -1256,12 +1255,12 @@ function _buildAdversaryDamageFormula(damageData, isCritical) {
     }
     formula += ' ' + modValue;
   });
-  
+
   // Handle critical damage for adversaries
   if (isCritical) {
     return _calculateAdversaryCriticalDamage(formula);
   }
-  
+
   return formula;
 }
 
@@ -1275,13 +1274,13 @@ async function _rollAdversaryDamage(event) {
   const weaponName = button.dataset.weaponName;
   const damageStructureJson = button.dataset.weaponDamageStructure;
   const isCritical = button.dataset.isCritical === "true";
-  
+
   const actor = game.actors.get(actorId);
   if (!actor) {
     console.error("Daggerheart | Actor not found for adversary damage roll");
     return;
   }
-  
+
   // Parse structured damage data
   let damageData;
   try {
@@ -1291,7 +1290,7 @@ async function _rollAdversaryDamage(event) {
     // Fallback: get fresh data from actor
     const weaponField = weaponType === "primary" ? "weapon-main" : "weapon-off";
     const weaponData = actor.system[weaponField];
-    
+
     if (weaponData && weaponData.damage) {
       if (typeof weaponData.damage === 'object' && weaponData.damage !== null && 'baseValue' in weaponData.damage) {
         damageData = weaponData.damage;
@@ -1312,46 +1311,46 @@ async function _rollAdversaryDamage(event) {
       };
     }
   }
-  
+
   // Build roll formula from structured data
   let rollValue = _buildAdversaryDamageFormula(damageData, isCritical);
   let flavorText = isCritical ? `${weaponName} - Critical Damage!` : `${weaponName} - Damage`;
-  
+
   // Create and send the damage roll
   const roll = new Roll(rollValue);
   await roll.evaluate();
-  
-      try {
-      // Let Foundry handle the roll rendering automatically, then add damage/healing buttons
-      const chatMessage = await ChatMessage.create({
-        flavor: flavorText,
-        user: game.user.id,
-        speaker: ChatMessage.getSpeaker({ actor: actor }),
-        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-        rolls: [roll],
-        rollMode: "roll",
-        flags: {
-          daggerheart: {
-            rollType: "damage",
-            actorId: actor.id,
-            actorType: "npc",
-            weaponName: weaponName,
-            weaponType: weaponType,
-            isCritical: isCritical,
-            damageAmount: roll.total,
-            isManualRoll: true
-          }
+
+  try {
+    // Let Foundry handle the roll rendering automatically, then add damage/healing buttons
+    const chatMessage = await ChatMessage.create({
+      flavor: flavorText,
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: actor }),
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      rolls: [roll],
+      rollMode: "roll",
+      flags: {
+        daggerheart: {
+          rollType: "damage",
+          actorId: actor.id,
+          actorType: "npc",
+          weaponName: weaponName,
+          weaponType: weaponType,
+          isCritical: isCritical,
+          damageAmount: roll.total,
+          isManualRoll: true
         }
-      });
-      
-      // Wait for Dice So Nice! animation to complete
-      if (chatMessage?.id && game.dice3d) {
-        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
       }
-    } catch (error) {
-      console.error("Error creating adversary damage chat message:", error);
-      ui.notifications.warn("Chat message failed to send, but damage was rolled.");
+    });
+
+    // Wait for Dice So Nice! animation to complete
+    if (chatMessage?.id && game.dice3d) {
+      await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
     }
+  } catch (error) {
+    console.error("Error creating adversary damage chat message:", error);
+    ui.notifications.warn("Chat message failed to send, but damage was rolled.");
+  }
 }
 
 /**
@@ -1363,7 +1362,7 @@ function _calculateAdversaryCriticalDamage(damageFormula) {
   const dicePattern = /(\d*)d(\d+)/gi;
   let criticalFormula = damageFormula;
   let maxDamageTotal = 0;
-  
+
   // Replace each dice term with its maximum value
   criticalFormula = criticalFormula.replace(dicePattern, (match, count, sides) => {
     const diceCount = parseInt(count) || 1;
@@ -1372,7 +1371,7 @@ function _calculateAdversaryCriticalDamage(damageFormula) {
     maxDamageTotal += maxValue;
     return match; // Keep original for the normal roll part
   });
-  
+
   // If we found dice in the formula, create critical damage
   if (maxDamageTotal > 0) {
     return `${maxDamageTotal} + ${damageFormula}`;
@@ -1389,12 +1388,12 @@ function _addDamageApplicationButtons(message, html, flags) {
   // Check for existing buttons
   const existingButtons = html.find(".apply-damage-button, .apply-healing-button").length;
   if (existingButtons > 0) return;
-  
+
   const damageAmount = flags.damageAmount || extractRollTotal(message);
   if (!damageAmount) return;
-  
+
   const sourceActor = game.actors.get(flags.actorId);
-  
+
   // Create damage and healing buttons
   const buttonContainer = `<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
     <button class="apply-damage-button" data-damage="${damageAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
@@ -1404,15 +1403,15 @@ function _addDamageApplicationButtons(message, html, flags) {
       <i class="fas fa-heart"></i> Heal (${damageAmount})
     </button>
   </div>`;
-  
+
   html.find(".message-content").append(buttonContainer);
-  
+
   // Add click handlers
   html.find(".apply-damage-button").click(async (event) => {
     event.preventDefault();
     await _handleDamageApplicationButton(event, "damage");
   });
-  
+
   html.find(".apply-healing-button").click(async (event) => {
     event.preventDefault();
     await _handleDamageApplicationButton(event, "healing");
@@ -1426,12 +1425,12 @@ function _addHealingApplicationButtons(message, html, flags) {
   // Check for existing buttons
   const existingButtons = html.find(".apply-damage-button, .apply-healing-button").length;
   if (existingButtons > 0) return;
-  
+
   const healingAmount = flags.healingAmount || extractRollTotal(message);
   if (!healingAmount) return;
-  
+
   const sourceActor = game.actors.get(flags.actorId);
-  
+
   // Create healing and damage buttons (healing first for healing rolls)
   const buttonContainer = `<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
     <button class="apply-healing-button" data-healing="${healingAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
@@ -1441,15 +1440,15 @@ function _addHealingApplicationButtons(message, html, flags) {
       <i class="fas fa-sword"></i> Damage (${healingAmount})
     </button>
   </div>`;
-  
+
   html.find(".message-content").append(buttonContainer);
-  
+
   // Add click handlers
   html.find(".apply-healing-button").click(async (event) => {
     event.preventDefault();
     await _handleDamageApplicationButton(event, "healing");
   });
-  
+
   html.find(".apply-damage-button").click(async (event) => {
     event.preventDefault();
     await _handleDamageApplicationButton(event, "damage");
@@ -1463,14 +1462,14 @@ async function _handleDamageApplicationButton(event, type) {
   const button = event.currentTarget;
   const amount = parseInt(button.dataset[type]) || 0;
   const sourceActorId = button.dataset.sourceActorId;
-  
+
   if (amount <= 0) {
     ui.notifications.error("Invalid amount for application.");
     return;
   }
-  
+
   const sourceActor = sourceActorId ? game.actors.get(sourceActorId) : null;
-  
+
   try {
     let result = { success: false, undoId: null };
     if (type === "damage") {
@@ -1478,7 +1477,7 @@ async function _handleDamageApplicationButton(event, type) {
     } else if (type === "healing") {
       result = await applyHealing(null, amount, sourceActor);
     }
-    
+
     // Note: No longer disabling buttons after use to allow multiple applications
     if (!result.success) {
       console.warn(`Failed to apply ${type}`);
@@ -1573,19 +1572,19 @@ function _addUndoButtonHandlers(html, flags) {
     event.preventDefault();
     const button = event.currentTarget;
     const undoId = button.dataset.undoId;
-    
+
     if (!undoId) {
       ui.notifications.error("Undo ID not found.");
       return;
     }
-    
+
     try {
       // Disable button during processing
       button.disabled = true;
       button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Undoing...';
-      
+
       const success = await undoDamageHealing(undoId);
-      
+
       if (success) {
         // Replace button with confirmation
         button.innerHTML = '<i class="fas fa-check"></i> Undone';
@@ -1598,7 +1597,7 @@ function _addUndoButtonHandlers(html, flags) {
     } catch (error) {
       console.error("Error during undo:", error);
       ui.notifications.error("Error during undo. Check console for details.");
-      
+
       // Re-enable button on error
       button.disabled = false;
       button.innerHTML = '<i class="fas fa-undo"></i> Undo';
