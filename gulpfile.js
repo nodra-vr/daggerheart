@@ -15,7 +15,7 @@ const PACK_DEST = `./packs`;
 
 const SIMPLE_SASS = ["styles/**/*.scss"];
 function compileSass() {
-  return gulp.src('./styles/simple.scss')
+  return gulp.src('./styles/daggerheart.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(gulp.dest('./styles'));
 };
