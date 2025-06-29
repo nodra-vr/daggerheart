@@ -584,13 +584,13 @@ Hooks.once("ready", async function() {
   game.daggerheart.gainFear = window.gainFear;
   
   // Add global damage application functions
-  window.applyDamage = async function(targetActor, damageAmount, sourceActor) {
+  window.applyDamage = async function(targetActor, damageAmount, sourceActor, createUndo = true, armorSlotsUsed = 0) {
     if (!game.daggerheart?.damageApplication?.applyDamage) {
       console.error("Damage application not initialized");
       ui.notifications.error("Damage application not available");
       return false;
     }
-    return await game.daggerheart.damageApplication.applyDamage(targetActor, damageAmount, sourceActor);
+    return await game.daggerheart.damageApplication.applyDamage(targetActor, damageAmount, sourceActor, createUndo, armorSlotsUsed);
   };
   
   window.applyHealing = async function(targetActor, healAmount, sourceActor) {
@@ -1470,6 +1470,129 @@ function _calculateAdversaryCriticalDamage(damageFormula) {
 }
 
 /**
+ * Update armor slots value in the chat UI
+ * @param {jQuery} html - The chat message HTML element
+ * @param {number} delta - The change amount (+1 or -1)
+ */
+function _updateArmorSlotsValue(html, delta) {
+  const armorSlotsContainer = html.find(".armor-slots-ui");
+  const currentElement = html.find(".armor-slots-current");
+  const maxElement = html.find(".armor-slots-max");
+  
+  if (!armorSlotsContainer.length || !currentElement.length || !maxElement.length) {
+    console.warn("Armor slots elements not found");
+    return;
+  }
+  
+  // Get current values
+  let current = parseInt(currentElement.text()) || 0;
+  const max = parseInt(maxElement.text()) || 3;
+  
+  // Calculate new value with bounds checking
+  const newValue = Math.max(0, Math.min(max, current + delta));
+  
+  // Only update if value actually changed
+  if (newValue !== current) {
+    // Update display
+    currentElement.text(newValue);
+    
+    // Store value on container for reference
+    armorSlotsContainer.data("current", newValue);
+    armorSlotsContainer.data("max", max);
+    
+    console.log(`Armor slots: ${current} → ${newValue}`);
+  }
+}
+
+/**
+ * Generate armor slots UI HTML based on target characters
+ * @param {number} currentSlots - Current armor slots used (default: 0)
+ * @param {number} maxSlots - Maximum armor slots available (default: 3)
+ * @param {boolean} showUI - Whether to show the UI (default: true)
+ * @returns {string} HTML string for armor slots UI
+ */
+function _getArmorSlotsUI(currentSlots = 0, maxSlots = 3, showUI = true) {
+  if (!showUI) return "";
+  
+  return `<div class="armor-slots-ui resource armor-slots" style="margin: 0.75em 0 0.5em 0;">
+    <div class="resource-content">
+      <div class="resource-box">
+        <span class="armor-slots-current">${currentSlots}</span>
+        <span>/</span>
+        <span class="armor-slots-max">${maxSlots}</span>
+      </div>
+    </div>
+    <div class="resource-label-controls">
+      <a class="resource-control armor-slots-decrement" data-action="decrement" title="Decrease Armor Slots Used">
+        <i class="fas fa-minus"></i>
+      </a>
+      <label>Use Armor Slots</label>
+      <a class="resource-control armor-slots-increment" data-action="increment" title="Increase Armor Slots Used">
+        <i class="fas fa-plus"></i>
+      </a>
+    </div>
+  </div>`;
+}
+
+/**
+ * Get maximum armor slots from current targets
+ * @returns {Object} Object with showUI flag and maxSlots value
+ */
+function _getTargetArmorInfo() {
+  // Check targeted tokens first (priority)
+  const targets = Array.from(game.user.targets);
+  
+  if (targets.length > 0) {
+    // Find first character target to get max armor slots
+    const characterTarget = targets.find(t => t.actor?.type === 'character');
+    if (characterTarget) {
+      const maxSlots = parseInt(characterTarget.actor.system.defenses?.["armor-slots"]?.max) || 3;
+      return { showUI: true, maxSlots: maxSlots };
+    }
+  }
+  
+  // Check selected tokens
+  const controlled = canvas.tokens?.controlled || [];
+  
+  if (controlled.length > 0) {
+    // Find first character to get max armor slots
+    const characterToken = controlled.find(t => t.actor?.type === 'character');
+    if (characterToken) {
+      const maxSlots = parseInt(characterToken.actor.system.defenses?.["armor-slots"]?.max) || 3;
+      return { showUI: true, maxSlots: maxSlots };
+    }
+  }
+  
+  return { showUI: false, maxSlots: 0 };
+}
+
+/**
+ * Initialize armor slots UI handlers
+ * @param {jQuery} html - The chat message HTML element
+ * @param {number} initialValue - Initial armor slots value
+ * @param {number} maxValue - Maximum armor slots value
+ */
+function _initializeArmorSlotsHandlers(html, initialValue = 0, maxValue = 3) {
+  const armorSlotsContainer = html.find(".armor-slots-ui");
+  if (!armorSlotsContainer.length) return;
+  
+  // Store initial state
+  armorSlotsContainer.data("current", initialValue);
+  armorSlotsContainer.data("max", maxValue);
+  
+  // Add click handlers for armor slots
+  html.find(".armor-slots-increment").click(async (event) => {
+    event.preventDefault();
+    _updateArmorSlotsValue(html, 1);
+  });
+  
+  html.find(".armor-slots-decrement").click(async (event) => {
+    event.preventDefault();
+    _updateArmorSlotsValue(html, -1);
+  });
+}
+
+/**
  * Add damage and healing application buttons to damage rolls
  */
 function _addDamageApplicationButtons(message, html, flags) {
@@ -1482,8 +1605,12 @@ function _addDamageApplicationButtons(message, html, flags) {
   
   const sourceActor = game.actors.get(flags.actorId);
   
+  // Get armor info based on current targets
+  const armorInfo = _getTargetArmorInfo();
+  const armorSlotsUI = _getArmorSlotsUI(0, armorInfo.maxSlots, armorInfo.showUI);
+  
   // Create damage and healing buttons
-  const buttonContainer = `<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
+  const buttonContainer = `${armorSlotsUI}<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
     <button class="apply-damage-button" data-damage="${damageAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
       <i class="fas fa-sword"></i> Damage (${damageAmount})
     </button>
@@ -1493,6 +1620,11 @@ function _addDamageApplicationButtons(message, html, flags) {
   </div>`;
   
   html.find(".message-content").append(buttonContainer);
+  
+  // Initialize armor slots handlers if UI is shown
+  if (armorInfo.showUI) {
+    _initializeArmorSlotsHandlers(html, 0, armorInfo.maxSlots);
+  }
   
   // Add click handlers
   html.find(".apply-damage-button").click(async (event) => {
@@ -1519,8 +1651,12 @@ function _addHealingApplicationButtons(message, html, flags) {
   
   const sourceActor = game.actors.get(flags.actorId);
   
+  // Get armor info based on current targets
+  const armorInfo = _getTargetArmorInfo();
+  const armorSlotsUI = _getArmorSlotsUI(0, armorInfo.maxSlots, armorInfo.showUI);
+  
   // Create healing and damage buttons (healing first for healing rolls)
-  const buttonContainer = `<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
+  const buttonContainer = `${armorSlotsUI}<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
     <button class="apply-healing-button" data-healing="${healingAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
       <i class="fas fa-heart"></i> Heal (${healingAmount})
     </button>
@@ -1530,6 +1666,11 @@ function _addHealingApplicationButtons(message, html, flags) {
   </div>`;
   
   html.find(".message-content").append(buttonContainer);
+  
+  // Initialize armor slots handlers if UI is shown
+  if (armorInfo.showUI) {
+    _initializeArmorSlotsHandlers(html, 0, armorInfo.maxSlots);
+  }
   
   // Add click handlers
   html.find(".apply-healing-button").click(async (event) => {
@@ -1558,10 +1699,22 @@ async function _handleDamageApplicationButton(event, type) {
   
   const sourceActor = sourceActorId ? game.actors.get(sourceActorId) : null;
   
+  // Get armor slots value from UI if damage is being applied
+  let armorSlotsUsed = 0;
+  if (type === "damage") {
+    const messageElement = $(button).closest(".chat-message");
+    const armorSlotsContainer = messageElement.find(".armor-slots-ui");
+    
+    if (armorSlotsContainer.length) {
+      armorSlotsUsed = parseInt(armorSlotsContainer.data("current")) || 0;
+      console.log(`Daggerheart | Using ${armorSlotsUsed} armor slots for damage reduction`);
+    }
+  }
+  
   try {
     let result = { success: false, undoId: null };
     if (type === "damage") {
-      result = await applyDamage(null, amount, sourceActor);
+      result = await applyDamage(null, amount, sourceActor, true, armorSlotsUsed);
     } else if (type === "healing") {
       result = await applyHealing(null, amount, sourceActor);
     }

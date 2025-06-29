@@ -20,9 +20,6 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   // Add styling to dice tooltips
   _styleDiceTooltips(html);
   
-  // Add damage/healing buttons for manual rolls
-  _addDamageHealingButtons(message, html);
-  
   // Handle automatic fear gain for fear-related rolls
   _handleAutomaticFearGain(message);
 });
@@ -179,87 +176,6 @@ function _styleDiceTooltips(html) {
   });
 }
 
-// Function to add damage/healing buttons to manual roll messages
-function _addDamageHealingButtons(message, html) {
-  const flags = message.flags?.daggerheart;
-  
-  // Only add buttons to manual damage/healing rolls
-  if (!flags?.isManualRoll || !flags?.rollType) return;
-  if (flags.rollType !== 'damage' && flags.rollType !== 'healing') return;
-  
-  // Check for existing buttons to avoid duplicates
-  const existingButtons = html.find(".apply-damage-button, .apply-healing-button").length;
-  if (existingButtons > 0) return;
-  
-  // Get the roll total for the buttons
-  const rollTotal = flags.damageAmount || flags.healingAmount;
-  if (!rollTotal) return;
-  
-  // Find the message content area
-  const messageContent = html.find('.message-content');
-  if (messageContent.length === 0) return;
-  
-  // Create the buttons HTML
-  const sourceActorId = flags.actorId || '';
-  const buttonsHtml = `
-    <div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
-      <button class="apply-damage-button" data-damage="${rollTotal}" data-source-actor-id="${sourceActorId}" style="flex: 1;">
-        <i class="fas fa-sword"></i> Damage (${rollTotal})
-      </button>
-      <button class="apply-healing-button" data-healing="${rollTotal}" data-source-actor-id="${sourceActorId}" style="flex: 1;">
-        <i class="fas fa-heart"></i> Heal (${rollTotal})
-      </button>
-    </div>
-  `;
-  
-  // Append the buttons to the message content
-  messageContent.append(buttonsHtml);
-  
-  // Add click handlers for the buttons
-  html.find(".apply-damage-button").click(async (event) => {
-    event.preventDefault();
-    await _handleDamageApplicationButton(event, "damage");
-  });
-  
-  html.find(".apply-healing-button").click(async (event) => {
-    event.preventDefault();
-    await _handleDamageApplicationButton(event, "healing");
-  });
-}
-
-/**
- * Handle clicks on damage/healing application buttons
- */
-async function _handleDamageApplicationButton(event, type) {
-  const button = event.currentTarget;
-  const amount = parseInt(button.dataset[type]) || 0;
-  const sourceActorId = button.dataset.sourceActorId;
-  
-  if (amount <= 0) {
-    ui.notifications.error("Invalid amount for application.");
-    return;
-  }
-  
-  const sourceActor = sourceActorId ? game.actors.get(sourceActorId) : null;
-  
-  try {
-    let result = { success: false, undoId: null };
-    if (type === "damage") {
-      result = await game.daggerheart.damageApplication.applyDamage(null, amount, sourceActor);
-    } else if (type === "healing") {
-      result = await game.daggerheart.damageApplication.applyHealing(null, amount, sourceActor);
-    }
-    
-    // Note: No longer disabling buttons after use to allow multiple applications
-    if (!result.success) {
-      console.warn(`Failed to apply ${type}`);
-    }
-  } catch (error) {
-    console.error(`Error applying ${type}:`, error);
-    ui.notifications.error(`Error applying ${type}. Check console for details.`);
-  }
-}
-
 // Function to ensure Daggerheart colorsets are available
 export function _ensureDaggerheartColorsets() {
   if (!game.dice3d) return;
@@ -282,8 +198,6 @@ export function _ensureDaggerheartColorsets() {
     game.dice3d.addColorset(_getDefaultModifierColorset());
   }
 }
-
-
 
 // Default colorset definitions
 function _getDefaultHopeColorset() {
@@ -330,8 +244,6 @@ function _getDefaultModifierColorset() {
     font: "Arial",
   };
 }
-
-
 
 export async function _rollHope(options = {}) {
   // Ensure colorsets are available for this roll
