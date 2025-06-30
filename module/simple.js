@@ -6,7 +6,7 @@ import { SimpleWeaponSheet } from "./weapon-sheet.js";
 import { SimpleActorSheet, NPCActorSheet } from "./actor-sheet.js";
 import { CompanionActorSheet } from "./actor-sheet-companion.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
-import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, createSpendHopeMacro, spendStress, spendHope } from "./spending-system.js";
+import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, createClearStressMacro, createSpendHopeMacro, createGainHopeMacro, spendStress, clearStress, spendHope, gainHope } from "./spending-system.js";
 import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
@@ -135,9 +135,13 @@ Hooks.once("init", async function() {
     createSpendFearMacro,
     createGainFearMacro,
     createSpendStressMacro,
+    createClearStressMacro,
     createSpendHopeMacro,
+    createGainHopeMacro,
     spendStress,
+    clearStress,
     spendHope,
+    gainHope,
     SheetTracker,
     EquipmentHandler,
     rollHandler: {
@@ -431,6 +435,16 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.spendStress(actor, amount);
   };
 
+  // Add global clearStress function
+  window.clearStress = async function(actor, amount) {
+    if (!game.daggerheart?.clearStress) {
+      console.error("clearStress function not initialized");
+      ui.notifications.error("clearStress function not available");
+      return false;
+    }
+    return await game.daggerheart.clearStress(actor, amount);
+  };
+
   // Add global spendHope function
   window.spendHope = async function(actor, amount) {
     if (!game.daggerheart?.spendHope) {
@@ -439,6 +453,16 @@ Hooks.once("ready", async function() {
       return false;
     }
     return await game.daggerheart.spendHope(actor, amount);
+  };
+
+  // Add global gainHope function
+  window.gainHope = async function(actor, amount) {
+    if (!game.daggerheart?.gainHope) {
+      console.error("gainHope function not initialized");
+      ui.notifications.error("gainHope function not available");
+      return false;
+    }
+    return await game.daggerheart.gainHope(actor, amount);
   };
   
   // Add test function for fear automation
@@ -795,7 +819,7 @@ Hooks.once("ready", async function() {
   game.daggerheart.cleanupDuplicateMacros = window.cleanupDuplicateMacros;
   
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), spendStress(), spendHope(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), and testFearAutomation() functions are now available globally.");
+  console.log("spendFear(), gainFear(), spendStress(), clearStress(), spendHope(), gainHope(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), and testFearAutomation() functions are now available globally.");
   console.log("🎲 Global Hope/Fear automation is now active for ALL duality rolls!");
   
   // Add test function to game object
@@ -869,7 +893,13 @@ async function _cleanupDuplicateMacros() {
     { name: "Spend Fear", flag: "daggerheart.spendFearMacro" },
     { name: "Spend 1 Fear", flag: "daggerheart.spendFearMacro" },
     { name: "Gain Fear", flag: "daggerheart.gainFearMacro" },
-    { name: "Apply Stress", flag: "daggerheart.spendStressMacro" }
+    { name: "Apply Stress", flag: "daggerheart.spendStressMacro" },
+    { name: "Clear Stress", flag: "daggerheart.clearStressMacro" },
+    { name: "Clear 1 Stress", flag: "daggerheart.clearStressMacro" },
+    { name: "Spend Hope", flag: "daggerheart.spendHopeMacro" },
+    { name: "Spend 1 Hope", flag: "daggerheart.spendHopeMacro" },
+    { name: "Gain Hope", flag: "daggerheart.gainHopeMacro" },
+    { name: "Gain 1 Hope", flag: "daggerheart.gainHopeMacro" }
   ];
   
   let totalCleaned = 0;
