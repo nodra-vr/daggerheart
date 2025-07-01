@@ -531,7 +531,7 @@ export class DaggerheartDialogHelper {
    * @returns {Promise} - Resolves with roll configuration or null
    */
   static async showDualityRollDialog(config = {}) {
-    const { title = "Roll", rollDetails = {} } = config;
+    const { title = "Roll", rollDetails = {}, actor = null } = config;
     
     // Set defaults
     const defaults = {
@@ -543,6 +543,42 @@ export class DaggerheartDialogHelper {
     };
     
     const initialValues = { ...defaults, ...rollDetails };
+    
+    // Build experience list HTML if we have a character actor with experience data
+    let experienceSection = "";
+    if (actor && actor.type === "character" && actor.system?.experience) {
+      const expData = actor.system.experience;
+      // Gather all keys ending with "Mod" (or "Mod#") that are numeric
+      const expEntries = Object.keys(expData)
+        .filter(k => /Mod\d*$/.test(k))
+        .map(k => {
+          const modValue = parseInt(expData[k]) || 0;
+          const nameKey = k.replace('Mod', 'Name');
+          const nameValue = (expData[nameKey] || `Experience`).trim();
+          return { key: k, label: nameValue, mod: modValue };
+        })
+        // Filter out entries with no meaningful label or zero modifier
+        .filter(entry => entry.mod !== 0);
+
+      if (expEntries.length > 0) {
+        experienceSection += `
+        <div class="flex-col" style="gap:0.5rem; width:100%;">
+          <span class="label-bar">Experience</span>
+          <div class="exp-table" style="display:flex;flex-direction:column;gap:0.25rem; width:100%;">`;
+
+        expEntries.forEach((exp, idx) => {
+          const checkedId = `expChk_${idx}`;
+          experienceSection += `
+            <label class="exp-row" style="display:flex;align-items:center;gap:0.5rem;width:100%;">
+              <input type="checkbox" class="exp-checkbox" data-mod="${exp.mod}" id="${checkedId}" />
+              <span class="exp-name" style="flex:1;">${exp.label}</span>
+              <span class="exp-mod" style="min-width:2rem;text-align:right;">${exp.mod >= 0 ? '+' : ''}${exp.mod}</span>
+            </label>`;
+        });
+
+        experienceSection += `</div></div>`;
+      }
+    }
     
     const content = `
     <form>
@@ -591,6 +627,7 @@ export class DaggerheartDialogHelper {
           </div>
         </div>
       </div>
+      ${experienceSection}
     </div>
     </form>
     `;
@@ -606,7 +643,10 @@ export class DaggerheartDialogHelper {
           callback: (html) => {
             const advantage = parseInt(html.find('#dualityDiceAdvantageInput').val()) || 0;
             const disadvantage = parseInt(html.find('#dualityDiceDisadvantageInput').val()) || 0;
-            const modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
+            let modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
+            html.find('.exp-checkbox:checked').each((i, el) => {
+              modifier += parseInt(el.dataset.mod) || 0;
+            });
             const hopeDieSize = html.find('#hopeDieSize').val();
             const fearDieSize = html.find('#fearDieSize').val();
             return { advantage, disadvantage, modifier, hopeDieSize, fearDieSize };
@@ -618,7 +658,10 @@ export class DaggerheartDialogHelper {
           callback: (html) => {
             const advantage = parseInt(html.find('#dualityDiceAdvantageInput').val()) || 0;
             const disadvantage = parseInt(html.find('#dualityDiceDisadvantageInput').val()) || 0;
-            const modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
+            let modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
+            html.find('.exp-checkbox:checked').each((i, el) => {
+              modifier += parseInt(el.dataset.mod) || 0;
+            });
             const hopeDieSize = html.find('#hopeDieSize').val();
             const fearDieSize = html.find('#fearDieSize').val();
             return { advantage, disadvantage, modifier, hopeDieSize, fearDieSize, reaction: true };

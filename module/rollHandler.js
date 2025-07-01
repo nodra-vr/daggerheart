@@ -759,7 +759,8 @@ export async function _dualityWithDialog(config) {
   if (!skipDialog) {
     const dialogChoice = await DaggerheartDialogHelper.showDualityRollDialog({
       title: title || "Roll",
-      rollDetails
+      rollDetails,
+      actor
     });
 
     if (!dialogChoice) { return; }
