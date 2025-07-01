@@ -1,0 +1,13 @@
+<section class="tab biography {{tabs.biography.css}}" data-group="primary" data-tab="biography">
+    {{!-- Tab content here --}}
+    <div class="biography-adversary">
+        {{!-- {{#if editable}} --}}
+        <prose-mirror name="system.biography" button="true" editable="{{editable}}" toggled="false"
+            value="{{system.biography}}">
+            {{{biographyHTML}}}
+        </prose-mirror>
+        {{!-- {{else}}
+        {{{biographyHTML}}}
+        {{/if}} --}}
+    </div>
+</section>

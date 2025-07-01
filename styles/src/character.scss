@@ -71,10 +71,10 @@
 }
 
 .npc .defenses {
-	gap: 2em;
-	margin-bottom: 2em;
-	margin-top: 1em;
-	overflow: hidden;
+  gap: 2em;
+  margin-bottom: 2em;
+  margin-top: 1em;
+  overflow: hidden;
 }
 
 .defense {
@@ -102,11 +102,14 @@
     background-repeat: no-repeat;
   }
 
+  input[name="system.dificulty"],
   input[name="system.defenses.evasion.value"] {
+    background-color: rgba(0, 0, 0, 0);
     background-image: url("icons/Evade BG-2.png");
   }
 
   input[name="system.defenses.armor.value"] {
+    background-color: rgba(0, 0, 0, 0);
     background-image: url("icons/Shield BG-2.png");
   }
 
@@ -385,7 +388,7 @@ input.trait-effects.resize-ta {
     padding: 0px;
     margin: 0px;
     height: fit-content;
-    
+
     &.weapon-field-hidden {
       display: none;
     }
@@ -409,7 +412,7 @@ input.trait-effects.resize-ta {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 100%; 
+    width: 100%;
     margin: auto;
   }
 
@@ -436,7 +439,8 @@ input.trait-effects.resize-ta {
     }
   }
 
-  .weapon-to-hit, .weapon-damage {
+  .weapon-to-hit,
+  .weapon-damage {
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
@@ -485,21 +489,21 @@ input.trait-effects.resize-ta {
       color: white;
       font-size: inherit;
     }
-    
+
     /* Primary weapon styling - blue gradient to match tag */
     &.primary-weapon {
       background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-      
+
       &:hover {
         background: linear-gradient(135deg, #1d4ed8, #60a5fa);
         color: white;
       }
     }
-    
+
     /* Secondary weapon styling - purple gradient to match tag */
     &.secondary-weapon {
       background: linear-gradient(135deg, #8a2be2, #9370db);
-      
+
       &:hover {
         background: linear-gradient(135deg, #9333ea, #a855f7);
         color: white;
@@ -513,7 +517,7 @@ input.trait-effects.resize-ta {
     border-color: #3b82f6;
     box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
   }
-  
+
   /* Secondary weapon field styling */
   .weapon-to-hit.secondary-weapon,
   .weapon-damage.secondary-weapon {
@@ -554,14 +558,14 @@ input.trait-effects.resize-ta {
 }
 
 .weapon-box {
-	color: white;
-	padding: 0;
-	border: 1px solid #433f64;
-	border-radius: 15px;
-	background: none;
-	width: 100%;
-	box-sizing: border-box;
-	min-width: 0;
+  color: white;
+  padding: 0;
+  border: 1px solid #433f64;
+  border-radius: 15px;
+  background: none;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
   display: flex;
 }
 
@@ -716,7 +720,7 @@ input.trait-effects.resize-ta {
 }
 
 .threshold-text {
-	color: #6c6a85;
+  color: #6c6a85;
   font-size: 0.75em;
   text-transform: uppercase;
   opacity: 0.7;
@@ -734,19 +738,19 @@ input.trait-effects.resize-ta {
 }
 
 .threshold-clickable {
-	cursor: pointer;
-	transition: all 0.2s ease;
-	user-select: none;
-	
-	&:hover {
-		color: var(--dh-color-gold-light);
-		opacity: 1;
-		transform: scale(1.1);
-	}
-	
-	&:active {
-		transform: scale(0.95);
-	}
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+
+  &:hover {
+    color: var(--dh-color-gold-light);
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 /* Threshold Group */
@@ -757,7 +761,7 @@ input.trait-effects.resize-ta {
   align-items: center;
   margin-bottom: 1em;
 
-  > label {
+  >label {
     font-size: 12px;
     text-transform: uppercase;
     color: var(--dh-color-off-white);
@@ -779,6 +783,7 @@ input.trait-effects.resize-ta {
   background-size: contain;
   border: none;
   width: 50px;
+  height: 26px;
   font-size: 18px;
   font-weight: 700;
   color: white;

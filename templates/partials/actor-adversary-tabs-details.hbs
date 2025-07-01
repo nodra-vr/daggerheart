@@ -1,0 +1,92 @@
+<section class="tab details {{tabs.details.css}}" data-group="primary" data-tab="details">
+    <div class="details-adversary">
+
+        <div class="npc-defense-section">
+            <div class="defense" data-trait="evasion">
+                <input type="number" name="system.dificulty" value="{{system.dificulty}}" />
+                <label for="system.dificulty">{{localize "DH.Difficulty"}}</label>
+            </div>
+            <div class="threshold-group">
+                <label>{{localize "DH.Threshold"}}</label>
+                <div class="threshold-values">
+                    <span class="threshold-text threshold-clickable" data-action="takeDamage" data-amount="1">{{localize
+                        "DH.Mark1HP"}}</span>
+                    <div class="resource-group">
+                        <input type="number" name="system.threshold.major" value="{{system.threshold.major}}" />
+                        <a class="trait-effects">{{localize "DH.Major"}}</a>
+                    </div>
+                    <span class="threshold-text threshold-clickable" data-action="takeDamage" data-amount="2">{{localize
+                        "DH.Mark2HP"}}</span>
+                    <div class="resource-group">
+                        <input type="number" name="system.threshold.severe" value="{{system.threshold.severe}}" />
+                        <a class="trait-effects">{{localize "DH.Severe"}}</a>
+                    </div>
+                    <span class="threshold-text threshold-clickable" data-action="takeDamage" data-amount="3">{{localize
+                        "DH.Mark3HP"}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="weapon-group">
+            <div class="weapon-row">
+                {{!-- <label class="weapon-label">{{localize "DH.PrimaryAttack"}}</label> --}}
+                <div class="weapon-box click-rollable-group basic-rollable-group">
+                    <button type="button" class="attack-button weapon-attack-button click-rollable"
+                        data-action="rollAction" data-roll-type="primary" title="Roll Attack">
+                        <i class="fas fa-sword"></i>
+                    </button>
+                    <div class="weapon-box-inner">
+                        <div class="weapon-infobox-first">
+                            <input class="weapon-field basic-rollable-name click-rollable-name"
+                                name="system.primary.name" type="text" value="{{system.primary.name}}"
+                                placeholder="{{localize " DH.Attack"}}" />
+                            <div class="flexrow textarea-container">
+                                <input class="trait-effects resize-ta" name="system.primary.range"
+                                    placeholder="{{localize " DH.AttackRangeHere"}}" value="{{system.primary.range}}" />
+                                <input class="trait-effects resize-ta" name="system.primary.description"
+                                    placeholder="{{localize " DH.AttackDescriptionHere"}}"
+                                    value="{{system.primary.description}}" />
+                            </div>
+                        </div>
+                        <div class="weapon-roller-box">
+                            <div class="weapon-infobox">
+                                <input class="weapon-to-hit click-rollable-modifier" name="system.attack.value"
+                                    type="number" value="{{system.attack.value}}" placeholder="2" />
+                                <a class="trait-effects click-rollable" data-action="rollAction"
+                                    data-roll-type="primary">
+                                    {{localize "DH.Modifier"}}
+                                </a>
+                            </div>
+                            <div class="weapon-infobox">
+                                <div class="weapon-damage-display damage-value-display" data-action="setDamageValue"
+                                    data-field="system.weapon-main.damage" data-label="Primary Attack Damage"
+                                    data-has-modifiers="true" data-edit-type="damage">
+                                    {{#if system.primary.damage.value}}
+                                    {{system.primary.damage.value}}
+                                    {{#if system.primary.damage.modifiers}}
+                                    {{#each system.primary.damage.modifiers}}
+                                    {{#if this.enabled}}
+                                    + {{this.value}}
+                                    {{/if}}
+                                    {{/each}}
+                                    {{/if}}
+                                    {{else}}
+                                    {{#if system.primary.damage}}
+                                    {{system.primary.damage}}
+                                    {{else}}
+                                    Missing
+                                    {{/if}}
+                                    {{/if}}
+                                </div>
+                                <a class="trait-effects basic-rollable" data-action="rollDamage"
+                                    data-roll-type="primary">
+                                    {{localize "DH.Damage"}}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

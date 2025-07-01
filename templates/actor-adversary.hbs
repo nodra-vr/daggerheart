@@ -1,0 +1,67 @@
+<section class="flexcol {{cssClass}} {{#if isDying}}dying{{/if}}" style="overflow: visible;">
+    <div class="item-bg" style="background-image: url('{{actor.img}}');"></div>
+    <div class="sheet-header">
+        <div class="header-main-container">
+            <div class="resource health">
+                <div class="resource-content">
+                    <div class="resource-box">
+                        <input type="number" name="system.health.value" value="{{system.health.value}}" min="0"
+                            max="{{system.health.max}}" data-dtype="Number" />
+                        <span>/</span>
+                        <input type="number" name="system.health.max" value="{{system.health.max}}" min="0"
+                            data-dtype="Number" />
+                    </div>
+                </div>
+                <div class="resource-label-controls">
+                    <a class="resource-control" data-action="decrementValue" data-field="health.value"><i
+                            class="fas fa-minus"></i></a>
+                    <label>{{localize "DH.HitPoints"}}</label>
+                    <a class="resource-control" data-action="incrementValue" data-field="health.value"><i
+                            class="fas fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="portrait-container">
+                <div class="portrait-image-wrapper">
+                    <img class="profile-img" src="{{actor.img}}" data-action="editImage" data-field="img"
+                        title="{{data.name}}" />
+                    {{#if isDying}}
+                    <div class="death-overlay" data-action="openDeathMove" title="{{localize " DH.AdversaryDying"}}">
+                        <i class="fas fa-skull"></i>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="resource stress">
+                <div class="resource-content">
+                    <div class="resource-box">
+                        <input type="number" name="system.stress.value" value="{{system.stress.value}}" min="0"
+                            max="{{system.stress.max}}" data-dtype="Number" />
+                        <span>/</span>
+                        <input type="number" name="system.stress.max" value="{{system.stress.max}}" min="0"
+                            data-dtype="Number" />
+                    </div>
+                </div>
+                <div class="resource-label-controls">
+                    <a class="resource-control" data-action="decrementValue" data-field="stress.value">
+                        <i class="fas fa-minus"></i>
+                    </a>
+                    <label>{{localize "DH.Stress"}}</label>
+                    <a class="resource-control" data-action="incrementValue" data-field="stress.value">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="header-bottom-container">
+            <h1 class="charname">
+                <input type="text" name="name" value="{{actor.name}}" placeholder="{{localize " DH.Name"}}" />
+            </h1>
+            <div class="header-domain">
+                <input type="text" name="system.tier" value="{{system.tier}}" placeholder="{{localize "
+                    DH.Adversary.Tier"}}" style="font-size: 1em;" />
+                <input type="text" name="system.type" value="{{system.type}}" placeholder="{{localize "
+                    DH.Adversary.Type"}}" style="font-size: 1em;" />
+            </div>
+        </div>
+    </div>
+</section>

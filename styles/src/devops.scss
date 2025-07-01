@@ -1,0 +1,50 @@
+/* Development Only Styles */
+/* Should be empty on master */
+
+/* Test Styles For Applicaiton v2 */
+
+.tab {
+    height: 100%;
+}
+
+.details-adversary,
+.biography-adversary {
+    height: 100%;
+    padding: 0.5em 0 1em 0;
+}
+
+.biography .prosemirror button.toggle,
+prose-mirror button.toggle {
+    top: 10px;
+    right: 10px;
+}
+
+.details .weapon-group {
+    padding: 1rem 0;
+    margin: auto;
+    max-width: 420px;
+}
+
+.details .weapon-field {
+    height: 14px;
+    border: none;
+}
+
+.details .weapon-to-hit {
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.npc-defense-section {
+    padding: 1rem 0;
+    margin: auto;
+    width: 420px;
+    justify-content: space-around;
+}
+
+.details .defense input:focus,
+.details .threshold-values input:focus {
+    outline: none;
+    box-shadow: rgba(0, 0, 0, 0);
+    border-color: rgba(0, 0, 0, 0);
+}

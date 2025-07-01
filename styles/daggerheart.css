@@ -2878,6 +2878,10 @@ body.game .app button:hover, body.game .app button:focus {
   gap: 0.5em;
 }
 
+.charname {
+  margin: 0;
+}
+
 .charname input {
   text-transform: uppercase;
   font-size: 2em;
@@ -2915,7 +2919,7 @@ body.game .app button:hover, body.game .app button:focus {
   text-transform: uppercase;
   padding: 0px;
   margin: 0px;
-  height: auto;
+  height: 1rem;
   background: transparent;
 }
 
@@ -3105,10 +3109,13 @@ body.game .app button:hover, body.game .app button:focus {
   background-position: center;
   background-repeat: no-repeat;
 }
+.defense input[name="system.dificulty"],
 .defense input[name="system.defenses.evasion.value"] {
+  background-color: rgba(0, 0, 0, 0);
   background-image: url("icons/Evade BG-2.png");
 }
 .defense input[name="system.defenses.armor.value"] {
+  background-color: rgba(0, 0, 0, 0);
   background-image: url("icons/Shield BG-2.png");
 }
 .defense label {
@@ -3432,6 +3439,9 @@ input.trait-effects.resize-ta {
 .weapon-row .weapon-to-hit {
   width: 35px !important;
 }
+.weapon-row .attack-button {
+  height: var(--form-field-height);
+}
 .weapon-row .weapon-attack-button {
   background: var(--dh-color-gold);
   border: none;
@@ -3733,10 +3743,16 @@ input.trait-effects.resize-ta {
   background-size: contain;
   border: none;
   width: 50px;
+  height: 26px;
   font-size: 18px;
   font-weight: 700;
   color: white;
   text-align: center;
+}
+
+.threshold-group input:focus[name="system.threshold.major"],
+.threshold-group input:focus[name="system.threshold.severe"] {
+  border: none;
 }
 
 .threshold-group .trait-effects {
@@ -8599,6 +8615,10 @@ button.weapon-locked:hover {
   gap: 0.5em;
 }
 
+.charname {
+  margin: 0;
+}
+
 .charname input {
   text-transform: uppercase;
   font-size: 2em;
@@ -8636,7 +8656,7 @@ button.weapon-locked:hover {
   text-transform: uppercase;
   padding: 0px;
   margin: 0px;
-  height: auto;
+  height: 1rem;
   background: transparent;
 }
 
@@ -8830,10 +8850,13 @@ button.weapon-locked:hover {
   background-position: center;
   background-repeat: no-repeat;
 }
+.defense input[name="system.dificulty"],
 .defense input[name="system.defenses.evasion.value"] {
+  background-color: rgba(0, 0, 0, 0);
   background-image: url("icons/Evade BG-2.png");
 }
 .defense input[name="system.defenses.armor.value"] {
+  background-color: rgba(0, 0, 0, 0);
   background-image: url("icons/Shield BG-2.png");
 }
 .defense label {
@@ -11873,4 +11896,50 @@ body.game .app a.content-link i,
 /* Dark mode compatibility */
 .daggerheart .sheet-tracker-sidebar {
   /* Additional theme-specific styles can go here */
+}
+
+/* Test Code Applicaiton v2 */
+
+.tab {
+  height: 100%;
+}
+.details-adversary,
+.biography-adversary {
+  height: 100%;
+  padding: 0.5em 0 1em 0;
+}
+
+.biography .prosemirror button.toggle, prose-mirror button.toggle {
+    top: 10px;
+    right: 10px;
+}
+
+.details .weapon-group {
+  padding: 1rem 0;
+  margin: auto;
+  max-width: 420px;
+}
+
+.details .weapon-field {
+  height: 14px;
+  border: none;
+}
+
+.details .weapon-to-hit {
+  height: 30px;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.npc-defense-section {
+  padding: 1rem 0;
+  margin: auto;
+  width: 420px;
+  justify-content: space-around;
+}
+
+.details .defense input:focus,
+.details .threshold-values input:focus {
+  outline: none;
+  box-shadow: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0);
 }
