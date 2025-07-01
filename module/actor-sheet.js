@@ -4,6 +4,7 @@ import { DaggerheartDialogHelper } from "./dialog-helper.js";
 import { SheetTracker } from "./sheet-tracker.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
 import { DomainAbilitySidebar } from "./domain-ability-sidebar.js";
+import { HeaderLoadoutBar } from "./header-loadout-bar.js";
 
 /**
 * Extend the basic ActorSheet with some very simple modifications
@@ -80,6 +81,9 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   
   /** @inheritdoc */
   async getData(options) {
+    // Always fetch UI state first so the template and later listeners know it
+    await this._loadUiState();
+
     const context = await super.getData(options);
     EntitySheetHelper.getAttributeData(context.data);
     context.shorthand = !!game.settings.get("daggerheart", "macroShorthand");
@@ -146,6 +150,12 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     const imageLink = context.data.img;
     context.imageStyle = `background: url(${imageLink});`;
     
+    // Expose UI-state flags to the template (future-proofing, avoids flicker)
+    context.uiState = {
+      vaultOpen : this._vaultOpen,
+      categoryStates: this._categoryStates
+    };
+    
     // Check if character is dying/dead (hit points maxed out)
     const health = context.systemData.health;
     context.isDying = health && health.value === health.max && health.max > 0;
@@ -172,11 +182,17 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     }
     this.domainAbilitySidebar.initialize();
     
+    // Initialize Header Loadout Bar
+    if (!this.headerLoadoutBar) {
+      this.headerLoadoutBar = new HeaderLoadoutBar(this);
+    }
+    this.headerLoadoutBar.initialize();
+    
     // Disable all transitions during initialization to prevent unwanted animations
     this._disableTransitions();
 
-    // Load and restore persistent vault state
-    await this._loadVaultState();
+    // Load UI (vault + category) state
+    await this._loadUiState();
 
     const vaultList = html.find('.item-list[data-location="vault"]');
     const icon = html.find('.vault-toggle i');
@@ -188,26 +204,6 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       vaultList.addClass('vault-collapsed');
       icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
     }
-
-    // Load and restore persistent category states
-    await this._loadCategoryStates();
-
-    const categories = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack'];
-    categories.forEach(category => {
-      const categoryList = html.find(`.item-list[data-location="${this._getCategoryDataType(category)}"]`);
-      const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
-      const categoryHeader = html.find(`.category-toggle[data-category="${category}"]`).closest('.tab-category');
-
-      if (this._categoryStates[category]) {
-        categoryList.removeClass('category-collapsed');
-        categoryHeader.removeClass('section-collapsed');
-        categoryIcon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-      } else {
-        categoryList.addClass('category-collapsed');
-        categoryHeader.addClass('section-collapsed');
-        categoryIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-      }
-    });
 
     // Initialize dynamic spacing for all categories (without transitions)
     this._updateDynamicSpacing(false);
@@ -664,17 +660,32 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       return; // Done, don't proceed to open edit sheet
     }
     
-    const type = button.dataset.type; // Ensure type is read for create actions
-    const location = button.dataset.location; // Get location for new items
+    // Unified create actions (create, create-item, create-class, etc.)
+    const type = button.dataset.type;
+    const location = button.dataset.location;
+    if (action && action.startsWith('create')) {
+      const ItemCls = getDocumentClass('Item');
+
+      const defaultNames = {
+        'class': 'New Class',
+        'subclass': 'New Subclass',
+        'ancestry': 'New Ancestry',
+        'community': 'New Community',
+        'domain': 'New Domain',
+        'item': 'New Item',
+        'weapon': 'New Weapon'
+      };
+      const itemName = defaultNames[type] || 'New Item';
+
+      // Choose sensible default location if none provided
+      const fallbackLoc = ['item','weapon'].includes(type) ? 'backpack' : (type || 'abilities');
+      const loc = location || fallbackLoc;
+
+      await ItemCls.create({ name: itemName, type, system: { location: loc } }, { parent: this.actor });
+      return;
+    }
     
     switch (action) {
-      case "create":
-      const clsi = getDocumentClass("Item");
-      return clsi.create({
-        name: "New Ability", 
-        type: type,
-        system: { location: location || "abilities" }
-      }, {parent: this.actor});
       case "create-item":
       const cls = getDocumentClass("Item");
       return cls.create({
@@ -721,10 +732,28 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         if (item) return item.sheet.render(true);
         break;
       case "delete":
-        if (item) return item.delete();
+        if (item) {
+          const confirmed = await Dialog.confirm({
+            title: "Delete Item",
+            content: `<p>Are you sure you want to delete <strong>${item.name}</strong>? This cannot be undone.</p>`,
+            yes: () => true,
+            no: () => false,
+            defaultYes: false
+          });
+          if (!confirmed) return;
+          return item.delete();
+        }
         break;
       case "send-to-vault":
         if (item) {
+          const confirmed = await Dialog.confirm({
+            title: "Move to Vault",
+            content: `<p>Are you sure you want to move <strong>${item.name}</strong> to the vault?</p>`,
+            yes: () => true,
+            no: () => false,
+            defaultYes: false
+          });
+          if (!confirmed) return;
           // Simply change location to vault - preserve item type and all other data
           return item.update({
             "system.location": "vault"
@@ -2301,8 +2330,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         this._vaultOpen = false;
     }
 
-    // Save the updated vault state persistently
-    await this._saveVaultState();
+    // Persist UI state
+    await this._saveUiState();
   }
 
   async _onToggleCategory(event) {
@@ -2342,8 +2371,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         this._updateDynamicSpacing(true);
     }
 
-    // Save the updated state persistently
-    await this._saveCategoryStates();
+    // Persist UI state
+    await this._saveUiState();
   }
 
   /**
@@ -2352,107 +2381,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
    * @private
    */
   _updateDynamicSpacing(enableTransitions = true) {
-    const allCategoryHeaders = this.element.find('.tab-category');
-    const sheetElement = this.element;
-
-    // Control transitions based on the parameter
-    if (enableTransitions) {
-      sheetElement.addClass('transitions-enabled');
-    } else {
-      sheetElement.removeClass('transitions-enabled');
-    }
-
-    allCategoryHeaders.each((index, header) => {
-      const $header = $(header);
-      const isCollapsed = $header.hasClass('section-collapsed');
-
-      if (isCollapsed) {
-        // Apply minimal spacing for collapsed sections
-        $header.addClass('dynamic-collapsed');
-        $header.removeClass('dynamic-expanded');
-      } else {
-        // Apply normal spacing for expanded sections
-        $header.addClass('dynamic-expanded');
-        $header.removeClass('dynamic-collapsed');
-      }
-    });
-
-    // If transitions were disabled for initialization, re-enable them after a brief delay
-    // to allow for future user interactions
-    if (!enableTransitions) {
-      setTimeout(() => {
-        if (this.element) {
-          this.element.addClass('transitions-enabled');
-        }
-      }, 100);
-    }
-  }
-
-  /**
-   * Load persistent category states from actor flags
-   * @private
-   */
-  async _loadCategoryStates() {
-    if (!this.actor) return;
-
-    // Get saved states from actor flags
-    const savedStates = this.actor.getFlag('daggerheart', 'categoryStates') || {};
-
-    // Initialize _categoryStates with saved values or defaults
-    this._categoryStates = {
-      'class': savedStates.class ?? false,
-      'subclass': savedStates.subclass ?? false,
-      'ancestry': savedStates.ancestry ?? false,
-      'community': savedStates.community ?? false,
-      'abilities': savedStates.abilities ?? false,
-      'worn': savedStates.worn ?? false,
-      'backpack': savedStates.backpack ?? false
-    };
-
-    console.log(`Loaded category states for ${this.actor.name}:`, this._categoryStates);
-  }
-
-  /**
-   * Save persistent category states to actor flags
-   * @private
-   */
-  async _saveCategoryStates() {
-    if (!this.actor || !this._categoryStates) return;
-
-    try {
-      await this.actor.setFlag('daggerheart', 'categoryStates', this._categoryStates);
-      console.log(`Saved category states for ${this.actor.name}:`, this._categoryStates);
-    } catch (error) {
-      console.error('Failed to save category states:', error);
-    }
-  }
-
-  /**
-   * Load persistent vault state from actor flags
-   * @private
-   */
-  async _loadVaultState() {
-    if (!this.actor) return;
-
-    // Get saved vault state from actor flags, default to false (collapsed)
-    this._vaultOpen = this.actor.getFlag('daggerheart', 'vaultOpen') ?? false;
-
-    console.log(`Loaded vault state for ${this.actor.name}:`, this._vaultOpen);
-  }
-
-  /**
-   * Save persistent vault state to actor flags
-   * @private
-   */
-  async _saveVaultState() {
-    if (!this.actor) return;
-
-    try {
-      await this.actor.setFlag('daggerheart', 'vaultOpen', this._vaultOpen);
-      console.log(`Saved vault state for ${this.actor.name}:`, this._vaultOpen);
-    } catch (error) {
-      console.error('Failed to save vault state:', error);
-    }
+    // Dynamic spacing logic removed for performance – handled purely in CSS now.
+    return; // no-op
   }
 
   /**
@@ -2808,6 +2738,41 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     return null;
   }
 
+  /* ------------------------------------------------------------------------- */
+  /* Unified UI (vault + category collapse) state helpers                       */
+  /* ------------------------------------------------------------------------- */
+
+  async _loadUiState() {
+    if (!this.actor) return;
+    const uiState = this.actor.getFlag('daggerheart', 'uiState') || {};
+
+    // Vault open flag
+    this._vaultOpen = uiState.vaultOpen ?? false;
+
+    // Category collapse flags
+    const keys = ['class','subclass','ancestry','community','abilities','worn','backpack'];
+    const defaults = Object.fromEntries(keys.map(k => [k, false]));
+    this._categoryStates = Object.assign(defaults, uiState.categoryStates || {});
+  }
+
+  async _saveUiState() {
+    if (!this.actor) return;
+    const data = {
+      vaultOpen: this._vaultOpen ?? false,
+      categoryStates: this._categoryStates ?? {}
+    };
+    try {
+      await this.actor.setFlag('daggerheart', 'uiState', data);
+    } catch(e) {
+      console.error('Failed to save UI state', e);
+    }
+  }
+
+  // Back-compat wrappers so legacy calls still work -------------------------
+  async _loadCategoryStates() { return this._loadUiState(); }
+  async _saveCategoryStates() { return this._saveUiState(); }
+  async _loadVaultState()     { return this._loadUiState(); }
+  async _saveVaultState()     { return this._saveUiState(); }
 }
 
 
@@ -2855,6 +2820,9 @@ export class NPCActorSheet extends SimpleActorSheet {
   
   /** @inheritdoc */
   async getData(options) {
+    // Always fetch UI state first so the template and later listeners know it
+    await this._loadUiState();
+
     const context = await super.getData(options);
     EntitySheetHelper.getAttributeData(context.data);
     context.shorthand = !!game.settings.get("daggerheart", "macroShorthand");
@@ -2909,6 +2877,12 @@ export class NPCActorSheet extends SimpleActorSheet {
     
     const imageLink = context.data.img;
     context.imageStyle = `background: url(${imageLink});`;
+    
+    // Expose UI-state flags to the template (future-proofing, avoids flicker)
+    context.uiState = {
+      vaultOpen : this._vaultOpen,
+      categoryStates: this._categoryStates
+    };
     
     // Check if NPC is dying/dead (hit points maxed out)
     const health = context.systemData.health;
@@ -2983,6 +2957,23 @@ export class NPCActorSheet extends SimpleActorSheet {
       textarea.css("height", calcHeight(textarea.val()) + "px");
     });
     
+    // Reflect saved collapsed/expanded state for each inventory/load-out category
+    const categories = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack'];
+    categories.forEach(category => {
+      const categoryList = html.find(`.item-list[data-location="${this._getCategoryDataType(category)}"]`);
+      const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
+      const categoryHeader = html.find(`.category-toggle[data-category="${category}"]`).closest('.tab-category');
+
+      if (this._categoryStates?.[category]) {
+        categoryList.removeClass('category-collapsed');
+        categoryHeader.removeClass('section-collapsed');
+        categoryIcon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      } else {
+        categoryList.addClass('category-collapsed');
+        categoryHeader.addClass('section-collapsed');
+        categoryIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+      }
+    });
   }
   
   /* -------------------------------------------- */
@@ -3040,7 +3031,17 @@ export class NPCActorSheet extends SimpleActorSheet {
         if (item) return item.sheet.render(true);
         break;
       case "delete":
-        if (item) return item.delete();
+        if (item) {
+          const confirmed = await Dialog.confirm({
+            title: "Delete Item",
+            content: `<p>Are you sure you want to delete <strong>${item.name}</strong>? This cannot be undone.</p>`,
+            yes: () => true,
+            no: () => false,
+            defaultYes: false
+          });
+          if (!confirmed) return;
+          return item.delete();
+        }
         break;
     }
   }

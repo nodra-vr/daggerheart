@@ -1,8 +1,3 @@
-// DomainAbilitySidebar: Adds a left-side icon bar displaying an actor's Domain Ability items
-// This is intentionally simple at first – it duplicates the existing list of items that appear
-// in the Loadout > Domain Abilities section, but presents them as icon-only buttons docked to
-// the left side of the sheet (mirroring the Sheet Tracker which sits on the right).
-
 export class DomainAbilitySidebar {
   constructor(actorSheet) {
     this.actorSheet = actorSheet;
@@ -10,6 +5,9 @@ export class DomainAbilitySidebar {
     this.sidebarElement = null;
     this.previewTimeout = null;
     this.previewElement = null;
+    // Track whether the preview is currently pinned via middle-click
+    this.previewPinned = false;
+    this.pinnedItemId = null;
   }
 
   /** Re-creates the sidebar every time the sheet renders */
@@ -45,8 +43,18 @@ export class DomainAbilitySidebar {
   _getDomainAbilityItems() {
     return this.actor.items.filter((item) => {
       const loc = item.system?.location;
-      const isAbilityLocation = loc === 'abilities' || loc === undefined || loc === null;
-      const isDomainType = item.type === 'domain' || item.type === 'item';
+      // Accept several legacy or current location strings that indicate this
+      // item is meant for the domain-ability bar.
+      const isAbilityLocation =
+        loc === 'abilities' ||
+        loc === 'domain' || // legacy value on some actors
+        loc === undefined ||
+        loc === null;
+
+      // Many existing worlds stored domain abilities under different item types.
+      // Accept anything flagged "domain" or the generic "item" type.
+      const isDomainType = item.type === 'domain' || item.type === 'item' || item.type === 'ability';
+
       return isAbilityLocation && isDomainType;
     });
   }
@@ -104,12 +112,28 @@ export class DomainAbilitySidebar {
           break;
         case 'delete':
           if (item) {
+            const confirmed = await Dialog.confirm({
+              title: 'Delete Ability',
+              content: `<p>Are you sure you want to delete <strong>${item.name}</strong> from the sheet? This cannot be undone.</p>`,
+              yes: () => true,
+              no: () => false,
+              defaultYes: false
+            });
+            if (!confirmed) break;
             await item.delete();
             this.render();
           }
           break;
         case 'send-to-vault':
           if (item) {
+            const confirmed = await Dialog.confirm({
+              title: 'Move to Vault',
+              content: `<p>Are you sure you want to move <strong>${item.name}</strong> to the vault?</p>`,
+              yes: () => true,
+              no: () => false,
+              defaultYes: false
+            });
+            if (!confirmed) break;
             await item.update({ 'system.location': 'vault' });
             this.render();
           }
@@ -155,6 +179,11 @@ export class DomainAbilitySidebar {
     // Hover preview (350 ms delay)
     this.sidebarElement.on('mouseenter', '.domain-ability-button', (ev) => {
       const buttonEl = ev.currentTarget;
+      const hoveredItemId = $(buttonEl).data('item-id');
+      // If another preview is pinned and this is a different item, unpin it first
+      if (this.previewPinned && hoveredItemId !== this.pinnedItemId) {
+        this._unpinPreview();
+      }
       // Prevent multiple timers
       clearTimeout(this.previewTimeout);
       this.previewTimeout = setTimeout(() => {
@@ -164,7 +193,30 @@ export class DomainAbilitySidebar {
 
     this.sidebarElement.on('mouseleave', '.domain-ability-button', () => {
       clearTimeout(this.previewTimeout);
-      this._hidePreview();
+      // Only hide if the preview has not been pinned by middle-click
+      if (!this.previewPinned) this._hidePreview();
+    });
+
+    // Middle-click to pin/unpin the preview for interaction
+    this.sidebarElement.on('mousedown', '.domain-ability-button', (ev) => {
+      // 2 => middle button for jQuery "which"
+      if (ev.which !== 2) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      const buttonEl = ev.currentTarget;
+      // Toggle pin state
+      if (this.previewPinned) {
+        this._unpinPreview();
+      } else {
+        // If preview not already visible for this item, show it immediately before pinning
+        const itemId = $(buttonEl).data('item-id');
+        if (!this.previewElement || !this.previewElement.hasClass('show') || this.pinnedItemId !== itemId) {
+          clearTimeout(this.previewTimeout);
+          this._showPreview(buttonEl);
+        }
+        this._pinPreview();
+      }
     });
 
     // Drag & Drop handlers for adding abilities
@@ -204,14 +256,18 @@ export class DomainAbilitySidebar {
         </div>
       </div>`;
 
+    const hintHtml = `<div class="preview-hint"><i class="fas fa-mouse"></i> Middle-click to pin</div>`;
+    const fullHtml = cardHtml + hintHtml;
+
     // If preview element exists update, else create
     if (!this.previewElement) {
       this.previewElement = $('<div class="domain-ability-preview"></div>').appendTo('body');
     }
-    this.previewElement.html(cardHtml);
+    this.previewElement.html(fullHtml);
 
     // Position: to the right of sidebar button (or at cursor)
     const rect = buttonEl.getBoundingClientRect();
+    this._anchorRect = rect;
     const previewRect = this.previewElement[0].getBoundingClientRect();
     let left = rect.right + 12;
     let top = rect.top + (rect.height/2) - (previewRect.height/2);
@@ -222,12 +278,55 @@ export class DomainAbilitySidebar {
     if (top + previewRect.height > window.innerHeight - 10) top = window.innerHeight - previewRect.height - 10;
 
     this.previewElement.css({ left: left + 'px', top: top + 'px' }).addClass('show');
+
+    // Store item id on container for later reference
+    this.previewElement.attr('data-item-id', item.id);
   }
 
   _hidePreview() {
     if (this.previewElement) {
-      this.previewElement.removeClass('show');
+      this.previewElement.removeClass('show pinned');
+      this.previewElement.css('pointer-events', 'none');
     }
+  }
+
+  /** Mark the currently displayed preview as pinned and set up outside-click to dismiss */
+  _pinPreview() {
+    if (!this.previewElement) return;
+    this.previewPinned = true;
+    this.pinnedItemId = this.previewElement.attr('data-item-id');
+    this.previewElement.addClass('pinned');
+    this.previewElement.css('pointer-events', 'auto');
+
+    // Update hint to "unpin"
+    this.previewElement.find('.preview-hint').html('<i class="fas fa-mouse"></i> Middle-click to unpin');
+
+    // Adjust position so the preview doesn't visibly jump when size changes (e.g., hint text)
+    const oldRect = this.previewElement[0].getBoundingClientRect();
+    // Force reflow to get updated size after hint text change
+    const newRect = this.previewElement[0].getBoundingClientRect();
+    const dx = (newRect.width - oldRect.width) / 2;
+    const dy = (newRect.height - oldRect.height) / 2;
+    const newLeft = parseFloat(this.previewElement.css('left')) - dx;
+    const newTop = parseFloat(this.previewElement.css('top')) - dy;
+    this.previewElement.css({ left: `${newLeft}px`, top: `${newTop}px` });
+
+    // Clicking anywhere outside the preview will unpin it
+    const offHandler = (ev) => {
+      if ($(ev.target).closest('.domain-ability-preview').length) return;
+      this._unpinPreview();
+    };
+    // Namespace the handler so we can reliably remove it
+    $(document).on('mousedown.domainPreview', offHandler);
+  }
+
+  _unpinPreview() {
+    this.previewPinned = false;
+    this.pinnedItemId = null;
+    // Remove outside-click handler
+    $(document).off('mousedown.domainPreview');
+    // Hide the preview now that it is no longer pinned
+    this._hidePreview();
   }
 
   /** Handle item drops to add new domain ability */
@@ -249,7 +348,7 @@ export class DomainAbilitySidebar {
     if (this.actor.items.has(item.id)) {
       const existing = this.actor.items.get(item.id);
       // Update location to abilities if not already
-      await existing.update({ 'system.location': 'abilities' });
+      await existing.update({ 'system.location': 'domain' });
       this.render();
       return true;
     }
@@ -257,7 +356,9 @@ export class DomainAbilitySidebar {
     // Otherwise create a copy on the actor with location abilities
     const newItemData = duplicate(item.toObject());
     newItemData.system = newItemData.system || {};
-    newItemData.system.location = 'abilities';
+    // Normalise to the canonical location string for the sidebar. Use "domain" to
+    // maintain backwards-compatibility with actors created before this feature.
+    newItemData.system.location = 'domain';
 
     await this.actor.createEmbeddedDocuments('Item', [newItemData]);
     this.render();

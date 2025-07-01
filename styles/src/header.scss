@@ -96,7 +96,7 @@
   top: 0;
   left: 0;
   width: 200px;
-  height: 200px;
+  height: auto;
   border-radius: 50%;
   object-fit: cover;
   -webkit-object-fit: cover;
@@ -193,12 +193,20 @@
   }
 }
 
+.actor {
+  .charname {
+    input {
+      text-align: left;
+    }
+  }
+}
+
 .header-domain {
   display: flex;
   gap: 2em;
   justify-content: center;
   margin-top: 0.5em;
-  width: 80%;
+  width: 100%;
 
   input {
     font-size: 1rem;
@@ -213,6 +221,16 @@
     margin: 0px;
     height: auto;
     background: transparent;
+  }
+}
+
+.actor {
+  .header-domain {
+    justify-content: flex-start;
+
+    input {
+      text-align: left;
+    }
   }
 }
 

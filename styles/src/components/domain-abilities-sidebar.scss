@@ -91,7 +91,8 @@
 
 .domain-ability-preview {
   position: fixed;
-  z-index: 120;
+  /* very high z-index so it never appears behind other sheet or HUD elements */
+  z-index: 4000;
   pointer-events: none;
   opacity: 0;
   transform: scale(0.95);
@@ -101,6 +102,11 @@
 .domain-ability-preview.show {
   opacity: 1;
   transform: scale(1);
+}
+
+/* When pinned via middle-click, make the preview interactive */
+.domain-ability-preview.pinned {
+  pointer-events: auto;
 }
 
 /* Ensure preview card has a maximum width */
@@ -130,4 +136,21 @@
 .domain-abilities-sidebar.drag-over .domain-ability-slot.empty {
   opacity: 0.6;
   border-style: solid;
+}
+
+.preview-hint {
+  margin: 4px 6px 6px;
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--dh-color-gold, #f3c267);
+  text-align: center;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.preview-hint i {
+  font-size: 0.7rem;
 } 

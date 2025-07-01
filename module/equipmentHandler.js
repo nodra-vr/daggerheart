@@ -64,6 +64,13 @@ export class EquipmentHandler {
     return this._equip(actor, weapon, "secondary");
   }
   
+  // slot keys
+  static MAIN = "weapon-main"; // main
+  static OFF  = "weapon-off";  // off
+  
+  // helper – quick deep compare using JSON (good enough for our small structures)
+  static _same(a,b){return JSON.stringify(a)===JSON.stringify(b);} // compare
+  
   /**
    * Shared implementation used by both slot handlers.
    * Handles the two-weapon limit and slot transitions.
@@ -98,18 +105,21 @@ export class EquipmentHandler {
       }
 
       // Unequip whatever is currently occupying the slot
+      const itemUpdates = [];
       if (currentSlotWeapon) {
-        await currentSlotWeapon.update({ "system.equipped": false, "system.weaponSlot": null });
+        itemUpdates.push({ _id: currentSlotWeapon.id, "system.equipped": false, "system.weaponSlot": null });
       }
 
       // If the weapon is equipped in the opposite slot just change the slot property;
       // otherwise equip it fresh.
       if (isCurrentlyEquipped) {
-        await weapon.update({ "system.weaponSlot": slot });
+        itemUpdates.push({ _id: weapon.id, "system.weaponSlot": slot });
       } else {
-        await weapon.update({ "system.equipped": true, "system.weaponSlot": slot });
+        itemUpdates.push({ _id: weapon.id, "system.equipped": true, "system.weaponSlot": slot });
       }
 
+      // batch
+      if(itemUpdates.length) await actor.updateEmbeddedDocuments("Item", itemUpdates);
       await this.updateWeaponSlots(actor);
       ui.notifications.info(`${weapon.name} equipped as ${slot} weapon`);
       return true;
@@ -255,7 +265,7 @@ export class EquipmentHandler {
    */
   static getDynamicWeaponData(actor, slot) {
     const weapon = slot === "primary" ? this.getPrimaryWeapon(actor) : this.getSecondaryWeapon(actor);
-    const slotKey = slot === "primary" ? "weapon-main" : "weapon-off";
+    const slotKey = slot === "primary" ? this.MAIN : this.OFF;
     
     if (!weapon) {
       // No weapon equipped - return default structure with character modifiers preserved
@@ -310,30 +320,18 @@ export class EquipmentHandler {
    * @static
    */
   static _calculateTotal(baseValue, modifiers) {
-    if (!modifiers || modifiers.length === 0) {
-      return baseValue;
-    }
-
-    const enabledModifiers = modifiers.filter(mod => mod.enabled !== false);
-    if (enabledModifiers.length === 0) {
-      return baseValue;
-    }
+    if (!modifiers || modifiers.length === 0) return baseValue; // no mods
+    const enabled = modifiers.filter(m=>m.enabled!==false);
+    if (!enabled.length) return baseValue;
 
     if (typeof baseValue === 'number') {
-      // Numeric base - add modifiers numerically
-      const modifierTotal = enabledModifiers.reduce((total, mod) => {
-        const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
-        return total + modValue;
-      }, 0);
-      return baseValue + modifierTotal;
-    } else {
-      // String base (damage formula) - concatenate modifiers
-      const modifierStrings = enabledModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
-      if (modifierStrings.length > 0) {
-        return `${baseValue} + ${modifierStrings.join(' + ')}`;
-      }
-      return baseValue;
+      const modSum = enabled.reduce((t,m)=>t+(parseInt(m.value||m.modifier||m)||0),0);
+      return baseValue + modSum;
     }
+
+    // stringify mods – strip leading +/- then join once
+    const parts = enabled.map(m=>`${m.value||m.name||m}`.trim()).filter(Boolean).map(v=>v.replace(/^([+\-])?/,'+$1'==='+$1'?v.slice(1):v));
+    return parts.length ? `${baseValue} + ${parts.join(' + ')}` : baseValue;
   }
   
   /**
@@ -344,18 +342,14 @@ export class EquipmentHandler {
    * @static
    */
   static async updateWeaponSlots(actor) {
-    // console.log("Daggerheart | Updating weapon slots for:", actor.name);
+    const primary = this.getDynamicWeaponData(actor, "primary");
+    const secondary = this.getDynamicWeaponData(actor, "secondary");
 
-    const primaryData = this.getDynamicWeaponData(actor, "primary");
-    const secondaryData = this.getDynamicWeaponData(actor, "secondary");
+    const curP = actor.system?.[this.MAIN];
+    const curS = actor.system?.[this.OFF];
+    if(this._same(primary,curP) && this._same(secondary,curS)) return; // no change
 
-    const updateData = {
-      "system.weapon-main": primaryData,
-      "system.weapon-off": secondaryData
-    };
-
-    // console.log("Daggerheart | Weapon slot updates:", updateData);
-    await actor.update(updateData);
+    await actor.update({[`system.${this.MAIN}`]:primary,[`system.${this.OFF}`]:secondary});
   }
   
   // ---------------------------------------------
