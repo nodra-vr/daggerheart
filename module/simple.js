@@ -168,7 +168,6 @@ Hooks.once("init", async function() {
       debugUndoData: debugUndoData
     },
     getTierOfPlay: _getTierOfPlay,
-    EquipmentHandler: EquipmentHandler,
     EntitySheetHelper: EntitySheetHelper
   };
 
@@ -310,7 +309,7 @@ Hooks.on("updateActor", (actor, data, options, userId) => {
     data.system["weapon-main"] || 
     data.system["weapon-off"]
   )) {
-    console.log("Daggerheart | Weapon data updated, refreshing sheets for actor:", actor.name);
+    // console.debug("Daggerheart | Weapon data updated, refreshing sheets for actor:", actor.name);
     
     // Force refresh all open sheets for this actor
     Object.values(actor.apps).forEach(app => {
@@ -318,7 +317,7 @@ Hooks.on("updateActor", (actor, data, options, userId) => {
         try {
           app.render(true);
         } catch (error) {
-          console.warn("Daggerheart | Failed to refresh sheet:", error);
+          // console.warn("Daggerheart | Failed to refresh sheet:", error);
         }
       }
     });
@@ -347,11 +346,11 @@ Hooks.on("updateItem", async (item, data, options, userId) => {
   );
   
   if (data.system?.equipped !== undefined) {
-    console.log("Daggerheart | Weapon equipped state changed:", item.name, "equipped:", data.system.equipped);
+    // console.log("Daggerheart | Weapon equipped state changed:", item.name, "equipped:", data.system.equipped);
   }
   
   if (hasDataChanges && isEquipped) {
-    console.log("Daggerheart | Equipped weapon data changed:", item.name, "changes:", Object.keys(data.system || {}));
+    // console.log("Daggerheart | Equipped weapon data changed:", item.name, "changes:", Object.keys(data.system || {}));
   }
   
   // If equipped state changed OR if an equipped weapon's data changed, sync and refresh
@@ -364,9 +363,9 @@ Hooks.on("updateItem", async (item, data, options, userId) => {
       try {
         await EquipmentHandler.syncEquippedWeapons(actor, actorSheet);
         actorSheet.render(true); // This will use debounced render
-        console.log("Daggerheart | Actor sheet refreshed after weapon update");
+        // console.debug("Daggerheart | Actor sheet refreshed after weapon update");
       } catch (error) {
-        console.warn("Daggerheart | Failed to sync weapons after item update:", error);
+        // console.warn("Daggerheart | Failed to sync weapons after item update:", error);
       }
     }
   }
@@ -549,7 +548,7 @@ Hooks.once("ready", async function() {
       await EquipmentHandler.syncEquippedWeapons(actor, sheet);
       console.log("Primary weapon sync completed");
       sheet.render(true, { immediate: true });
-      console.log("Sheet rendered");
+      // console.debug("Sheet rendered");
       
       // Log the results
       console.log("New weapon-main damage:", actor.system["weapon-main"]?.damage);
@@ -595,7 +594,7 @@ Hooks.once("ready", async function() {
       await EquipmentHandler.syncEquippedWeapons(actor, sheet);
       console.log("Secondary weapon sync completed");
       sheet.render(true, { immediate: true });
-      console.log("Sheet rendered");
+      // console.debug("Sheet rendered");
       
       // Log the results
       console.log("New weapon-off damage:", actor.system["weapon-off"]?.damage);

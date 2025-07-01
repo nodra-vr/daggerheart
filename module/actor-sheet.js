@@ -3,6 +3,7 @@ import {ATTRIBUTE_TYPES} from "./constants.js";
 import { DaggerheartDialogHelper } from "./dialog-helper.js";
 import { SheetTracker } from "./sheet-tracker.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
+import { DomainAbilitySidebar } from "./domain-ability-sidebar.js";
 
 /**
 * Extend the basic ActorSheet with some very simple modifications
@@ -158,12 +159,18 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   async activateListeners(html) {
     super.activateListeners(html);
     
-    // Initialize Sheet Tracker
+    // Initialize Sheet Tracker (right side)
     if (!this.sheetTracker) {
       this.sheetTracker = new SheetTracker(this);
     }
     // Always initialize on re-render to recreate the DOM
     this.sheetTracker.initialize();
+    
+    // Initialize Domain Ability Sidebar (left side)
+    if (!this.domainAbilitySidebar) {
+      this.domainAbilitySidebar = new DomainAbilitySidebar(this);
+    }
+    this.domainAbilitySidebar.initialize();
     
     // Disable all transitions during initialization to prevent unwanted animations
     this._disableTransitions();

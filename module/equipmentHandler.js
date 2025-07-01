@@ -48,56 +48,8 @@ export class EquipmentHandler {
    * @static
    */
   static async equipPrimaryWeapon(actor, weapon) {
-    if (!weapon || weapon.type !== "weapon") {
-      ui.notifications.error("Invalid weapon");
-      return false;
-    }
-    
-    try {
-      // Get current primary weapon to unequip
-      const currentPrimary = this.getPrimaryWeapon(actor);
-      
-      // If this weapon is already primary, unequip it
-      if (currentPrimary && currentPrimary.id === weapon.id) {
-        await weapon.update({
-          "system.equipped": false,
-          "system.weaponSlot": null
-        });
-        await this.updateWeaponSlots(actor);
-        ui.notifications.info(`${weapon.name} unequipped from primary slot`);
-        return true;
-      }
-      
-      // Unequip current primary weapon if exists
-      if (currentPrimary) {
-        await currentPrimary.update({
-          "system.equipped": false,
-          "system.weaponSlot": null
-        });
-      }
-      
-      // If this weapon is currently secondary, just change its slot
-      if (foundry.utils.getProperty(weapon, 'system.equipped') && foundry.utils.getProperty(weapon, 'system.weaponSlot') === "secondary") {
-        await weapon.update({
-          "system.weaponSlot": "primary"
-        });
-      } else {
-        // Equip the new weapon as primary
-        await weapon.update({
-          "system.equipped": true,
-          "system.weaponSlot": "primary"
-        });
-      }
-      
-      await this.updateWeaponSlots(actor);
-      ui.notifications.info(`${weapon.name} equipped as primary weapon`);
-      return true;
-      
-    } catch (error) {
-      console.error("Failed to equip primary weapon:", error);
-      ui.notifications.error(`Failed to equip ${weapon.name} as primary weapon`);
-      return false;
-    }
+    // Re-route to the shared equip helper
+    return this._equip(actor, weapon, "primary");
   }
   
   /**
@@ -108,54 +60,62 @@ export class EquipmentHandler {
    * @static
    */
   static async equipSecondaryWeapon(actor, weapon) {
+    // Re-route to the shared equip helper
+    return this._equip(actor, weapon, "secondary");
+  }
+  
+  /**
+   * Shared implementation used by both slot handlers.
+   * Handles the two-weapon limit and slot transitions.
+   * @private
+   * @param {foundry.documents.Actor} actor
+   * @param {foundry.documents.Item} weapon
+   * @param {"primary"|"secondary"} slot
+   */
+  static async _equip(actor, weapon, slot) {
     if (!weapon || weapon.type !== "weapon") {
-      ui.notifications.error("Invalid weapon");
+      ui.notifications.error(game.i18n?.localize?.("DH.InvalidWeapon") ?? "Invalid weapon");
       return false;
     }
-    
+
+    // Enforce the two-weapon limit (ignoring the weapon we might be re-assigning)
+    const otherEquipped = this.getEquippedWeapons(actor).filter(w => w.id !== weapon.id);
+    const isCurrentlyEquipped = weapon.system?.equipped === true;
+    if (!isCurrentlyEquipped && otherEquipped.length >= 2) {
+      ui.notifications.warn(game.i18n?.localize?.("DH.MaxTwoWeapons") ?? "You can only equip two weapons at a time.");
+      return false;
+    }
+
+    const currentSlotWeapon = slot === "primary" ? this.getPrimaryWeapon(actor) : this.getSecondaryWeapon(actor);
+
     try {
-      // Get current secondary weapon to unequip
-      const currentSecondary = this.getSecondaryWeapon(actor);
-      
-      // If this weapon is already secondary, unequip it
-      if (currentSecondary && currentSecondary.id === weapon.id) {
-        await weapon.update({
-          "system.equipped": false,
-          "system.weaponSlot": null
-        });
+      // Toggle off if the weapon is already in that slot
+      if (currentSlotWeapon && currentSlotWeapon.id === weapon.id) {
+        await weapon.update({ "system.equipped": false, "system.weaponSlot": null });
         await this.updateWeaponSlots(actor);
-        ui.notifications.info(`${weapon.name} unequipped from secondary slot`);
+        ui.notifications.info(`${weapon.name} unequipped from ${slot} slot`);
         return true;
       }
-      
-      // Unequip current secondary weapon if exists
-      if (currentSecondary) {
-        await currentSecondary.update({
-          "system.equipped": false,
-          "system.weaponSlot": null
-        });
+
+      // Unequip whatever is currently occupying the slot
+      if (currentSlotWeapon) {
+        await currentSlotWeapon.update({ "system.equipped": false, "system.weaponSlot": null });
       }
-      
-      // If this weapon is currently primary, just change its slot
-      if (foundry.utils.getProperty(weapon, 'system.equipped') && foundry.utils.getProperty(weapon, 'system.weaponSlot') === "primary") {
-        await weapon.update({
-          "system.weaponSlot": "secondary"
-        });
+
+      // If the weapon is equipped in the opposite slot just change the slot property;
+      // otherwise equip it fresh.
+      if (isCurrentlyEquipped) {
+        await weapon.update({ "system.weaponSlot": slot });
       } else {
-        // Equip the new weapon as secondary
-        await weapon.update({
-          "system.equipped": true,
-          "system.weaponSlot": "secondary"
-        });
+        await weapon.update({ "system.equipped": true, "system.weaponSlot": slot });
       }
-      
+
       await this.updateWeaponSlots(actor);
-      ui.notifications.info(`${weapon.name} equipped as secondary weapon`);
+      ui.notifications.info(`${weapon.name} equipped as ${slot} weapon`);
       return true;
-      
     } catch (error) {
-      console.error("Failed to equip secondary weapon:", error);
-      ui.notifications.error(`Failed to equip ${weapon.name} as secondary weapon`);
+      console.error("Failed to equip weapon:", error);
+      ui.notifications.error(`Failed to equip ${weapon.name}`);
       return false;
     }
   }
@@ -260,7 +220,7 @@ export class EquipmentHandler {
       }
     }
 
-    console.log(`Daggerheart | Weapon ${weapon.name} total damage: ${totalWeaponDamage}`);
+    // console.log(`Daggerheart | Weapon ${weapon.name} total damage: ${totalWeaponDamage}`);
     return totalWeaponDamage;
   }
   
@@ -282,7 +242,7 @@ export class EquipmentHandler {
     }
 
     const traitValue = foundry.utils.getProperty(actor, `system.${traitName}.value`) ?? 0;
-    console.log(`Daggerheart | Weapon ${weapon.name} trait ${traitName}: ${traitValue}`);
+    // console.log(`Daggerheart | Weapon ${weapon.name} trait ${traitName}: ${traitValue}`);
     return traitValue;
   }
   
@@ -384,7 +344,7 @@ export class EquipmentHandler {
    * @static
    */
   static async updateWeaponSlots(actor) {
-    console.log("Daggerheart | Updating weapon slots for:", actor.name);
+    // console.log("Daggerheart | Updating weapon slots for:", actor.name);
 
     const primaryData = this.getDynamicWeaponData(actor, "primary");
     const secondaryData = this.getDynamicWeaponData(actor, "secondary");
@@ -394,7 +354,19 @@ export class EquipmentHandler {
       "system.weapon-off": secondaryData
     };
 
-    console.log("Daggerheart | Weapon slot updates:", updateData);
+    // console.log("Daggerheart | Weapon slot updates:", updateData);
     await actor.update(updateData);
+  }
+  
+  // ---------------------------------------------
+  // COMPATIBILITY SHIM
+  // ---------------------------------------------
+  /**
+   * Legacy helper kept for backwards-compatibility.
+   * Simply forwards to updateWeaponSlots.
+   * @deprecated – use updateWeaponSlots instead.
+   */
+  static async syncEquippedWeapons(actor /*, sheet */) {
+    return this.updateWeaponSlots(actor);
   }
 } 

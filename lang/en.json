@@ -156,5 +156,7 @@
   "DH.VeryClose": "Very Close",
   "DH.Close": "Close",
   "DH.Far": "Far",
-  "DH.VeryFar": "Very Far"
+  "DH.VeryFar": "Very Far",
+  "DH.MaxTwoWeapons": "You can only equip two weapons at a time.",
+  "DH.InvalidWeapon": "Invalid weapon"
 }
