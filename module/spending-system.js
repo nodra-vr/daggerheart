@@ -732,7 +732,10 @@ if (!item) {
 }
 
 const itemData = item.system;
-const description = await TextEditor.enrichHTML(itemData.description, {secrets: item.isOwner, async: true});
+const description = await TextEditor.enrichHTML(
+  itemData.description,
+  { enrichers: false, secrets: item.isOwner, async: true }
+);
 const chatCard = globalThis.daggerheart?.buildItemCardChat ?
   globalThis.daggerheart.buildItemCardChat({
     itemId: item.id,
@@ -865,7 +868,7 @@ Hooks.once("init", () => {
     return "hp";
   }
 
-  /**
+  /**`
    * Parse delta
    * @param {string} amountStr
    * @param {string|null} verb
@@ -937,45 +940,34 @@ Hooks.once("init", () => {
   _safeRegisterEnricher({
     pattern: masterPattern,
     enricher: (match, options) => {
-      // Skip if we're inside an already-processed resource button
-      const matchIndex = match.index || 0;
+      // Skip if we're in an item card context
+      if (options?.inItemCard) return match[0];
+      
+      // Skip if the content is already enriched (contains our buttons)
       const fullText = match.input || "";
-      
-      // Look backwards from match position to see if we're inside a resource button
-      const beforeMatch = fullText.substring(0, matchIndex);
-      const afterMatch = fullText.substring(matchIndex);
-      
-      // Check if this match is inside an existing dh-resource-btn or dh-fear-btn
-      const openTagBefore = beforeMatch.lastIndexOf('<a class="dh-resource-btn"') > beforeMatch.lastIndexOf('</a>');
-      const openFearTagBefore = beforeMatch.lastIndexOf('<a class="dh-fear-btn"') > beforeMatch.lastIndexOf('</a>');
-      
-      if (openTagBefore || openFearTagBefore) {
-        // We're inside an existing button, return the match unchanged
+      if (fullText.includes('dh-resource-btn') || fullText.includes('data-enriched="true"')) {
         return match[0];
       }
       
-      // Also check if the match is preceded by button-like content
-      if (beforeMatch.includes('fa-hand-pointer') || beforeMatch.includes('fa-solid fa-skull')) {
-        const lastCloseTag = beforeMatch.lastIndexOf('</a>');
-        const lastOpenTag = Math.max(
-          beforeMatch.lastIndexOf('<a class="dh-resource-btn"'),
-          beforeMatch.lastIndexOf('<a class="dh-fear-btn"')
-        );
-        
-        // If we have an open tag after the last close tag, skip
-        if (lastOpenTag > lastCloseTag) {
-          return match[0];
-        }
+      // Skip if we're inside dh-no-enrich spans
+      const matchIndex = match.index || 0;
+      const beforeMatch = fullText.substring(0, matchIndex);
+      const afterMatch = fullText.substring(matchIndex);
+      
+      // Check if we're inside a dh-no-enrich span
+      const lastNoEnrichOpen = beforeMatch.lastIndexOf('<span class="dh-no-enrich"');
+      const lastNoEnrichClose = beforeMatch.lastIndexOf('</span>');
+      if (lastNoEnrichOpen > lastNoEnrichClose) {
+        return match[0];
       }
       
-      // Check if this text is inside any button or link element
-      const lastButtonOpen = beforeMatch.lastIndexOf('<button');
-      const lastButtonClose = beforeMatch.lastIndexOf('</button>');
+      // Skip if we're inside any existing button or anchor
       const lastAnchorOpen = beforeMatch.lastIndexOf('<a');
       const lastAnchorClose = beforeMatch.lastIndexOf('</a>');
+      const lastButtonOpen = beforeMatch.lastIndexOf('<button');
+      const lastButtonClose = beforeMatch.lastIndexOf('</button>');
       
-      // If we're inside a button or anchor, skip
-      if (lastButtonOpen > lastButtonClose || lastAnchorOpen > lastAnchorClose) {
+      if (lastAnchorOpen > lastAnchorClose || lastButtonOpen > lastButtonClose) {
         return match[0];
       }
       
@@ -985,7 +977,6 @@ Hooks.once("init", () => {
       const resourceKey = _canonicalResource(resStr);
       const delta = _parseDelta(amountStr, verb, resourceKey);
       
-      // Add a unique marker to help prevent reprocessing
       const anchor = _buildAnchor(resourceKey, delta, verb);
       anchor.setAttribute('data-enriched', 'true');
       return anchor;
@@ -1196,4 +1187,6 @@ export async function adjustHitPoints(actor = null, delta = -1) {
     ui.notifications.error("Failed to update HP.");
     return false;
   }
-} 
+}
+
+ 

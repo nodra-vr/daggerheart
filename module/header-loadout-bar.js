@@ -169,7 +169,7 @@ export class HeaderLoadoutBar {
 
   async _postToChat(item) {
     const itemData = item.system;
-    const description = await TextEditor.enrichHTML(itemData.description, { secrets: this.actor.isOwner, async: true });
+    // Don't pre-enrich for chat cards - let Foundry enrich it when the chat message is created
     const chatCard = buildItemCardChat({
       itemId: item.id,
       actorId: this.actor.id,
@@ -177,7 +177,7 @@ export class HeaderLoadoutBar {
       name: item.name,
       category: itemData.category || '',
       rarity: itemData.rarity || '',
-      description
+      description: itemData.description || ''
     });
     ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: chatCard });
   }
@@ -187,6 +187,7 @@ export class HeaderLoadoutBar {
     const item = this.actor.items.get(itemId);
     if (!item) return;
     const itemData = item.system;
+    // For preview cards, we DO want enrichment since they're not going through chat
     const description = await TextEditor.enrichHTML(itemData.description, { secrets: this.actor.isOwner, async: true });
     const cardHtml = buildItemCardChat({
       itemId: item.id,

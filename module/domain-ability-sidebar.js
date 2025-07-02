@@ -155,7 +155,7 @@ export class DomainAbilitySidebar {
       // Post to chat – use Foundry's built-in method if available
       try {
         const itemData = item.system;
-        const description = await TextEditor.enrichHTML(itemData.description, { secrets: this.actor.isOwner, async: true });
+        // Don't pre-enrich for chat cards - let Foundry enrich it when the chat message is created
 
         const chatCard = buildItemCardChat({
           itemId: item.id,
@@ -164,7 +164,7 @@ export class DomainAbilitySidebar {
           name: item.name,
           category: itemData.category || '',
           rarity: itemData.rarity || '',
-          description,
+          description: itemData.description || '',
           extraClasses: 'domain-preview-card'
         });
 
@@ -246,6 +246,7 @@ export class DomainAbilitySidebar {
 
     // Generate HTML card (same as chat)
     const itemData = item.system;
+    // For preview cards, we DO want enrichment since they're not going through chat
     const description = await TextEditor.enrichHTML(itemData.description, { secrets: this.actor.isOwner, async: true });
     const cardHtml = buildItemCardChat({
       itemId: item.id,
