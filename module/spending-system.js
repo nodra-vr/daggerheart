@@ -902,7 +902,7 @@ Hooks.once("init", () => {
 
   function _buildAnchor(resourceKey, delta, verbHint = null) {
     const a = document.createElement("a");
-    a.classList.add("dh-resource-btn");
+    a.classList.add("dh-resource-btn", "dh-btn", "dh-btn--primary");
     a.dataset.resource = resourceKey;
     a.dataset.delta = String(delta);
 
@@ -919,7 +919,8 @@ Hooks.once("init", () => {
 
     const amount = Math.abs(delta);
     const resLabel = resourceKey === "armor" ? (amount === 1 ? "Armor Slot" : "Armor Slots") : (resourceKey === "hp" ? (amount === 1 ? "Hit Point" : "Hit Points") : `${resourceKey.charAt(0).toUpperCase()}${resourceKey.slice(1)}`);
-    a.innerHTML = `<i class="fa-solid fa-hand-pointer"></i> ${labelAction} ${amount} ${resLabel}`;
+    a.innerHTML = `${labelAction} ${amount} ${resLabel}`;
+    a.setAttribute('data-icon', 'fa-solid fa-hand-pointer'); // Store icon for future use
     return a;
   }
 
@@ -965,6 +966,17 @@ Hooks.once("init", () => {
         if (lastOpenTag > lastCloseTag) {
           return match[0];
         }
+      }
+      
+      // Check if this text is inside any button or link element
+      const lastButtonOpen = beforeMatch.lastIndexOf('<button');
+      const lastButtonClose = beforeMatch.lastIndexOf('</button>');
+      const lastAnchorOpen = beforeMatch.lastIndexOf('<a');
+      const lastAnchorClose = beforeMatch.lastIndexOf('</a>');
+      
+      // If we're inside a button or anchor, skip
+      if (lastButtonOpen > lastButtonClose || lastAnchorOpen > lastAnchorClose) {
+        return match[0];
       }
       
       const verb = match[1] || null;

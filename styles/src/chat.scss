@@ -1235,6 +1235,90 @@ body.game .app a.content-link, .content-link, .inline-roll {
   }
 }
 
+/* Resource Button Styling - Global Design System */
+.dh-resource-btn {
+  /* Base button styling from global design system */
+  display: inline-block;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.05rem;
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  vertical-align: baseline;
+  line-height: 1.2;
+  
+  /* Glassmorphism effect */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  color: var(--dh-color-off-white);
+  
+  /* Primary button variant */
+  &.dh-btn--primary {
+    background: rgba(243, 194, 103, 0.12);
+    border: 1px solid rgba(243, 194, 103, 0.25);
+    color: var(--dh-color-gold);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  }
+  
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2);
+    background: rgba(243, 194, 103, 0.18);
+    border-color: rgba(243, 194, 103, 0.35);
+  }
+  
+  /* Active/pressed state */
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Focus state for accessibility */
+  &:focus {
+    outline: 1px solid rgba(243, 194, 103, 0.4);
+    outline-offset: 1px;
+  }
+}
+
+/* Legacy fear button styling for backward compatibility */
+.dh-fear-btn {
+  @extend .dh-resource-btn;
+  
+  &[data-action="spendFear"] {
+    background: rgba(220, 38, 127, 0.15);
+    border: 1px solid rgba(220, 38, 127, 0.3);
+    color: #dc267f;
+    
+    &:hover {
+      background: rgba(220, 38, 127, 0.2);
+      border-color: rgba(220, 38, 127, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(220, 38, 127, 0.3);
+    }
+  }
+  
+  &[data-action="gainFear"] {
+    background: rgba(255, 140, 0, 0.15);
+    border: 1px solid rgba(255, 140, 0, 0.3);
+    color: #ff8c00;
+    
+    &:hover {
+      background: rgba(255, 140, 0, 0.2);
+      border-color: rgba(255, 140, 0, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 140, 0, 0.3);
+    }
+  }
+}
+
 /* Hope Message Styling */
 .hope-spend-message {
   background: linear-gradient(135deg, rgba(57, 77, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
