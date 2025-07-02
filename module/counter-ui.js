@@ -27,10 +27,10 @@ export class CounterUI {
     await this.render();
     
     // Listen for setting changes
-    Hooks.on("updateSetting", (setting, value) => {
-      if (setting.key === "daggerheart.counterValue") {
-        this.count = parseInt(value.value) || 0;
-        this.count = Math.max(0, Math.min(12, this.count));
+    Hooks.on("updateSetting", (namespace, key, value) => {
+      if (namespace === "daggerheart" && key === "counterValue") {
+        const parsed = parseInt(value);
+        this.count = Number.isNaN(parsed) ? 0 : Math.max(0, Math.min(12, parsed));
         this.updateDisplay();
       }
     });

@@ -1358,7 +1358,7 @@ body.game .app input[type=search]:focus {
 /* Item Sheet Specific Layouts */
 .item-bg {
   position: absolute;
-  top: -2vh;
+  top: -2.25vh;
   left: 0;
   width: 100%;
   height: 25rem;
@@ -1390,6 +1390,7 @@ body.game .app input[type=search]:focus {
   width: 100%;
   padding-top: 0em;
   padding-bottom: 1.25em;
+  border-top: 1px solid var(--dh-color-gold);
 }
 
 .item .flexcol {
@@ -2420,16 +2421,16 @@ body.game .app button:hover, body.game .app button:focus {
 .daggerheart .item-list[data-item-type=vault] {
   max-height: 500px;
   opacity: 1;
-  transform: scaleY(1);
+  /* Rely solely on max-height for the slide-down animation */
   transform-origin: top;
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out, transform 0.3s ease-out;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
   overflow: hidden;
 }
 
 .daggerheart .item-list[data-item-type=vault].vault-collapsed {
   max-height: 0;
   opacity: 0;
-  transform: scaleY(0);
+  /* No transform scaling – height handles the collapse */
   margin: 0 0.5em;
   padding: 0;
   border: none;
@@ -2445,16 +2446,16 @@ body.game .app button:hover, body.game .app button:focus {
 .daggerheart .item-list[data-item-type=inventory] {
   max-height: 500px;
   opacity: 1;
-  transform: scaleY(1);
+  /* Use only max-height for smoother, single-direction animation */
   transform-origin: top;
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out, transform 0.3s ease-out;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
   overflow: hidden;
 }
 
 .daggerheart .item-list.category-collapsed {
   max-height: 0;
   opacity: 0;
-  transform: scaleY(0);
+  /* No transform scaling – height handles the collapse */
   margin: 0;
   padding: 0;
   border: none;
@@ -2473,18 +2474,15 @@ body.game .app button:hover, body.game .app button:focus {
 
 /* Enable transitions only when the sheet allows them (user-initiated toggles) */
 .daggerheart.transitions-enabled .tab-category {
-  transition: margin 0.3s ease-in-out;
+  transition: margin-bottom 0.3s ease-in-out;
 }
 
-/* Minimal spacing for collapsed sections */
+/* Only the bottom margin changes between collapsed/expanded to keep the header anchored */
 .daggerheart .tab-category.dynamic-collapsed {
-  margin-top: 0.05em;
   margin-bottom: 0.05em;
 }
 
-/* Normal spacing for expanded sections */
 .daggerheart .tab-category.dynamic-expanded {
-  margin-top: 0.5rem;
   margin-bottom: 0.75em;
 }
 
@@ -2545,9 +2543,7 @@ body.game .app button:hover, body.game .app button:focus {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out, transform 0.3s ease-out;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
   margin: 0 0.5em;
   min-width: 100%;
   border-left: solid 2px var(--dh-color-gold);
@@ -2560,9 +2556,10 @@ body.game .app button:hover, body.game .app button:focus {
 }
 
 .daggerheart .item-list .item.expanded .item-description {
-  max-height: 500px;
+  /* Limit the expanded height so huge descriptions don't blow out the sheet */
+  max-height: 200px;
+  overflow-y: auto; /* Allow scrolling once the description exceeds the max height */
   opacity: 1;
-  transform: scaleY(1);
   padding-top: 0.5em;
 }
 
@@ -2711,6 +2708,342 @@ body.game .app button:hover, body.game .app button:focus {
   border: 1px solid var(--color-secondary);
 }
 
+/* =========================================
+   Domain Abilities Sidebar (left of sheet)
+   ========================================= */
+.domain-abilities-sidebar {
+  position: absolute;
+  top: 15%;
+  right: 100%; /* sit just to the left of the sheet */
+  transform: translateX(-8px); /* little gutter spacing */
+  width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--dh-space-sm, 0.5rem);
+  z-index: 95;
+  pointer-events: auto;
+}
+
+.domain-ability-button {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: var(--dh-radius-lg, 8px);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
+}
+
+.domain-ability-button:hover {
+  transform: scale(1.05);
+}
+
+.domain-ability-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlay controls (edit / delete icons) */
+.domain-ability-button .ability-overlay {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: none; /* icons inside will still receive events */
+}
+
+.domain-ability-button .ability-overlay .item-control {
+  pointer-events: all;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dh-color-gold, #f3c267);
+  font-size: 10px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.domain-ability-button .ability-overlay .item-control:hover {
+  background: var(--dh-color-gold, #f3c267);
+  color: var(--dh-color-off-black, #0b0a13);
+  transform: scale(1.1);
+}
+
+/* Name label (appears on hover) */
+.domain-ability-button .ability-name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2px 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--dh-color-gold, #f3c267);
+  font-size: 0.65rem;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.domain-ability-button:hover .ability-name {
+  opacity: 1;
+}
+
+.domain-ability-preview {
+  position: fixed;
+  /* very high z-index so it never appears behind other sheet or HUD elements */
+  z-index: 4000;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.domain-ability-preview.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* When pinned via middle-click, make the preview interactive */
+.domain-ability-preview.pinned {
+  pointer-events: auto;
+}
+
+/* Ensure preview card has a maximum width */
+.domain-preview-card {
+  max-width: 260px;
+  border: 1px solid var(--dh-color-gold, #f3c267);
+  border-radius: var(--dh-radius-lg, 8px);
+  overflow: hidden;
+  box-shadow: var(--dh-shadow-lg, 0 6px 12px rgba(0, 0, 0, 0.6));
+  background: rgba(11, 10, 19, 0.95); /* opaque dark backdrop */
+}
+
+/* Ensure inner content panels also have solid backdrop */
+.domain-preview-card .card-content {
+  background: transparent; /* inherit from parent but keep no extra transparency */
+}
+
+.domain-ability-slot.empty {
+  width: 96px;
+  height: 96px;
+  border: 2px dashed var(--dh-color-gold, #f3c267);
+  border-radius: var(--dh-radius-lg, 8px);
+  opacity: 0.2;
+}
+
+.domain-ability-slot.empty.drag-over,
+.domain-abilities-sidebar.drag-over .domain-ability-slot.empty {
+  opacity: 0.6;
+  border-style: solid;
+}
+
+.preview-hint {
+  margin: 4px 6px 6px;
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--dh-color-gold, #f3c267);
+  text-align: center;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.preview-hint i {
+  font-size: 0.7rem;
+}
+
+/* Header Loadout Bar */
+.header-loadout-bar {
+  display: flex;
+  gap: var(--dh-space-sm, 0.5rem);
+  margin-top: var(--dh-space-sm, 0.5rem);
+  z-index: 60;
+  position: relative;
+  pointer-events: auto;
+}
+
+.loadout-card-slot {
+  position: relative;
+  width: 145px;
+  height: 96px;
+  border-radius: var(--dh-radius-md, 6px);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
+}
+
+.loadout-card-slot.empty {
+  border: 2px dashed var(--dh-color-gold, #f3c267);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.3;
+  color: var(--dh-color-gold, #f3c267);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  /* Disable hover transforms for empty slots */
+}
+.loadout-card-slot.empty:hover {
+  transform: none;
+}
+
+.loadout-card-slot.empty.drag-over {
+  opacity: 0.6;
+}
+
+.loadout-card-slot img.slot-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.loadout-card-slot .slot-overlay {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.loadout-card-slot .slot-overlay .slot-control {
+  pointer-events: all;
+  width: 16px;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  font-size: 9px;
+  color: var(--dh-color-gold, #f3c267);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadout-card-slot .slot-overlay .slot-control:hover {
+  background: var(--dh-color-gold, #f3c267);
+  color: var(--dh-color-off-black, #0b0a13);
+}
+
+.loadout-card-slot:hover {
+  transform: scale(1.05);
+}
+
+.loadout-card-slot .slot-name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2px 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--dh-color-gold, #f3c267);
+  font-size: 0.65rem;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.loadout-card-slot:hover .slot-name {
+  opacity: 1;
+}
+
+/* push nav tabs down a bit when bar present */
+.sheet-header + nav.sheet-tabs {
+  margin-top: var(--dh-space-md, 0.75rem);
+}
+
+/* Header overall layout */
+.header-wrapper {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.header-left {
+  flex: 0 0 140px;
+  margin-right: 1rem; /* space between portrait and other fields */
+}
+
+/* Constrain portrait exactly to left column */
+.header-left .portrait-container {
+  width: auto;
+  height: auto;
+  position: relative;
+}
+
+.header-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 85%;
+}
+
+.header-top-fields {
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: right;
+  align-content: flex-start;
+  flex-wrap: nowrap;
+}
+
+.header-resources-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  margin-left: -8em;
+  z-index: 1;
+  margin-top: 0.5rem;
+  justify-content: space-between;
+  /*.resource-label-controls label {
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.55), 0 0 8px rgba(0, 0, 0, 0.45);
+  }*/
+}
+.header-resources-row .resource {
+  min-width: 120px;
+  text-align: center;
+}
+
+.header-domain {
+  justify-content: flex-end;
+}
+
+/* Full-width card bar positioning */
+.header-loadout-bar {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.header-left .profile-img {
+  border: none;
+  border-radius: 8px;
+  display: block;
+  width: 100%;
+  height: auto;
+  box-shadow: 0 0 12px 4px rgba(0, 0, 0, 0.4);
+  border: 1px solid black;
+}
+
 /* Feature Layer */
 /* Header */
 .sheet-header {
@@ -2808,7 +3141,7 @@ body.game .app button:hover, body.game .app button:focus {
   top: 0;
   left: 0;
   width: 200px;
-  height: 200px;
+  height: auto;
   border-radius: 50%;
   object-fit: cover;
   -webkit-object-fit: cover;
@@ -2901,12 +3234,16 @@ body.game .app button:hover, body.game .app button:focus {
   box-shadow: none;
 }
 
+.actor .charname input {
+  text-align: left;
+}
+
 .header-domain {
   display: flex;
   gap: 2em;
   justify-content: center;
   margin-top: 0.5em;
-  width: 80%;
+  width: 100%;
 }
 .header-domain input {
   font-size: 1rem;
@@ -2921,6 +3258,13 @@ body.game .app button:hover, body.game .app button:focus {
   margin: 0px;
   height: 1rem;
   background: transparent;
+}
+
+.actor .header-domain {
+  justify-content: flex-start;
+}
+.actor .header-domain input {
+  text-align: left;
 }
 
 /* Item sheet header specifics */
@@ -3667,6 +4011,9 @@ input.trait-effects.resize-ta {
 }
 .resource-label-controls label {
   margin: 0;
+}
+.resource-label-controls [data-trait-tooltip] {
+  box-shadow: 0 0 16px 6px rgba(0, 0, 0, 0.45);
 }
 
 .armor-controls {
@@ -4437,6 +4784,9 @@ input.trait-effects.resize-ta {
 /* Item Card in Chat */
 .message-content .item-card-chat {
   width: 100%;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
   margin: 0;
   border: 1px solid #6d6795;
@@ -5421,6 +5771,160 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   color: var(--dh-color-gold);
 }
 
+.multi-target-armor-container .multi-target-armor-header {
+  text-align: center;
+  margin-bottom: 0.75em;
+}
+.multi-target-armor-container .multi-target-armor-header label {
+  font-weight: bold;
+  color: var(--dh-color-gold);
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(243, 194, 103, 0.6);
+}
+.multi-target-armor-container .armor-slots-ui {
+  background: rgba(11, 10, 19, 0.85);
+  backdrop-filter: blur(5px);
+  border: 1px solid #6d6795;
+  border-radius: 10px;
+  padding: 0.75em;
+  margin: 0.5em 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.multi-target-armor-container .armor-slots-ui:hover {
+  background: rgba(11, 10, 19, 0.9);
+  border-color: var(--dh-color-gold);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.multi-target-armor-container .armor-slots-ui .resource-content {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5em;
+}
+.multi-target-armor-container .armor-slots-ui .resource-content .resource-box {
+  background: #1c1c1c;
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 10px;
+  padding: 8px 15px;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 700;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  min-width: 60px;
+  justify-content: center;
+}
+.multi-target-armor-container .armor-slots-ui .resource-content .resource-box .armor-slots-current, .multi-target-armor-container .armor-slots-ui .resource-content .resource-box .armor-slots-max {
+  color: var(--dh-color-off-white);
+  text-align: center;
+  min-width: 1em;
+}
+.multi-target-armor-container .armor-slots-ui .resource-content .resource-box span {
+  color: var(--dh-color-gold);
+  font-weight: bold;
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls label {
+  font-size: 0.85em;
+  color: var(--dh-color-off-white);
+  text-align: center;
+  flex: 1;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls label strong {
+  color: var(--dh-color-gold);
+  text-shadow: 0 0 5px rgba(243, 194, 103, 0.6);
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls label .armor-availability {
+  font-size: 1em;
+  color: #6c6a85;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.9;
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls .resource-control {
+  background: rgba(67, 63, 100, 0.5);
+  border: 1px solid #6d6795;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dh-color-off-white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls .resource-control:hover {
+  background: rgba(67, 63, 100, 0.8);
+  border-color: var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls .resource-control:active {
+  transform: scale(0.95);
+}
+.multi-target-armor-container .armor-slots-ui .resource-label-controls .resource-control i {
+  color: inherit;
+}
+
+/* SHINE EFFECT */
+.item-card-chat .card-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.item-card-chat .card-image-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  animation: shineMove 1s ease-in-out forwards;
+  z-index: 1;
+}
+
+.item-card-chat:hover .card-image-container::before {
+  animation: shineMove 1s ease-in-out forwards;
+}
+
+.domain-preview-card .card-image-container::before {
+  animation: shineMove 1s ease-in-out forwards;
+}
+
+@keyframes shineMove {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
 .rest-button {
   display: flex;
   align-items: center;
@@ -7248,6 +7752,109 @@ button.weapon-locked:hover {
   /* Additional theme-specific styles can go here */
 }
 
+/* ----------------------------------------- */
+/* Sidebar Navigation Buttons                */
+/* ----------------------------------------- */
+.sidebar-nav-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-button {
+  width: 45px;
+  height: 36px;
+  border-radius: 0% 25% 25% 0%;
+  background: rgba(11, 10, 19, 0.9);
+  border: 1px solid var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.nav-button i {
+  font-size: 14px;
+}
+.nav-button:hover {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.nav-button.active {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+}
+.nav-button::after {
+  content: attr(title);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(11, 10, 19, 0.95);
+  color: var(--dh-color-gold);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  border: 1px solid var(--dh-color-gold);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+.nav-button:hover::after {
+  opacity: 1;
+  visibility: visible;
+  margin-left: 12px;
+}
+
+/* Completely hide the original nav bar but keep it in the DOM for fallback */
+.daggerheart.sheet.actor .sheet-tabs,
+.daggerheart.sheet.npc .sheet-tabs {
+  display: none !important;
+}
+
+/* ----------------------------------------- */
+/* Tooltip for tracker main button            */
+/* ----------------------------------------- */
+.tracker-main-button::after {
+  content: attr(title);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(11, 10, 19, 0.95);
+  color: var(--dh-color-gold);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  border: 1px solid var(--dh-color-gold);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.tracker-main-button:hover::after {
+  opacity: 1;
+  visibility: visible;
+  margin-left: 12px;
+}
+
 /* ============================================
    ITEM SHEET STYLES
    Matching the chat card design for consistency
@@ -7606,7 +8213,7 @@ button.weapon-locked:hover {
   border: 1px solid #433f64;
   border-radius: 4px;
   color: var(--dh-color-off-white);
-  padding: 8px 12px;
+  padding: 0em 0.5em;
   font-size: 0.9em;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -7971,6 +8578,7 @@ button.weapon-locked:hover {
   width: 100%;
   padding-top: 0em;
   padding-bottom: 1.25em;
+  border-top: 1px solid var(--dh-color-gold);
 }
 .item .flexcol {
   position: relative;
@@ -8402,7 +9010,9 @@ button.weapon-locked:hover {
   transition: opacity 0.2s ease-out 0.1s;
 }
 .daggerheart .item-list .item.expanded .item-description {
-  max-height: 500px;
+  /* Limit the expanded height so huge descriptions don't blow out the sheet */
+  max-height: 200px;
+  overflow-y: auto; /* Allow scrolling once the description exceeds the max height */
   opacity: 1;
   transform: scaleY(1);
   padding-top: 0.5em;

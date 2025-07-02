@@ -10,7 +10,7 @@ import { SimpleWeaponSheet } from "./weapon-sheet.js";
 import { SimpleActorSheet, NPCActorSheet } from "./actor-sheet.js";
 import { CompanionActorSheet } from "./actor-sheet-companion.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
-import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, spendStress } from "./spending-system.js";
+import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, createClearStressMacro, createSpendHopeMacro, createGainHopeMacro, spendStress, clearStress, spendHope, gainHope } from "./spending-system.js";
 import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
@@ -18,6 +18,7 @@ import { CountdownTracker } from "./countdown-tracker.js";
 import { SheetTracker } from "./sheet-tracker.js";
 import { DaggerheartMigrations } from "./migrations.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
+import { EntitySheetHelper } from "./helper.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
 import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
@@ -138,7 +139,13 @@ Hooks.once("init", async function () {
     createSpendFearMacro,
     createGainFearMacro,
     createSpendStressMacro,
+    createClearStressMacro,
+    createSpendHopeMacro,
+    createGainHopeMacro,
     spendStress,
+    clearStress,
+    spendHope,
+    gainHope,
     SheetTracker,
     EquipmentHandler,
     rollHandler: {
@@ -165,7 +172,7 @@ Hooks.once("init", async function () {
       debugUndoData: debugUndoData
     },
     getTierOfPlay: _getTierOfPlay,
-    EquipmentHandler: EquipmentHandler
+    EntitySheetHelper: EntitySheetHelper
   };
 
   // Define custom Document and Model classes
@@ -173,6 +180,12 @@ Hooks.once("init", async function () {
   CONFIG.Actor.dataModels = {
     Adversary: AdversaryDataModel
   };
+
+  // Make EntitySheetHelper available globally for other modules
+  globalThis.daggerheart = {
+    EntitySheetHelper
+  };
+
   CONFIG.Actor.typeLabels = {
     character: "ACTOR.TypeCharacter",
     npc: "ACTOR.TypeNpc",
@@ -301,41 +314,23 @@ Hooks.once("init", async function () {
 });
 
 /**
- * Hook to refresh actor sheets when base value restrictions change
+ * Hook to refresh actor sheets when weapon data changes
  */
 Hooks.on("updateActor", (actor, data, options, userId) => {
-  // Check if base value restrictions were updated
-  if (data.flags?.daggerheart?.baseValueRestrictions) {
-    console.log("Daggerheart | Base value restrictions updated, refreshing sheets for actor:", actor.name);
-
-    // Force refresh all open sheets for this actor (debounced)
-    Object.values(actor.apps).forEach(app => {
-      if (app.render) {
-        console.log("Daggerheart | Refreshing sheet:", app.constructor.name);
-        try {
-          app.render(true); // This will use debounced render
-        } catch (error) {
-          console.warn("Daggerheart | Failed to refresh sheet:", error);
-        }
-      }
-    });
-  }
-
-  // Also check for weapon data changes that might need sheet refresh
+  // Check for weapon data changes that need sheet refresh
   if (data.system && (
     data.system["weapon-main"] ||
-    data.system["weapon-off"] ||
-    data.flags?.daggerheart // Any daggerheart flags
+    data.system["weapon-off"]
   )) {
-    console.log("Daggerheart | Weapon or system data updated, refreshing sheets for actor:", actor.name);
+    // console.debug("Daggerheart | Weapon data updated, refreshing sheets for actor:", actor.name);
 
-    // Force refresh all open sheets for this actor (debounced)
+    // Force refresh all open sheets for this actor
     Object.values(actor.apps).forEach(app => {
       if (app.render) {
         try {
-          app.render(true); // This will use debounced render
+          app.render(true);
         } catch (error) {
-          console.warn("Daggerheart | Failed to refresh sheet:", error);
+          // console.warn("Daggerheart | Failed to refresh sheet:", error);
         }
       }
     });
@@ -343,16 +338,36 @@ Hooks.on("updateActor", (actor, data, options, userId) => {
 });
 
 /**
- * Hook to handle weapon equipped state changes
+ * Hook to handle weapon equipped state changes and weapon data updates
  */
 Hooks.on("updateItem", async (item, data, options, userId) => {
-  // Only handle weapon items with equipped state changes
-  if (item.type === "weapon" && data.system?.equipped !== undefined) {
-    const actor = item.parent;
-    if (!actor) return;
+  // Only handle weapon items
+  if (item.type !== "weapon") return;
 
-    console.log("Daggerheart | Weapon equipped state changed:", item.name, "equipped:", data.system.equipped);
+  const actor = item.parent;
+  if (!actor) return;
 
+  // Check if this is an equipped weapon that might need dynamic resolution refresh
+  const isEquipped = item.system.equipped;
+  const hasDataChanges = data.system && (
+    data.system.damage !== undefined ||
+    data.system.trait !== undefined ||
+    data.system.range !== undefined ||
+    data.system.damageType !== undefined ||
+    data.system.category !== undefined ||
+    data.system.tier !== undefined
+  );
+
+  if (data.system?.equipped !== undefined) {
+    // console.log("Daggerheart | Weapon equipped state changed:", item.name, "equipped:", data.system.equipped);
+  }
+
+  if (hasDataChanges && isEquipped) {
+    // console.log("Daggerheart | Equipped weapon data changed:", item.name, "changes:", Object.keys(data.system || {}));
+  }
+
+  // If equipped state changed OR if an equipped weapon's data changed, sync and refresh
+  if (data.system?.equipped !== undefined || (hasDataChanges && isEquipped)) {
     // Get the actor sheet if it's open
     const actorSheet = Object.values(actor.apps).find(app => app.constructor.name.includes('ActorSheet'));
 
@@ -361,8 +376,9 @@ Hooks.on("updateItem", async (item, data, options, userId) => {
       try {
         await EquipmentHandler.syncEquippedWeapons(actor, actorSheet);
         actorSheet.render(true); // This will use debounced render
+        // console.debug("Daggerheart | Actor sheet refreshed after weapon update");
       } catch (error) {
-        console.warn("Daggerheart | Failed to sync weapons after item update:", error);
+        // console.warn("Daggerheart | Failed to sync weapons after item update:", error);
       }
     }
   }
@@ -430,31 +446,61 @@ Hooks.once("ready", async function () {
     }
     return await game.daggerheart.spendStress(actor, amount);
   };
-  
+
+  // Add global clearStress function
+  window.clearStress = async function (actor, amount) {
+    if (!game.daggerheart?.clearStress) {
+      console.error("clearStress function not initialized");
+      ui.notifications.error("clearStress function not available");
+      return false;
+    }
+    return await game.daggerheart.clearStress(actor, amount);
+  };
+
+  // Add global spendHope function
+  window.spendHope = async function (actor, amount) {
+    if (!game.daggerheart?.spendHope) {
+      console.error("spendHope function not initialized");
+      ui.notifications.error("spendHope function not available");
+      return false;
+    }
+    return await game.daggerheart.spendHope(actor, amount);
+  };
+
+  // Add global gainHope function
+  window.gainHope = async function (actor, amount) {
+    if (!game.daggerheart?.gainHope) {
+      console.error("gainHope function not initialized");
+      ui.notifications.error("gainHope function not available");
+      return false;
+    }
+    return await game.daggerheart.gainHope(actor, amount);
+  };
+
   // Add test function for fear automation
-  window.testFearAutomation = async function() {
+  window.testFearAutomation = async function () {
     console.log("=== Daggerheart | Starting Global Automation Test ===");
-    
+
     // Test standalone fear roll
     console.log("\n--- Test 1: Standalone Fear Roll ---");
     await game.daggerheart.rollHandler.rollFear({
       sendToChat: true,
       flavor: "<p class='roll-flavor-line'><b>Test Fear Roll</b> (should trigger +1 Fear globally)</p>"
     });
-    
+
     // Wait a moment for processing
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     // Test duality roll
     console.log("\n--- Test 2: Duality Roll ---");
     await game.daggerheart.rollHandler.rollDuality({
       sendToChat: true,
       flavor: "<p class='roll-flavor-line'><b>Test Duality Roll</b> (automation depends on result)</p>"
     });
-    
+
     // Wait a moment for processing
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     // Test duality roll from dialog (no actor context)
     console.log("\n--- Test 3: Duality Dialog (No Actor) ---");
     await game.daggerheart.rollHandler.dualityWithDialog({
@@ -462,11 +508,11 @@ Hooks.once("ready", async function () {
       skipDialog: true,
       rollDetails: { modifier: 0, advantage: 0, disadvantage: 0 }
     });
-    
+
     console.log("\n=== Test completed! Check the console output above and look for automation messages ===");
     ui.notifications.info("Global automation test completed. Check console for detailed output.");
   };
-  
+
   // Add global test function for weapon equipping
   window.testWeaponEquip = async function () {
     const selectedTokens = canvas.tokens.controlled;
@@ -515,7 +561,7 @@ Hooks.once("ready", async function () {
       await EquipmentHandler.syncEquippedWeapons(actor, sheet);
       console.log("Primary weapon sync completed");
       sheet.render(true, { immediate: true });
-      console.log("Sheet rendered");
+      // console.debug("Sheet rendered");
 
       // Log the results
       console.log("New weapon-main damage:", actor.system["weapon-main"]?.damage);
@@ -561,7 +607,7 @@ Hooks.once("ready", async function () {
       await EquipmentHandler.syncEquippedWeapons(actor, sheet);
       console.log("Secondary weapon sync completed");
       sheet.render(true, { immediate: true });
-      console.log("Sheet rendered");
+      // console.debug("Sheet rendered");
 
       // Log the results
       console.log("New weapon-off damage:", actor.system["weapon-off"]?.damage);
@@ -591,12 +637,135 @@ Hooks.once("ready", async function () {
     console.log("Base value restrictions:", JSON.stringify(actor.flags?.daggerheart?.baseValueRestrictions, null, 2));
   };
 
+  // Add function to test new weapon system
+  window.testWeaponSystem = function () {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+
+    const actor = selectedTokens[0].actor;
+    console.log("=== New Weapon System Test ===");
+    console.log("Actor:", actor.name);
+    console.log("Primary weapon data:", EquipmentHandler.getDynamicWeaponData(actor, "primary"));
+    console.log("Secondary weapon data:", EquipmentHandler.getDynamicWeaponData(actor, "secondary"));
+    console.log("Weapon display data:", EquipmentHandler.getWeaponDisplayData(actor));
+  };
+
+  // Add comprehensive test function for the user's example scenario
+  window.testWeaponScenario = function () {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+
+    const actor = selectedTokens[0].actor;
+    console.log("=== Weapon System Test Scenario ===");
+    console.log("Actor:", actor.name);
+
+    // Character stats example
+    const strength = foundry.utils.getProperty(actor, 'system.strength.value') ?? 0;
+    console.log(`Character strength modifier: ${strength}`);
+
+    // Get primary weapon if equipped
+    const primaryWeapon = EquipmentHandler.getPrimaryWeapon(actor);
+    if (primaryWeapon) {
+      console.log(`\nPrimary weapon: ${primaryWeapon.name}`);
+
+      // Get weapon's complete damage (base + modifiers)
+      const weaponTotalDamage = EquipmentHandler.getWeaponTotalDamage(primaryWeapon, actor);
+      console.log(`Weapon total damage: ${weaponTotalDamage}`);
+
+      // Get weapon trait value
+      const weaponTraitValue = EquipmentHandler.getWeaponTraitValue(primaryWeapon, actor);
+      console.log(`Weapon trait value: ${weaponTraitValue}`);
+
+      // Get dynamic weapon data for character sheet
+      const weaponData = EquipmentHandler.getDynamicWeaponData(actor, "primary");
+      console.log("\nFinal character sheet data:");
+      console.log(`- Attack modifier base: ${weaponData["to-hit"].baseValue}`);
+      console.log(`- Attack modifier total: ${weaponData["to-hit"].value}`);
+      console.log(`- Damage base: ${weaponData.damage.baseValue}`);
+      console.log(`- Damage total: ${weaponData.damage.value}`);
+      console.log(`- Character modifiers preserved:`, weaponData["to-hit"].modifiers);
+
+      console.log("\n✅ This demonstrates the correct separation:");
+      console.log("- Weapon damage (1d12 + 1d6 + 2) becomes character's base value");
+      console.log("- Character modifiers (+2 blessing) stay as character modifiers");
+      console.log("- Final result: (1d12 + 1d6 + 2) + 2");
+
+    } else {
+      console.log("No primary weapon equipped");
+    }
+
+    // Also test secondary weapon
+    const secondaryWeapon = EquipmentHandler.getSecondaryWeapon(actor);
+    if (secondaryWeapon) {
+      console.log(`\nSecondary weapon: ${secondaryWeapon.name}`);
+      const secondaryData = EquipmentHandler.getDynamicWeaponData(actor, "secondary");
+      console.log("Secondary weapon data:", secondaryData);
+    }
+  };
+
+  // Add function to debug weapon damage formulas
+  window.debugWeaponDamage = function () {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+
+    const actor = selectedTokens[0].actor;
+    console.log("=== Weapon Damage Debug ===");
+    console.log("Actor:", actor.name);
+
+    // Check all weapons on the actor
+    const weapons = actor.items.filter(i => i.type === "weapon");
+    console.log("\n--- All Weapons ---");
+    weapons.forEach(weapon => {
+      console.log(`${weapon.name}:`);
+      console.log("  Raw damage data:", weapon.system.damage);
+      console.log("  Equipped:", weapon.system.equipped);
+      console.log("  Slot:", weapon.system.weaponSlot);
+
+      if (typeof weapon.system.damage === 'object') {
+        console.log("  - baseValue:", weapon.system.damage.baseValue);
+        console.log("  - value:", weapon.system.damage.value);
+        console.log("  - modifiers:", weapon.system.damage.modifiers);
+      }
+    });
+
+    // Check current weapon slots
+    console.log("\n--- Character Weapon Slots ---");
+    console.log("Primary weapon slot:", JSON.stringify(actor.system["weapon-main"], null, 2));
+    console.log("Secondary weapon slot:", JSON.stringify(actor.system["weapon-off"], null, 2));
+
+    // Test dynamic resolution
+    console.log("\n--- Dynamic Resolution Test ---");
+    const primaryWeapon = EquipmentHandler.getPrimaryWeapon(actor);
+    const secondaryWeapon = EquipmentHandler.getSecondaryWeapon(actor);
+
+    if (primaryWeapon) {
+      console.log("Primary weapon resolved data:");
+      const resolvedPrimary = EquipmentHandler.getResolvedWeaponData(actor, "primary");
+      console.log(JSON.stringify(resolvedPrimary, null, 2));
+    }
+
+    if (secondaryWeapon) {
+      console.log("Secondary weapon resolved data:");
+      const resolvedSecondary = EquipmentHandler.getResolvedWeaponData(actor, "secondary");
+      console.log(JSON.stringify(resolvedSecondary, null, 2));
+    }
+  };
+
   // Also add to the game.daggerheart object for consistency
   game.daggerheart.spendFear = window.spendFear;
   game.daggerheart.gainFear = window.gainFear;
 
   // Add global damage application functions
-  window.applyDamage = async function(targetActor, damageAmount, sourceActor, createUndo = true, armorSlotsUsed = 0) {
+  window.applyDamage = async function (targetActor, damageAmount, sourceActor, createUndo = true, armorSlotsUsed = 0) {
     if (!game.daggerheart?.damageApplication?.applyDamage) {
       console.error("Damage application not initialized");
       ui.notifications.error("Damage application not available");
@@ -662,12 +831,12 @@ Hooks.once("ready", async function () {
   game.daggerheart.cleanupDuplicateMacros = window.cleanupDuplicateMacros;
 
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), spendStress(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), and testFearAutomation() functions are now available globally.");
+  console.log("spendFear(), gainFear(), spendStress(), clearStress(), spendHope(), gainHope(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), and testFearAutomation() functions are now available globally.");
   console.log("🎲 Global Hope/Fear automation is now active for ALL duality rolls!");
-  
+
   // Add test function to game object
   game.daggerheart.testFearAutomation = window.testFearAutomation;
-  
+
   // Clean up any existing duplicate macros from previous versions, but don't create new ones
   if (game.user.isGM) {
     await _cleanupDuplicateMacros();
@@ -677,15 +846,15 @@ Hooks.once("ready", async function () {
   game.socket.on("system.daggerheart", async (data) => {
     // Only GM should process these requests
     if (!game.user.isGM) return;
-    
+
     if (data.type === "requestFearGain") {
       console.log(`Daggerheart | Processing fear gain request from ${data.userName}: +${data.amount} from ${data.source}`);
-      
+
       if (game.daggerheart?.counter) {
         try {
           // Use the regular gainFear method which includes proper notifications
           await game.daggerheart.counter.gainFear(data.amount);
-          
+
           // Send confirmation back to the requesting user
           game.socket.emit("system.daggerheart", {
             type: "fearGainConfirmation",
@@ -696,7 +865,7 @@ Hooks.once("ready", async function () {
           });
         } catch (error) {
           console.error("Daggerheart | Error processing fear gain request:", error);
-          
+
           // Send error back to the requesting user
           game.socket.emit("system.daggerheart", {
             type: "fearGainConfirmation",
@@ -709,7 +878,7 @@ Hooks.once("ready", async function () {
         }
       }
     }
-    
+
     // Handle confirmation messages (for non-GM users)
     if (data.type === "fearGainConfirmation" && data.targetUserId === game.user.id) {
       if (data.success) {
@@ -719,6 +888,8 @@ Hooks.once("ready", async function () {
       }
     }
   });
+
+  console.log("Daggerheart | System ready with dynamic weapon resolution");
 });
 
 /**
@@ -734,7 +905,13 @@ async function _cleanupDuplicateMacros() {
     { name: "Spend Fear", flag: "daggerheart.spendFearMacro" },
     { name: "Spend 1 Fear", flag: "daggerheart.spendFearMacro" },
     { name: "Gain Fear", flag: "daggerheart.gainFearMacro" },
-    { name: "Apply Stress", flag: "daggerheart.spendStressMacro" }
+    { name: "Apply Stress", flag: "daggerheart.spendStressMacro" },
+    { name: "Clear Stress", flag: "daggerheart.clearStressMacro" },
+    { name: "Clear 1 Stress", flag: "daggerheart.clearStressMacro" },
+    { name: "Spend Hope", flag: "daggerheart.spendHopeMacro" },
+    { name: "Spend 1 Hope", flag: "daggerheart.spendHopeMacro" },
+    { name: "Gain Hope", flag: "daggerheart.gainHopeMacro" },
+    { name: "Gain 1 Hope", flag: "daggerheart.gainHopeMacro" }
   ];
 
   let totalCleaned = 0;
@@ -959,7 +1136,7 @@ Hooks.on("renderChatMessage", (message, html, data) => {
     // Add damage button based on actor type
     if (actorType === "character") {
       _addCharacterDamageButton(html, actor, weaponData, weaponType, isCritical);
-    } else if (actorType === "npc") {
+    } else if (actorType === "npc" || actorType === "companion") {
       _addAdversaryDamageButton(html, actor, weaponData, weaponType, isCritical);
     }
   }
@@ -1431,7 +1608,7 @@ async function _rollAdversaryDamage(event) {
         daggerheart: {
           rollType: "damage",
           actorId: actor.id,
-          actorType: "npc",
+          actorType: actor.type,
           weaponName: weaponName,
           weaponType: weaponType,
           isCritical: isCritical,
@@ -1488,28 +1665,28 @@ function _updateArmorSlotsValue(html, delta) {
   const armorSlotsContainer = html.find(".armor-slots-ui");
   const currentElement = html.find(".armor-slots-current");
   const maxElement = html.find(".armor-slots-max");
-  
+
   if (!armorSlotsContainer.length || !currentElement.length || !maxElement.length) {
     console.warn("Armor slots elements not found");
     return;
   }
-  
+
   // Get current values
   let current = parseInt(currentElement.text()) || 0;
   const max = parseInt(maxElement.text()) || 3;
-  
+
   // Calculate new value with bounds checking
   const newValue = Math.max(0, Math.min(max, current + delta));
-  
+
   // Only update if value actually changed
   if (newValue !== current) {
     // Update display
     currentElement.text(newValue);
-    
+
     // Store value on container for reference
     armorSlotsContainer.data("current", newValue);
     armorSlotsContainer.data("max", max);
-    
+
     console.log(`Armor slots: ${current} → ${newValue}`);
   }
 }
@@ -1523,7 +1700,7 @@ function _updateArmorSlotsValue(html, delta) {
  */
 function _getArmorSlotsUI(currentSlots = 0, maxSlots = 3, showUI = true) {
   if (!showUI) return "";
-  
+
   return `<div class="armor-slots-ui resource armor-slots" style="margin: 0.75em 0 0.5em 0;">
     <div class="resource-content">
       <div class="resource-box">
@@ -1551,7 +1728,7 @@ function _getArmorSlotsUI(currentSlots = 0, maxSlots = 3, showUI = true) {
 function _getTargetArmorInfo() {
   // Check targeted tokens first (priority)
   const targets = Array.from(game.user.targets);
-  
+
   if (targets.length > 0) {
     // Find first character target to get max armor slots
     const characterTarget = targets.find(t => t.actor?.type === 'character');
@@ -1560,10 +1737,10 @@ function _getTargetArmorInfo() {
       return { showUI: true, maxSlots: maxSlots };
     }
   }
-  
+
   // Check selected tokens
   const controlled = canvas.tokens?.controlled || [];
-  
+
   if (controlled.length > 0) {
     // Find first character to get max armor slots
     const characterToken = controlled.find(t => t.actor?.type === 'character');
@@ -1572,7 +1749,7 @@ function _getTargetArmorInfo() {
       return { showUI: true, maxSlots: maxSlots };
     }
   }
-  
+
   return { showUI: false, maxSlots: 0 };
 }
 
@@ -1585,17 +1762,17 @@ function _getTargetArmorInfo() {
 function _initializeArmorSlotsHandlers(html, initialValue = 0, maxValue = 3) {
   const armorSlotsContainer = html.find(".armor-slots-ui");
   if (!armorSlotsContainer.length) return;
-  
+
   // Store initial state
   armorSlotsContainer.data("current", initialValue);
   armorSlotsContainer.data("max", maxValue);
-  
+
   // Add click handlers for armor slots
   html.find(".armor-slots-increment").click(async (event) => {
     event.preventDefault();
     _updateArmorSlotsValue(html, 1);
   });
-  
+
   html.find(".armor-slots-decrement").click(async (event) => {
     event.preventDefault();
     _updateArmorSlotsValue(html, -1);
@@ -1614,10 +1791,10 @@ function _addDamageApplicationButtons(message, html, flags) {
   if (!damageAmount) return;
 
   const sourceActor = game.actors.get(flags.actorId);
-  
+
   // Use multi-target armor system
   const armorSlotsUI = _getMultiTargetArmorSlotsUI();
-  
+
   // Create damage and healing buttons
   const buttonContainer = `${armorSlotsUI}<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
     <button class="apply-damage-button" data-damage="${damageAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
@@ -1629,12 +1806,12 @@ function _addDamageApplicationButtons(message, html, flags) {
   </div>`;
 
   html.find(".message-content").append(buttonContainer);
-  
+
   // Initialize multi-target armor slots handlers if UI is present
   if (armorSlotsUI) {
     _initializeMultiTargetArmorSlotsHandlers(html);
   }
-  
+
   // Add click handlers
   html.find(".apply-damage-button").click(async (event) => {
     event.preventDefault();
@@ -1659,10 +1836,10 @@ function _addHealingApplicationButtons(message, html, flags) {
   if (!healingAmount) return;
 
   const sourceActor = game.actors.get(flags.actorId);
-  
+
   // Use multi-target armor system
   const armorSlotsUI = _getMultiTargetArmorSlotsUI();
-  
+
   // Create healing and damage buttons (healing first for healing rolls)
   const buttonContainer = `${armorSlotsUI}<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
     <button class="apply-healing-button" data-healing="${healingAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
@@ -1674,12 +1851,12 @@ function _addHealingApplicationButtons(message, html, flags) {
   </div>`;
 
   html.find(".message-content").append(buttonContainer);
-  
+
   // Initialize multi-target armor slots handlers if UI is present
   if (armorSlotsUI) {
     _initializeMultiTargetArmorSlotsHandlers(html);
   }
-  
+
   // Add click handlers
   html.find(".apply-healing-button").click(async (event) => {
     event.preventDefault();
@@ -1706,13 +1883,13 @@ async function _handleDamageApplicationButton(event, type) {
   }
 
   const sourceActor = sourceActorId ? game.actors.get(sourceActorId) : null;
-  
+
   // Get armor slots values from multi-target UI if damage is being applied
   let armorSlotsUsed = 0;
   if (type === "damage") {
     const messageElement = $(button).closest(".chat-message");
     const armorSlotsData = _collectMultiTargetArmorSlots(messageElement);
-    
+
     // Check if we have individual armor slots data for multiple targets
     if (Object.keys(armorSlotsData).length > 0) {
       armorSlotsUsed = armorSlotsData;
@@ -1726,7 +1903,7 @@ async function _handleDamageApplicationButton(event, type) {
       }
     }
   }
-  
+
   try {
     let result = { success: false, undoId: null };
     if (type === "damage") {
@@ -1868,10 +2045,10 @@ function _addUndoButtonHandlers(html, flags) {
  */
 function _getMultiTargetArmorInfo() {
   const characterTargets = [];
-  
+
   // Check targeted tokens first (priority)
   const targets = Array.from(game.user.targets);
-  
+
   if (targets.length > 0) {
     // Get all character targets
     targets.forEach(token => {
@@ -1881,7 +2058,7 @@ function _getMultiTargetArmorInfo() {
         const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
         const availableSlots = maxSlots - currentSlots; // How many slots they have available
         const usableSlots = Math.min(availableSlots, 3); // Cap at 3 due to damage threshold system
-        
+
         characterTargets.push({
           actor: token.actor,
           name: token.actor.name,
@@ -1896,7 +2073,7 @@ function _getMultiTargetArmorInfo() {
   } else {
     // Check selected tokens
     const controlled = canvas.tokens?.controlled || [];
-    
+
     controlled.forEach(token => {
       if (token.actor?.type === 'character') {
         // New data structure: armor.value = max slots, armor-slots.value = current used slots
@@ -1904,7 +2081,7 @@ function _getMultiTargetArmorInfo() {
         const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
         const availableSlots = maxSlots - currentSlots; // How many slots they have available
         const usableSlots = Math.min(availableSlots, 3); // Cap at 3 due to damage threshold system
-        
+
         characterTargets.push({
           actor: token.actor,
           name: token.actor.name,
@@ -1917,7 +2094,7 @@ function _getMultiTargetArmorInfo() {
       }
     });
   }
-  
+
   return characterTargets;
 }
 
@@ -1927,13 +2104,13 @@ function _getMultiTargetArmorInfo() {
  */
 function _getMultiTargetArmorSlotsUI() {
   const characterTargets = _getMultiTargetArmorInfo();
-  
+
   if (characterTargets.length === 0) {
     return "";
   }
-  
+
   let armorUIHtml = '<div class="multi-target-armor-container" style="margin: 0.75em 0 0.5em 0;">';
-  
+
   if (characterTargets.length === 1) {
     // Single character - use simplified UI
     const target = characterTargets[0];
@@ -1950,7 +2127,10 @@ function _getMultiTargetArmorSlotsUI() {
           <a class="resource-control armor-slots-decrement" data-action="decrement" title="Decrease Armor Slots Used">
             <i class="fas fa-minus"></i>
           </a>
-          <label>${target.name} - Use Armor Slots (${target.availableSlots} available)</label>
+          <label>
+            <strong>${target.name}</strong> - Use Armor Slots
+            <span class="armor-availability">(${target.availableSlots} available)</span>
+          </label>
           <a class="resource-control armor-slots-increment" data-action="increment" title="Increase Armor Slots Used">
             <i class="fas fa-plus"></i>
           </a>
@@ -1959,7 +2139,7 @@ function _getMultiTargetArmorSlotsUI() {
   } else {
     // Multiple characters - show each with their name
     armorUIHtml += '<div class="multi-target-armor-header"><label>Armor Slots Per Character:</label></div>';
-    
+
     characterTargets.forEach(target => {
       armorUIHtml += `
         <div class="armor-slots-ui resource armor-slots" data-actor-id="${target.id}" style="margin: 0.25em 0;">
@@ -1974,7 +2154,10 @@ function _getMultiTargetArmorSlotsUI() {
             <a class="resource-control armor-slots-decrement" data-action="decrement" title="Decrease Armor Slots Used for ${target.name}">
               <i class="fas fa-minus"></i>
             </a>
-            <label><strong>${target.name}</strong> (${target.availableSlots} available)</label>
+            <label>
+              <strong>${target.name}</strong>
+              <span class="armor-availability">(${target.availableSlots} available)</span>
+            </label>
             <a class="resource-control armor-slots-increment" data-action="increment" title="Increase Armor Slots Used for ${target.name}">
               <i class="fas fa-plus"></i>
             </a>
@@ -1982,7 +2165,7 @@ function _getMultiTargetArmorSlotsUI() {
         </div>`;
     });
   }
-  
+
   armorUIHtml += '</div>';
   return armorUIHtml;
 }
@@ -1994,27 +2177,27 @@ function _getMultiTargetArmorSlotsUI() {
 function _initializeMultiTargetArmorSlotsHandlers(html) {
   const armorContainers = html.find(".armor-slots-ui");
   if (!armorContainers.length) return;
-  
+
   // Initialize each armor container
-  armorContainers.each(function() {
+  armorContainers.each(function () {
     const container = $(this);
     const actorId = container.data("actor-id");
     const maxElement = container.find(".armor-slots-max");
     const maxValue = parseInt(maxElement.text()) || 3; // This is now the usableSlots (capped at 3)
-    
+
     // Store initial state
     container.data("current", 0);
     container.data("max", maxValue); // Store the usable max (capped at 3)
     container.data("actor-id", actorId);
   });
-  
+
   // Add click handlers for armor slots increment/decrement
   html.find(".armor-slots-increment").click(async (event) => {
     event.preventDefault();
     const container = $(event.currentTarget).closest(".armor-slots-ui");
     _updateMultiTargetArmorSlotsValue(container, 1);
   });
-  
+
   html.find(".armor-slots-decrement").click(async (event) => {
     event.preventDefault();
     const container = $(event.currentTarget).closest(".armor-slots-ui");
@@ -2030,28 +2213,28 @@ function _initializeMultiTargetArmorSlotsHandlers(html) {
 function _updateMultiTargetArmorSlotsValue(container, delta) {
   const currentElement = container.find(".armor-slots-current");
   const maxElement = container.find(".armor-slots-max");
-  
+
   if (!currentElement.length || !maxElement.length) {
     console.warn("Armor slots elements not found in container");
     return;
   }
-  
+
   // Get current values
   let current = parseInt(currentElement.text()) || 0;
   const max = parseInt(maxElement.text()) || 3;
-  
+
   // Calculate new value with bounds checking
   const newValue = Math.max(0, Math.min(max, current + delta));
-  
+
   // Only update if value actually changed
   if (newValue !== current) {
     // Update display
     currentElement.text(newValue);
-    
+
     // Store value on container for reference
     container.data("current", newValue);
     container.data("max", max);
-    
+
     const actorId = container.data("actor-id");
     console.log(`Armor slots for actor ${actorId}: ${current} → ${newValue}`);
   }
@@ -2065,16 +2248,16 @@ function _updateMultiTargetArmorSlotsValue(container, delta) {
 function _collectMultiTargetArmorSlots(html) {
   const armorSlots = {};
   const armorContainers = html.find(".armor-slots-ui");
-  
-  armorContainers.each(function() {
+
+  armorContainers.each(function () {
     const container = $(this);
     const actorId = container.data("actor-id");
     const current = parseInt(container.data("current")) || 0;
-    
+
     if (actorId && current > 0) {
       armorSlots[actorId] = current;
     }
   });
-  
+
   return armorSlots;
 }

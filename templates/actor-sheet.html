@@ -3,25 +3,9 @@
     <div class="item-bg" style="background-image: url('{{data.img}}');"></div>
     {{!-- Sheet Header --}}
     <header class="sheet-header">
-        <!--<div class="header-top-container">
-        </div>-->
-
-        <div class="header-main-container">
-            <div class="resource health">
-                <div class="resource-content">
-                    <div class="resource-box">
-                        <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}" />
-                        <span>/</span>
-                        <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0" />
-                    </div>
-                </div>
-                <div class="resource-label-controls">
-                    <a class="resource-control" data-action="decrement" data-field="health.value"><i class="fas fa-minus"></i></a>
-                    <label data-trait-tooltip="{{systemData.health.tooltip}}">{{localize "DH.HitPoints"}}</label>
-                    <a class="resource-control" data-action="increment" data-field="health.value"><i class="fas fa-plus"></i></a>
-                </div>
-            </div>
-
+        <div class="header-wrapper">
+          <div class="header-left">
+            <!-- Portrait and rest buttons -->
             <div class="portrait-container">
                 <div class="portrait-buttons">
                     <button type="button" class="rest-button short-rest" data-rest-type="short" title="{{localize 'DH.ShortRest'}}">
@@ -39,39 +23,36 @@
                     </div>
                     {{/if}}
                 </div>
+            </div>
+          </div>
+          <div class="header-right">
 
-                <div class="portrait-resources">
-                    <div class="resource hope">
-                        <div class="resource-content">
-                            <div class="resource-box">
-                                <input type="number" name="system.hope.value" value="{{systemData.hope.value}}" min="0" max="{{systemData.hope.max}}" />
-                                <span>/</span>
-                                <input type="number" name="system.hope.max" value="{{systemData.hope.max}}" min="0" />
-                            </div>
-                        </div>
-                        <div class="resource-label-controls">
-                            <a class="resource-control" data-action="decrement" data-field="hope.value"><i class="fas fa-minus"></i></a>
-                            <label data-trait-tooltip="{{systemData.hope.tooltip}}">{{localize "DH.Hope"}}</label>
-                            <a class="resource-control" data-action="increment" data-field="hope.value"><i class="fas fa-plus"></i></a>
-                        </div>
-                    </div>
-                    <div class="resource armor-slots">
-                        <div class="resource-content">
-                            <div class="resource-box">
-                                <input type="number" name="system.defenses.armor-slots.value" value="{{systemData.defenses.armor-slots.value}}" min="0" max="{{systemData.defenses.armor.value}}" />
-                                <span>/</span>
-                                <input type="number" value="{{systemData.defenses.armor.value}}" min="0" readonly disabled title="Edit armor value in the defense section" />
-                            </div>
-                        </div>
-                        <div class="resource-label-controls">
-                            <a class="resource-control" data-action="decrement" data-field="defenses.armor-slots.value"><i class="fas fa-minus"></i></a>
-                            <label>{{localize "DH.ArmorSlots"}}</label>
-                            <a class="resource-control" data-action="increment" data-field="defenses.armor-slots.value"><i class="fas fa-plus"></i></a>
-                        </div>
+        <!-- resources and fields -->
+        <div class="header-top-fields">
+            <h1 class="charname">
+                <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
+            </h1>
+            <div class="header-domain">
+                <input type="text" name="system.chosenDomains.domain-one" value="{{systemData.chosenDomains.domain-one}}" placeholder="{{localize "DH.DomainOne"}}" />
+                <input type="text" name="system.chosenDomains.domain-two" value="{{systemData.chosenDomains.domain-two}}" placeholder="{{localize "DH.DomainTwo"}}" />
+            </div>
+        </div>
+
+        <div class="header-resources-row">
+            <div class="resource health">
+                <div class="resource-content">
+                    <div class="resource-box">
+                        <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}" />
+                        <span>/</span>
+                        <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0" />
                     </div>
                 </div>
+                <div class="resource-label-controls">
+                    <a class="resource-control" data-action="decrement" data-field="health.value"><i class="fas fa-minus"></i></a>
+                    <label data-trait-tooltip="{{systemData.health.tooltip}}">{{localize "DH.HitPoints"}}</label>
+                    <a class="resource-control" data-action="increment" data-field="health.value"><i class="fas fa-plus"></i></a>
+                </div>
             </div>
-
             <div class="resource stress">
                 <div class="resource-content">
                     <div class="resource-box">
@@ -86,31 +67,43 @@
                     <a class="resource-control" data-action="increment" data-field="stress.value"><i class="fas fa-plus"></i></a>
                 </div>
             </div>
-        </div>
-
-        <div class="header-bottom-container">
-            <h1 class="charname">
-                <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
-            </h1>
-            <!--<div class="header-name-level-prof">
-                <!--<div class="charlevel">
-                    <input type="number" name="system.level.value" value="{{systemData.level.value}}" />
-                    <a>{{localize "DH.Level"}}</a>
-                </div>-->
-                
-                <!--<div class="charlevel">
-                    <input id="prof" type="number" name="system.proficiency.value" value="{{systemData.proficiency.value}}" />
-                    <a>{{localize "DH.Prof"}}</a>
+            <!-- Hope -->
+            <div class="resource hope">
+                <div class="resource-content">
+                    <div class="resource-box">
+                        <input type="number" name="system.hope.value" value="{{systemData.hope.value}}" min="0" max="{{systemData.hope.max}}" />
+                        <span>/</span>
+                        <input type="number" name="system.hope.max" value="{{systemData.hope.max}}" min="0" />
+                    </div>
                 </div>
-            </div>-->
-
-            <div class="header-domain">
-                <input type="text" name="system.chosenDomains.domain-one" value="{{systemData.chosenDomains.domain-one}}"
-                    placeholder="{{localize "DH.DomainOne"}}" />
-                <input type="text" name="system.chosenDomains.domain-two" value="{{systemData.chosenDomains.domain-two}}"
-                    placeholder="{{localize "DH.DomainTwo"}}" />
+                <div class="resource-label-controls">
+                    <a class="resource-control" data-action="decrement" data-field="hope.value"><i class="fas fa-minus"></i></a>
+                    <label data-trait-tooltip="{{systemData.hope.tooltip}}">{{localize "DH.Hope"}}</label>
+                    <a class="resource-control" data-action="increment" data-field="hope.value"><i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+            <!-- Armor Slots -->
+            <div class="resource armor-slots">
+                <div class="resource-content">
+                    <div class="resource-box">
+                        <input type="number" name="system.defenses.armor-slots.value" value="{{systemData.defenses.armor-slots.value}}" min="0" max="{{systemData.defenses.armor.value}}" />
+                        <span>/</span>
+                        <input type="number" value="{{systemData.defenses.armor.value}}" min="0" readonly disabled title="Edit armor value in the defense section" />
+                    </div>
+                </div>
+                <div class="resource-label-controls">
+                    <a class="resource-control" data-action="decrement" data-field="defenses.armor-slots.value"><i class="fas fa-minus"></i></a>
+                    <label>{{localize "DH.ArmorSlots"}}</label>
+                    <a class="resource-control" data-action="increment" data-field="defenses.armor-slots.value"><i class="fas fa-plus"></i></a>
+                </div>
             </div>
         </div>
+        </div> <!-- close header-right -->
+
+        </div> <!-- header-wrapper -->
+        
+        <!-- Loadout Card Bar (Class / Subclass / Ancestry / Community) -->
+        <div class="header-loadout-bar"></div>
     </header>
     
     {{!-- Trait Edit Popup (backwards compatibility) --}}
@@ -519,7 +512,7 @@
 
             {{!-- Owned Inventory Tab --}}
             <div class="inventory">
-                <div class="tab-category">{{localize "DH.Worn"}}
+                <div class="tab-category {{#unless uiState.categoryStates.worn}}section-collapsed{{/unless}}">{{localize "DH.Worn"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                             data-type="item" data-location="worn">
@@ -527,7 +520,7 @@
                         <a class="item-control category-toggle" data-category="worn" title="Toggle Worn Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list category-collapsed" data-location="worn">
+                <ol class="item-list {{#unless uiState.categoryStates.worn}}category-collapsed{{/unless}}" data-location="worn">
                     {{#each data.items as |item id|}}
                     {{#if (or (eq item.system.location "worn") (and (not item.system.location) (eq item.type "worn")))}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -565,7 +558,7 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category">{{localize "DH.Backpack"}}
+                <div class="tab-category {{#unless uiState.categoryStates.backpack}}section-collapsed{{/unless}}">{{localize "DH.Backpack"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                             data-type="item" data-location="backpack">
@@ -574,7 +567,7 @@
                     </div>
                 </div>
 
-                <ol class="item-list category-collapsed" data-location="backpack">
+                <ol class="item-list {{#unless uiState.categoryStates.backpack}}category-collapsed{{/unless}}" data-location="backpack">
                     {{#each data.items as |item id|}}
                     {{#if (or (eq item.system.location "backpack") (and (not item.system.location) (eq item.type "inventory")) (and (not item.system.location) (eq item.type "weapon")))}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -619,7 +612,7 @@
             <div class="features">
                 <div class="tab-title">{{localize "DH.Loadout"}}</div>
 
-                <div class="tab-category">{{localize "DH.Class"}}
+                <div class="tab-category {{#unless uiState.categoryStates.class}}section-collapsed{{/unless}}">{{localize "DH.Class"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-class"
                             data-type="class" data-location="class">
@@ -627,7 +620,7 @@
                         <a class="item-control category-toggle" data-category="class" title="Toggle Class Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list category-collapsed" data-location="class">
+                <ol class="item-list {{#unless uiState.categoryStates.class}}category-collapsed{{/unless}}" data-location="class">
                     {{#each data.items as |item id|}}
                     {{#if (or (eq item.system.location "class") (and (not item.system.location) (eq item.type "class")))}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -664,7 +657,7 @@
                     {{/if}}
                     {{/each}}
                 </ol>
-                <div class="tab-category">{{localize "DH.Subclass"}}
+                <div class="tab-category {{#unless uiState.categoryStates.subclass}}section-collapsed{{/unless}}">{{localize "DH.Subclass"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-subclass"
                             data-type="subclass" data-location="subclass">
@@ -672,7 +665,7 @@
                         <a class="item-control category-toggle" data-category="subclass" title="Toggle Subclass Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list category-collapsed" data-location="subclass">
+                <ol class="item-list {{#unless uiState.categoryStates.subclass}}category-collapsed{{/unless}}" data-location="subclass">
                     {{#each data.items as |item id|}}
                     {{#if (or (eq item.system.location "subclass") (and (not item.system.location) (eq item.type "subclass")))}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -710,7 +703,7 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category">{{localize "DH.Ancestry"}}
+                <div class="tab-category {{#unless uiState.categoryStates.ancestry}}section-collapsed{{/unless}}">{{localize "DH.Ancestry"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-ancestry"
                             data-type="ancestry" data-location="ancestry">
@@ -718,7 +711,7 @@
                         <a class="item-control category-toggle" data-category="ancestry" title="Toggle Ancestry Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list category-collapsed" data-location="ancestry">
+                <ol class="item-list {{#unless uiState.categoryStates.ancestry}}category-collapsed{{/unless}}" data-location="ancestry">
                     {{#each data.items as |item id|}}
                     {{#if (or (eq item.system.location "ancestry") (and (not item.system.location) (eq item.type "ancestry")))}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -756,7 +749,7 @@
                     {{/each}}
                 </ol>
                 
-                <div class="tab-category">{{localize "DH.Community"}}
+                <div class="tab-category {{#unless uiState.categoryStates.community}}section-collapsed{{/unless}}">{{localize "DH.Community"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-community"
                             data-type="community" data-location="community">
@@ -764,7 +757,7 @@
                         <a class="item-control category-toggle" data-category="community" title="Toggle Community Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list category-collapsed" data-location="community">
+                <ol class="item-list {{#unless uiState.categoryStates.community}}category-collapsed{{/unless}}" data-location="community">
                     {{#each data.items as |item id|}}
                     {{#if (or (eq item.system.location "community") (and (not item.system.location) (eq item.type "community")))}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -802,7 +795,7 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category">{{localize "DH.Abilities"}}
+                <div class="tab-category {{#unless uiState.categoryStates.abilities}}section-collapsed{{/unless}}">{{localize "DH.Abilities"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create"
                             data-type="item" data-location="abilities">
@@ -810,7 +803,7 @@
                         <a class="item-control category-toggle" data-category="abilities" title="Toggle Abilities Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list category-collapsed" data-location="abilities">
+                <ol class="item-list {{#unless uiState.categoryStates.abilities}}category-collapsed{{/unless}}" data-location="abilities">
                     {{#each data.items as |item id|}}
                     {{#if (or (eq item.system.location "abilities") (and (not item.system.location) (or (eq item.type "item") (eq item.type "domain"))))}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -834,8 +827,11 @@
                                 <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
                                 {{/if}}
-                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
-                                        class="fas fa-arrow-right"></i></a>
+                                {{#if (eq item.system.location "vault")}}
+                                <a class="item-control" title="Send to Domain" data-action="send-to-domain"><i class="fas fa-arrow-left"></i></a>
+                                {{else}}
+                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i class="fas fa-arrow-right"></i></a>
+                                {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
@@ -850,7 +846,7 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category">{{localize "DH.Vault"}}
+                <div class="tab-category {{#unless uiState.vaultOpen}}section-collapsed{{/unless}}">{{localize "DH.Vault"}}
                     <div class="vault-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                             data-type="item" data-location="vault">
@@ -858,7 +854,7 @@
                         <a class="item-control vault-toggle" title="{{localize "DH.ToggleVault"}}"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list vault-collapsed" data-location="vault">
+                <ol class="item-list {{#unless uiState.vaultOpen}}vault-collapsed{{/unless}}" data-location="vault">
                     {{#each data.items as |item id|}}
                     {{#if (or (eq item.system.location "vault") (and (not item.system.location) (eq item.type "vault")))}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -882,8 +878,11 @@
                                 <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
                                 {{/if}}
-                                <!--<a class="item-control" title="Send to Domain" data-action="send-to-domain"><i
-                                    class="fas fa-arrow-left"></i></a>-->
+                                {{#if (eq item.system.location "vault")}}
+                                <a class="item-control" title="Send to Domain" data-action="send-to-domain"><i class="fas fa-arrow-left"></i></a>
+                                {{else}}
+                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i class="fas fa-arrow-right"></i></a>
+                                {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
@@ -900,36 +899,5 @@
             </div>        
         </div>
     </section>
-
-    <!-- Popup overlay for editing trait values -->
-    <div class="trait-edit-popup-overlay" style="display: none;">
-        <div class="trait-edit-popup">
-            <div class="trait-edit-header">
-                <span class="trait-edit-label"></span>
-                <button type="button" class="trait-edit-close">×</button>
-            </div>
-            <div class="trait-edit-content">
-                <div class="trait-base-value">
-                    <label>Base Value:</label>
-                    <input type="number" class="trait-base-input" />
-                </div>
-                
-                <div class="trait-modifiers-section">
-                    <div class="modifiers-header">
-                        <span>Additional Modifiers:</span>
-                        <button type="button" class="add-modifier-btn">+</button>
-                    </div>
-                    <div class="modifiers-table">
-                        <div class="modifiers-list"></div>
-                    </div>
-                </div>
-                
-                <div class="trait-total">
-                    <label>Total Value:</label>
-                    <span class="trait-total-value">0</span>
-                </div>
-            </div>
-        </div>
-    </div>
 </form>
     

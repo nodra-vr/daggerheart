@@ -508,4 +508,114 @@
   .sheet-tracker-sidebar {
     /* Additional theme-specific styles can go here */
   }
+}
+
+/* ----------------------------------------- */
+/* Sidebar Navigation Buttons                */
+/* ----------------------------------------- */
+
+.sidebar-nav-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-button {
+  width: 45px;
+  height: 36px;
+  border-radius: 0% 25% 25% 0%;
+  background: rgba(11, 10, 19, 0.9);
+  border: 1px solid var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  i {
+    font-size: 14px;
+  }
+
+  &:hover {
+    background: var(--dh-color-gold);
+    color: var(--dh-color-off-black);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  &.active {
+    background: var(--dh-color-gold);
+    color: var(--dh-color-off-black);
+  }
+
+  &::after {
+    content: attr(title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(11, 10, 19, 0.95);
+    color: var(--dh-color-gold);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    border: 1px solid var(--dh-color-gold);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+  }
+
+  &:hover::after {
+    opacity: 1;
+    visibility: visible;
+    margin-left: 12px;
+  }
+}
+
+/* Completely hide the original nav bar but keep it in the DOM for fallback */
+.daggerheart.sheet.actor .sheet-tabs,
+.daggerheart.sheet.npc .sheet-tabs {
+  display: none !important;
+}
+
+/* ----------------------------------------- */
+/* Tooltip for tracker main button            */
+/* ----------------------------------------- */
+
+.tracker-main-button::after {
+  content: attr(title);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(11, 10, 19, 0.95);
+  color: var(--dh-color-gold);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  border: 1px solid var(--dh-color-gold);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.tracker-main-button:hover::after {
+  opacity: 1;
+  visibility: visible;
+  margin-left: 12px;
 } 

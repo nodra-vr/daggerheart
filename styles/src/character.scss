@@ -704,6 +704,9 @@ input.trait-effects.resize-ta {
   label {
     margin: 0;
   }
+  [data-trait-tooltip] {
+    box-shadow: 0 0 16px 6px rgb(0 0 0 / 45%);
+  }
 }
 
 .armor-controls {

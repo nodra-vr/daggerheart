@@ -3,6 +3,9 @@ import {ATTRIBUTE_TYPES} from "./constants.js";
 import { DaggerheartDialogHelper } from "./dialog-helper.js";
 import { SheetTracker } from "./sheet-tracker.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
+import { DomainAbilitySidebar } from "./domain-ability-sidebar.js";
+import { HeaderLoadoutBar } from "./header-loadout-bar.js";
+import { buildItemCardChat } from "./helper.js";
 
 /**
 * Extend the basic ActorSheet with some very simple modifications
@@ -55,155 +58,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     }
   }
 
-  /**
-   * Set a base value programmatically with optional editability restrictions
-   * @param {string} field - The field path (e.g., "system.finesse.value" or "system.weapon-main.damage")
-   * @param {number|string} value - The base value to set (number for modifiers, string for damage formulas)
-   * @param {boolean} editable - Whether the base value should be editable in the UI (default: true)
-   * @returns {Promise} - Promise that resolves when the update is complete
-   */
-  async baseValue(field, value, editable = true) {
-    console.log("Daggerheart | Setting base value:", field, "=", value, "editable:", editable);
-    
-    const updateData = {};
-    
-    // Store restriction in actor flags for persistence
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    if (!editable) {
-      updateData[restrictionPath] = {
-        value: value,
-        editable: false,
-        timestamp: Date.now()
-      };
-      console.log("Daggerheart | Creating restriction:", restrictionPath, updateData[restrictionPath]);
-    } else {
-      updateData[restrictionPath] = null; // Remove restriction
-      console.log("Daggerheart | Removing restriction:", restrictionPath);
-    }
-    
-    // Handle weapon damage and attack modifiers specially
-    if (field.includes('weapon-main.damage') || field.includes('weapon-off.damage')) {
-      // For weapon damage, update the damage structure
-      updateData[`${field}.baseValue`] = value;
-      
-      // Preserve existing modifiers and recalculate value
-      const currentData = foundry.utils.getProperty(this.actor, field);
-      const existingModifiers = (currentData && Array.isArray(currentData.modifiers)) ? currentData.modifiers : [];
-      
-      // NEVER overwrite existing modifiers - only initialize if truly missing
-      // This preserves modifiers like ally bonuses, spell effects, etc.
-      if (!currentData || currentData.modifiers === undefined) {
-        updateData[`${field}.modifiers`] = existingModifiers;
-      }
-      
-      // Recalculate value with existing modifiers
-      let calculatedValue = value;
-      if (existingModifiers.length > 0) {
-        // For damage, modifiers are typically added as strings like "+2" or "+1d4"
-        const modifierStrings = existingModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
-        if (modifierStrings.length > 0) {
-          calculatedValue = `${value} + ${modifierStrings.join(' + ')}`;
-        }
-      }
-      updateData[`${field}.value`] = calculatedValue;
-      
-    } else if (field.includes('weapon-main.to-hit') || field.includes('weapon-off.to-hit')) {
-      // For weapon attack modifiers, update the to-hit structure
-      updateData[`${field}.baseValue`] = value;
-      
-      // Preserve existing modifiers and recalculate value
-      const currentData = foundry.utils.getProperty(this.actor, field);
-      const existingModifiers = (currentData && Array.isArray(currentData.modifiers)) ? currentData.modifiers : [];
-      
-      // NEVER overwrite existing modifiers - only initialize if truly missing
-      // This preserves modifiers like ally bonuses, spell effects, etc.
-      if (!currentData || currentData.modifiers === undefined) {
-        updateData[`${field}.modifiers`] = existingModifiers;
-      }
-      
-      // Recalculate value with existing modifiers
-      let calculatedValue = value;
-      if (existingModifiers.length > 0) {
-        // For to-hit, modifiers are typically numeric
-        const modifierTotal = existingModifiers.reduce((total, mod) => {
-          const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
-          return total + modValue;
-        }, 0);
-        calculatedValue = value + modifierTotal;
-      }
-      updateData[`${field}.value`] = calculatedValue;
-    } else {
-      // Handle other modifier structures
-      let basePath = field;
-      if (field.endsWith('.value')) {
-        basePath = field.substring(0, field.lastIndexOf('.'));
-      }
-      
-      // Create/update the modifier structure
-      updateData[`${basePath}.baseValue`] = value;
-      
-      // Preserve existing modifiers and recalculate value
-      const currentData = foundry.utils.getProperty(this.actor, basePath);
-      const existingModifiers = (currentData && Array.isArray(currentData.modifiers)) ? currentData.modifiers : [];
-      
-      // NEVER overwrite existing modifiers - only initialize if truly missing
-      if (!currentData || currentData.modifiers === undefined) {
-        updateData[`${basePath}.modifiers`] = existingModifiers;
-      }
-      
-      // Recalculate value with existing modifiers
-      let calculatedValue = value;
-      if (existingModifiers.length > 0) {
-        // For general modifiers, try to add them numerically
-        const modifierTotal = existingModifiers.reduce((total, mod) => {
-          const modValue = parseInt(mod.value || mod.modifier || mod) || 0;
-          return total + modValue;
-        }, 0);
-        calculatedValue = value + modifierTotal;
-      }
-      updateData[`${basePath}.value`] = calculatedValue;
-    }
-    
-    console.log("Daggerheart | Base value update data:", updateData);
-    
-    // Apply the update
-    await this.actor.update(updateData);
-    
-    console.log("Daggerheart | Base value update complete for:", field);
-    return true;
-  }
-  
-  /**
-   * Remove base value restrictions for a specific field
-   * @param {string} field - The field path to remove restrictions from
-   */
-  async removeBaseValueRestriction(field) {
-    console.log("Daggerheart | Removing base value restriction for:", field);
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    await this.actor.update({[restrictionPath]: null});
-    console.log("Daggerheart | Base value restriction removed for:", field);
-  }
-  
-  /**
-   * Check if a field has base value restrictions
-   * @param {string} field - The field path to check
-   * @returns {boolean} - Whether the field has restrictions
-   */
-  hasBaseValueRestriction(field) {
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    const restriction = foundry.utils.getProperty(this.actor, restrictionPath);
-    return restriction && !restriction.editable;
-  }
-  
-  /**
-   * Get base value restriction data for a field
-   * @param {string} field - The field path to check
-   * @returns {object|null} - The restriction data or null
-   */
-  getBaseValueRestriction(field) {
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    return foundry.utils.getProperty(this.actor, restrictionPath);
-  }
+  // Removed baseValue restriction system - now using simple dynamic weapon resolution
   
   /** @inheritdoc */
   static get defaultOptions() {
@@ -227,12 +82,22 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   
   /** @inheritdoc */
   async getData(options) {
+    // Always fetch UI state first so the template and later listeners know it
+    await this._loadUiState();
+
     const context = await super.getData(options);
     EntitySheetHelper.getAttributeData(context.data);
     context.shorthand = !!game.settings.get("daggerheart", "macroShorthand");
     context.systemData = context.data.system;
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;
+    
+    // Only apply dynamic weapon system to character actors (not NPCs or Companions)
+    if (this.actor.type === "character") {
+      // Get dynamic weapon data - this replaces the complex baseValue system for PCs
+      context.systemData["weapon-main"] = EquipmentHandler.getDynamicWeaponData(this.actor, "primary");
+      context.systemData["weapon-off"] = EquipmentHandler.getDynamicWeaponData(this.actor, "secondary");
+    }
     
     // Ensure tooltip properties exist for resources (migration fallback)
     if (!context.systemData.health?.tooltip) {
@@ -267,8 +132,8 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
         async: true
       });
       
-      // Add weapon slot information for equipped weapons
-      if (item.type === "weapon") {
+      // Add weapon slot information for equipped weapons (character actors only)
+      if (item.type === "weapon" && this.actor.type === "character") {
         item.equippedSlot = EquipmentHandler.getWeaponEquippedSlot(this.actor, item);
       }
     }
@@ -278,11 +143,19 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     
     context.actor = this.actor; // Add this line to include the actor object in the context
     
-    // Add weapon display data
-    context.weaponDisplay = EquipmentHandler.getWeaponDisplayData(this.actor);
+    // Add weapon display data (character actors only)
+    if (this.actor.type === "character") {
+      context.weaponDisplay = EquipmentHandler.getWeaponDisplayData(this.actor);
+    }
     
     const imageLink = context.data.img;
     context.imageStyle = `background: url(${imageLink});`;
+    
+    // Expose UI-state flags to the template (future-proofing, avoids flicker)
+    context.uiState = {
+      vaultOpen : this._vaultOpen,
+      categoryStates: this._categoryStates
+    };
     
     // Check if character is dying/dead (hit points maxed out)
     const health = context.systemData.health;
@@ -297,18 +170,30 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   async activateListeners(html) {
     super.activateListeners(html);
     
-    // Initialize Sheet Tracker
+    // Initialize Sheet Tracker (right side)
     if (!this.sheetTracker) {
       this.sheetTracker = new SheetTracker(this);
     }
     // Always initialize on re-render to recreate the DOM
     this.sheetTracker.initialize();
     
+    // Initialize Domain Ability Sidebar (left side)
+    if (!this.domainAbilitySidebar) {
+      this.domainAbilitySidebar = new DomainAbilitySidebar(this);
+    }
+    this.domainAbilitySidebar.initialize();
+    
+    // Initialize Header Loadout Bar
+    if (!this.headerLoadoutBar) {
+      this.headerLoadoutBar = new HeaderLoadoutBar(this);
+    }
+    this.headerLoadoutBar.initialize();
+    
     // Disable all transitions during initialization to prevent unwanted animations
     this._disableTransitions();
 
-    // Load and restore persistent vault state
-    await this._loadVaultState();
+    // Load UI (vault + category) state
+    await this._loadUiState();
 
     const vaultList = html.find('.item-list[data-location="vault"]');
     const icon = html.find('.vault-toggle i');
@@ -320,26 +205,6 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       vaultList.addClass('vault-collapsed');
       icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
     }
-
-    // Load and restore persistent category states
-    await this._loadCategoryStates();
-
-    const categories = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack'];
-    categories.forEach(category => {
-      const categoryList = html.find(`.item-list[data-location="${this._getCategoryDataType(category)}"]`);
-      const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
-      const categoryHeader = html.find(`.category-toggle[data-category="${category}"]`).closest('.tab-category');
-
-      if (this._categoryStates[category]) {
-        categoryList.removeClass('category-collapsed');
-        categoryHeader.removeClass('section-collapsed');
-        categoryIcon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-      } else {
-        categoryList.addClass('category-collapsed');
-        categoryHeader.addClass('section-collapsed');
-        categoryIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-      }
-    });
 
     // Initialize dynamic spacing for all categories (without transitions)
     this._updateDynamicSpacing(false);
@@ -373,12 +238,15 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.find(".item-control").click(this._onItemControl.bind(this));
     html.find(".rollable").on("click", this._onItemRoll.bind(this));
     
-    // Weapon equip toggle
-    html.find('.weapon-toggle-equip').click(this._onToggleWeaponEquip.bind(this));
-    
-    // New dual weapon equip buttons
-    html.find('.weapon-equip-primary').click(this._onEquipPrimaryWeapon.bind(this));
-    html.find('.weapon-equip-secondary').click(this._onEquipSecondaryWeapon.bind(this));
+    // Weapon equip functionality (character actors only)
+    if (this.actor.type === "character") {
+      // Weapon equip toggle
+      html.find('.weapon-toggle-equip').click(this._onToggleWeaponEquip.bind(this));
+      
+      // New dual weapon equip buttons
+      html.find('.weapon-equip-primary').click(this._onEquipPrimaryWeapon.bind(this));
+      html.find('.weapon-equip-secondary').click(this._onEquipSecondaryWeapon.bind(this));
+    }
     
     // Handle toggling item description visibility
     html.find(".item-name[data-action=\"toggle-description\"]").click(this._onToggleDescription.bind(this));
@@ -617,23 +485,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const success = await EquipmentHandler.toggleWeaponEquip(this.actor, item);
     
     if (success) {
-      // Wait for the weapon sync to complete
-      await EquipmentHandler.syncEquippedWeapons(this.actor, this);
-      
-      // Update button appearance immediately
-      const newEquippedState = item.system.equipped;
-      if (newEquippedState) {
-        button.classList.add('equipped');
-        button.title = 'Unequip';
-      } else {
-        button.classList.remove('equipped');
-        button.title = 'Equip';
-      }
-      
-      // Force immediate render after a brief delay to ensure all data is propagated
-      setTimeout(() => {
-        this.render(true, { immediate: true });
-      }, 150);
+      // The equipment handler now automatically updates weapon slots
+      // Force immediate render to show the changes
+      this.render(true);
     }
   }
 
@@ -653,13 +507,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const success = await EquipmentHandler.equipPrimaryWeapon(this.actor, item);
     
     if (success) {
-      // Wait for the weapon sync to complete
-      await EquipmentHandler.syncEquippedWeapons(this.actor, this);
-      
-      // Force immediate render after a brief delay to ensure all data is propagated
-      setTimeout(() => {
-        this.render(true, { immediate: true });
-      }, 150);
+      // The equipment handler now automatically updates weapon slots
+      // Force immediate render to show the changes
+      this.render(true);
     }
   }
 
@@ -679,13 +529,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const success = await EquipmentHandler.equipSecondaryWeapon(this.actor, item);
     
     if (success) {
-      // Wait for the weapon sync to complete
-      await EquipmentHandler.syncEquippedWeapons(this.actor, this);
-      
-      // Force immediate render after a brief delay to ensure all data is propagated
-      setTimeout(() => {
-        this.render(true, { immediate: true });
-      }, 150);
+      // The equipment handler now automatically updates weapon slots
+      // Force immediate render to show the changes
+      this.render(true);
     }
   }
 
@@ -789,23 +635,15 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     if (item && action === "edit" && button.tagName === 'IMG' && button.classList.contains('item-control')) {
       const itemData = item.system;
       const description = await TextEditor.enrichHTML(itemData.description, {secrets: this.actor.isOwner, async: true});
-      const chatCard = `
-      <div class="item-card-chat" data-item-id="${item.id}" data-actor-id="${this.actor.id}">
-          <div class="card-image-container" style="background-image: url('${item.img}')">
-              <div class="card-header-text">
-                  <h3>${item.name}</h3>
-              </div>
-          </div>
-          <div class="card-content">
-              <div class="card-subtitle">
-                  <span>${itemData.category || ''} - ${itemData.rarity || ''}</span>
-              </div>
-              <div class="card-description">
-                  ${description}
-              </div>
-          </div>
-      </div>
-      `;
+      const chatCard = buildItemCardChat({
+        itemId: item.id,
+        actorId: this.actor.id,
+        image: item.img,
+        name: item.name,
+        category: itemData.category || '',
+        rarity: itemData.rarity || '',
+        description
+      });
 
       ChatMessage.create({
           user: game.user.id,
@@ -815,17 +653,32 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       return; // Done, don't proceed to open edit sheet
     }
     
-    const type = button.dataset.type; // Ensure type is read for create actions
-    const location = button.dataset.location; // Get location for new items
+    // Unified create actions (create, create-item, create-class, etc.)
+    const type = button.dataset.type;
+    const location = button.dataset.location;
+    if (action && action.startsWith('create')) {
+      const ItemCls = getDocumentClass('Item');
+
+      const defaultNames = {
+        'class': 'New Class',
+        'subclass': 'New Subclass',
+        'ancestry': 'New Ancestry',
+        'community': 'New Community',
+        'domain': 'New Domain',
+        'item': 'New Item',
+        'weapon': 'New Weapon'
+      };
+      const itemName = defaultNames[type] || 'New Item';
+
+      // Choose sensible default location if none provided
+      const fallbackLoc = ['item','weapon'].includes(type) ? 'backpack' : (type || 'abilities');
+      const loc = location || fallbackLoc;
+
+      await ItemCls.create({ name: itemName, type, system: { location: loc } }, { parent: this.actor });
+      return;
+    }
     
     switch (action) {
-      case "create":
-      const clsi = getDocumentClass("Item");
-      return clsi.create({
-        name: "New Ability", 
-        type: type,
-        system: { location: location || "abilities" }
-      }, {parent: this.actor});
       case "create-item":
       const cls = getDocumentClass("Item");
       return cls.create({
@@ -872,10 +725,48 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         if (item) return item.sheet.render(true);
         break;
       case "delete":
-        if (item) return item.delete();
+        if (item) {
+          const confirmResult = await DaggerheartDialogHelper.showDialog({
+            title: "Delete Item",
+            content: `<p>Are you sure you want to delete <strong>${item.name}</strong>? This cannot be undone.</p>`,
+            dialogClass: "confirm-dialog",
+            buttons: {
+              confirm: {
+                label: "Delete",
+                icon: '<i class="fas fa-trash"></i>',
+                callback: () => true
+              },
+              cancel: {
+                label: "Cancel",
+                callback: () => null
+              }
+            },
+            default: "cancel"
+          });
+          if (!confirmResult) return;
+          return item.delete();
+        }
         break;
       case "send-to-vault":
         if (item) {
+          const confirmResult = await DaggerheartDialogHelper.showDialog({
+            title: "Move to Vault",
+            content: `<p>Are you sure you want to move <strong>${item.name}</strong> to the vault?</p>`,
+            dialogClass: "confirm-dialog",
+            buttons: {
+              confirm: {
+                label: "Move",
+                icon: '<i class="fas fa-archive"></i>',
+                callback: () => true
+              },
+              cancel: {
+                label: "Cancel",
+                callback: () => null
+              }
+            },
+            default: "cancel"
+          });
+          if (!confirmResult) return;
           // Simply change location to vault - preserve item type and all other data
           return item.update({
             "system.location": "vault"
@@ -2178,63 +2069,85 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   /* -------------------------------------------- */
   
   /**
-   * Build damage formula from structured damage data
-   * @param {Object} damageData - The damage data object with baseValue and modifiers
-   * @param {number|null} proficiency - The character's proficiency value (null for NPCs)
-   * @returns {string} - The complete damage formula for rolling
+   * Build damage formula from structure, using dynamic weapon resolution if available
+   * @param {Object} damageData - The damage data structure 
+   * @param {number} [proficiency] - Optional proficiency modifier
+   * @returns {string} - The final damage formula
    * @private
    */
   _buildDamageFormulaFromStructure(damageData, proficiency = null) {
-    let baseFormula = damageData.baseValue || '1d8';
-    
-    // Apply proficiency to base formula if character
-    if (proficiency) {
-      baseFormula = this._applyProficiencyToDamageFormula(baseFormula, proficiency);
-    }
-    
-    // Add enabled modifiers
-    const modifiers = damageData.modifiers || [];
-    const enabledModifiers = modifiers.filter(mod => mod.enabled !== false && mod.value);
-    
-    if (enabledModifiers.length === 0) {
-      return baseFormula;
-    }
-    
-    let formula = baseFormula;
-    enabledModifiers.forEach(modifier => {
-      let modValue = modifier.value.trim();
-      // Ensure proper formatting - add + if it doesn't start with + or -
-      if (modValue && !modValue.startsWith('+') && !modValue.startsWith('-')) {
-        modValue = '+' + modValue;
+    // Check if this is a dynamic weapon slot (character actors only)
+    if (this.actor.type === "character" && damageData?.isDynamic && damageData?.baseValue === null) {
+      // Determine which weapon slot this is
+      const weaponSlot = this._determineWeaponSlot(damageData);
+      if (weaponSlot) {
+        // Get dynamically resolved weapon data
+        const resolvedData = EquipmentHandler.getResolvedWeaponData(this.actor, weaponSlot);
+        if (resolvedData && resolvedData.damage) {
+          damageData = resolvedData.damage;
+        }
       }
-      formula += ' ' + modValue;
-    });
+    }
     
-    return formula;
+    let baseFormula = "";
+    
+    // Extract base formula using safe property access
+    if (typeof damageData === 'string') {
+      baseFormula = damageData;
+    } else if (typeof damageData === 'object' && damageData !== null) {
+      baseFormula = damageData.baseValue || damageData.value || "1d8";
+    } else {
+      baseFormula = "1d8";
+    }
+    
+    // Process inline references if available using Foundry VTT global
+    if (globalThis.daggerheart?.EntitySheetHelper) {
+      try {
+        baseFormula = globalThis.daggerheart.EntitySheetHelper.processInlineReferences(baseFormula, this.actor);
+      } catch (error) {
+        console.warn("Daggerheart | Error processing inline references in damage formula:", error);
+        // Continue with unprocessed formula
+      }
+    }
+    
+    // Apply proficiency if provided and formula contains @prof placeholder
+    if (proficiency !== null && baseFormula.includes('@prof')) {
+      baseFormula = baseFormula.replace(/@prof/g, proficiency);
+    }
+    
+    // Handle modifiers
+    let finalFormula = baseFormula;
+    if (typeof damageData === 'object' && damageData !== null && Array.isArray(damageData.modifiers)) {
+      const enabledModifiers = damageData.modifiers.filter(mod => mod.enabled !== false);
+      if (enabledModifiers.length > 0) {
+        const modifierStrings = enabledModifiers.map(mod => mod.value || mod.name || mod).filter(v => v);
+        if (modifierStrings.length > 0) {
+          finalFormula = `${baseFormula} + ${modifierStrings.join(' + ')}`;
+        }
+      }
+    }
+    
+    return finalFormula;
   }
 
   /**
-   * Apply proficiency logic to damage formulas for characters
-   * @param {string} damageFormula - The damage formula (e.g., "1d8 + 1 + 1d4")
-   * @param {number} proficiency - The character's proficiency value
-   * @returns {string} - The modified damage formula with proficiency applied
+   * Determine which weapon slot a damage data structure belongs to
+   * @param {Object} damageData - The damage data structure
+   * @returns {string|null} - "primary" or "secondary" or null
    * @private
    */
-  _applyProficiencyToDamageFormula(damageFormula, proficiency) {
-    // Use the same logic as the original weapon damage handling
-    // Parse dice notation at the beginning of the formula
-    const diceMatch = damageFormula.match(/^(\d*)d(\d+)(.*)$/i);
-    
-    if (diceMatch) {
-      const diceCount = diceMatch[1] || proficiency; // Use proficiency if no count specified
-      const dieType = diceMatch[2]; // Die type (8, 6, etc.)
-      const remainder = diceMatch[3] || ""; // Everything after the first dice (modifiers, additional dice, etc.)
-      
-      return `${diceCount}d${dieType}${remainder}`;
-    } else {
-      // If it doesn't match dice notation, return as-is
-      return damageFormula;
+  _determineWeaponSlot(damageData) {
+    // Check if this damage data matches the primary weapon slot using safe property access
+    const primaryWeaponDamage = foundry.utils.getProperty(this.actor, 'system.weapon-main.damage');
+    if (primaryWeaponDamage === damageData) {
+      return "primary";
     }
+    // Check if this damage data matches the secondary weapon slot using safe property access
+    const secondaryWeaponDamage = foundry.utils.getProperty(this.actor, 'system.weapon-off.damage');
+    if (secondaryWeaponDamage === damageData) {
+      return "secondary";
+    }
+    return null;
   }
   
   /* -------------------------------------------- */
@@ -2430,8 +2343,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         this._vaultOpen = false;
     }
 
-    // Save the updated vault state persistently
-    await this._saveVaultState();
+    // Persist UI state
+    await this._saveUiState();
   }
 
   async _onToggleCategory(event) {
@@ -2471,8 +2384,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         this._updateDynamicSpacing(true);
     }
 
-    // Save the updated state persistently
-    await this._saveCategoryStates();
+    // Persist UI state
+    await this._saveUiState();
   }
 
   /**
@@ -2481,107 +2394,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
    * @private
    */
   _updateDynamicSpacing(enableTransitions = true) {
-    const allCategoryHeaders = this.element.find('.tab-category');
-    const sheetElement = this.element;
-
-    // Control transitions based on the parameter
-    if (enableTransitions) {
-      sheetElement.addClass('transitions-enabled');
-    } else {
-      sheetElement.removeClass('transitions-enabled');
-    }
-
-    allCategoryHeaders.each((index, header) => {
-      const $header = $(header);
-      const isCollapsed = $header.hasClass('section-collapsed');
-
-      if (isCollapsed) {
-        // Apply minimal spacing for collapsed sections
-        $header.addClass('dynamic-collapsed');
-        $header.removeClass('dynamic-expanded');
-      } else {
-        // Apply normal spacing for expanded sections
-        $header.addClass('dynamic-expanded');
-        $header.removeClass('dynamic-collapsed');
-      }
-    });
-
-    // If transitions were disabled for initialization, re-enable them after a brief delay
-    // to allow for future user interactions
-    if (!enableTransitions) {
-      setTimeout(() => {
-        if (this.element) {
-          this.element.addClass('transitions-enabled');
-        }
-      }, 100);
-    }
-  }
-
-  /**
-   * Load persistent category states from actor flags
-   * @private
-   */
-  async _loadCategoryStates() {
-    if (!this.actor) return;
-
-    // Get saved states from actor flags
-    const savedStates = this.actor.getFlag('daggerheart', 'categoryStates') || {};
-
-    // Initialize _categoryStates with saved values or defaults
-    this._categoryStates = {
-      'class': savedStates.class ?? false,
-      'subclass': savedStates.subclass ?? false,
-      'ancestry': savedStates.ancestry ?? false,
-      'community': savedStates.community ?? false,
-      'abilities': savedStates.abilities ?? false,
-      'worn': savedStates.worn ?? false,
-      'backpack': savedStates.backpack ?? false
-    };
-
-    console.log(`Loaded category states for ${this.actor.name}:`, this._categoryStates);
-  }
-
-  /**
-   * Save persistent category states to actor flags
-   * @private
-   */
-  async _saveCategoryStates() {
-    if (!this.actor || !this._categoryStates) return;
-
-    try {
-      await this.actor.setFlag('daggerheart', 'categoryStates', this._categoryStates);
-      console.log(`Saved category states for ${this.actor.name}:`, this._categoryStates);
-    } catch (error) {
-      console.error('Failed to save category states:', error);
-    }
-  }
-
-  /**
-   * Load persistent vault state from actor flags
-   * @private
-   */
-  async _loadVaultState() {
-    if (!this.actor) return;
-
-    // Get saved vault state from actor flags, default to false (collapsed)
-    this._vaultOpen = this.actor.getFlag('daggerheart', 'vaultOpen') ?? false;
-
-    console.log(`Loaded vault state for ${this.actor.name}:`, this._vaultOpen);
-  }
-
-  /**
-   * Save persistent vault state to actor flags
-   * @private
-   */
-  async _saveVaultState() {
-    if (!this.actor) return;
-
-    try {
-      await this.actor.setFlag('daggerheart', 'vaultOpen', this._vaultOpen);
-      console.log(`Saved vault state for ${this.actor.name}:`, this._vaultOpen);
-    } catch (error) {
-      console.error('Failed to save vault state:', error);
-    }
+    // Dynamic spacing logic removed for performance – handled purely in CSS now.
+    return; // no-op
   }
 
   /**
@@ -2832,7 +2646,146 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     });
   }
 
+  /**
+   * Check if a field has a base value restriction due to equipped weapons
+   * @param {string} field - The field path to check (e.g., "system.weapon-main.damage")
+   * @returns {boolean} - True if the field has a restriction
+   */
+  hasBaseValueRestriction(field) {
+    if (!field) return false;
+    
+    // Base value restrictions only apply to character actors
+    if (this.actor.type !== "character") return false;
+    
+    // Check if this is a weapon field
+    const isWeaponMainDamage = field.includes('weapon-main.damage');
+    const isWeaponOffDamage = field.includes('weapon-off.damage');
+    const isWeaponMainToHit = field.includes('weapon-main.to-hit');
+    const isWeaponOffToHit = field.includes('weapon-off.to-hit');
+    
+    if (!isWeaponMainDamage && !isWeaponOffDamage && !isWeaponMainToHit && !isWeaponOffToHit) {
+      return false;
+    }
+    
+    // Check if relevant weapon is equipped
+    const { EquipmentHandler } = globalThis.daggerheart || {};
+    if (!EquipmentHandler) {
+      return false;
+    }
+    
+    const primaryWeapon = EquipmentHandler.getPrimaryWeapon(this.actor);
+    const secondaryWeapon = EquipmentHandler.getSecondaryWeapon(this.actor);
+    
+    if ((isWeaponMainDamage || isWeaponMainToHit) && primaryWeapon) {
+      return true;
+    }
+    
+    if ((isWeaponOffDamage || isWeaponOffToHit) && secondaryWeapon) {
+      return true;
+    }
+    
+    return false;
+  }
+  
+  /**
+   * Get base value restriction data for a field
+   * @param {string} field - The field path to check
+   * @returns {Object|null} - Restriction data with {value, editable, reason} or null
+   */
+  getBaseValueRestriction(field) {
+    // Base value restrictions only apply to character actors
+    if (this.actor.type !== "character") return null;
+    
+    if (!this.hasBaseValueRestriction(field)) {
+      return null;
+    }
+    
+    const { EquipmentHandler } = globalThis.daggerheart || {};
+    if (!EquipmentHandler) {
+      return null;
+    }
+    
+    const isWeaponMainDamage = field.includes('weapon-main.damage');
+    const isWeaponOffDamage = field.includes('weapon-off.damage');
+    const isWeaponMainToHit = field.includes('weapon-main.to-hit');
+    const isWeaponOffToHit = field.includes('weapon-off.to-hit');
+    
+    let weapon = null;
+    let restrictedValue = null;
+    let reason = "";
+    
+    if (isWeaponMainDamage || isWeaponMainToHit) {
+      weapon = EquipmentHandler.getPrimaryWeapon(this.actor);
+      if (weapon) {
+        if (isWeaponMainDamage) {
+          restrictedValue = EquipmentHandler.getWeaponTotalDamage(weapon, this.actor);
+          reason = `Base damage locked by ${weapon.name}`;
+        } else {
+          restrictedValue = EquipmentHandler.getWeaponTraitValue(weapon, this.actor);
+          reason = `Base attack locked by ${weapon.name}`;
+        }
+      }
+    } else if (isWeaponOffDamage || isWeaponOffToHit) {
+      weapon = EquipmentHandler.getSecondaryWeapon(this.actor);
+      if (weapon) {
+        if (isWeaponOffDamage) {
+          restrictedValue = EquipmentHandler.getWeaponTotalDamage(weapon, this.actor);
+          reason = `Base damage locked by ${weapon.name}`;
+        } else {
+          restrictedValue = EquipmentHandler.getWeaponTraitValue(weapon, this.actor);
+          reason = `Base attack locked by ${weapon.name}`;
+        }
+      }
+    }
+    
+    if (weapon && restrictedValue !== null) {
+      return {
+        value: restrictedValue,
+        editable: false, // Base values are not editable when weapons are equipped
+        reason: reason,
+        weaponName: weapon.name,
+        weaponId: weapon.id
+      };
+    }
+    
+    return null;
+  }
 
+  /* ------------------------------------------------------------------------- */
+  /* Unified UI (vault + category collapse) state helpers                       */
+  /* ------------------------------------------------------------------------- */
+
+  async _loadUiState() {
+    if (!this.actor) return;
+    const uiState = this.actor.getFlag('daggerheart', 'uiState') || {};
+
+    // Vault open flag
+    this._vaultOpen = uiState.vaultOpen ?? false;
+
+    // Category collapse flags
+    const keys = ['class','subclass','ancestry','community','abilities','worn','backpack'];
+    const defaults = Object.fromEntries(keys.map(k => [k, false]));
+    this._categoryStates = Object.assign(defaults, uiState.categoryStates || {});
+  }
+
+  async _saveUiState() {
+    if (!this.actor) return;
+    const data = {
+      vaultOpen: this._vaultOpen ?? false,
+      categoryStates: this._categoryStates ?? {}
+    };
+    try {
+      await this.actor.setFlag('daggerheart', 'uiState', data);
+    } catch(e) {
+      console.error('Failed to save UI state', e);
+    }
+  }
+
+  // Back-compat wrappers so legacy calls still work -------------------------
+  async _loadCategoryStates() { return this._loadUiState(); }
+  async _saveCategoryStates() { return this._saveUiState(); }
+  async _loadVaultState()     { return this._loadUiState(); }
+  async _saveVaultState()     { return this._saveUiState(); }
 }
 
 
@@ -2880,12 +2833,36 @@ export class NPCActorSheet extends SimpleActorSheet {
   
   /** @inheritdoc */
   async getData(options) {
+    // Always fetch UI state first so the template and later listeners know it
+    await this._loadUiState();
+
     const context = await super.getData(options);
     EntitySheetHelper.getAttributeData(context.data);
     context.shorthand = !!game.settings.get("daggerheart", "macroShorthand");
     context.systemData = context.data.system;
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;
+    
+    // Only apply dynamic weapon system to character actors (not NPCs or Companions)
+    if (this.actor.type === "character") {
+      // Get dynamic weapon data - this replaces the complex baseValue system for PCs
+      context.systemData["weapon-main"] = EquipmentHandler.getDynamicWeaponData(this.actor, "primary");
+      context.systemData["weapon-off"] = EquipmentHandler.getDynamicWeaponData(this.actor, "secondary");
+    }
+    
+    // Ensure tooltip properties exist for resources (migration fallback)
+    if (!context.systemData.health?.tooltip) {
+      context.systemData.health = context.systemData.health || {};
+      context.systemData.health.tooltip = "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic.";
+    }
+    if (!context.systemData.stress?.tooltip) {
+      context.systemData.stress = context.systemData.stress || {};
+      context.systemData.stress.tooltip = "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic.";
+    }
+    if (!context.systemData.hope?.tooltip) {
+      context.systemData.hope = context.systemData.hope || {};
+      context.systemData.hope.tooltip = "Hope and Fear are currencies used by the players and the GM to represent the way fate turns for or against the characters during the game.";
+    }
     
     // htmlFields
     context.biographyHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.systemData.biography, {
@@ -2897,6 +2874,8 @@ export class NPCActorSheet extends SimpleActorSheet {
       async: true
     });
 
+    // Migration is now handled by the system-level migration system
+
     // Enrich item descriptions
     for (let item of context.data.items) {
       item.system.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(item.system.description, {
@@ -2904,17 +2883,19 @@ export class NPCActorSheet extends SimpleActorSheet {
         async: true
       });
       
-      // Add weapon slot information for equipped weapons
-      if (item.type === "weapon") {
-        item.equippedSlot = EquipmentHandler.getWeaponEquippedSlot(this.actor, item);
-        console.log(`Weapon ${item.name}: equipped=${item.system.equipped}, slot=${item.equippedSlot}`);
-      }
+      // NPCs don't use the equipment slot system
     }
     
     context.actor = this.actor; // Add this line to include the actor object in the context
     
     const imageLink = context.data.img;
     context.imageStyle = `background: url(${imageLink});`;
+    
+    // Expose UI-state flags to the template (future-proofing, avoids flicker)
+    context.uiState = {
+      vaultOpen : this._vaultOpen,
+      categoryStates: this._categoryStates
+    };
     
     // Check if NPC is dying/dead (hit points maxed out)
     const health = context.systemData.health;
@@ -2989,6 +2970,23 @@ export class NPCActorSheet extends SimpleActorSheet {
       textarea.css("height", calcHeight(textarea.val()) + "px");
     });
     
+    // Reflect saved collapsed/expanded state for each inventory/load-out category
+    const categories = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack'];
+    categories.forEach(category => {
+      const categoryList = html.find(`.item-list[data-location="${this._getCategoryDataType(category)}"]`);
+      const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
+      const categoryHeader = html.find(`.category-toggle[data-category="${category}"]`).closest('.tab-category');
+
+      if (this._categoryStates?.[category]) {
+        categoryList.removeClass('category-collapsed');
+        categoryHeader.removeClass('section-collapsed');
+        categoryIcon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      } else {
+        categoryList.addClass('category-collapsed');
+        categoryHeader.addClass('section-collapsed');
+        categoryIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+      }
+    });
   }
   
   /* -------------------------------------------- */
@@ -3011,23 +3009,15 @@ export class NPCActorSheet extends SimpleActorSheet {
     if (item && action === "edit" && button.tagName === 'IMG' && button.classList.contains('item-control')) {
       const itemData = item.system;
       const description = await TextEditor.enrichHTML(itemData.description, {secrets: this.actor.isOwner, async: true});
-      const chatCard = `
-      <div class="item-card-chat" data-item-id="${item.id}" data-actor-id="${this.actor.id}">
-          <div class="card-image-container" style="background-image: url('${item.img}')">
-              <div class="card-header-text">
-                  <h3>${item.name}</h3>
-              </div>
-          </div>
-          <div class="card-content">
-              <div class="card-subtitle">
-                  <span>${itemData.category || ''} - ${itemData.rarity || ''}</span>
-              </div>
-              <div class="card-description">
-                  ${description}
-              </div>
-          </div>
-      </div>
-      `;
+      const chatCard = buildItemCardChat({
+        itemId: item.id,
+        actorId: this.actor.id,
+        image: item.img,
+        name: item.name,
+        category: itemData.category || '',
+        rarity: itemData.rarity || '',
+        description
+      });
 
       ChatMessage.create({
           user: game.user.id,
@@ -3046,7 +3036,27 @@ export class NPCActorSheet extends SimpleActorSheet {
         if (item) return item.sheet.render(true);
         break;
       case "delete":
-        if (item) return item.delete();
+        if (item) {
+          const confirmResult = await DaggerheartDialogHelper.showDialog({
+            title: "Delete Item",
+            content: `<p>Are you sure you want to delete <strong>${item.name}</strong>? This cannot be undone.</p>`,
+            dialogClass: "confirm-dialog",
+            buttons: {
+              confirm: {
+                label: "Delete",
+                icon: '<i class="fas fa-trash"></i>',
+                callback: () => true
+              },
+              cancel: {
+                label: "Cancel",
+                callback: () => null
+              }
+            },
+            default: "cancel"
+          });
+          if (!confirmResult) return;
+          return item.delete();
+        }
         break;
     }
   }

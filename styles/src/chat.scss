@@ -135,6 +135,9 @@
 /* Item Card in Chat */
 .message-content .item-card-chat {
   width: 100%;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
   margin: 0;
   border: 1px solid #6d6795;
@@ -1255,51 +1258,168 @@ body.game .app a.content-link, .content-link, .inline-roll {
   }
 }
 
-// Multi-target armor slots styling
+// Multi-target armor slots styling - Updated to match hope tracker design pattern
 .multi-target-armor-container {
   .multi-target-armor-header {
     text-align: center;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.75em;
     
     label {
       font-weight: bold;
-      color: #333;
+      color: var(--dh-color-gold);
       font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 5px rgba(243, 194, 103, 0.6);
     }
   }
   
   // Individual armor slot containers in multi-target view
   .armor-slots-ui {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 0.25em;
-    background-color: #f9f9f9;
+    background: rgba(11, 10, 19, 0.85);
+    backdrop-filter: blur(5px);
+    border: 1px solid #6d6795;
+    border-radius: 10px;
+    padding: 0.75em;
+    margin: 0.5em 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     
     &:hover {
-      background-color: #f0f0f0;
-      border-color: #bbb;
+      background: rgba(11, 10, 19, 0.9);
+      border-color: var(--dh-color-gold);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
     
-    .resource-label-controls {
-      label {
-        font-size: 0.85em;
-        color: #444;
+    .resource-content {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.5em;
+      
+      .resource-box {
+        background: #1c1c1c;
+        border: 1px solid var(--dh-color-gold);
+        border-radius: 10px;
+        padding: 8px 15px;
+        color: white;
+        font-size: 1.2em;
+        font-weight: 700;
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        min-width: 60px;
+        justify-content: center;
         
-        strong {
-          color: #222;
+        .armor-slots-current, .armor-slots-max {
+          color: var(--dh-color-off-white);
+          text-align: center;
+          min-width: 1em;
+        }
+        
+        span {
+          color: var(--dh-color-gold);
+          font-weight: bold;
         }
       }
     }
     
-    .resource-box {
-      background-color: #fff;
-      border: 1px solid #ccc;
-    }
-    
-    .resource-control {
-      &:hover {
-        background-color: #e0e0e0;
+    .resource-label-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5em;
+      
+      label {
+        font-size: 0.85em;
+        color: var(--dh-color-off-white);
+        text-align: center;
+        flex: 1;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2em;
+        
+        strong {
+          color: var(--dh-color-gold);
+          text-shadow: 0 0 5px rgba(243, 194, 103, 0.6);
+        }
+        
+        .armor-availability {
+          font-size: 1em;
+          color: #6c6a85;
+          font-weight: 400;
+          text-transform: none;
+          letter-spacing: 0;
+          opacity: 0.9;
+        }
+      }
+      
+      .resource-control {
+        background: rgba(67, 63, 100, 0.5);
+        border: 1px solid #6d6795;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--dh-color-off-white);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 12px;
+        text-decoration: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        
+        &:hover {
+          background: rgba(67, 63, 100, 0.8);
+          border-color: var(--dh-color-gold);
+          color: var(--dh-color-gold);
+          transform: scale(1.1);
+          box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
+        }
+        
+        &:active {
+          transform: scale(0.95);
+        }
+        
+        i {
+          color: inherit;
+        }
       }
     }
   }
+}
+
+/* SHINE EFFECT */
+.item-card-chat .card-image-container {
+  position: relative;
+  overflow: hidden;
+}
+.item-card-chat .card-image-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  animation: shineMove 1s ease-in-out forwards;
+  z-index: 1;
+}
+.item-card-chat:hover .card-image-container::before {
+  animation: shineMove 1s ease-in-out forwards;
+}
+.domain-preview-card .card-image-container::before {
+  animation: shineMove 1s ease-in-out forwards;
+}
+@keyframes shineMove {
+  0% { left: -150%; }
+  100% { left: 150%; }
 }

@@ -37,13 +37,13 @@ async function _handleAutomaticFearGain(message) {
   if (game.paused) return;
   
   // Handle fear rolls (standalone or duality with fear)
-  if (flags.rollType === "fear" || (flags.rollType === "duality" && flags.isFear && !flags.reaction)) {
+  if (flags.rollType === "fear" || (flags.isDuality && flags.isFear && !flags.reaction)) {
     // Use socket-based fear gain to avoid permission issues
     await _requestFearGain(1, "roll with Fear");
   }
   
   // Handle hope/critical from duality rolls
-  if (flags.rollType === "duality" && !flags.reaction && (flags.isHope || flags.isCrit)) {
+  if (flags.isDuality && !flags.reaction && (flags.isHope || flags.isCrit)) {
     // Find the character for hope automation
     let targetActor = null;
     
@@ -74,7 +74,10 @@ async function _handleAutomaticFearGain(message) {
         console.log(`Daggerheart | +1 Hope for ${targetActor.name}`);
       }
       
-      if (Object.keys(updateData).length > 0) {
+      // Apply the update only if the current user has permission to modify the actor
+      const canModify = game.user?.isGM || game.user?.hasRole?.("ASSISTANT") || targetActor.isOwner;
+
+      if (Object.keys(updateData).length > 0 && canModify) {
         await targetActor.update(updateData);
       }
     } else {
@@ -759,7 +762,8 @@ export async function _dualityWithDialog(config) {
   if (!skipDialog) {
     const dialogChoice = await DaggerheartDialogHelper.showDualityRollDialog({
       title: title || "Roll",
-      rollDetails
+      rollDetails,
+      actor
     });
 
     if (!dialogChoice) { return; }
@@ -849,7 +853,8 @@ export async function _dualityWithDialog(config) {
       rolls: [result.roll],
       flags: {
         daggerheart: {
-          rollType: "duality", // Always set to duality for duality rolls
+          rollType: pendingRollType || "duality", // Use pending roll type for attack rolls, fallback to duality
+          isDuality: true, // Always true for duality rolls - needed for dice styling and automation
           weaponName: pendingWeaponName,
           actorId: actor?.id,
           actorType: actor?.type,
@@ -964,7 +969,7 @@ export async function _npcRollWithDialog(config) {
     sheet._lastRollResult = null;
   }
   
-  const pendingRollType = sheet?.getPendingRollType ? sheet.getPendingRollType() : "unknown";
+  const pendingRollType = sheet?.getPendingRollType ? sheet.getPendingRollType() : null;
   const pendingWeaponName = sheet?.getPendingWeaponName ? sheet.getPendingWeaponName() : "";
 
   // Send message
@@ -976,10 +981,12 @@ export async function _npcRollWithDialog(config) {
       rolls: [result.roll],
       flags: {
         daggerheart: {
-          rollType: pendingRollType,
+          rollType: pendingRollType || "npc",
           weaponName: pendingWeaponName,
           actorId: actor.id,
-          actorType: actor.type
+          actorType: actor.type,
+          isCrit,
+          reaction
         }
       }
     });

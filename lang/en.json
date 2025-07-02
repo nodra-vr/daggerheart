@@ -147,6 +147,8 @@
   "DH.Close": "Close",
   "DH.Far": "Far",
   "DH.VeryFar": "Very Far",
+  "DH.MaxTwoWeapons": "You can only equip two weapons at a time.",
+  "DH.InvalidWeapon": "Invalid weapon",
   "DH.Tabs.Details": "Details",
   "DH.Tabs.Biography": "Biograhpy"
 }
