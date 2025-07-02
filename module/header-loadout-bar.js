@@ -1,5 +1,7 @@
 // HeaderLoadoutBar: displays Class / Subclass / Ancestry / Community cards inside the sheet header
 
+import { buildItemCardChat } from "./helper.js";
+
 export class HeaderLoadoutBar {
   constructor(actorSheet) {
     this.actorSheet = actorSheet;
@@ -168,16 +170,15 @@ export class HeaderLoadoutBar {
   async _postToChat(item) {
     const itemData = item.system;
     const description = await TextEditor.enrichHTML(itemData.description, { secrets: this.actor.isOwner, async: true });
-    const chatCard = `
-      <div class="item-card-chat" data-item-id="${item.id}" data-actor-id="${this.actor.id}">
-        <div class="card-image-container" style="background-image: url('${item.img}')">
-          <div class="card-header-text"><h3>${item.name}</h3></div>
-        </div>
-        <div class="card-content">
-          <div class="card-subtitle"><span>${itemData.category || ''} - ${itemData.rarity || ''}</span></div>
-          <div class="card-description">${description}</div>
-        </div>
-      </div>`;
+    const chatCard = buildItemCardChat({
+      itemId: item.id,
+      actorId: this.actor.id,
+      image: item.img,
+      name: item.name,
+      category: itemData.category || '',
+      rarity: itemData.rarity || '',
+      description
+    });
     ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: chatCard });
   }
 
@@ -187,16 +188,15 @@ export class HeaderLoadoutBar {
     if (!item) return;
     const itemData = item.system;
     const description = await TextEditor.enrichHTML(itemData.description, { secrets: this.actor.isOwner, async: true });
-    const cardHtml = `
-      <div class="item-card-chat domain-preview-card" data-item-id="${item.id}">
-        <div class="card-image-container" style="background-image: url('${item.img}')">
-          <div class="card-header-text"><h3>${item.name}</h3></div>
-        </div>
-        <div class="card-content">
-          <div class="card-subtitle"><span>${itemData.category || ''} - ${itemData.rarity || ''}</span></div>
-          <div class="card-description">${description}</div>
-        </div>
-      </div>`;
+    const cardHtml = buildItemCardChat({
+      itemId: item.id,
+      image: item.img,
+      name: item.name,
+      category: itemData.category || '',
+      rarity: itemData.rarity || '',
+      description,
+      extraClasses: 'domain-preview-card'
+    });
     const hintHtml = `<div class="preview-hint"><i class="fas fa-mouse"></i> Middle-click to pin</div>`;
     const fullHtml = cardHtml + hintHtml;
     if (!this.previewElement) this.previewElement = $('<div class="domain-ability-preview"></div>').appendTo('body');

@@ -797,23 +797,16 @@ if (!item) {
 
 const itemData = item.system;
 const description = await TextEditor.enrichHTML(itemData.description, {secrets: item.isOwner, async: true});
-const chatCard = \`
-<div class="item-card-chat" data-item-id="\${item.id}" data-actor-id="\${item.parent?.id || ''}">
-    <div class="card-image-container" style="background-image: url('\${item.img}')">
-        <div class="card-header-text">
-            <h3>\${item.name}</h3>
-        </div>
-    </div>
-    <div class="card-content">
-        <div class="card-subtitle">
-            <span>\${itemData.category || ''} - \${itemData.rarity || ''}</span>
-        </div>
-        <div class="card-description">
-            \${description}
-        </div>
-    </div>
-</div>
-\`;
+const chatCard = globalThis.daggerheart?.buildItemCardChat ?
+  globalThis.daggerheart.buildItemCardChat({
+    itemId: item.id,
+    actorId: item.parent?.id || '',
+    image: item.img,
+    name: item.name,
+    category: itemData.category || '',
+    rarity: itemData.rarity || '',
+    description
+  }) : \`<div class="item-card-chat">\${item.name}</div>\`; // fallback
 
 ChatMessage.create({
     user: game.user.id,

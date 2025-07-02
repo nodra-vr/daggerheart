@@ -706,3 +706,25 @@ export class EntitySheetHelper {
     return processedFormula;
   }
 }
+
+export function buildItemCardChat({ itemId, actorId = "", image, name, category = "", rarity = "", description = "", extraClasses = "" }) {
+  const classAttr = extraClasses && extraClasses.trim().length ? `item-card-chat ${extraClasses.trim()}` : "item-card-chat";
+  return `
+  <div class="${classAttr}" data-item-id="${itemId}" data-actor-id="${actorId}">
+      <div class="card-image-container" style="background-image: url('${image}')">
+          <div class="card-header-text"><h3>${name}</h3></div>
+      </div>
+      <div class="card-content">
+          <div class="card-subtitle"><span>${category} - ${rarity}</span></div>
+          <div class="card-description">
+              ${description}
+          </div>
+      </div>
+  </div>`;
+}
+
+// Make globally accessible for macros and external usage
+if (typeof globalThis !== 'undefined') {
+  globalThis.daggerheart = globalThis.daggerheart || {};
+  globalThis.daggerheart.buildItemCardChat = buildItemCardChat;
+}

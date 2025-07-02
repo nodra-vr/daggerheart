@@ -5,6 +5,7 @@ import { SheetTracker } from "./sheet-tracker.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
 import { DomainAbilitySidebar } from "./domain-ability-sidebar.js";
 import { HeaderLoadoutBar } from "./header-loadout-bar.js";
+import { buildItemCardChat } from "./helper.js";
 
 /**
 * Extend the basic ActorSheet with some very simple modifications
@@ -634,23 +635,15 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     if (item && action === "edit" && button.tagName === 'IMG' && button.classList.contains('item-control')) {
       const itemData = item.system;
       const description = await TextEditor.enrichHTML(itemData.description, {secrets: this.actor.isOwner, async: true});
-      const chatCard = `
-      <div class="item-card-chat" data-item-id="${item.id}" data-actor-id="${this.actor.id}">
-          <div class="card-image-container" style="background-image: url('${item.img}')">
-              <div class="card-header-text">
-                  <h3>${item.name}</h3>
-              </div>
-          </div>
-          <div class="card-content">
-              <div class="card-subtitle">
-                  <span>${itemData.category || ''} - ${itemData.rarity || ''}</span>
-              </div>
-              <div class="card-description">
-                  ${description}
-              </div>
-          </div>
-      </div>
-      `;
+      const chatCard = buildItemCardChat({
+        itemId: item.id,
+        actorId: this.actor.id,
+        image: item.img,
+        name: item.name,
+        category: itemData.category || '',
+        rarity: itemData.rarity || '',
+        description
+      });
 
       ChatMessage.create({
           user: game.user.id,
@@ -733,27 +726,47 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         break;
       case "delete":
         if (item) {
-          const confirmed = await Dialog.confirm({
+          const confirmResult = await DaggerheartDialogHelper.showDialog({
             title: "Delete Item",
             content: `<p>Are you sure you want to delete <strong>${item.name}</strong>? This cannot be undone.</p>`,
-            yes: () => true,
-            no: () => false,
-            defaultYes: false
+            dialogClass: "confirm-dialog",
+            buttons: {
+              confirm: {
+                label: "Delete",
+                icon: '<i class="fas fa-trash"></i>',
+                callback: () => true
+              },
+              cancel: {
+                label: "Cancel",
+                callback: () => null
+              }
+            },
+            default: "cancel"
           });
-          if (!confirmed) return;
+          if (!confirmResult) return;
           return item.delete();
         }
         break;
       case "send-to-vault":
         if (item) {
-          const confirmed = await Dialog.confirm({
+          const confirmResult = await DaggerheartDialogHelper.showDialog({
             title: "Move to Vault",
             content: `<p>Are you sure you want to move <strong>${item.name}</strong> to the vault?</p>`,
-            yes: () => true,
-            no: () => false,
-            defaultYes: false
+            dialogClass: "confirm-dialog",
+            buttons: {
+              confirm: {
+                label: "Move",
+                icon: '<i class="fas fa-archive"></i>',
+                callback: () => true
+              },
+              cancel: {
+                label: "Cancel",
+                callback: () => null
+              }
+            },
+            default: "cancel"
           });
-          if (!confirmed) return;
+          if (!confirmResult) return;
           // Simply change location to vault - preserve item type and all other data
           return item.update({
             "system.location": "vault"
@@ -2996,23 +3009,15 @@ export class NPCActorSheet extends SimpleActorSheet {
     if (item && action === "edit" && button.tagName === 'IMG' && button.classList.contains('item-control')) {
       const itemData = item.system;
       const description = await TextEditor.enrichHTML(itemData.description, {secrets: this.actor.isOwner, async: true});
-      const chatCard = `
-      <div class="item-card-chat" data-item-id="${item.id}" data-actor-id="${this.actor.id}">
-          <div class="card-image-container" style="background-image: url('${item.img}')">
-              <div class="card-header-text">
-                  <h3>${item.name}</h3>
-              </div>
-          </div>
-          <div class="card-content">
-              <div class="card-subtitle">
-                  <span>${itemData.category || ''} - ${itemData.rarity || ''}</span>
-              </div>
-              <div class="card-description">
-                  ${description}
-              </div>
-          </div>
-      </div>
-      `;
+      const chatCard = buildItemCardChat({
+        itemId: item.id,
+        actorId: this.actor.id,
+        image: item.img,
+        name: item.name,
+        category: itemData.category || '',
+        rarity: itemData.rarity || '',
+        description
+      });
 
       ChatMessage.create({
           user: game.user.id,
@@ -3032,14 +3037,24 @@ export class NPCActorSheet extends SimpleActorSheet {
         break;
       case "delete":
         if (item) {
-          const confirmed = await Dialog.confirm({
+          const confirmResult = await DaggerheartDialogHelper.showDialog({
             title: "Delete Item",
             content: `<p>Are you sure you want to delete <strong>${item.name}</strong>? This cannot be undone.</p>`,
-            yes: () => true,
-            no: () => false,
-            defaultYes: false
+            dialogClass: "confirm-dialog",
+            buttons: {
+              confirm: {
+                label: "Delete",
+                icon: '<i class="fas fa-trash"></i>',
+                callback: () => true
+              },
+              cancel: {
+                label: "Cancel",
+                callback: () => null
+              }
+            },
+            default: "cancel"
           });
-          if (!confirmed) return;
+          if (!confirmResult) return;
           return item.delete();
         }
         break;

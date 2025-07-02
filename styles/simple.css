@@ -4768,6 +4768,9 @@ input.trait-effects.resize-ta {
 /* Item Card in Chat */
 .message-content .item-card-chat {
   width: 100%;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
   margin: 0;
   border: 1px solid #6d6795;
@@ -5870,6 +5873,42 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   color: inherit;
 }
 
+/* SHINE EFFECT */
+.item-card-chat .card-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.item-card-chat .card-image-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  animation: shineMove 1s ease-in-out forwards;
+  z-index: 1;
+}
+
+.item-card-chat:hover .card-image-container::before {
+  animation: shineMove 1s ease-in-out forwards;
+}
+
+.domain-preview-card .card-image-container::before {
+  animation: shineMove 1s ease-in-out forwards;
+}
+
+@keyframes shineMove {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
 .rest-button {
   display: flex;
   align-items: center;
