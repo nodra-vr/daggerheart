@@ -8523,6 +8523,7 @@ button.weapon-locked:hover {
   width: 100%;
   padding-top: 0em;
   padding-bottom: 1.25em;
+  border-top: 1px solid var(--dh-color-gold);
 }
 .item .flexcol {
   position: relative;

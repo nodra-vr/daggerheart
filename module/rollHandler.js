@@ -74,7 +74,10 @@ async function _handleAutomaticFearGain(message) {
         console.log(`Daggerheart | +1 Hope for ${targetActor.name}`);
       }
       
-      if (Object.keys(updateData).length > 0) {
+      // Apply the update only if the current user has permission to modify the actor
+      const canModify = game.user?.isGM || game.user?.hasRole?.("ASSISTANT") || targetActor.isOwner;
+
+      if (Object.keys(updateData).length > 0 && canModify) {
         await targetActor.update(updateData);
       }
     } else {

@@ -51,7 +51,6 @@ export class HeaderLoadoutBar {
         <div class="slot-overlay">
           <a class="slot-control" data-action="edit" title="Edit"><i class="fas fa-edit"></i></a>
           <a class="slot-control" data-action="delete" title="Delete"><i class="fas fa-trash"></i></a>
-          <a class="slot-control" data-action="send-to-vault" title="Send to Vault"><i class="fas fa-arrow-right"></i></a>
         </div>
         <span class="slot-name">${item.name}</span>
       </div>`;
@@ -85,19 +84,6 @@ export class HeaderLoadoutBar {
           });
           if (!confirmed) return;
           await item.delete();
-          return this.render();
-        }
-        case 'send-to-vault': {
-          // Confirm before moving to vault to prevent accidental clicks
-          const confirmed = await Dialog.confirm({
-            title: 'Move to Vault',
-            content: `<p>Are you sure you want to move <strong>${item.name}</strong> to the vault?</p>`,
-            yes: () => true,
-            no: () => false,
-            defaultYes: false
-          });
-          if (!confirmed) return;
-          await item.update({ 'system.location': 'vault' });
           return this.render();
         }
       }
