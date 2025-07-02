@@ -5050,31 +5050,361 @@ input.trait-effects.resize-ta {
   color: #ffd700;
 }
 
-/* Inline links and rolls */
-body.game .app a.inline-roll, a.inline-roll.roll {
-  background: rgba(11, 10, 19, 0.85);
-  border: 1px solid #433f64;
-  border-radius: 0.5em;
-  color: #f3c267;
-  font-weight: 600;
+/* Resource Button Styling - Global Design System */
+.dh-resource-btn, .dh-fear-btn {
+  /* Base button styling from global design system */
+  display: inline-block;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.05rem;
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  vertical-align: baseline;
+  line-height: 1.2;
+  /* Glassmorphism effect */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  color: var(--dh-color-off-white);
+  /* Primary button variant */
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Focus state for accessibility */
 }
-body.game .app a.inline-roll i, a.inline-roll.roll i {
-  color: #f3c267;
+.dh-resource-btn.dh-btn--primary, .dh-btn--primary.dh-fear-btn {
+  background: rgba(243, 194, 103, 0.12);
+  border: 1px solid rgba(243, 194, 103, 0.25);
+  color: var(--dh-color-gold);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+}
+.dh-resource-btn:hover, .dh-fear-btn:hover {
+  transform: translateY(-0.5px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2);
+  background: rgba(243, 194, 103, 0.18);
+  border-color: rgba(243, 194, 103, 0.35);
+}
+.dh-resource-btn:active, .dh-fear-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.dh-resource-btn:focus, .dh-fear-btn:focus {
+  outline: 1px solid rgba(243, 194, 103, 0.4);
+  outline-offset: 1px;
 }
 
-body.game .app a.content-link, .content-link, .inline-roll {
-  background: rgba(12, 10, 19, 0.85);
-  border: 1px solid #433f64;
-  border-radius: 0.5em;
-  color: #f3c267;
-  font-weight: 600;
-  padding: 1px 4px;
+/* Unified Button Styling - Apply glassmorphism to all Foundry button types */
+/* Inline rolls, content links, and rollable buttons */
+body.game .app a.inline-roll,
+a.inline-roll.roll,
+body.game .app a.content-link,
+.content-link,
+.inline-roll,
+.rollable,
+.roll-link,
+.document-link,
+.entity-link {
+  /* Apply same glassmorphism styling as resource buttons */
+  display: inline-block;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.05rem;
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.15s ease;
   white-space: nowrap;
-  word-break: break-all;
+  vertical-align: baseline;
+  line-height: 1.2;
+  /* Glassmorphism effect */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  color: var(--dh-color-gold) !important;
+  /* Icon styling */
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Focus state for accessibility */
 }
-body.game .app a.content-link i, .content-link i, .inline-roll i {
-  color: var(--dh-color-gold);
+body.game .app a.inline-roll i,
+a.inline-roll.roll i,
+body.game .app a.content-link i,
+.content-link i,
+.inline-roll i,
+.rollable i,
+.roll-link i,
+.document-link i,
+.entity-link i {
+  color: var(--dh-color-gold) !important;
   margin-right: 0.25em;
+}
+body.game .app a.inline-roll:hover,
+a.inline-roll.roll:hover,
+body.game .app a.content-link:hover,
+.content-link:hover,
+.inline-roll:hover,
+.rollable:hover,
+.roll-link:hover,
+.document-link:hover,
+.entity-link:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+  background: rgba(243, 194, 103, 0.18) !important;
+  border-color: rgba(243, 194, 103, 0.35) !important;
+  color: var(--dh-color-gold) !important;
+}
+body.game .app a.inline-roll:active,
+a.inline-roll.roll:active,
+body.game .app a.content-link:active,
+.content-link:active,
+.inline-roll:active,
+.rollable:active,
+.roll-link:active,
+.document-link:active,
+.entity-link:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+body.game .app a.inline-roll:focus,
+a.inline-roll.roll:focus,
+body.game .app a.content-link:focus,
+.content-link:focus,
+.inline-roll:focus,
+.rollable:focus,
+.roll-link:focus,
+.document-link:focus,
+.entity-link:focus {
+  outline: 1px solid rgba(243, 194, 103, 0.4) !important;
+  outline-offset: 1px;
+}
+
+/* Macro Hotbar Button Styling */
+#hotbar .macro,
+.macro-sheet .macro,
+.hotbar-page .macro {
+  /* Apply glassmorphism to macro buttons */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Macro icon styling */
+  /* Macro key styling */
+}
+#hotbar .macro:hover,
+.macro-sheet .macro:hover,
+.hotbar-page .macro:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+  background: rgba(243, 194, 103, 0.18) !important;
+  border-color: rgba(243, 194, 103, 0.35) !important;
+}
+#hotbar .macro:active,
+.macro-sheet .macro:active,
+.hotbar-page .macro:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+#hotbar .macro .macro-icon,
+.macro-sheet .macro .macro-icon,
+.hotbar-page .macro .macro-icon {
+  color: var(--dh-color-gold) !important;
+}
+#hotbar .macro .macro-key,
+.macro-sheet .macro .macro-key,
+.hotbar-page .macro .macro-key {
+  color: var(--dh-color-off-white) !important;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 0.2rem;
+  padding: 0.1rem 0.2rem;
+  font-size: 0.6rem;
+}
+
+/* Control Tool Buttons (canvas controls) */
+#controls .control-tool,
+.control-tool,
+.scene-control {
+  /* Apply glassmorphism to control buttons */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  /* Hover effects */
+  /* Active/selected state */
+}
+#controls .control-tool:hover,
+.control-tool:hover,
+.scene-control:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+  background: rgba(243, 194, 103, 0.18) !important;
+  border-color: rgba(243, 194, 103, 0.35) !important;
+}
+#controls .control-tool.active, #controls .control-tool:active,
+.control-tool.active,
+.control-tool:active,
+.scene-control.active,
+.scene-control:active {
+  background: rgba(243, 194, 103, 0.25) !important;
+  border-color: rgba(243, 194, 103, 0.4) !important;
+  transform: translateY(0) !important;
+  box-shadow: 0 0 8px rgba(243, 194, 103, 0.3) !important;
+}
+
+/* Dialog and Form Buttons */
+.dialog .dialog-buttons button,
+.form-group button,
+.form-footer button,
+button.default,
+button[type=submit],
+input[type=submit],
+.button {
+  /* Apply glassmorphism to form buttons */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  padding: 0.4rem 0.8rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Focus state for accessibility */
+  /* Disabled state */
+}
+.dialog .dialog-buttons button:hover,
+.form-group button:hover,
+.form-footer button:hover,
+button.default:hover,
+button[type=submit]:hover,
+input[type=submit]:hover,
+.button:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+  background: rgba(243, 194, 103, 0.18) !important;
+  border-color: rgba(243, 194, 103, 0.35) !important;
+}
+.dialog .dialog-buttons button:active,
+.form-group button:active,
+.form-footer button:active,
+button.default:active,
+button[type=submit]:active,
+input[type=submit]:active,
+.button:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+.dialog .dialog-buttons button:focus,
+.form-group button:focus,
+.form-footer button:focus,
+button.default:focus,
+button[type=submit]:focus,
+input[type=submit]:focus,
+.button:focus {
+  outline: 1px solid rgba(243, 194, 103, 0.4) !important;
+  outline-offset: 1px;
+}
+.dialog .dialog-buttons button:disabled,
+.form-group button:disabled,
+.form-footer button:disabled,
+button.default:disabled,
+button[type=submit]:disabled,
+input[type=submit]:disabled,
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Directory Item Controls */
+.directory-item .item-controls .item-control,
+.directory-header .header-control,
+.folder-header .folder-control {
+  /* Apply glassmorphism to directory controls */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  padding: 0.2rem 0.3rem;
+  /* Hover effects */
+}
+.directory-item .item-controls .item-control:hover,
+.directory-header .header-control:hover,
+.folder-header .folder-control:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+  background: rgba(243, 194, 103, 0.18) !important;
+  border-color: rgba(243, 194, 103, 0.35) !important;
+}
+
+/* Chat Control Buttons */
+#chat-controls .chat-control-icon,
+.chat-control-icon {
+  /* Apply glassmorphism to chat controls */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  /* Hover effects */
+}
+#chat-controls .chat-control-icon:hover,
+.chat-control-icon:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+  background: rgba(243, 194, 103, 0.18) !important;
+  border-color: rgba(243, 194, 103, 0.35) !important;
+}
+
+/* Legacy fear button styling for backward compatibility */
+.dh-fear-btn[data-action=spendFear] {
+  background: rgba(220, 38, 127, 0.15);
+  border: 1px solid rgba(220, 38, 127, 0.3);
+  color: #dc267f;
+}
+.dh-fear-btn[data-action=spendFear]:hover {
+  background: rgba(220, 38, 127, 0.2);
+  border-color: rgba(220, 38, 127, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(220, 38, 127, 0.3);
+}
+.dh-fear-btn[data-action=gainFear] {
+  background: rgba(255, 140, 0, 0.15);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  color: #ff8c00;
+}
+.dh-fear-btn[data-action=gainFear]:hover {
+  background: rgba(255, 140, 0, 0.2);
+  border-color: rgba(255, 140, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 140, 0, 0.3);
 }
 
 /* Death Move Messages */
@@ -5726,78 +6056,6 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   margin-bottom: 0;
   color: #deb887;
   font-weight: 500;
-}
-
-/* Resource Button Styling - Global Design System */
-.dh-resource-btn, .dh-fear-btn {
-  /* Base button styling from global design system */
-  display: inline-block;
-  padding: 0.1rem 0.3rem;
-  margin: 0 0.05rem;
-  border: none;
-  border-radius: 0.2rem;
-  font-size: 0.7rem;
-  font-weight: 400;
-  text-decoration: none;
-  text-transform: none;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-  vertical-align: baseline;
-  line-height: 1.2;
-  /* Glassmorphism effect */
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  color: var(--dh-color-off-white);
-  /* Primary button variant */
-  /* Hover effects */
-  /* Active/pressed state */
-  /* Focus state for accessibility */
-}
-.dh-resource-btn.dh-btn--primary, .dh-btn--primary.dh-fear-btn {
-  background: rgba(243, 194, 103, 0.12);
-  border: 1px solid rgba(243, 194, 103, 0.25);
-  color: var(--dh-color-gold);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
-}
-.dh-resource-btn:hover, .dh-fear-btn:hover {
-  transform: translateY(-0.5px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2);
-  background: rgba(243, 194, 103, 0.18);
-  border-color: rgba(243, 194, 103, 0.35);
-}
-.dh-resource-btn:active, .dh-fear-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-.dh-resource-btn:focus, .dh-fear-btn:focus {
-  outline: 1px solid rgba(243, 194, 103, 0.4);
-  outline-offset: 1px;
-}
-
-/* Legacy fear button styling for backward compatibility */
-.dh-fear-btn[data-action=spendFear] {
-  background: rgba(220, 38, 127, 0.15);
-  border: 1px solid rgba(220, 38, 127, 0.3);
-  color: #dc267f;
-}
-.dh-fear-btn[data-action=spendFear]:hover {
-  background: rgba(220, 38, 127, 0.2);
-  border-color: rgba(220, 38, 127, 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(220, 38, 127, 0.3);
-}
-.dh-fear-btn[data-action=gainFear] {
-  background: rgba(255, 140, 0, 0.15);
-  border: 1px solid rgba(255, 140, 0, 0.3);
-  color: #ff8c00;
-}
-.dh-fear-btn[data-action=gainFear]:hover {
-  background: rgba(255, 140, 0, 0.2);
-  border-color: rgba(255, 140, 0, 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 140, 0, 0.3);
 }
 
 /* Hope Message Styling */

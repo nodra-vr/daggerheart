@@ -455,32 +455,317 @@
   }
 }
 
-/* Inline links and rolls */
-body.game .app a.inline-roll, a.inline-roll.roll {
-  background: rgba(11, 10, 19, 0.85);
-  border: 1px solid #433f64;
-  border-radius: 0.5em;
-  color: #f3c267;
-  font-weight: 600;
-
-  i {
-    color: #f3c267;
+/* Resource Button Styling - Global Design System */
+.dh-resource-btn {
+  /* Base button styling from global design system */
+  display: inline-block;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.05rem;
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  vertical-align: baseline;
+  line-height: 1.2;
+  
+  /* Glassmorphism effect */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  color: var(--dh-color-off-white);
+  
+  /* Primary button variant */
+  &.dh-btn--primary {
+    background: rgba(243, 194, 103, 0.12);
+    border: 1px solid rgba(243, 194, 103, 0.25);
+    color: var(--dh-color-gold);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  }
+  
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2);
+    background: rgba(243, 194, 103, 0.18);
+    border-color: rgba(243, 194, 103, 0.35);
+  }
+  
+  /* Active/pressed state */
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Focus state for accessibility */
+  &:focus {
+    outline: 1px solid rgba(243, 194, 103, 0.4);
+    outline-offset: 1px;
   }
 }
 
-body.game .app a.content-link, .content-link, .inline-roll {
-  background: rgba(12, 10, 19, 0.85);
-  border: 1px solid #433f64;
-  border-radius: 0.5em;
-  color: #f3c267;
-  font-weight: 600;
-  padding: 1px 4px;
+/* Unified Button Styling - Apply glassmorphism to all Foundry button types */
+/* Inline rolls, content links, and rollable buttons */
+body.game .app a.inline-roll, 
+a.inline-roll.roll,
+body.game .app a.content-link, 
+.content-link, 
+.inline-roll,
+.rollable,
+.roll-link,
+.document-link,
+.entity-link {
+  /* Apply same glassmorphism styling as resource buttons */
+  display: inline-block;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.05rem;
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.15s ease;
   white-space: nowrap;
-  word-break: break-all;
-
+  vertical-align: baseline;
+  line-height: 1.2;
+  
+  /* Glassmorphism effect */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  color: var(--dh-color-gold) !important;
+  
+  /* Icon styling */
   i {
-    color: var(--dh-color-gold);
+    color: var(--dh-color-gold) !important;
     margin-right: 0.25em;
+  }
+  
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+    background: rgba(243, 194, 103, 0.18) !important;
+    border-color: rgba(243, 194, 103, 0.35) !important;
+    color: var(--dh-color-gold) !important;
+  }
+  
+  /* Active/pressed state */
+  &:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  /* Focus state for accessibility */
+  &:focus {
+    outline: 1px solid rgba(243, 194, 103, 0.4) !important;
+    outline-offset: 1px;
+  }
+}
+
+/* Macro Hotbar Button Styling */
+#hotbar .macro,
+.macro-sheet .macro,
+.hotbar-page .macro {
+  /* Apply glassmorphism to macro buttons */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+    background: rgba(243, 194, 103, 0.18) !important;
+    border-color: rgba(243, 194, 103, 0.35) !important;
+  }
+  
+  /* Active/pressed state */
+  &:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  /* Macro icon styling */
+  .macro-icon {
+    color: var(--dh-color-gold) !important;
+  }
+  
+  /* Macro key styling */
+  .macro-key {
+    color: var(--dh-color-off-white) !important;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0.2rem;
+    padding: 0.1rem 0.2rem;
+    font-size: 0.6rem;
+  }
+}
+
+/* Control Tool Buttons (canvas controls) */
+#controls .control-tool,
+.control-tool,
+.scene-control {
+  /* Apply glassmorphism to control buttons */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+    background: rgba(243, 194, 103, 0.18) !important;
+    border-color: rgba(243, 194, 103, 0.35) !important;
+  }
+  
+  /* Active/selected state */
+  &.active,
+  &:active {
+    background: rgba(243, 194, 103, 0.25) !important;
+    border-color: rgba(243, 194, 103, 0.4) !important;
+    transform: translateY(0) !important;
+    box-shadow: 0 0 8px rgba(243, 194, 103, 0.3) !important;
+  }
+}
+
+/* Dialog and Form Buttons */
+.dialog .dialog-buttons button,
+.form-group button,
+.form-footer button,
+button.default,
+button[type="submit"],
+input[type="submit"],
+.button {
+  /* Apply glassmorphism to form buttons */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  padding: 0.4rem 0.8rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+    background: rgba(243, 194, 103, 0.18) !important;
+    border-color: rgba(243, 194, 103, 0.35) !important;
+  }
+  
+  /* Active/pressed state */
+  &:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  /* Focus state for accessibility */
+  &:focus {
+    outline: 1px solid rgba(243, 194, 103, 0.4) !important;
+    outline-offset: 1px;
+  }
+  
+  /* Disabled state */
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  }
+}
+
+/* Directory Item Controls */
+.directory-item .item-controls .item-control,
+.directory-header .header-control,
+.folder-header .folder-control {
+  /* Apply glassmorphism to directory controls */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  padding: 0.2rem 0.3rem;
+  
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+    background: rgba(243, 194, 103, 0.18) !important;
+    border-color: rgba(243, 194, 103, 0.35) !important;
+  }
+}
+
+/* Chat Control Buttons */
+#chat-controls .chat-control-icon,
+.chat-control-icon {
+  /* Apply glassmorphism to chat controls */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+    background: rgba(243, 194, 103, 0.18) !important;
+    border-color: rgba(243, 194, 103, 0.35) !important;
+  }
+}
+
+/* Legacy fear button styling for backward compatibility */
+.dh-fear-btn {
+  @extend .dh-resource-btn;
+  
+  &[data-action="spendFear"] {
+    background: rgba(220, 38, 127, 0.15);
+    border: 1px solid rgba(220, 38, 127, 0.3);
+    color: #dc267f;
+    
+    &:hover {
+      background: rgba(220, 38, 127, 0.2);
+      border-color: rgba(220, 38, 127, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(220, 38, 127, 0.3);
+    }
+  }
+  
+  &[data-action="gainFear"] {
+    background: rgba(255, 140, 0, 0.15);
+    border: 1px solid rgba(255, 140, 0, 0.3);
+    color: #ff8c00;
+    
+    &:hover {
+      background: rgba(255, 140, 0, 0.2);
+      border-color: rgba(255, 140, 0, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 140, 0, 0.3);
+    }
   }
 }
 
@@ -1231,90 +1516,6 @@ body.game .app a.content-link, .content-link, .inline-roll {
       margin-bottom: 0;
       color: #deb887;
       font-weight: 500;
-    }
-  }
-}
-
-/* Resource Button Styling - Global Design System */
-.dh-resource-btn {
-  /* Base button styling from global design system */
-  display: inline-block;
-  padding: 0.1rem 0.3rem;
-  margin: 0 0.05rem;
-  border: none;
-  border-radius: 0.2rem;
-  font-size: 0.7rem;
-  font-weight: 400;
-  text-decoration: none;
-  text-transform: none;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-  vertical-align: baseline;
-  line-height: 1.2;
-  
-  /* Glassmorphism effect */
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  color: var(--dh-color-off-white);
-  
-  /* Primary button variant */
-  &.dh-btn--primary {
-    background: rgba(243, 194, 103, 0.12);
-    border: 1px solid rgba(243, 194, 103, 0.25);
-    color: var(--dh-color-gold);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
-  }
-  
-  /* Hover effects */
-  &:hover {
-    transform: translateY(-0.5px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2);
-    background: rgba(243, 194, 103, 0.18);
-    border-color: rgba(243, 194, 103, 0.35);
-  }
-  
-  /* Active/pressed state */
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Focus state for accessibility */
-  &:focus {
-    outline: 1px solid rgba(243, 194, 103, 0.4);
-    outline-offset: 1px;
-  }
-}
-
-/* Legacy fear button styling for backward compatibility */
-.dh-fear-btn {
-  @extend .dh-resource-btn;
-  
-  &[data-action="spendFear"] {
-    background: rgba(220, 38, 127, 0.15);
-    border: 1px solid rgba(220, 38, 127, 0.3);
-    color: #dc267f;
-    
-    &:hover {
-      background: rgba(220, 38, 127, 0.2);
-      border-color: rgba(220, 38, 127, 0.4);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(220, 38, 127, 0.3);
-    }
-  }
-  
-  &[data-action="gainFear"] {
-    background: rgba(255, 140, 0, 0.15);
-    border: 1px solid rgba(255, 140, 0, 0.3);
-    color: #ff8c00;
-    
-    &:hover {
-      background: rgba(255, 140, 0, 0.2);
-      border-color: rgba(255, 140, 0, 0.4);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 140, 0, 0.3);
     }
   }
 }
