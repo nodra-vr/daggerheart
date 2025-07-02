@@ -1,12 +1,11 @@
 /**
- * Create a spendFear macro
- * @param {number} amount - The amount of fear to spend (default: 1)
- * @param {number} slot - The hotbar slot to use
+ * Create spendFear macro
+ * @param {number} amount
+ * @param {number} slot
  * @returns {Promise}
  */
 export async function createSpendFearMacro(amount = 1, slot = null) {
-  const command = `// Spend Fear Macro
-const amount = ${amount};
+  const command = `const amount = ${amount};
 if (typeof spendFear === 'function') {
   await spendFear(amount);
 } else {
@@ -14,7 +13,6 @@ if (typeof spendFear === 'function') {
 }`;
 
   const macroName = amount === 1 ? "Spend Fear" : `Spend ${amount} Fear`;
-  // Improved duplicate detection: check by name and flag first, then by command as fallback
   let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.spendFearMacro"]) ||
               game.macros.find(m => m.name === macroName && m.command === command);
   
@@ -22,7 +20,7 @@ if (typeof spendFear === 'function') {
     macro = await Macro.create({
       name: macroName,
       type: "script",
-      img: "icons/svg/skull.svg", // Use skull icon for fear
+      img: "icons/svg/skull.svg",
       command: command,
       flags: { "daggerheart.spendFearMacro": true }
     });
@@ -36,14 +34,13 @@ if (typeof spendFear === 'function') {
 }
 
 /**
- * Create a gainFear macro
- * @param {number} amount - The amount of fear to gain (default: 1)
- * @param {number} slot - The hotbar slot to use
+ * Create gainFear macro
+ * @param {number} amount
+ * @param {number} slot
  * @returns {Promise}
  */
 export async function createGainFearMacro(amount = 1, slot = null) {
-  const command = `// Gain Fear Macro
-const amount = ${amount};
+  const command = `const amount = ${amount};
 if (typeof gainFear === 'function') {
   await gainFear(amount);
 } else {
@@ -51,7 +48,6 @@ if (typeof gainFear === 'function') {
 }`;
 
   const macroName = amount === 1 ? "Gain Fear" : `Gain ${amount} Fear`;
-  // Improved duplicate detection: check by name and flag first, then by command as fallback
   let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.gainFearMacro"]) ||
               game.macros.find(m => m.name === macroName && m.command === command);
   
@@ -59,7 +55,7 @@ if (typeof gainFear === 'function') {
     macro = await Macro.create({
       name: macroName,
       type: "script",
-      img: "icons/svg/terror.svg", // Use terror icon for gaining fear
+      img: "icons/svg/terror.svg",
       command: command,
       flags: { "daggerheart.gainFearMacro": true }
     });
@@ -73,20 +69,18 @@ if (typeof gainFear === 'function') {
 }
 
 /**
- * Spend stress on an actor
- * @param {Actor|null} actor - The actor to apply stress to (optional)
- * @param {number} amount - The amount of stress to add (default: 1)
+ * Spend stress
+ * @param {Actor|null} actor
+ * @param {number} amount
  * @returns {Promise<boolean>}
  */
 export async function spendStress(actor = null, amount = 1) {
-  // Check if game is paused
   if (game.paused) {
     console.log("Daggerheart | Stress spending skipped - game is paused");
     ui.notifications.info("Stress spending skipped - game is paused");
     return false;
   }
   
-  // Validate amount parameter
   if (!Number.isInteger(amount) || amount <= 0) {
     console.error("Stress amount must be a positive integer");
     ui.notifications.error("Stress amount must be a positive integer.");
@@ -95,9 +89,7 @@ export async function spendStress(actor = null, amount = 1) {
 
   let targetActor = actor;
 
-  // If no actor provided, try to determine the target actor
   if (!targetActor) {
-    // First, check if we're on a character sheet
     const activeSheet = Object.values(ui.windows).find(app => 
       app instanceof ActorSheet && app.rendered
     );
@@ -106,7 +98,6 @@ export async function spendStress(actor = null, amount = 1) {
       targetActor = activeSheet.actor;
       console.log(`Using actor from active sheet: ${targetActor.name}`);
     } else {
-      // Check for selected tokens
       const selectedTokens = canvas.tokens?.controlled || [];
       
       if (selectedTokens.length === 1) {
@@ -124,21 +115,18 @@ export async function spendStress(actor = null, amount = 1) {
     }
   }
 
-  // Validate that we have a valid actor
   if (!targetActor) {
     console.error("No valid actor found for stress spending");
     ui.notifications.error("No valid actor found.");
     return false;
   }
 
-  // Check if actor has stress system
   if (!targetActor.system?.stress) {
     console.error(`Actor ${targetActor.name} does not have a stress system`);
     ui.notifications.error(`${targetActor.name} does not have a stress system.`);
     return false;
   }
 
-  // Check permissions - allow if user is GM, Assistant GM, or owns the actor
   const canModify = game.user.isGM || 
                    game.user.hasRole("ASSISTANT") || 
                    targetActor.isOwner;
@@ -154,7 +142,6 @@ export async function spendStress(actor = null, amount = 1) {
   const newStress = Math.min(maxStress, currentStress + amount);
   const actualAmount = newStress - currentStress;
 
-  // Check if we can actually add stress
   if (actualAmount <= 0) {
     console.warn(`${targetActor.name} already has maximum stress (${maxStress})`);
     ui.notifications.warn(`${targetActor.name} already has maximum stress.`);
@@ -162,19 +149,16 @@ export async function spendStress(actor = null, amount = 1) {
   }
 
   try {
-    // Update the actor's stress
     await targetActor.update({
       "system.stress.value": newStress
     });
 
-    // Success notification
     const message = actualAmount === 1 ? 
       `${targetActor.name} gains 1 stress. Current stress: ${newStress}/${maxStress}` : 
       `${targetActor.name} gains ${actualAmount} stress. Current stress: ${newStress}/${maxStress}`;
     
     ui.notifications.info(message);
 
-    // Send to chat
     ChatMessage.create({
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: targetActor }),
@@ -204,20 +188,18 @@ export async function spendStress(actor = null, amount = 1) {
 }
 
 /**
- * Spend hope on an actor
- * @param {Actor|null} actor - The actor to spend hope from (optional)
- * @param {number} amount - The amount of hope to spend (default: 1)
+ * Spend hope
+ * @param {Actor|null} actor
+ * @param {number} amount
  * @returns {Promise<boolean>}
  */
 export async function spendHope(actor = null, amount = 1) {
-  // Check if game is paused
   if (game.paused) {
     console.log("Daggerheart | Hope spending skipped - game is paused");
     ui.notifications.info("Hope spending skipped - game is paused");
     return false;
   }
   
-  // Validate amount parameter
   if (!Number.isInteger(amount) || amount <= 0) {
     console.error("Hope amount must be a positive integer");
     ui.notifications.error("Hope amount must be a positive integer.");
@@ -226,11 +208,9 @@ export async function spendHope(actor = null, amount = 1) {
 
   let targetActor = actor;
 
-  // If no actor provided, try to determine the target actor
   if (!targetActor) {
     console.log("Daggerheart | spendHope: No actor provided, attempting to find target actor");
     
-    // First, check if we're on a character sheet
     const activeSheet = Object.values(ui.windows).find(app => 
       app instanceof ActorSheet && app.rendered
     );
@@ -242,7 +222,6 @@ export async function spendHope(actor = null, amount = 1) {
       targetActor = activeSheet.actor;
       console.log(`Daggerheart | spendHope: Using actor from active sheet: ${targetActor.name} (type: ${targetActor.type})`);
     } else {
-      // Check for selected tokens
       const selectedTokens = canvas.tokens?.controlled || [];
       console.log("Daggerheart | spendHope: Selected tokens count:", selectedTokens.length);
       
@@ -261,7 +240,6 @@ export async function spendHope(actor = null, amount = 1) {
     }
   }
 
-  // Validate that we have a valid actor
   if (!targetActor) {
     console.error("Daggerheart | spendHope: No valid actor found for hope spending");
     ui.notifications.error("No valid actor found.");
@@ -272,14 +250,12 @@ export async function spendHope(actor = null, amount = 1) {
   console.log("Daggerheart | spendHope: targetActor.system:", targetActor.system ? "exists" : "undefined");
   console.log("Daggerheart | spendHope: targetActor.system.hope:", targetActor.system?.hope ? "exists" : "undefined");
 
-  // Check if actor has hope system
   if (!targetActor.system?.hope) {
     console.error(`Actor ${targetActor.name} does not have a hope system`);
     ui.notifications.error(`${targetActor.name} does not have a hope system.`);
     return false;
   }
 
-  // Check permissions - allow if user is GM, Assistant GM, or owns the actor
   const canModify = game.user.isGM || 
                    game.user.hasRole("ASSISTANT") || 
                    targetActor.isOwner;
@@ -295,7 +271,6 @@ export async function spendHope(actor = null, amount = 1) {
   const newHope = Math.max(0, currentHope - amount);
   const actualAmount = currentHope - newHope;
 
-  // Check if we can actually spend hope
   if (actualAmount <= 0) {
     console.warn(`${targetActor.name} doesn't have enough hope to spend (${currentHope} available)`);
     ui.notifications.warn(`${targetActor.name} doesn't have enough hope to spend.`);
@@ -303,19 +278,16 @@ export async function spendHope(actor = null, amount = 1) {
   }
 
   try {
-    // Update the actor's hope
     await targetActor.update({
       "system.hope.value": newHope
     });
 
-    // Success notification
     const message = actualAmount === 1 ? 
       `${targetActor.name} spends 1 hope. Current hope: ${newHope}/${maxHope}` : 
       `${targetActor.name} spends ${actualAmount} hope. Current hope: ${newHope}/${maxHope}`;
     
     ui.notifications.info(message);
 
-    // Send to chat
     ChatMessage.create({
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: targetActor }),
@@ -345,20 +317,18 @@ export async function spendHope(actor = null, amount = 1) {
 }
 
 /**
- * Gain hope on an actor (increase hope)
- * @param {Actor|null} actor - The actor to gain hope on (optional)
- * @param {number} amount - The amount of hope to gain (default: 1)
+ * Gain hope
+ * @param {Actor|null} actor
+ * @param {number} amount
  * @returns {Promise<boolean>}
  */
 export async function gainHope(actor = null, amount = 1) {
-  // Check if game is paused
   if (game.paused) {
     console.log("Daggerheart | Hope gaining skipped - game is paused");
     ui.notifications.info("Hope gaining skipped - game is paused");
     return false;
   }
   
-  // Validate amount parameter
   if (!Number.isInteger(amount) || amount <= 0) {
     console.error("Hope amount must be a positive integer");
     ui.notifications.error("Hope amount must be a positive integer.");
@@ -367,11 +337,9 @@ export async function gainHope(actor = null, amount = 1) {
 
   let targetActor = actor;
 
-  // If no actor provided, try to determine the target actor
   if (!targetActor) {
     console.log("Daggerheart | gainHope: No actor provided, attempting to find target actor");
     
-    // First, check if we're on a character sheet
     const activeSheet = Object.values(ui.windows).find(app => 
       app instanceof ActorSheet && app.rendered
     );
@@ -383,7 +351,6 @@ export async function gainHope(actor = null, amount = 1) {
       targetActor = activeSheet.actor;
       console.log(`Daggerheart | gainHope: Using actor from active sheet: ${targetActor.name} (type: ${targetActor.type})`);
     } else {
-      // Check for selected tokens
       const selectedTokens = canvas.tokens?.controlled || [];
       console.log("Daggerheart | gainHope: Selected tokens count:", selectedTokens.length);
       
@@ -402,7 +369,6 @@ export async function gainHope(actor = null, amount = 1) {
     }
   }
 
-  // Validate that we have a valid actor
   if (!targetActor) {
     console.error("Daggerheart | gainHope: No valid actor found for hope gaining");
     ui.notifications.error("No valid actor found.");
@@ -413,14 +379,12 @@ export async function gainHope(actor = null, amount = 1) {
   console.log("Daggerheart | gainHope: targetActor.system:", targetActor.system ? "exists" : "undefined");
   console.log("Daggerheart | gainHope: targetActor.system.hope:", targetActor.system?.hope ? "exists" : "undefined");
 
-  // Check if actor has hope system
   if (!targetActor.system?.hope) {
     console.error(`Actor ${targetActor.name} does not have a hope system`);
     ui.notifications.error(`${targetActor.name} does not have a hope system.`);
     return false;
   }
 
-  // Check permissions - allow if user is GM, Assistant GM, or owns the actor
   const canModify = game.user.isGM || 
                    game.user.hasRole("ASSISTANT") || 
                    targetActor.isOwner;
@@ -436,7 +400,6 @@ export async function gainHope(actor = null, amount = 1) {
   const newHope = Math.min(maxHope, currentHope + amount);
   const actualAmount = newHope - currentHope;
 
-  // Check if we can actually gain hope
   if (actualAmount <= 0) {
     console.warn(`${targetActor.name} already has maximum hope (${maxHope})`);
     ui.notifications.warn(`${targetActor.name} already has maximum hope.`);
@@ -444,19 +407,16 @@ export async function gainHope(actor = null, amount = 1) {
   }
 
   try {
-    // Update the actor's hope
     await targetActor.update({
       "system.hope.value": newHope
     });
 
-    // Success notification
     const message = actualAmount === 1 ? 
       `${targetActor.name} gains 1 hope. Current hope: ${newHope}/${maxHope}` : 
       `${targetActor.name} gains ${actualAmount} hope. Current hope: ${newHope}/${maxHope}`;
     
     ui.notifications.info(message);
 
-    // Send to chat
     ChatMessage.create({
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: targetActor }),
@@ -486,14 +446,13 @@ export async function gainHope(actor = null, amount = 1) {
 }
 
 /**
- * Create a spendHope macro
- * @param {number} amount - The amount of hope to spend (default: 1)
- * @param {number} slot - The hotbar slot to use
+ * Create spendHope macro
+ * @param {number} amount
+ * @param {number} slot
  * @returns {Promise}
  */
 export async function createSpendHopeMacro(amount = 1, slot = null) {
-  const command = `// Spend Hope Macro
-const amount = ${amount};
+  const command = `const amount = ${amount};
 if (typeof spendHope === 'function') {
   await spendHope(null, amount);
 } else {
@@ -501,7 +460,6 @@ if (typeof spendHope === 'function') {
 }`;
 
   const macroName = amount === 1 ? "Spend Hope" : `Spend ${amount} Hope`;
-  // Improved duplicate detection: check by name and flag first, then by command as fallback
   let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.spendHopeMacro"]) ||
               game.macros.find(m => m.name === macroName && m.command === command);
   
@@ -509,7 +467,7 @@ if (typeof spendHope === 'function') {
     macro = await Macro.create({
       name: macroName,
       type: "script",
-      img: "icons/svg/sun.svg", // Use sun icon for hope
+      img: "icons/svg/sun.svg",
       command: command,
       flags: { "daggerheart.spendHopeMacro": true }
     });
@@ -523,14 +481,13 @@ if (typeof spendHope === 'function') {
 }
 
 /**
- * Create a gainHope macro
- * @param {number} amount - The amount of hope to gain (default: 1)
- * @param {number} slot - The hotbar slot to use
+ * Create gainHope macro
+ * @param {number} amount
+ * @param {number} slot
  * @returns {Promise}
  */
 export async function createGainHopeMacro(amount = 1, slot = null) {
-  const command = `// Gain Hope Macro
-const amount = ${amount};
+  const command = `const amount = ${amount};
 if (typeof gainHope === 'function') {
   await gainHope(null, amount);
 } else {
@@ -538,7 +495,6 @@ if (typeof gainHope === 'function') {
 }`;
 
   const macroName = amount === 1 ? "Gain Hope" : `Gain ${amount} Hope`;
-  // Improved duplicate detection: check by name and flag first, then by command as fallback
   let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.gainHopeMacro"]) ||
               game.macros.find(m => m.name === macroName && m.command === command);
   
@@ -546,7 +502,7 @@ if (typeof gainHope === 'function') {
     macro = await Macro.create({
       name: macroName,
       type: "script",
-      img: "icons/svg/sun.svg", // Use sun icon for hope gaining
+      img: "icons/svg/sun.svg",
       command: command,
       flags: { "daggerheart.gainHopeMacro": true }
     });
@@ -560,20 +516,18 @@ if (typeof gainHope === 'function') {
 }
 
 /**
- * Clear stress from an actor (reduce stress)
- * @param {Actor|null} actor - The actor to clear stress from (optional)
- * @param {number} amount - The amount of stress to clear (default: 1)
+ * Clear stress
+ * @param {Actor|null} actor
+ * @param {number} amount
  * @returns {Promise<boolean>}
  */
 export async function clearStress(actor = null, amount = 1) {
-  // Check if game is paused
   if (game.paused) {
     console.log("Daggerheart | Stress clearing skipped - game is paused");
     ui.notifications.info("Stress clearing skipped - game is paused");
     return false;
   }
   
-  // Validate amount parameter
   if (!Number.isInteger(amount) || amount <= 0) {
     console.error("Stress amount must be a positive integer");
     ui.notifications.error("Stress amount must be a positive integer.");
@@ -582,11 +536,9 @@ export async function clearStress(actor = null, amount = 1) {
 
   let targetActor = actor;
 
-  // If no actor provided, try to determine the target actor
   if (!targetActor) {
     console.log("Daggerheart | clearStress: No actor provided, attempting to find target actor");
     
-    // First, check if we're on a character sheet
     const activeSheet = Object.values(ui.windows).find(app => 
       app instanceof ActorSheet && app.rendered
     );
@@ -598,7 +550,6 @@ export async function clearStress(actor = null, amount = 1) {
       targetActor = activeSheet.actor;
       console.log(`Daggerheart | clearStress: Using actor from active sheet: ${targetActor.name} (type: ${targetActor.type})`);
     } else {
-      // Check for selected tokens
       const selectedTokens = canvas.tokens?.controlled || [];
       console.log("Daggerheart | clearStress: Selected tokens count:", selectedTokens.length);
       
@@ -617,7 +568,6 @@ export async function clearStress(actor = null, amount = 1) {
     }
   }
 
-  // Validate that we have a valid actor
   if (!targetActor) {
     console.error("Daggerheart | clearStress: No valid actor found for stress clearing");
     ui.notifications.error("No valid actor found.");
@@ -628,14 +578,12 @@ export async function clearStress(actor = null, amount = 1) {
   console.log("Daggerheart | clearStress: targetActor.system:", targetActor.system ? "exists" : "undefined");
   console.log("Daggerheart | clearStress: targetActor.system.stress:", targetActor.system?.stress ? "exists" : "undefined");
 
-  // Check if actor has stress system
   if (!targetActor.system?.stress) {
     console.error(`Actor ${targetActor.name} does not have a stress system`);
     ui.notifications.error(`${targetActor.name} does not have a stress system.`);
     return false;
   }
 
-  // Check permissions - allow if user is GM, Assistant GM, or owns the actor
   const canModify = game.user.isGM || 
                    game.user.hasRole("ASSISTANT") || 
                    targetActor.isOwner;
@@ -651,7 +599,6 @@ export async function clearStress(actor = null, amount = 1) {
   const newStress = Math.max(0, currentStress - amount);
   const actualAmount = currentStress - newStress;
 
-  // Check if we can actually clear stress
   if (actualAmount <= 0) {
     console.warn(`${targetActor.name} doesn't have any stress to clear (${currentStress} current)`);
     ui.notifications.warn(`${targetActor.name} doesn't have any stress to clear.`);
@@ -659,19 +606,16 @@ export async function clearStress(actor = null, amount = 1) {
   }
 
   try {
-    // Update the actor's stress
     await targetActor.update({
       "system.stress.value": newStress
     });
 
-    // Success notification
     const message = actualAmount === 1 ? 
       `${targetActor.name} clears 1 stress. Current stress: ${newStress}/${maxStress}` : 
       `${targetActor.name} clears ${actualAmount} stress. Current stress: ${newStress}/${maxStress}`;
     
     ui.notifications.info(message);
 
-    // Send to chat
     ChatMessage.create({
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: targetActor }),
@@ -701,14 +645,13 @@ export async function clearStress(actor = null, amount = 1) {
 }
 
 /**
- * Create a spendStress macro
- * @param {number} amount - The amount of stress to apply (default: 1)
- * @param {number} slot - The hotbar slot to use
+ * Create spendStress macro
+ * @param {number} amount
+ * @param {number} slot
  * @returns {Promise}
  */
 export async function createSpendStressMacro(amount = 1, slot = null) {
-  const command = `// Spend Stress Macro
-const amount = ${amount};
+  const command = `const amount = ${amount};
 if (typeof game.daggerheart?.spendStress === 'function') {
   await game.daggerheart.spendStress(null, amount);
 } else {
@@ -716,7 +659,6 @@ if (typeof game.daggerheart?.spendStress === 'function') {
 }`;
 
   const macroName = amount === 1 ? "Apply Stress" : `Apply ${amount} Stress`;
-  // Improved duplicate detection: check by name and flag first, then by command as fallback
   let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.spendStressMacro"]) ||
               game.macros.find(m => m.name === macroName && m.command === command);
   
@@ -724,7 +666,7 @@ if (typeof game.daggerheart?.spendStress === 'function') {
     macro = await Macro.create({
       name: macroName,
       type: "script",
-      img: "icons/svg/hazard.svg", // Use hazard icon for stress
+      img: "icons/svg/hazard.svg",
       command: command,
       flags: { "daggerheart.spendStressMacro": true }
     });
@@ -738,14 +680,13 @@ if (typeof game.daggerheart?.spendStress === 'function') {
 }
 
 /**
- * Create a clearStress macro
- * @param {number} amount - The amount of stress to clear (default: 1)
- * @param {number} slot - The hotbar slot to use
+ * Create clearStress macro
+ * @param {number} amount
+ * @param {number} slot
  * @returns {Promise}
  */
 export async function createClearStressMacro(amount = 1, slot = null) {
-  const command = `// Clear Stress Macro
-const amount = ${amount};
+  const command = `const amount = ${amount};
 if (typeof clearStress === 'function') {
   await clearStress(null, amount);
 } else {
@@ -753,7 +694,6 @@ if (typeof clearStress === 'function') {
 }`;
 
   const macroName = amount === 1 ? "Clear Stress" : `Clear ${amount} Stress`;
-  // Improved duplicate detection: check by name and flag first, then by command as fallback
   let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.clearStressMacro"]) ||
               game.macros.find(m => m.name === macroName && m.command === command);
   
@@ -761,7 +701,7 @@ if (typeof clearStress === 'function') {
     macro = await Macro.create({
       name: macroName,
       type: "script",
-      img: "icons/svg/heal.svg", // Use heal icon for stress clearing
+      img: "icons/svg/heal.svg",
       command: command,
       flags: { "daggerheart.clearStressMacro": true }
     });
@@ -775,21 +715,17 @@ if (typeof clearStress === 'function') {
 }
 
 /**
- * Create a Macro from an attribute drop.
- * Get an existing daggerheart macro if one exists, otherwise create a new one.
- * @param {Object} data     The dropped data
- * @param {number} slot     The hotbar slot to use
+ * Create macro from drop
+ * @param {Object} data
+ * @param {number} slot
  * @returns {Promise}
  */
 export async function createDaggerheartMacro(data, slot) {
-  // Handle Item drops - create macro to send item to chat as card
   if (data.type === "Item") {
     const item = await fromUuid(data.uuid);
     if (!item) return false;
     
-    // Create a simple macro command that matches the existing image click functionality
-    const command = `// Send item to chat as card
-const item = await fromUuid("${data.uuid}");
+    const command = `const item = await fromUuid("${data.uuid}");
 if (!item) {
   ui.notifications.warn("Item not found!");
   return;
@@ -806,7 +742,7 @@ const chatCard = globalThis.daggerheart?.buildItemCardChat ?
     category: itemData.category || '',
     rarity: itemData.rarity || '',
     description
-  }) : \`<div class="item-card-chat">\${item.name}</div>\`; // fallback
+  }) : \`<div class="item-card-chat">\${item.name}</div>\`;
 
 ChatMessage.create({
     user: game.user.id,
@@ -814,9 +750,7 @@ ChatMessage.create({
     content: chatCard
 });`;
 
-    // Create the macro
     const macroName = `${item.name}`;
-    // Improved duplicate detection: check by name and flag first, then by command as fallback
     let macro = game.macros.find(m => m.name === macroName && m.flags?.["daggerheart.itemMacro"]) ||
                 game.macros.find(m => m.name === macroName && m.command === command);
     
@@ -834,7 +768,6 @@ ChatMessage.create({
     return false;
   }
   
-    // Handle attribute roll drops (existing functionality)  
   if ( !data.roll || !data.label ) return false;
   const command = `const roll = new Roll("${data.roll}", actor ? actor.getRollData() : {});
   await roll.evaluate();
@@ -854,7 +787,6 @@ ChatMessage.create({
         rolls: [roll]
       });
       
-      // Wait for Dice So Nice! animation to complete
       if (chatMessage?.id && game.dice3d) {
         await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
       }
@@ -862,7 +794,6 @@ ChatMessage.create({
       console.error("Error creating macro roll chat message:", error);
       ui.notifications.warn("Chat message failed to send, but roll was completed.");
     }`;
-  // Improved duplicate detection: check by name and flag first, then by command as fallback
   let macro = game.macros.find(m => m.name === data.label && m.flags?.["daggerheart.attrMacro"]) ||
               game.macros.find(m => m.name === data.label && m.command === command);
   if (!macro) {
@@ -875,4 +806,382 @@ ChatMessage.create({
   }
   game.user.assignHotbarMacro(macro, slot);
   return false;
+}
+
+// Text Enricher: Auto-link resource phrases
+
+/**
+ * Word to number
+ * @param {string} word
+ * @returns {number}
+ */
+function _wordToNumber(word) {
+  if (!word) return NaN;
+  word = word.toLowerCase();
+  switch (word) {
+    case "a":
+    case "one":
+      return 1;
+    case "two":
+      return 2;
+    case "three":
+      return 3;
+    case "four":
+      return 4;
+    case "five":
+      return 5;
+    case "six":
+      return 6;
+    case "seven":
+      return 7;
+    case "eight":
+      return 8;
+    case "nine":
+      return 9;
+    case "ten":
+      return 10;
+    default:
+      return Number(word);
+  }
+}
+
+Hooks.once("init", () => {
+  const VERB_PATTERN = "spend|use|gain|add|lose|remove|clear|mark|recover|heal";
+  const NUM_PATTERN = "\\d+|a|one|two|three|four|five|six|seven|eight|nine|ten";
+  const RES_PATTERN = "fear(?:s)?|hope(?:s)?|stress|armor\\s+slots?|hit\\s+points?";
+  const masterPattern = new RegExp(`(?:^|[^>a-zA-Z])(?:(${VERB_PATTERN})\\s+)?([+\\-]?\\s*(?:${NUM_PATTERN}))\\s+(${RES_PATTERN})(?![^<]*</a>)`, "gi");
+
+  /**
+   * Canonical resource
+   * @param {string} resStr
+   * @returns {string}
+   */
+  function _canonicalResource(resStr) {
+    resStr = resStr.toLowerCase();
+    if (resStr.startsWith("fear")) return "fear";
+    if (resStr.startsWith("hope")) return "hope";
+    if (resStr.startsWith("stress")) return "stress";
+    if (resStr.includes("armor")) return "armor";
+    return "hp";
+  }
+
+  /**
+   * Parse delta
+   * @param {string} amountStr
+   * @param {string|null} verb
+   * @param {string} resourceKey
+   */
+  function _parseDelta(amountStr, verb, resourceKey) {
+    amountStr = amountStr.replace(/\s+/g, "");
+    let sign = 1;
+    if (amountStr.startsWith("+")) {
+      amountStr = amountStr.slice(1);
+      sign = 1;
+    } else if (amountStr.startsWith("-")) {
+      amountStr = amountStr.slice(1);
+      sign = -1;
+    }
+
+    let val = _wordToNumber(amountStr) || 1;
+
+    if (sign === 1 && verb) {
+      verb = verb.toLowerCase();
+      
+      // For HP and armor: lose/damage = positive, recover/heal = negative
+      if (resourceKey === "hp" || resourceKey === "armor") {
+        if (["lose", "add", "gain", "mark"].includes(verb)) sign = 1;
+        else if (["recover", "heal", "remove", "clear"].includes(verb)) sign = -1;
+      } else {
+        // For fear/hope/stress: spend/use/lose = negative, gain = positive
+        if (["spend", "use", "lose", "remove", "clear"].includes(verb)) sign = -1;
+        else sign = 1;
+      }
+    }
+    return val * sign;
+  }
+
+  function _buildAnchor(resourceKey, delta, verbHint = null) {
+    const a = document.createElement("a");
+    a.classList.add("dh-resource-btn");
+    a.dataset.resource = resourceKey;
+    a.dataset.delta = String(delta);
+
+    let normalizedVerb = verbHint ? verbHint.toLowerCase() : "";
+    let labelAction;
+    if (resourceKey === "hp" || resourceKey === "armor") {
+      if (["lose","add","gain"].includes(normalizedVerb) || delta > 0) labelAction = "Lose";
+      else labelAction = "Recover";
+    } else if (resourceKey === "stress") {
+      labelAction = (normalizedVerb === "clear" || delta < 0) ? "Clear" : "Apply";
+    } else {
+      labelAction = (normalizedVerb === "gain" || delta > 0) ? "Gain" : "Spend";
+    }
+
+    const amount = Math.abs(delta);
+    const resLabel = resourceKey === "armor" ? (amount === 1 ? "Armor Slot" : "Armor Slots") : (resourceKey === "hp" ? (amount === 1 ? "Hit Point" : "Hit Points") : `${resourceKey.charAt(0).toUpperCase()}${resourceKey.slice(1)}`);
+    a.innerHTML = `<i class="fa-solid fa-hand-pointer"></i> ${labelAction} ${amount} ${resLabel}`;
+    return a;
+  }
+
+  function _safeRegisterEnricher(cfg) {
+    if (typeof TextEditor.registerEnricher === "function") {
+      TextEditor.registerEnricher(cfg);
+    } else if (globalThis.CONFIG?.TextEditor?.enrichers) {
+      CONFIG.TextEditor.enrichers.push(cfg);
+    } else {
+      console.error("Daggerheart | Unable to register text enricher – unsupported Foundry version");
+    }
+  }
+
+  _safeRegisterEnricher({
+    pattern: masterPattern,
+    enricher: (match, options) => {
+      // Skip if we're inside an already-processed resource button
+      const matchIndex = match.index || 0;
+      const fullText = match.input || "";
+      
+      // Look backwards from match position to see if we're inside a resource button
+      const beforeMatch = fullText.substring(0, matchIndex);
+      const afterMatch = fullText.substring(matchIndex);
+      
+      // Check if this match is inside an existing dh-resource-btn or dh-fear-btn
+      const openTagBefore = beforeMatch.lastIndexOf('<a class="dh-resource-btn"') > beforeMatch.lastIndexOf('</a>');
+      const openFearTagBefore = beforeMatch.lastIndexOf('<a class="dh-fear-btn"') > beforeMatch.lastIndexOf('</a>');
+      
+      if (openTagBefore || openFearTagBefore) {
+        // We're inside an existing button, return the match unchanged
+        return match[0];
+      }
+      
+      // Also check if the match is preceded by button-like content
+      if (beforeMatch.includes('fa-hand-pointer') || beforeMatch.includes('fa-solid fa-skull')) {
+        const lastCloseTag = beforeMatch.lastIndexOf('</a>');
+        const lastOpenTag = Math.max(
+          beforeMatch.lastIndexOf('<a class="dh-resource-btn"'),
+          beforeMatch.lastIndexOf('<a class="dh-fear-btn"')
+        );
+        
+        // If we have an open tag after the last close tag, skip
+        if (lastOpenTag > lastCloseTag) {
+          return match[0];
+        }
+      }
+      
+      const verb = match[1] || null;
+      const amountStr = match[2];
+      const resStr = match[3];
+      const resourceKey = _canonicalResource(resStr);
+      const delta = _parseDelta(amountStr, verb, resourceKey);
+      
+      // Add a unique marker to help prevent reprocessing
+      const anchor = _buildAnchor(resourceKey, delta, verb);
+      anchor.setAttribute('data-enriched', 'true');
+      return anchor;
+    }
+  });
+});
+
+/**
+ * Global click listener
+ */
+Hooks.once("ready", () => {
+  document.addEventListener("click", async (event) => {
+    const btn = event.target.closest(".dh-resource-btn, .dh-fear-btn");
+    if (!btn) return;
+
+    if (btn.classList.contains("dh-fear-btn")) {
+      const amt   = Number(btn.dataset.amount) || 1;
+      const action = btn.dataset.action;
+      if (action === "spendFear" && typeof spendFear === "function") {
+        await spendFear(amt);
+      } else if (action === "gainFear" && typeof gainFear === "function") {
+        await gainFear(amt);
+      }
+      return;
+    }
+
+    const delta = Number(btn.dataset.delta) || 0;
+    const resource = btn.dataset.resource;
+
+    switch (resource) {
+      case "fear":
+        if (delta < 0) await spendFear(-delta); else await gainFear(delta);
+        break;
+      case "hope":
+        if (delta < 0) await spendHope(null, -delta); else await gainHope(null, delta);
+        break;
+      case "stress":
+        if (delta < 0) await clearStress(null, -delta); else await spendStress(null, delta);
+        break;
+      case "armor":
+        await adjustArmorSlots(null, delta);
+        break;
+      case "hp":
+        await adjustHitPoints(null, delta);
+        break;
+      default:
+        ui.notifications.warn("Unknown resource type.");
+    }
+  });
+});
+
+// Placeholder functions
+
+/**
+ * Adjust armor slots
+ * @param {number} delta
+ */
+export async function adjustArmorSlots(actor = null, delta = 1) {
+  // Validate delta (non-zero integer)
+  if (!Number.isInteger(delta) || delta === 0) {
+    console.error("Armor slot delta must be a non-zero integer");
+    ui.notifications.error("Armor slot amount must be a non-zero integer.");
+    return false;
+  }
+
+  let targetActor = actor;
+
+  // Actor detection (same as spendStress)
+  if (!targetActor) {
+    const activeSheet = Object.values(ui.windows).find(app => app instanceof ActorSheet && app.rendered);
+    if (activeSheet?.actor) {
+      targetActor = activeSheet.actor;
+    } else {
+      const selectedTokens = canvas.tokens?.controlled || [];
+      if (selectedTokens.length === 1) targetActor = selectedTokens[0].actor;
+    }
+  }
+
+  if (!targetActor) {
+    ui.notifications.error("No target actor found for armor slot adjustment.");
+    return false;
+  }
+
+  // Only character actors have armor slots
+  if (targetActor.type !== "character") {
+    ui.notifications.warn("Armor slots are only available for character actors.");
+    return false;
+  }
+
+  // Check data path exists
+  const armorSlotObj = targetActor.system?.defenses?.["armor-slots"];
+  const armorMaxObj  = targetActor.system?.defenses?.armor;
+  if (!armorSlotObj || !armorMaxObj) {
+    ui.notifications.error("This actor does not have armor slot data.");
+    return false;
+  }
+
+  const current = parseInt(armorSlotObj.value) || 0;
+  const max     = parseInt(armorMaxObj.value)  || 0;
+  const newVal  = Math.max(0, Math.min(max, current + delta));
+  const actual  = newVal - current;
+  if (actual === 0) {
+    ui.notifications.info("Armor slots already at limit.");
+    return false;
+  }
+
+  // Permission check
+  const canModify = game.user.isGM || game.user.hasRole("ASSISTANT") || targetActor.isOwner;
+  if (!canModify) {
+    ui.notifications.warn(`You do not have permission to modify ${targetActor.name}'s armor slots.`);
+    return false;
+  }
+
+  try {
+    await targetActor.update({
+      "system.defenses.armor-slots.value": newVal
+    });
+
+    const actionText = actual > 0 ? "ARMOR USED" : "ARMOR FREED";
+    const detailText = actual > 0 ?
+      `${targetActor.name} uses ${actual} armor slot${actual === 1 ? "" : "s"}.` :
+      `${targetActor.name} frees ${-actual} armor slot${actual === -1 ? "" : "s"}.`;
+
+    ui.notifications.info(detailText);
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: targetActor }),
+      content: `<div class="armor-slot-message">
+        <h3><i class="fa-solid fa-shield-halved"></i>${actionText}</h3>
+        <p>${detailText}</p>
+        <p>Armor slots: ${newVal}/${max}</p>
+      </div>`,
+      flags: { daggerheart: { messageType: "armorSlots", delta: actual } }
+    });
+    return true;
+  } catch (e) {
+    console.error("Error updating armor slots", e);
+    ui.notifications.error("Failed to update armor slots.");
+    return false;
+  }
+}
+
+/**
+ * Adjust hit points
+ * @param {number} delta
+ */
+export async function adjustHitPoints(actor = null, delta = -1) {
+  if (!Number.isInteger(delta) || delta === 0) {
+    ui.notifications.error("Hit point delta must be a non-zero integer.");
+    return false;
+  }
+  let targetActor = actor;
+  if (!targetActor) {
+    const activeSheet = Object.values(ui.windows).find(app => app instanceof ActorSheet && app.rendered);
+    if (activeSheet?.actor) targetActor = activeSheet.actor;
+    else {
+      const sel = canvas.tokens?.controlled || [];
+      if (sel.length === 1) targetActor = sel[0].actor;
+    }
+  }
+  if (!targetActor) {
+    ui.notifications.error("No target actor found for HP adjustment.");
+    return false;
+  }
+
+  const hpObj = targetActor.system?.health;
+  if (!hpObj) {
+    ui.notifications.error("Actor has no health data.");
+    return false;
+  }
+  const current = parseInt(hpObj.value) || 0;
+  const max = parseInt(hpObj.max) || 0;
+  const newVal = Math.max(0, Math.min(max, current + delta));
+  const actual = newVal - current;
+  if (actual === 0) {
+    ui.notifications.info("HP already at limit.");
+    return false;
+  }
+
+  const canModify = game.user.isGM || game.user.hasRole("ASSISTANT") || targetActor.isOwner;
+  if (!canModify) {
+    ui.notifications.warn("You do not have permission to modify this actor's HP.");
+    return false;
+  }
+  try {
+    await targetActor.update({ "system.health.value": newVal });
+
+    const actionText = actual > 0 ? "HEALING" : "DAMAGE TAKEN";
+    const detailText = actual > 0 ?
+      `${targetActor.name} heals ${actual} hit point${actual === 1 ? "" : "s"}.` :
+      `${targetActor.name} suffers ${-actual} damage.`;
+
+    ui.notifications.info(detailText);
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: targetActor }),
+      content: `<div class="hp-adjust-message">
+        <h3><i class="fa-solid fa-heart"></i>${actionText}</h3>
+        <p>${detailText}</p>
+        <p>Hit points: ${newVal}/${max}</p>
+      </div>`,
+      flags: { daggerheart: { messageType: "hpAdjust", delta: actual } }
+    });
+    return true;
+  } catch (e) {
+    console.error("Error updating HP", e);
+    ui.notifications.error("Failed to update HP.");
+    return false;
+  }
 } 

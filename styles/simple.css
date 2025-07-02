@@ -5620,6 +5620,205 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   margin-top: 8px;
 }
 
+/* Stress Clear Message Styling */
+.stress-clear-message {
+  background: linear-gradient(135deg, rgba(38, 77, 38, 0.9) 0%, rgba(10, 19, 10, 0.9) 100%);
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.stress-clear-message h3 {
+  color: #81c784;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.stress-clear-message h3 i {
+  margin-right: 8px;
+  color: #81c784;
+}
+.stress-clear-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.stress-clear-message p:last-child {
+  margin-bottom: 0;
+  color: #a5d6a7;
+  font-weight: 500;
+}
+
+/* Armor Slot Message Styling */
+.armor-slot-message {
+  background: linear-gradient(135deg, rgba(96, 125, 139, 0.9) 0%, rgba(37, 47, 63, 0.9) 100%);
+  border: 1px solid #607d8b;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.armor-slot-message h3 {
+  color: #90a4ae;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.armor-slot-message h3 i {
+  margin-right: 8px;
+  color: #90a4ae;
+}
+.armor-slot-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.armor-slot-message p:last-child {
+  margin-bottom: 0;
+  color: #b0bec5;
+  font-weight: 500;
+}
+
+/* HP Adjust Message Styling */
+.hp-adjust-message {
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.9) 0%, rgba(62, 39, 35, 0.9) 100%);
+  border: 1px solid #8b4513;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.hp-adjust-message h3 {
+  color: #cd853f;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.hp-adjust-message h3 i {
+  margin-right: 8px;
+  color: #cd853f;
+}
+.hp-adjust-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.hp-adjust-message p:last-child {
+  margin-bottom: 0;
+  color: #deb887;
+  font-weight: 500;
+}
+
+/* Hope Message Styling */
+.hope-spend-message {
+  background: linear-gradient(135deg, rgba(57, 77, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
+  border: 1px solid var(--dh-color-teal);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.hope-spend-message h3 {
+  color: var(--dh-color-gold);
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.hope-spend-message h3 i {
+  margin-right: 8px;
+  color: var(--dh-color-gold);
+}
+.hope-spend-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.hope-spend-message p:last-child {
+  margin-bottom: 0;
+  color: var(--dh-color-teal);
+  font-weight: 600;
+}
+.hope-spend-message .hope-warning {
+  color: #ff9800 !important;
+  font-weight: bold !important;
+  font-style: italic;
+  background: rgba(255, 152, 0, 0.1);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 8px;
+}
+
+.hope-gain-message {
+  background: linear-gradient(135deg, rgba(77, 77, 38, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.hope-gain-message h3 {
+  color: var(--dh-color-gold);
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.hope-gain-message h3 i {
+  margin-right: 8px;
+  color: var(--dh-color-gold);
+}
+.hope-gain-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.hope-gain-message p:last-child {
+  margin-bottom: 0;
+  color: var(--dh-color-gold);
+  font-weight: 600;
+}
+.hope-gain-message .hope-max {
+  color: #ffeb3b !important;
+  font-weight: bold !important;
+  font-style: italic;
+  background: rgba(255, 235, 59, 0.1);
+  border: 1px solid rgba(255, 235, 59, 0.3);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 8px;
+}
+
 /* Undo Button Styling */
 .undo-damage-button,
 .undo-healing-button {
