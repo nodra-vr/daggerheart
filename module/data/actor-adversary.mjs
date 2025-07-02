@@ -1,8 +1,8 @@
 import { ActorDataModel } from "./base/actor-data.mjs";
 
 const {
-  HTMLField, ArrayField, NumberField,
-  SchemaField, StringField,
+  HTMLField, ArrayField, BooleanField,
+  NumberField, SchemaField, StringField,
 } = foundry.data.fields;
 
 export class AdversaryDataModel extends ActorDataModel {
@@ -107,13 +107,20 @@ export class AdversaryDataModel extends ActorDataModel {
       }),
       value: new NumberField({
         required: true, integer: true,
-        positive: false, initial: 0,
-        min: -20, max: +20
+        positive: false, initial: 0
       }),
-      modifiers: new ArrayField(new NumberField({
-        required: true, integer: true,
-        positive: false, initial: 0,
-        min: -20, max: +20
+      modifiers: new ArrayField(new SchemaField({
+        name: new StringField({
+          required: true, blank: true,
+          trim: true, textSearch: false
+        }),
+        value: new StringField({
+          required: true, blank: true,
+          trim: true, textSearch: false
+        }),
+        enabled: new BooleanField({
+          required: true, initial: false,
+        })
       })),
     }),
 
@@ -150,10 +157,18 @@ export class AdversaryDataModel extends ActorDataModel {
             required: true, blank: false,
             trim: true, initial: "1d6",
           }),
-          modifiers: new ArrayField(new NumberField({
-            required: true, integer: true,
-            positive: false, initial: 0,
-            min: -20, max: +20
+          modifiers: new ArrayField(new SchemaField({
+            name: new StringField({
+              required: true, blank: true,
+              trim: true, textSearch: false
+            }),
+            value: new StringField({
+              required: true, blank: true,
+              trim: true, textSearch: false
+            }),
+            enabled: new BooleanField({
+              required: true, initial: false,
+            })
           })),
         }),
         description: new StringField({
