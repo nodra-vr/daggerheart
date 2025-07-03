@@ -809,7 +809,7 @@ ChatMessage.create({
   }
   game.user.assignHotbarMacro(macro, slot);
   return false;
-}
+} 
 
 // Text Enricher: Auto-link resource phrases
 
@@ -912,16 +912,16 @@ Hooks.once("init", () => {
     let normalizedVerb = verbHint ? verbHint.toLowerCase() : "";
     let labelAction;
     if (resourceKey === "hp" || resourceKey === "armor") {
-      if (["lose","add","gain"].includes(normalizedVerb) || delta > 0) labelAction = "Lose";
-      else labelAction = "Recover";
+      if (["lose","add","gain"].includes(normalizedVerb) || delta > 0) labelAction = "Mark";
+      else labelAction = "Clear";
     } else if (resourceKey === "stress") {
-      labelAction = (normalizedVerb === "clear" || delta < 0) ? "Clear" : "Apply";
+      labelAction = (normalizedVerb === "clear" || delta < 0) ? "Clear" : "Mark";
     } else {
       labelAction = (normalizedVerb === "gain" || delta > 0) ? "Gain" : "Spend";
     }
 
     const amount = Math.abs(delta);
-    const resLabel = resourceKey === "armor" ? (amount === 1 ? "Armor Slot" : "Armor Slots") : (resourceKey === "hp" ? (amount === 1 ? "Hit Point" : "Hit Points") : `${resourceKey.charAt(0).toUpperCase()}${resourceKey.slice(1)}`);
+    const resLabel = resourceKey === "armor" ? (amount === 1 ? "Armor Slot" : "Armor Slots") : (resourceKey === "hp" ? "Hit Point" : `${resourceKey.charAt(0).toUpperCase()}${resourceKey.slice(1)}`);
     a.innerHTML = `${labelAction} ${amount} ${resLabel}`;
     a.setAttribute('data-icon', 'fa-solid fa-hand-pointer'); // Store icon for future use
     return a;
