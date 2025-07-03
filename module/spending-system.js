@@ -971,7 +971,27 @@ Hooks.once("init", () => {
         return match[0];
       }
       
-      const verb = match[1] || null;
+      // Determine the verb (action) for this resource phrase. If the regex captured one directly we use it;
+      // otherwise, look back in the same sentence for the nearest preceding verb so phrases like
+      // "clear 2 Hit Points or 2 Stress" apply the verb "clear" to both resources.
+      let verb = match[1] || null;
+
+      if (!verb) {
+        const lastSentenceBreak = Math.max(beforeMatch.lastIndexOf("."), beforeMatch.lastIndexOf("!"), beforeMatch.lastIndexOf("?"));
+        const searchSegment = beforeMatch.slice(lastSentenceBreak + 1);
+
+        const verbSearchRe = new RegExp(`\\b(${VERB_PATTERN})\\b`, "gi");
+        let verbMatch;
+        for (const m of searchSegment.matchAll(verbSearchRe)) {
+          verbMatch = m;
+        }
+        if (verbMatch && verbMatch[1]) verb = verbMatch[1];
+      }
+      
+      if (!verb) {
+        return match[0];
+      }
+      
       const amountStr = match[2];
       const resStr = match[3];
       const resourceKey = _canonicalResource(resStr);
@@ -1165,16 +1185,18 @@ export async function adjustHitPoints(actor = null, delta = -1) {
   try {
     await targetActor.update({ "system.health.value": newVal });
 
-    const actionText = actual > 0 ? "HEALING" : "DAMAGE TAKEN";
+    const actionText = actual > 0 ? "DAMAGE TAKEN" : "HEALING";
     const detailText = actual > 0 ?
-      `${targetActor.name} heals ${actual} hit point${actual === 1 ? "" : "s"}.` :
-      `${targetActor.name} suffers ${-actual} damage.`;
+      `${targetActor.name} damaged for ${actual} point${actual === 1 ? "" : "s"}.` :
+      `${targetActor.name} healed for ${-actual} point${actual === -1 ? "" : "s"}.`;
+
+    const messageClass = actual > 0 ? "hp-adjust-message" : "hp-healing-message";
 
     ui.notifications.info(detailText);
     ChatMessage.create({
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: targetActor }),
-      content: `<div class="hp-adjust-message">
+      content: `<div class="${messageClass}">
         <h3><i class="fa-solid fa-heart"></i>${actionText}</h3>
         <p>${detailText}</p>
         <p>Hit points: ${newVal}/${max}</p>

@@ -1715,31 +1715,12 @@ function _getArmorSlotsUI(currentSlots = 0, maxSlots = 3, showUI = true) {
  * @returns {Object} Object with showUI flag and maxSlots value
  */
 function _getTargetArmorInfo() {
-  // Check targeted tokens first (priority)
   const targets = Array.from(game.user.targets);
-  
-  if (targets.length > 0) {
-    // Find first character target to get max armor slots
-    const characterTarget = targets.find(t => t.actor?.type === 'character');
-    if (characterTarget) {
-      const maxSlots = parseInt(characterTarget.actor.system.defenses?.["armor-slots"]?.max) || 3;
-      return { showUI: true, maxSlots: maxSlots };
-    }
-  }
-  
-  // Check selected tokens
-  const controlled = canvas.tokens?.controlled || [];
-  
-  if (controlled.length > 0) {
-    // Find first character to get max armor slots
-    const characterToken = controlled.find(t => t.actor?.type === 'character');
-    if (characterToken) {
-      const maxSlots = parseInt(characterToken.actor.system.defenses?.["armor-slots"]?.max) || 3;
-      return { showUI: true, maxSlots: maxSlots };
-    }
-  }
-  
-  return { showUI: false, maxSlots: 0 };
+  if (targets.length === 0) return { showUI: false, maxSlots: 0 };
+  const characterTarget = targets.find(t => t.actor?.type === "character");
+  if (!characterTarget) return { showUI: false, maxSlots: 0 };
+  const maxSlots = parseInt(characterTarget.actor.system.defenses?.["armor-slots"]?.max) || 3;
+  return { showUI: true, maxSlots };
 }
 
 /**
@@ -2034,56 +2015,24 @@ function _addUndoButtonHandlers(html, flags) {
  */
 function _getMultiTargetArmorInfo() {
   const characterTargets = [];
-  
-  // Check targeted tokens first (priority)
   const targets = Array.from(game.user.targets);
-  
-  if (targets.length > 0) {
-    // Get all character targets
-    targets.forEach(token => {
-      if (token.actor?.type === 'character') {
-        // New data structure: armor.value = max slots, armor-slots.value = current used slots
-        const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
-        const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
-        const availableSlots = maxSlots - currentSlots; // How many slots they have available
-        const usableSlots = Math.min(availableSlots, 3); // Cap at 3 due to damage threshold system
-        
-        characterTargets.push({
-          actor: token.actor,
-          name: token.actor.name,
-          id: token.actor.id,
-          maxSlots: maxSlots,
-          currentSlots: currentSlots,
-          availableSlots: availableSlots,
-          usableSlots: usableSlots
-        });
-      }
-    });
-  } else {
-    // Check selected tokens
-    const controlled = canvas.tokens?.controlled || [];
-    
-    controlled.forEach(token => {
-      if (token.actor?.type === 'character') {
-        // New data structure: armor.value = max slots, armor-slots.value = current used slots
-        const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
-        const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
-        const availableSlots = maxSlots - currentSlots; // How many slots they have available
-        const usableSlots = Math.min(availableSlots, 3); // Cap at 3 due to damage threshold system
-        
-        characterTargets.push({
-          actor: token.actor,
-          name: token.actor.name,
-          id: token.actor.id,
-          maxSlots: maxSlots,
-          currentSlots: currentSlots,
-          availableSlots: availableSlots,
-          usableSlots: usableSlots
-        });
-      }
-    });
-  }
-  
+  targets.forEach(token => {
+    if (token.actor?.type === "character") {
+      const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
+      const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
+      const availableSlots = maxSlots - currentSlots;
+      const usableSlots = Math.min(availableSlots, 3);
+      characterTargets.push({
+        actor: token.actor,
+        name: token.actor.name,
+        id: token.actor.id,
+        maxSlots,
+        currentSlots,
+        availableSlots,
+        usableSlots
+      });
+    }
+  });
   return characterTargets;
 }
 

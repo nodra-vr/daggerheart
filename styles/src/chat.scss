@@ -1929,3 +1929,44 @@ input[type="submit"],
   0% { left: -150%; }
   100% { left: 150%; }
 }
+
+.chat-message:has(.item-card-chat) .message-content {
+  padding-bottom: 0;
+}
+
+.hp-healing-message {
+  background: linear-gradient(135deg, rgba(46, 64, 34, 0.9) 0%, rgba(19, 40, 29, 0.9) 100%);
+  border: 1px solid #5bb85c;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    color: #66cc66;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    i {
+      margin-right: 8px;
+      color: #66cc66;
+    }
+  }
+
+  p {
+    color: var(--dh-color-off-white);
+    font-size: 0.95em;
+    margin: 4px 0;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+      color: #a5d6a7;
+      font-weight: 500;
+    }
+  }
+}

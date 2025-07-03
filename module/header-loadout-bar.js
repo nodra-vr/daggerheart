@@ -1,6 +1,7 @@
 // HeaderLoadoutBar: displays Class / Subclass / Ancestry / Community cards inside the sheet header
 
 import { buildItemCardChat } from "./helper.js";
+import { DaggerheartDialogHelper } from "./dialog-helper.js";
 
 export class HeaderLoadoutBar {
   constructor(actorSheet) {
@@ -77,14 +78,24 @@ export class HeaderLoadoutBar {
         case 'edit':
           return item.sheet.render(true);
         case 'delete': {
-          const confirmed = await Dialog.confirm({
+          const confirmResult = await DaggerheartDialogHelper.showDialog({
             title: 'Delete Item',
             content: `<p>Are you sure you want to delete <strong>${item.name}</strong> from the sheet? This cannot be undone.</p>`,
-            yes: () => true,
-            no: () => false,
-            defaultYes: false
+            dialogClass: 'confirm-dialog',
+            buttons: {
+              confirm: {
+                label: 'Delete',
+                icon: '<i class="fas fa-trash"></i>',
+                callback: () => true
+              },
+              cancel: {
+                label: 'Cancel',
+                callback: () => null
+              }
+            },
+            default: 'cancel'
           });
-          if (!confirmed) return;
+          if (!confirmResult) return;
           await item.delete();
           return this.render();
         }

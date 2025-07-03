@@ -1,4 +1,5 @@
 import { buildItemCardChat } from "./helper.js";
+import { DaggerheartDialogHelper } from "./dialog-helper.js";
 
 export class DomainAbilitySidebar {
   constructor(actorSheet) {
@@ -114,28 +115,48 @@ export class DomainAbilitySidebar {
           break;
         case 'delete':
           if (item) {
-            const confirmed = await Dialog.confirm({
+            const confirmResult = await DaggerheartDialogHelper.showDialog({
               title: 'Delete Ability',
               content: `<p>Are you sure you want to delete <strong>${item.name}</strong> from the sheet? This cannot be undone.</p>`,
-              yes: () => true,
-              no: () => false,
-              defaultYes: false
+              dialogClass: 'confirm-dialog',
+              buttons: {
+                confirm: {
+                  label: 'Delete',
+                  icon: '<i class="fas fa-trash"></i>',
+                  callback: () => true
+                },
+                cancel: {
+                  label: 'Cancel',
+                  callback: () => null
+                }
+              },
+              default: 'cancel'
             });
-            if (!confirmed) break;
+            if (!confirmResult) break;
             await item.delete();
             this.render();
           }
           break;
         case 'send-to-vault':
           if (item) {
-            const confirmed = await Dialog.confirm({
+            const confirmResult = await DaggerheartDialogHelper.showDialog({
               title: 'Move to Vault',
               content: `<p>Are you sure you want to move <strong>${item.name}</strong> to the vault?</p>`,
-              yes: () => true,
-              no: () => false,
-              defaultYes: false
+              dialogClass: 'confirm-dialog',
+              buttons: {
+                confirm: {
+                  label: 'Move',
+                  icon: '<i class="fas fa-archive"></i>',
+                  callback: () => true
+                },
+                cancel: {
+                  label: 'Cancel',
+                  callback: () => null
+                }
+              },
+              default: 'cancel'
             });
-            if (!confirmed) break;
+            if (!confirmResult) break;
             await item.update({ 'system.location': 'vault' });
             this.render();
           }

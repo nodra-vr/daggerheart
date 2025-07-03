@@ -268,20 +268,27 @@ export class EquipmentHandler {
     const slotKey = slot === "primary" ? this.MAIN : this.OFF;
     
     if (!weapon) {
-      // No weapon equipped - return default structure with character modifiers preserved
+      // No weapon equipped - preserve any existing player-entered values instead of resetting
       const currentData = foundry.utils.getProperty(actor, `system.${slotKey}`) || {};
+
+      // Resolve previously saved base values (falling back to sensible defaults)
+      const dmgBase  = currentData.damage?.baseValue ?? currentData.damage?.value ?? "1d8";
+      const hitBase  = currentData["to-hit"]?.baseValue ?? currentData["to-hit"]?.value ?? 0;
+      const dmgMods  = Array.isArray(currentData.damage?.modifiers)   ? currentData.damage.modifiers   : [];
+      const hitMods  = Array.isArray(currentData["to-hit"]?.modifiers)? currentData["to-hit"].modifiers: [];
+
       return {
-        name: "",
-        weaponId: null,
-        damage: {
-          baseValue: "1d8",
-          modifiers: currentData.damage?.modifiers || [],
-          value: this._calculateTotal("1d8", currentData.damage?.modifiers || [])
+        name     : currentData.name ?? "",
+        weaponId : null,
+        damage   : {
+          baseValue : dmgBase,
+          modifiers : dmgMods,
+          value     : this._calculateTotal(dmgBase, dmgMods)
         },
-        "to-hit": {
-          baseValue: 0,
-          modifiers: currentData["to-hit"]?.modifiers || [],
-          value: this._calculateTotal(0, currentData["to-hit"]?.modifiers || [])
+        "to-hit" : {
+          baseValue : hitBase,
+          modifiers : hitMods,
+          value     : this._calculateTotal(hitBase, hitMods)
         }
       };
     }
