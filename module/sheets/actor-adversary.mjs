@@ -11,6 +11,23 @@ const {
 export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
   sheets.ActorSheetV2
 ) {
+  OverlayType = Object.freeze({
+    Attack: "attack",
+    Damage: "damage",
+  });
+  _overlayState = {
+    path: "",
+    title: "",
+    scale: 0.8,
+    opacity: 0,
+    hide: true,
+    weapon: false,
+    base: "",
+    total: "",
+    modifiers: [],
+  }
+  _activeOverlayType = null;
+
 
   // TODO Depricate fully or add to a base actor class.
   // Pending Info is used to manage rolls and chat info.
@@ -41,7 +58,7 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
 
   /** @override */
   static DEFAULT_OPTIONS = {
-    classes: ["daggerheart", "adversary", "sheet"],
+    classes: ["daggerheart", "adversary", "sheet", "transitions-enabled"],
     document: null,
     editPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER,
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.LIMITED,
@@ -65,12 +82,21 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
       openDeathMove: this.#openDeathMove,
       decrementValue: this.#decrementValue,
       incrementValue: this.#incrementValue,
-      setDamageValue: this.#setDamageValue,
+
+      createModifier: this.#createModifier,
+      deleteModifier: this.#deleteModifier,
+
+      openModifiers: this.#openModifiers,
+      saveModifiers: this.#saveModifiers,
+      closeModifiers: this.#closeModifiers,
     },
   };
 
   /** @override */
   static PARTS = {
+    mods: {
+      template: "./systems/daggerheart/templates/partials/actor-overlay-modifiers.hbs",
+    },
     base: {
       template: "./systems/daggerheart/templates/actor-adversary.hbs"
     },
@@ -105,6 +131,7 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
       };
 
       switch (partId) {
+        case 'mods':
         case 'base':
         case 'tabs':
           return tabs;
@@ -128,12 +155,13 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
     }, {});
   }
 
+
   /** @override */
   async _prepareContext(options) {
-    console.log('ActorAdversary: Prepare context actor:');
-    console.log(this.actor);
-    console.log('ActorAdversary: Prepare context options:');
-    console.log(options);
+    // console.log('ActorAdversary: Prepare context actor:');
+    // console.log(this.actor);
+    // console.log('ActorAdversary: Prepare context options:');
+    // console.log(options);
 
     // Base Context
     const context = {
@@ -154,24 +182,111 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
       relativeTo: this.document
     })
 
-    console.log('ActorAdversary: Context ready:');
-    console.log(context);
+    context.overlay = this._overlayState;
+
+    // console.log('ActorAdversary: Context ready:');
+    // console.log(context);
     return context;
   }
 
   /** @override */
   async _processSubmitData(event, form, formData) {
-    console.log("ActorAdversary: update actor data:");
-    console.log(formData);
+    console.log("ActorAdversary: process submit event");
 
-    if (this.actor.name !== formData.name) {
+    if (event.type !== 'change' || !event.target) {
+      console.warn(`Actor._processSubmitData: ignored`);
+      // TODO Handle others?
+      console.log(event);
+      // Ignore it
+      return;
+    }
+
+    const target = event.target;
+
+    // console.log(target);
+    // console.log(target.name);
+    // console.log(target.dataset.index);
+
+    switch (target.name) {
+      case 'name':
+        this._updateActorName(target.value);
+        // This may be a bit too optimized but it works,
+        // prevents a full document update and related saves
+        // For simple use cases the default will do the job fine.
+        break;
+      case 'modifier-base':
+        this._updateBaseFormula(
+          target.value,
+        );
+        break;
+      case 'modifier-name':
+        this._updateModifierName(
+          target.dataset.index,
+          target.value,
+        );
+        break;
+      case 'modifier-value':
+        this._updateModifierValue(
+          target.dataset.index,
+          target.value,
+        );
+        break;
+      case 'modifier-state':
+        this._updateModifierState(
+          target.dataset.index,
+          target.value,
+        );
+        break;
+      default:
+        await this.document.update(formData);
+        break;
+    }
+  }
+
+  async _updateActorName(name) {
+    if (this.actor.name !== name) {
       this.actor.update({
-        name: formData.name
+        name: name
       })
     }
-    await this.document.update(formData);
-    this.render();
   }
+
+  async _updateBaseFormula(value) {
+    this._overlayState.total = value;
+    this._overlayState.base = value;
+    // TODO _updateDamageTotal
+    // TODO validate value
+  }
+
+  async _updateModifierName(index, name) {
+    if (index < 0 || index >= this._overlayState.modifiers.length) {
+      console.warn(`Actor._updateModifierName: invalid index: ${index}`);
+      ui.notifications.error("Failed to update the modifier name.");
+      return;
+    }
+    this._overlayState.modifiers[index].name = name;
+  }
+
+  async _updateModifierValue(index, value) {
+    if (index < 0 || index >= this._overlayState.modifiers.length) {
+      console.warn(`Actor._updateModifierValue: invalid index: ${index}`);
+      ui.notifications.error("Failed to update the modifier value.");
+      return;
+    }
+    this._overlayState.modifiers[index].value = value;
+    // TODO _updateDamageTotal
+    // TODO validate value
+  }
+
+  async _updateModifierState(index, enabled) {
+    if (index < 0 || index >= this._overlayState.modifiers.length) {
+      console.warn(`Actor._updateModifierValue: invalid index: ${index}`);
+      ui.notifications.error("Failed to update the modifier value.");
+      return;
+    }
+    this._overlayState.modifiers[index].enabled = enabled;
+  }
+
 
   static async #editImage(event, target) {
     console.log("ActorAdversary: edit actor image:");
@@ -359,6 +474,251 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
   }
 
 
+  static async #createModifier(event, target) {
+    console.log(this._overlayState.modifiers);
+    console.log(this._overlayState.modifiers.length);
+
+    const mods = this._overlayState.modifiers;
+    if (mods.length > 0 && mods[mods.length - 1].name === 'unknown') {
+      ui.notifications.error("Define the unknown modifier first.");
+      return;
+    }
+    this._overlayState.modifiers.push({
+      name: 'unknown',
+      value: '+1',
+      enabled: true,
+    })
+    await this.render();
+
+    // Grab the focus of the newly created element for a good user experience
+    const overlay = document.getElementById('overlay-' + this.actor.id);
+    const list = overlay.querySelectorAll('.modifier-name');
+    if (list.length > 0) list[list.length - 1].focus();
+  }
+
+  static async #deleteModifier(event, target) {
+    const index = target.dataset.index;
+
+    if (index < 0 || index >= this._overlayState.modifiers.length) {
+      console.warn(`Actor.#deleteModifier: invalid index: ${index}`);
+      ui.notifications.error("Failed to delete the modifier.");
+      return;
+    }
+
+    this._overlayState.modifiers.splice(index, 1);
+    this.render();
+  }
+
+
+  async _openModifiers(config) {
+    this._overlayState.path = config.path;
+    this._overlayState.title = config.title;
+    this._overlayState.base = config.base;
+    this._overlayState.total = config.total;
+    this._overlayState.modifiers = config.modifiers;
+    await this.render();
+
+    const overlay = document.getElementById('overlay-' + this.actor.id);
+    const popup = overlay.querySelector('.damage-edit-popup');
+    const input = overlay.querySelector('.damage-base-input');
+
+    const damageLabel = overlay.querySelector('.damage-edit-label');
+
+    // Setup the modifier title 
+    damageLabel.innerHTML = config.title;
+
+    // Animate in with JavaScript for smooth backdrop-filter
+    overlay.style.removeProperty("display");
+    this._animatePopupIn(popup, () => {
+      input.focus();
+    });
+  }
+
+  async _closeModifiers() {
+    const overlay = document.getElementById('overlay-' + this.actor.id);
+    const popup = overlay.querySelector('.damage-edit-popup');
+
+    this._animatePopupOut(popup, () => {
+      overlay.style.setProperty("display", "none");
+      this._activeOverlayType = null;
+      this._overlayState = {
+        path: "",
+        title: "",
+        scale: 0.8,
+        opacity: 0,
+        hide: true,
+        weapon: false,
+        base: "",
+        total: "",
+        modifiers: [],
+      };
+      this.render();
+    });
+  }
+
+  static async #closeModifiers(event, target) {
+    event.preventDefault();
+    this._closeModifiers();
+  }
+
+  async _saveAttackModifiers() {
+    const data = this._overlayState;
+    this.actor.update({
+      system: {
+        attack: {
+          base: data.base,
+          value: data.total,
+          modifiers: data.modifiers,
+        }
+      }
+    })
+  }
+
+  async _saveDamageModifiers() {
+    const data = this._overlayState;
+    this.actor.update({
+      system: {
+        primary: {
+          damage: {
+            base: data.base,
+            value: data.total,
+            modifiers: data.modifiers,
+          }
+        }
+      }
+    })
+  }
+
+  static async #saveModifiers(event, target) {
+    event.preventDefault();
+    switch (this._activeOverlayType) {
+      case this.OverlayType.Attack:
+        await this._saveAttackModifiers();
+        this._closeModifiers();
+        break;
+      case this.OverlayType.Damage:
+        await this._saveDamageModifiers();
+        this._closeModifiers();
+        break;
+      default:
+        const type = this._activeOverlayType;
+        console.warn(`Actor._saveModifiers: invalid type: ${type}`);
+    }
+  }
+
+  async _openAttackModifiers() {
+    if (this._activeOverlayType !== null) return;
+
+    this._activeOverlayType = this.OverlayType.Attack;
+    const data = this.actor.system.attack;
+
+    // TODO Reimplement restrictions for equiped items
+    // See the original _showDamageModifierEditPopup
+
+    this._openModifiers({
+      path: "attack",
+      title: `${this.actor.system.primary.name} - Attack`,
+      base: data.base,
+      total: data.value,
+      modifiers: data.modifiers,
+    });
+  }
+
+  async _openDamageModifiers() {
+    if (this._activeOverlayType !== null) return;
+
+    this._activeOverlayType = this.OverlayType.Damage;
+    const data = this.actor.system.primary.damage;
+
+    // TODO Reimplement restrictions for equiped items
+    // See the original _showDamageModifierEditPopup
+
+    this._openModifiers({
+      path: "primary.damage",
+      title: `${this.actor.system.primary.name} - Damage`,
+      base: data.base,
+      total: data.value,
+      modifiers: data.modifiers,
+    });
+  }
+
+  static async #openModifiers(event, target) {
+    event.preventDefault();
+    switch (target.dataset.type) {
+      case this.OverlayType.Attack:
+        this._openAttackModifiers();
+        break;
+      case this.OverlayType.Damage:
+        this._openDamageModifiers();
+        break;
+      default:
+        const type = target.dataset.type;
+        console.warn(`Actor.#openModifiers: unknown type: ${type}`);
+    }
+  }
+
+
+  _animatePopupIn(popup, callback) {
+    let start = null;
+    const duration = 120;
+
+    const animate = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+
+      // Easing function (ease-out)
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      const scale = 0.8 + (0.2 * eased); // From 0.8 to 1.0
+      const opacity = eased; // From 0 to 1
+
+      popup.style.setProperty("--dh-popup-scale", scale);
+      popup.style.setProperty("--dh-popup-opacity", opacity);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        callback && callback();
+        this._overlayState.hide = false;
+        this._overlayState.scale = 1.0;
+        this._overlayState.opacity = 1.0;
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }
+
+  _animatePopupOut(popup, callback) {
+    let start = null;
+    const duration = 180;
+
+    const animate = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+
+      // Easing function (ease-in)
+      const eased = Math.pow(progress, 2);
+
+      const scale = 1.0 - (0.2 * eased); // From 1.0 to 0.8
+      const opacity = 1 - eased; // From 1 to 0
+
+      popup.style.setProperty("--dh-popup-scale", scale);
+      popup.style.setProperty("--dh-popup-opacity", opacity);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        callback && callback();
+        this._overlayState.hide = true;
+        this._overlayState.scale = 0.8;
+        this._overlayState.opacity = 0.0;
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }
+
+
   ////////////////////////////////////////////////////////////////////////////
   // TODO The Stuff below is broken, damage and attack editor overlay
   //
@@ -366,113 +726,6 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
   // * This seems overly complicated and depends on data sets within HTML
   // elements for computation. Are we mixing presentation with logic?
   // * Second problem are the jquery lookups, these are depricated!
-  ////////////////////////////////////////////////////////////////////////////
-
-  static async #setDamageValue(event, target) {
-    console.warn("Trigger jquery breakdown!");
-
-    event.preventDefault();
-    const displayElement = event.currentTarget;
-
-    // Get configuration from data attributes or derive from context
-    const config = {
-      field: displayElement.dataset.field,
-      label: displayElement.dataset.label,
-      type: displayElement.dataset.editType || 'damage',
-      hasModifiers: displayElement.dataset.hasModifiers !== 'false',
-      min: displayElement.dataset.min ? parseInt(displayElement.dataset.min) : null,
-      max: displayElement.dataset.max ? parseInt(displayElement.dataset.max) : null
-    };
-
-    // If no label provided, use a default
-    if (!config.label) {
-      config.label = 'Weapon Damage';
-    }
-
-    // Get the actual damage data using the field path
-    let damageData = foundry.utils.getProperty(this.actor, config.field);
-
-    // Normalize the damage data to structured format
-    if (typeof damageData === 'object' && damageData !== null && 'baseValue' in damageData) {
-      // Already structured - but check for corrupted baseValue that might contain flattened formula
-      const baseValue = damageData.baseValue || '1d8';
-      const modifiers = damageData.modifiers || [];
-
-      // If baseValue contains spaces and we have no modifiers, it might be a flattened formula
-      // that got corrupted - try to extract the real base value
-      if (baseValue.includes(' ') && modifiers.length === 0) {
-        // Extract just the first dice part as the real base
-        const match = baseValue.match(/^(\d*d\d+)/);
-        if (match) {
-          damageData.baseValue = match[1];
-          damageData.modifiers = [];
-          damageData.value = match[1];
-        }
-      }
-    } else if (typeof damageData === 'object' && damageData !== null && 'value' in damageData) {
-      // Has .value but missing structure - this is a legacy mixed case
-      const displayValue = damageData.value || '1d8';
-      damageData = {
-        baseValue: displayValue, // Treat the existing value as base (might be flattened)
-        modifiers: damageData.modifiers || [],
-        value: displayValue
-      };
-    } else {
-      // Simple string/primitive - convert to structure
-      const simpleValue = damageData || '1d8';
-      damageData = {
-        baseValue: simpleValue,
-        modifiers: [],
-        value: simpleValue
-      };
-    }
-
-    // Ensure modifiers is always an array
-    if (!Array.isArray(damageData.modifiers)) {
-      damageData.modifiers = [];
-    }
-
-    // Check if this is from an equipped weapon
-    config.isFromEquippedWeapon = damageData.isFromEquippedWeapon || false;
-
-    // Show the damage modifier popup
-    this._showDamageModifierEditPopup(config, damageData, displayElement);
-  }
-
-  ////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Check if a field has base value restrictions
-   * @param {string} field - The field path to check
-   * @returns {boolean} - Whether the field has restrictions
-   */
-  hasBaseValueRestriction(field) {
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    const restriction = foundry.utils.getProperty(this.actor, restrictionPath);
-    return restriction && !restriction.editable;
-  }
-
-  /**
-   * Get base value restriction data for a field
-   * @param {string} field - The field path to check
-   * @returns {object|null} - The restriction data or null
-   */
-  getBaseValueRestriction(field) {
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    return foundry.utils.getProperty(this.actor, restrictionPath);
-  }
-
-  /**
-   * Remove base value restrictions for a specific field
-   * @param {string} field - The field path to remove restrictions from
-   */
-  async removeBaseValueRestriction(field) {
-    console.log("Daggerheart | Removing base value restriction for:", field);
-    const restrictionPath = `flags.daggerheart.baseValueRestrictions.${field.replace(/\./g, '_')}`;
-    await this.actor.update({ [restrictionPath]: null });
-    console.log("Daggerheart | Base value restriction removed for:", field);
-  }
-
   ////////////////////////////////////////////////////////////////////////////
 
   _updateDamageTotal(overlay) {
@@ -509,353 +762,5 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
     // This preserves the structured data for future editing
 
     return totalFormula;
-  }
-
-  _createDamageModifierRow(overlay, modifier, index) {
-    const modifiersList = overlay.find('.damage-modifiers-list');
-    const row = $(`
-      <div class="damage-modifier-row modifier-row ${modifier.enabled === false ? 'disabled' : ''}" data-index="${index}">
-        <input type="text" class="damage-modifier-name modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" />
-        <input type="text" class="damage-modifier-value modifier-value" placeholder="±1 or ±1d4" value="${modifier.value || ''}" />
-        <input type="checkbox" class="damage-modifier-toggle modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} />
-        <button type="button" class="damage-modifier-delete modifier-delete">×</button>
-      </div>
-    `);
-
-    // Simple event handlers without propagation issues
-    row.find('.damage-modifier-name, .damage-modifier-value').on('input', () => this._updateDamageTotal(overlay));
-
-    row.find('.damage-modifier-toggle').on('click change', (e) => {
-      e.stopPropagation();
-      const checkbox = $(e.currentTarget);
-      const isEnabled = checkbox.prop('checked');
-      row.toggleClass('disabled', !isEnabled);
-      this._updateDamageTotal(overlay);
-    });
-
-    row.find('.damage-modifier-delete').on('click', (e) => {
-      e.stopPropagation();
-      row.remove();
-      this._updateDamageTotal(overlay);
-    });
-
-    modifiersList.append(row);
-  }
-
-  ////////////////////////////////////////////////////////////////////////////
-
-  _addDamageModifier(overlay) {
-    const newModifier = {
-      name: 'Modifier',
-      value: '+1',
-      enabled: true
-    };
-
-    const modifiersList = overlay.find('.damage-modifiers-list');
-    const index = modifiersList.children().length;
-
-    this._createDamageModifierRow(overlay, newModifier, index);
-
-    // Focus the name input of the new modifier and select the text
-    const newRow = modifiersList.children().last();
-    const nameInput = newRow.find('.damage-modifier-name');
-    nameInput.focus().select();
-  }
-
-  _loadDamageModifiers(overlay, modifiers) {
-    const modifiersList = overlay.find('.damage-modifiers-list');
-    modifiersList.empty();
-
-    // Ensure modifiers is an array
-    if (!Array.isArray(modifiers)) {
-      modifiers = [];
-    }
-
-    modifiers.forEach((modifier, index) => {
-      this._createDamageModifierRow(overlay, modifier, index);
-    });
-  }
-
-  ////////////////////////////////////////////////////////////////////////////
-
-  _animatePopupIn(popup, callback) {
-    let start = null;
-    const duration = 200; // 200ms animation
-
-    const animate = (timestamp) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-
-      // Easing function (ease-out)
-      const eased = 1 - Math.pow(1 - progress, 3);
-
-      const scale = 0.8 + (0.2 * eased); // From 0.8 to 1.0
-      const opacity = eased; // From 0 to 1
-
-      popup.css({
-        'transform': `scale(${scale})`,
-        'opacity': opacity
-      });
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        callback && callback();
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }
-
-  _animatePopupOut(popup, callback) {
-    let start = null;
-    const duration = 150; // Slightly faster out animation
-
-    const animate = (timestamp) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-
-      // Easing function (ease-in)
-      const eased = Math.pow(progress, 2);
-
-      const scale = 1.0 - (0.2 * eased); // From 1.0 to 0.8
-      const opacity = 1 - eased; // From 1 to 0
-
-      popup.css({
-        'transform': `scale(${scale})`,
-        'opacity': opacity
-      });
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        callback && callback();
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }
-
-  _hideDamageEditPopup(overlay) {
-    const popup = overlay.find('.damage-edit-popup');
-    this._animatePopupOut(popup, () => {
-      overlay.hide();
-      overlay.remove(); // Clean up the popup
-    });
-  }
-
-  ////////////////////////////////////////////////////////////////////////////
-
-  async _submitDamageEdit(overlay) {
-    const config = overlay.data('config');
-    const attributeName = overlay.data('attribute-name');
-
-    // Check if base value is restricted
-    const hasRestriction = this.hasBaseValueRestriction(config.field);
-    const restriction = this.getBaseValueRestriction(config.field);
-
-    let baseValue;
-    if (hasRestriction && restriction && !restriction.editable) {
-      // Use the restricted value, don't allow user input to override
-      baseValue = String(restriction.value) || '1d8';
-    } else {
-      // Use the user-entered value
-      baseValue = overlay.find('.damage-base-input').val().trim() || '1d8';
-    }
-
-    // Collect modifiers
-    const modifiers = [];
-    overlay.find('.damage-modifier-row').each((index, row) => {
-      const $row = $(row);
-      let name = $row.find('.damage-modifier-name').val().trim();
-      const value = $row.find('.damage-modifier-value').val().trim();
-      const enabled = $row.find('.damage-modifier-toggle').is(':checked');
-
-      // Only save modifiers that have a value (even if name is empty)
-      if (value) {
-        // Default name if empty
-        if (!name) {
-          name = 'Modifier';
-        }
-        modifiers.push({
-          name: name,
-          value: value,
-          enabled: enabled
-        });
-      }
-    });
-
-    // Calculate final formula for the value field using the correct base value
-    let totalFormula = baseValue;
-    const enabledModifiers = modifiers.filter(mod => mod.enabled !== false && mod.value);
-
-    if (enabledModifiers.length > 0) {
-      enabledModifiers.forEach(modifier => {
-        let modValue = modifier.value.trim();
-        // Ensure proper formatting - add + if it doesn't start with + or -
-        if (modValue && !modValue.startsWith('+') && !modValue.startsWith('-')) {
-          modValue = '+' + modValue;
-        }
-        totalFormula += ' ' + modValue;
-      });
-    }
-
-    // Build update data based on the field path
-    const updateData = {};
-
-    // Check if we're dealing with weapon damage
-    const isWeaponDamage = config.field.includes('weapon-main.damage') || config.field.includes('weapon-off.damage');
-
-    let basePath;
-    if (isWeaponDamage) {
-      // For weapon damage, the field itself is the base path
-      basePath = config.field;
-    } else {
-      // For other attributes, remove .value from the path
-      basePath = config.field.substring(0, config.field.lastIndexOf('.'));
-    }
-
-    updateData[`${basePath}.baseValue`] = baseValue;
-    updateData[`${basePath}.modifiers`] = modifiers;
-    updateData[`${basePath}.value`] = totalFormula;
-
-    await this.actor.update(updateData);
-
-    // DO NOT update the display element directly - let the sheet re-render
-    // This preserves the structured data for future editing
-
-    this._hideDamageEditPopup(overlay);
-  }
-
-  _showDamageModifierEditPopup(config, damageData, displayElement) {
-    // Create the damage popup HTML if it doesn't exist
-    let overlay = this.element.find('.damage-edit-popup-overlay');
-    if (overlay.length === 0) {
-      const popupHtml = `
-        <div class="damage-edit-popup-overlay attribute-edit-popup-overlay" style="display: none;">
-          <div class="damage-edit-popup attribute-edit-popup">
-            <div class="damage-edit-header attribute-edit-header">
-              <span class="damage-edit-label attribute-edit-label"></span>
-              <button type="button" class="damage-edit-close attribute-edit-close">×</button>
-            </div>
-            <div class="damage-edit-content attribute-edit-content">
-              <div class="damage-base-value attribute-base-value">
-                <label class="base-value-label">Base Formula</label>
-                <div class="base-value-controls">
-                  <input type="text" class="damage-base-input attribute-base-input" placeholder="1d8" />
-                  <div class="equipped-weapon-indicator" style="display: none;">
-                    <span class="equipped-weapon-text">From equipped weapon</span>
-                  </div>
-                </div>
-              </div>
-              <div class="damage-modifiers-section attribute-modifiers-section">
-                <div class="modifiers-header">
-                  <span>Damage Modifiers</span>
-                  <button type="button" class="add-damage-modifier-btn add-modifier-btn">+</button>
-                </div>
-                <div class="damage-modifiers-list modifiers-list"></div>
-              </div>
-              <div class="damage-total attribute-total">
-                <label>Total Formula</label>
-                <span class="damage-total-value attribute-total-value">1d8</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      this.element.append(popupHtml);
-      overlay = this.element.find('.damage-edit-popup-overlay');
-    }
-
-    // Extract attribute name for data access
-    const pathParts = config.field.split('.');
-    const attributeName = pathParts[pathParts.length - 2]; // e.g., "system.weapon-main.damage" -> "weapon-main"
-
-    // Set up the popup content
-    overlay.find('.damage-edit-label').text(config.label);
-
-    // Set base value from structured damage data
-    const baseInput = overlay.find('.damage-base-input');
-    const baseValue = damageData.baseValue || '1d8';
-
-    baseInput.val(baseValue);
-
-    // Handle equipped weapon case
-    const equippedIndicator = overlay.find('.equipped-weapon-indicator');
-
-    // Check for base value restrictions
-    const hasRestriction = this.hasBaseValueRestriction(config.field);
-    const restriction = this.getBaseValueRestriction(config.field);
-
-    if (hasRestriction && restriction && !restriction.editable) {
-      // Apply restriction - disable base value editing
-      baseInput.prop('readonly', true).addClass('restriction-locked');
-      equippedIndicator.show();
-      overlay.find('.equipped-weapon-text').text('Base formula locked by equipped weapon');
-      overlay.find('.base-value-label').text('Base Formula (From Equipped Weapon)');
-
-      // Override the displayed base value with the restricted value
-      baseInput.val(restriction.value);
-    } else {
-      baseInput.prop('readonly', false).removeClass('weapon-locked restriction-locked');
-      equippedIndicator.hide();
-      overlay.find('.base-value-label').text('Base Formula');
-    }
-
-    // Store config for later use
-    overlay.data('config', config);
-    overlay.data('attribute-name', attributeName);
-    overlay.data('field-name', config.field);
-    overlay.data('display-element', displayElement);
-
-    // Load existing modifiers
-    this._loadDamageModifiers(overlay, damageData.modifiers || []);
-
-    // Calculate and display total
-    this._updateDamageTotal(overlay);
-
-    // Show the popup with animation
-    overlay.show();
-    const popup = overlay.find('.damage-edit-popup');
-
-    // Animate in with JavaScript for smooth backdrop-filter
-    this._animatePopupIn(popup, () => {
-      baseInput.focus().select();
-    });
-
-    // Set up event handlers -- inline
-    //this._setupDamagePopupEventHandlers(overlay);
-
-    // Clear any existing handlers
-    overlay.off('.damage-edit');
-    overlay.find('*').off('.damage-edit');
-
-    // Base value input handler
-    // const baseInput = overlay.find('.damage-base-input');
-    baseInput.on('input', () => this._updateDamageTotal(overlay));
-
-    // Keyboard shortcuts
-    overlay.on('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this._hideDamageEditPopup(overlay);
-      }
-    });
-
-    // Add modifier button
-    overlay.find('.add-damage-modifier-btn').on('click', () => {
-      this._addDamageModifier(overlay);
-    });
-
-    // Close button
-    overlay.find('.damage-edit-close').on('click', () => {
-      this._submitDamageEdit(overlay);
-    });
-
-    // Click outside to close (only on the overlay background)
-    overlay.on('click', (e) => {
-      if (e.target === overlay[0]) {
-        this._submitDamageEdit(overlay);
-      }
-    });
   }
 }

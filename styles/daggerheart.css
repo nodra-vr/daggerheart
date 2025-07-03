@@ -6399,8 +6399,8 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   max-height: 80vh;
   overflow: hidden;
   position: relative;
-  transform: scale(0.8);
-  opacity: 0;
+  transform: scale(var(--dh-popup-scale));
+  opacity: var(--dh-popup-opacity);
   transition: var(--dh-transition-fast);
 }
 .trait-edit-popup.show,
@@ -11580,8 +11580,8 @@ body.game .app a.content-link i,
   padding: 0;
   min-width: 320px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
-  transform: scale(0.8);
-  opacity: 0;
+  transform: scale(var(--dh-popup-scale));
+  opacity: var(--dh-popup-opacity);
   position: relative;
   overflow: hidden;
 }
@@ -12508,7 +12508,24 @@ body.game .app a.content-link i,
   /* Additional theme-specific styles can go here */
 }
 
-/* Test Code Applicaiton v2 */
+/****************************************************/
+
+/* Applicaiton v2 - General Fixes */
+
+/* TODO Expand and move up, the initial setup */
+/* Missing as .app is no longer set on windows */
+/* and the new .application does not clear them */
+.daggerheart button {
+    display: unset;
+    margin: revert;
+    padding: revert;
+    /* width: unset; */
+    /* height: unset; */
+    min-width: unset;
+    min-height: unset;
+}
+
+/* Applicaiton v2 - Test Styles For actor adversary */
 
 .tab {
   height: 100%;
@@ -12552,4 +12569,11 @@ body.game .app a.content-link i,
   outline: none;
   box-shadow: rgba(0, 0, 0, 0);
   border-color: rgba(0, 0, 0, 0);
+}
+
+/* Applicaiton v2 - Test Styles For actor overlays */
+
+.damage-edit-label, 
+.attribute-edit-label {
+  margin-right: 56px;
 }

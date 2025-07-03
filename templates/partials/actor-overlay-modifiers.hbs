@@ -1,0 +1,47 @@
+<div id="overlay-{{actor.id}}" class="damage-edit-popup-overlay attribute-edit-popup-overlay" {{#if
+  overlay.hide}}style="display: none;" {{/if}}>
+  <div class="damage-edit-popup attribute-edit-popup"
+    style="--dh-popup-scale: {{overlay.scale}}; --dh-popup-opacity: {{overlay.opacity}};">
+    <div class="damage-edit-header attribute-edit-header">
+      <span class="damage-edit-label attribute-edit-label">{{overlay.title}}</span>
+      <button type="button" class="damage-edit-close attribute-edit-close" data-action="saveModifiers">×</button>
+    </div>
+    <div class="damage-edit-content attribute-edit-content">
+      <div class="damage-base-value attribute-base-value">
+        <label class="base-value-label">Base Formula</label>
+        <div class="base-value-controls">
+          <input type="text" class="damage-base-input attribute-base-input" placeholder="1d8" name="modifier-base"
+            value="{{overlay.base}}" />
+          <div class="equipped-weapon-indicator" style="display: none;">
+            <span class="equipped-weapon-text">From equipped weapon</span>
+          </div>
+        </div>
+      </div>
+      <div class="damage-modifiers-section attribute-modifiers-section">
+        <div class="modifiers-header">
+          <span>Damage Modifiers</span>
+          <button type="button" class="add-damage-modifier-btn add-modifier-btn" data-action="createModifier">+</button>
+        </div>
+        <div class="damage-modifiers-list modifiers-list">
+          {{#each overlay.modifiers}}
+          <div class="damage-modifier-row modifier-row" data-index="{{this.name}}">
+            <input type="text" class="damage-modifier-name modifier-name" placeholder="Modifier name"
+              name="modifier-name" value="{{this.name}}" data-index="{{@index}}" />
+            <input type="text" class="damage-modifier-value modifier-value" placeholder="±1 or ±1d4"
+              name="modifier-value" value="{{this.value}}" data-index="{{@index}}" />
+            <input type="checkbox" class="damage-modifier-toggle modifier-toggle" name="modifier-state"
+              data-index="{{@index}}" {{#if this.enabled}}checked{{/if}} />
+            <button type="button" class="damage-modifier-delete modifier-delete" data-action="deleteModifier"
+              data-index="{{@index}}">×</button>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+      <div class="damage-total attribute-total">
+        <label>Total Formula</label>
+        <span class="damage-total-value attribute-total-value">
+          {{overlay.value}} TODO
+        </span>
+      </div>
+    </div>
+  </div>
