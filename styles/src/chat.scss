@@ -522,32 +522,33 @@ body.game .app a.content-link,
 .document-link,
 .entity-link {
   /* Apply same glassmorphism styling as resource buttons */
-  display: inline-block !important;
-  padding: 0.1rem 0.3rem !important;
-  margin: 0 0.05rem !important;
-  border: 1px solid rgba(243, 194, 103, 0.25) !important;
-  border-radius: 0.2rem !important;
-  font-size: 0.7rem !important;
-  font-weight: 400 !important;
-  text-decoration: none !important;
-  text-transform: none !important;
-  letter-spacing: 0.01em !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
-  white-space: nowrap !important;
-  vertical-align: baseline !important;
-  line-height: 1.2 !important;
+  display: inline-block;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.05rem;
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  vertical-align: baseline;
+  line-height: 1.2;
   
   /* Glassmorphism effect */
   background: rgba(243, 194, 103, 0.12) !important;
-  backdrop-filter: blur(4px) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
   color: var(--dh-color-gold) !important;
   
   /* Icon styling */
   i {
     color: var(--dh-color-gold) !important;
-    margin-right: 0.25em !important;
+    margin-right: 0.25em;
   }
   
   /* Hover effects */
@@ -557,7 +558,6 @@ body.game .app a.content-link,
     background: rgba(243, 194, 103, 0.18) !important;
     border-color: rgba(243, 194, 103, 0.35) !important;
     color: var(--dh-color-gold) !important;
-    text-decoration: none !important;
   }
   
   /* Active/pressed state */
@@ -569,7 +569,7 @@ body.game .app a.content-link,
   /* Focus state for accessibility */
   &:focus {
     outline: 1px solid rgba(243, 194, 103, 0.4) !important;
-    outline-offset: 1px !important;
+    outline-offset: 1px;
   }
 }
 
@@ -579,11 +579,11 @@ body.game .app a.content-link,
 .hotbar-page .macro {
   /* Apply glassmorphism to macro buttons */
   background: rgba(243, 194, 103, 0.12) !important;
-  backdrop-filter: blur(4px) !important;
+  backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
-  border-radius: 0.3rem !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15) !important;
-  transition: all 0.15s ease !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
   
   /* Hover effects */
   &:hover {
@@ -607,10 +607,10 @@ body.game .app a.content-link,
   /* Macro key styling */
   .macro-key {
     color: var(--dh-color-off-white) !important;
-    background: rgba(0, 0, 0, 0.3) !important;
-    border-radius: 0.2rem !important;
-    padding: 0.1rem 0.2rem !important;
-    font-size: 0.6rem !important;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0.2rem;
+    padding: 0.1rem 0.2rem;
+    font-size: 0.6rem;
   }
 }
 
