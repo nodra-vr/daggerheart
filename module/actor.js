@@ -96,7 +96,7 @@ export class SimpleActor extends Actor {
       // Apply dead status effect
       await this.createEmbeddedDocuments("ActiveEffect", [{
         name: game.i18n.localize(deadEffect.name) || "Dead",
-        icon: deadEffect.image || "icons/svg/skull.svg",
+        img: deadEffect.img || "icons/svg/skull.svg",
         statuses: ["dead"],
         flags: {
           core: {
