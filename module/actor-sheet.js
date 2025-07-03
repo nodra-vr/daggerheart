@@ -173,7 +173,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
           name: "Duality Dice Roll",
           type: "script",
           scope: "global",
-          img: "https:
+          img: "icons/svg/d20-grey.svg",
           command: `
 await game.daggerheart.rollHandler.dualityWithDialog({
   title: "Duality Dice Roll"
