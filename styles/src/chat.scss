@@ -1,3 +1,4 @@
+/* Chat Messages */
 .chat-message {
   margin: 7px 4px;
   padding: 0.75em 1em;
@@ -7,16 +8,19 @@
   border: 1px solid #6d6795;
   backdrop-filter: blur(5px);
   border-radius: 10px;
+
   .message-header {
     line-height: 20px;
     color: var(--dh-color-off-white);
     font-weight: 100;
     font-size: var(--font-size-12);
     margin-bottom: 0.5em;
+
     .flavor-text, .whisper-to {
       flex: 0 0 100%;
       font-size: var(--font-size-12);
     }
+
     .message-sender {
       flex: 3;
       margin: 0;
@@ -25,6 +29,7 @@
       color: var(--dh-color-teal);
     }
   }
+
   .dice-roll .dice-formula, .dice-roll .dice-total {
     flex: 0 0 100%;
     position: relative;
@@ -38,6 +43,7 @@
     word-break: break-all;
     margin-top: 0.25em;
   }
+
   .message-content {
     -webkit-user-select: text;
     -moz-user-select: text;
@@ -45,24 +51,30 @@
     user-select: text;
     word-break: break-word;
     padding-bottom: 0.5em;
+
     p {
       margin: 0px;
       font-size: var(--font-size-14);
       font-weight: 200;
     }
   }
+
   &.whisper {
     background: #292941;
     border: 1px solid var(--dh-color-purple-light);
   }
+
+  /* Roll Outcome Styling */
   .roll-outcome {
     font-size: 1.25em;
     font-weight: bold;
+
     &.success,
     &.failure {
       color: var(--dh-color-gold);
     }
   }
+
   .roll-effect {
     font-size: 12px;
     color: #6c6a85;
@@ -70,16 +82,21 @@
     margin-top: 0;
     margin-bottom: 0.25em;
   }
+
   .roll-flavor-line {
     margin: 0;
   }
 }
+
+/* Remove padding and default styling from chat messages that contain an item card */
 .chat-message:has(.item-card-chat) {
   padding: 0;
   background: transparent;
   border: none;
   backdrop-filter: none;
 }
+
+/* Daggerheart Chat Cards */
 .daggerheart.chat-card.item-card {
   display: flex;
   flex-direction: row-reverse;
@@ -92,11 +109,13 @@
   font-size: 1.25em;
   border-bottom: 1px solid rgba(216, 216, 214, 0.1490196078);
   margin-bottom: 0.5em;
+
   h3 {
     border-bottom: none;
     padding: 0px;
     margin: 0px;
   }
+
   img {
     box-sizing: border-box;
     border-radius: 10px;
@@ -106,11 +125,14 @@
     object-position: top;
     border: 2px solid var(--dh-color-gray);
   }
+
   .flexrow {
     display: flex;
     width: 100%;
   }
 }
+
+/* Item Card in Chat */
 .message-content .item-card-chat {
   width: 100%;
   max-width: 300px;
@@ -125,6 +147,7 @@
   backdrop-filter: blur(5px);
   color: var(--dh-color-off-white);
 }
+
 .item-card-chat {
   .card-image-container {
     height: 150px;
@@ -137,6 +160,7 @@
     padding: 10px;
     color: white;
     border-bottom: 1px solid var(--dh-color-gold);
+
     &::after {
       content: "";
       position: absolute;
@@ -148,9 +172,11 @@
       z-index: 0;
     }
   }
+
   .card-header-text {
     z-index: 10;
     position: relative;
+
     h3 {
       margin: 0;
       font-size: 1.5em;
@@ -160,9 +186,11 @@
       text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
     }
   }
+
   .card-content {
     padding: 15px;
   }
+
   .card-subtitle {
     font-size: 0.8em;
     text-transform: uppercase;
@@ -172,23 +200,31 @@
     border-bottom: 1px solid #433f64;
     padding-bottom: 5px;
   }
+
   .card-description {
     font-size: 0.9em;
+
     p {
       margin: 0.5em 0;
+
       &:first-child {
         margin-top: 0;
       }
+
       &:last-child {
         margin-bottom: 0;
       }
     }
+
+    /* Override dark header colors in item-card-chat descriptions */
     h1, h2, h3, h4, h5, h6 {
       color: var(--dh-color-off-white) !important;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     }
   }
 }
+
+/* Damage Roll Button in Chat */
 .damage-roll-button {
   background: rgba(11, 10, 19, 0.85);
   border: 1px solid #433f64;
@@ -203,30 +239,37 @@
   align-items: center;
   justify-content: center;
   gap: 0.5em;
+
   &:hover {
     background: rgba(35, 34, 43, 0.9);
     border-color: #f3c267;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
+
   i {
     color: #f3c267;
   }
+
+  /* Critical Damage Button Styling */
   &.critical {
     background: rgba(35, 10, 10, 0.85);
     border-color: #ff6b6b;
     color: #ff6b6b;
     animation: criticalGlow 2s ease-in-out infinite;
+
     &:hover {
       background: rgba(55, 15, 15, 0.9);
       border-color: #ff9999;
       box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
     }
+
     i {
       color: #ff6b6b;
     }
   }
 }
+
 @keyframes criticalGlow {
   0%, 100% {
     box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
@@ -235,11 +278,14 @@
     box-shadow: 0 0 10px rgba(255, 107, 107, 0.8), 0 0 20px rgba(255, 107, 107, 0.4);
   }
 }
+
+/* Damage Application Buttons */
 .damage-application-buttons {
   display: flex;
   gap: 0.25em;
   margin-top: 0.5em;
 }
+
 .apply-damage-button,
 .apply-healing-button {
   flex: 1;
@@ -256,48 +302,60 @@
   align-items: center;
   justify-content: center;
   gap: 0.4em;
+
   &:hover {
     background: rgba(35, 34, 43, 0.9);
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
     transform: none;
   }
+
   i {
     font-size: 0.9em;
   }
 }
+
 .apply-damage-button {
   border-color: #b94a48;
   color: #ff6b6b;
+
   &:hover {
     border-color: #ff6b6b;
     box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
   }
+
   i {
     color: #ff6b6b;
   }
 }
+
 .apply-healing-button {
   border-color: #5bb85c;
   color: #66cc66;
+
   &:hover {
     border-color: #66cc66;
     box-shadow: 0 2px 4px rgba(102, 204, 102, 0.3);
   }
+
   i {
     color: #66cc66;
   }
 }
+
+/* Damage Application Chat Messages */
 .damage-application-message {
   padding: 1em;
   margin: 0.5em 0;
   border-radius: 10px;
   background: rgba(11, 10, 19, 0.85);
   border: 1px solid #433f64;
+
   h3 {
     margin: 0 0 0.5em 0;
     color: #f3c267;
@@ -307,6 +365,7 @@
     align-items: center;
     gap: 0.5em;
   }
+
   .damage-details {
     margin: 0.5em 0;
     padding: 0.5em;
@@ -314,46 +373,58 @@
     border-radius: 5px;
     border-left: 3px solid #6d6795;
   }
+
   .damage-warning {
     color: #ff6b6b;
     font-weight: bold;
     text-align: center;
     margin-top: 0.5em;
+
     i {
       color: #ff6b6b;
     }
   }
+
   &.damage-minor {
     border-color: #f3c267;
+
     h3 {
       color: #f3c267;
     }
   }
+
   &.damage-major {
     border-color: #ff8c00;
+
     h3 {
       color: #ff8c00;
     }
+
     .damage-details {
       border-left-color: #ff8c00;
     }
   }
+
   &.damage-severe {
     border-color: #ff6b6b;
+
     h3 {
       color: #ff6b6b;
     }
+
     .damage-details {
       border-left-color: #ff6b6b;
     }
   }
 }
+
 .healing-application-message {
   padding: 1em;
   margin: 0.5em 0;
   border-radius: 10px;
   background: rgba(11, 10, 19, 0.85);
   border: 1px solid #5bb85c;
+
   h3 {
     margin: 0 0 0.5em 0;
     color: #66cc66;
@@ -363,6 +434,7 @@
     align-items: center;
     gap: 0.5em;
   }
+
   .healing-details {
     margin: 0.5em 0;
     padding: 0.5em;
@@ -370,17 +442,22 @@
     border-radius: 5px;
     border-left: 3px solid #5bb85c;
   }
+
   .healing-success {
     color: #66cc66;
     font-weight: bold;
     text-align: center;
     margin-top: 0.5em;
+
     i {
       color: #ffd700;
     }
   }
 }
+
+/* Resource Button Styling - Global Design System */
 .dh-resource-btn {
+  /* Base button styling from global design system */
   display: inline-block;
   padding: 0.1rem 0.3rem;
   margin: 0 0.05rem;
@@ -396,32 +473,45 @@
   white-space: nowrap;
   vertical-align: baseline;
   line-height: 1.2;
+  
+  /* Glassmorphism effect */
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   color: var(--dh-color-off-white);
+  
+  /* Primary button variant */
   &.dh-btn--primary {
     background: rgba(243, 194, 103, 0.12);
     border: 1px solid rgba(243, 194, 103, 0.25);
     color: var(--dh-color-gold);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
   }
+  
+  /* Hover effects */
   &:hover {
     transform: translateY(-0.5px);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2);
     background: rgba(243, 194, 103, 0.18);
     border-color: rgba(243, 194, 103, 0.35);
   }
+  
+  /* Active/pressed state */
   &:active {
     transform: translateY(0);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
+  
+  /* Focus state for accessibility */
   &:focus {
     outline: 1px solid rgba(243, 194, 103, 0.4);
     outline-offset: 1px;
   }
 }
+
+/* Unified Button Styling - Apply glassmorphism to all Foundry button types */
+/* Inline rolls, content links, and rollable buttons */
 body.game .app a.inline-roll, 
 a.inline-roll.roll,
 body.game .app a.content-link, 
@@ -431,6 +521,7 @@ body.game .app a.content-link,
 .roll-link,
 .document-link,
 .entity-link {
+  /* Apply same glassmorphism styling as resource buttons */
   display: inline-block;
   padding: 0.1rem 0.3rem;
   margin: 0 0.05rem;
@@ -446,15 +537,21 @@ body.game .app a.content-link,
   white-space: nowrap;
   vertical-align: baseline;
   line-height: 1.2;
+  
+  /* Glassmorphism effect */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
   color: var(--dh-color-gold) !important;
+  
+  /* Icon styling */
   i {
     color: var(--dh-color-gold) !important;
     margin-right: 0.25em;
   }
+  
+  /* Hover effects */
   &:hover {
     transform: translateY(-0.5px) !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
@@ -462,37 +559,52 @@ body.game .app a.content-link,
     border-color: rgba(243, 194, 103, 0.35) !important;
     color: var(--dh-color-gold) !important;
   }
+  
+  /* Active/pressed state */
   &:active {
     transform: translateY(0) !important;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
   }
+  
+  /* Focus state for accessibility */
   &:focus {
     outline: 1px solid rgba(243, 194, 103, 0.4) !important;
     outline-offset: 1px;
   }
 }
+
+/* Macro Hotbar Button Styling */
 #hotbar .macro,
 .macro-sheet .macro,
 .hotbar-page .macro {
+  /* Apply glassmorphism to macro buttons */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
   border-radius: 0.3rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
   transition: all 0.15s ease;
+  
+  /* Hover effects */
   &:hover {
     transform: translateY(-0.5px) !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
     background: rgba(243, 194, 103, 0.18) !important;
     border-color: rgba(243, 194, 103, 0.35) !important;
   }
+  
+  /* Active/pressed state */
   &:active {
     transform: translateY(0) !important;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
   }
+  
+  /* Macro icon styling */
   .macro-icon {
     color: var(--dh-color-gold) !important;
   }
+  
+  /* Macro key styling */
   .macro-key {
     color: var(--dh-color-off-white) !important;
     background: rgba(0, 0, 0, 0.3);
@@ -501,9 +613,12 @@ body.game .app a.content-link,
     font-size: 0.6rem;
   }
 }
+
+/* Control Tool Buttons (canvas controls) */
 #controls .control-tool,
 .control-tool,
 .scene-control {
+  /* Apply glassmorphism to control buttons */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
@@ -511,12 +626,16 @@ body.game .app a.content-link,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
   transition: all 0.15s ease;
   color: var(--dh-color-gold) !important;
+  
+  /* Hover effects */
   &:hover {
     transform: translateY(-0.5px) !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
     background: rgba(243, 194, 103, 0.18) !important;
     border-color: rgba(243, 194, 103, 0.35) !important;
   }
+  
+  /* Active/selected state */
   &.active,
   &:active {
     background: rgba(243, 194, 103, 0.25) !important;
@@ -525,6 +644,8 @@ body.game .app a.content-link,
     box-shadow: 0 0 8px rgba(243, 194, 103, 0.3) !important;
   }
 }
+
+/* Dialog and Form Buttons */
 .dialog .dialog-buttons button,
 .form-group button,
 .form-footer button,
@@ -532,6 +653,7 @@ button.default,
 button[type="submit"],
 input[type="submit"],
 .button {
+  /* Apply glassmorphism to form buttons */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
@@ -544,20 +666,28 @@ input[type="submit"],
   text-transform: none;
   letter-spacing: 0.01em;
   cursor: pointer;
+  
+  /* Hover effects */
   &:hover {
     transform: translateY(-0.5px) !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
     background: rgba(243, 194, 103, 0.18) !important;
     border-color: rgba(243, 194, 103, 0.35) !important;
   }
+  
+  /* Active/pressed state */
   &:active {
     transform: translateY(0) !important;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
   }
+  
+  /* Focus state for accessibility */
   &:focus {
     outline: 1px solid rgba(243, 194, 103, 0.4) !important;
     outline-offset: 1px;
   }
+  
+  /* Disabled state */
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -565,9 +695,12 @@ input[type="submit"],
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
   }
 }
+
+/* Directory Item Controls */
 .directory-item .item-controls .item-control,
 .directory-header .header-control,
 .folder-header .folder-control {
+  /* Apply glassmorphism to directory controls */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
@@ -576,6 +709,8 @@ input[type="submit"],
   transition: all 0.15s ease;
   color: var(--dh-color-gold) !important;
   padding: 0.2rem 0.3rem;
+  
+  /* Hover effects */
   &:hover {
     transform: translateY(-0.5px) !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
@@ -583,8 +718,11 @@ input[type="submit"],
     border-color: rgba(243, 194, 103, 0.35) !important;
   }
 }
+
+/* Chat Control Buttons */
 #chat-controls .chat-control-icon,
 .chat-control-icon {
+  /* Apply glassmorphism to chat controls */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
@@ -592,6 +730,8 @@ input[type="submit"],
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
   transition: all 0.15s ease;
   color: var(--dh-color-gold) !important;
+  
+  /* Hover effects */
   &:hover {
     transform: translateY(-0.5px) !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
@@ -599,22 +739,28 @@ input[type="submit"],
     border-color: rgba(243, 194, 103, 0.35) !important;
   }
 }
+
+/* Legacy fear button styling for backward compatibility */
 .dh-fear-btn {
   @extend .dh-resource-btn;
+  
   &[data-action="spendFear"] {
     background: rgba(220, 38, 127, 0.15);
     border: 1px solid rgba(220, 38, 127, 0.3);
     color: #dc267f;
+    
     &:hover {
       background: rgba(220, 38, 127, 0.2);
       border-color: rgba(220, 38, 127, 0.4);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(220, 38, 127, 0.3);
     }
   }
+  
   &[data-action="gainFear"] {
     background: rgba(255, 140, 0, 0.15);
     border: 1px solid rgba(255, 140, 0, 0.3);
     color: #ff8c00;
+    
     &:hover {
       background: rgba(255, 140, 0, 0.2);
       border-color: rgba(255, 140, 0, 0.4);
@@ -622,6 +768,8 @@ input[type="submit"],
     }
   }
 }
+
+/* Death Move Messages */
 .death-move-blaze {
   padding: 1em;
   margin: 0.5em 0;
@@ -635,6 +783,7 @@ input[type="submit"],
   box-shadow: 
     0 0 20px rgba(255, 69, 0, 0.6),
     inset 0 0 20px rgba(255, 140, 0, 0.3);
+
   &::before {
     content: "";
     position: absolute;
@@ -648,6 +797,7 @@ input[type="submit"],
       radial-gradient(ellipse at 70% 90%, rgba(255, 87, 34, 0.5) 0%, transparent 30%);
     animation: blazeGlow 2s ease-in-out infinite;
   }
+
   &::after {
     content: "";
     position: absolute;
@@ -660,6 +810,7 @@ input[type="submit"],
       radial-gradient(ellipse at 80% 100%, rgba(255, 69, 0, 0.4) 0%, transparent 60%);
     animation: blazeFlicker 1.5s ease-in-out infinite alternate;
   }
+
   p {
     position: relative;
     z-index: 2;
@@ -668,6 +819,7 @@ input[type="submit"],
     color: #ffffff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   }
+
   strong {
     color: #ffeb3b;
     font-size: 1.2em;
@@ -676,6 +828,7 @@ input[type="submit"],
       0 0 20px rgba(255, 193, 7, 0.6),
       2px 2px 4px rgba(0, 0, 0, 0.8);
   }
+
   em {
     color: #ffd54f;
     display: block;
@@ -685,6 +838,7 @@ input[type="submit"],
       2px 2px 4px rgba(0, 0, 0, 0.8);
   }
 }
+
 .death-move-blaze-complete {
   padding: 1.5em;
   margin: 0.5em 0;
@@ -701,6 +855,7 @@ input[type="submit"],
   position: relative;
   overflow: hidden;
   animation: blazeComplete 3s ease-in-out infinite;
+
   &::before {
     content: "";
     position: absolute;
@@ -714,6 +869,7 @@ input[type="submit"],
     animation: blazeCompleteGlow 4s ease-in-out infinite;
     pointer-events: none;
   }
+
   strong {
     color: #ffeb3b;
     font-size: 1.3em;
@@ -726,6 +882,7 @@ input[type="submit"],
     position: relative;
     z-index: 1;
   }
+
   em {
     color: #ffffff;
     font-size: 1.1em;
@@ -737,6 +894,7 @@ input[type="submit"],
     z-index: 1;
   }
 }
+
 @keyframes blazeComplete {
   0%, 100% {
     box-shadow: 
@@ -751,6 +909,7 @@ input[type="submit"],
       0 0 80px rgba(255, 140, 0, 0.6);
   }
 }
+
 @keyframes blazeCompleteGlow {
   0% {
     transform: rotate(0deg) scale(1);
@@ -769,6 +928,7 @@ input[type="submit"],
     opacity: 0.3;
   }
 }
+
 @keyframes blazeGlow {
   0% {
     transform: rotate(0deg) scale(1) translateY(0);
@@ -791,6 +951,7 @@ input[type="submit"],
     opacity: 0.7;
   }
 }
+
 @keyframes blazeFlicker {
   0% {
     transform: scale(1) translateX(0) translateY(0);
@@ -817,6 +978,7 @@ input[type="submit"],
     opacity: 0.8;
   }
 }
+
 .death-move-avoid {
   padding: 1em;
   margin: 0.5em 0;
@@ -824,16 +986,19 @@ input[type="submit"],
   border: 2px solid #42a5f5;
   border-radius: 10px;
   text-align: center;
+
   strong {
     color: #81d4fa;
     font-size: 1.1em;
     text-shadow: 0 0 8px rgba(129, 212, 250, 0.6);
   }
+
   em {
     color: #ffffff;
     opacity: 0.95;
   }
 }
+
 .death-move-avoid-result {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -841,6 +1006,7 @@ input[type="submit"],
   border: 2px solid #42a5f5;
   border-radius: 10px;
   position: relative;
+
   &::before {
     content: "";
     position: absolute;
@@ -852,25 +1018,30 @@ input[type="submit"],
     border-radius: 8px;
     pointer-events: none;
   }
+
   > * {
     position: relative;
     z-index: 1;
   }
+
   p {
     margin: 0.5em 0;
     text-align: center;
     color: #ffffff;
+
     &:first-child {
       font-size: 1.2em;
       color: #81d4fa;
       margin-bottom: 1em;
       font-weight: bold;
     }
+
     strong {
       color: #ffeb3b;
       font-size: 1.1em;
     }
   }
+
   .scar-gained {
     color: #ffffff;
     font-size: 1.1em;
@@ -880,6 +1051,7 @@ input[type="submit"],
     border: 1px solid #f44336;
     border-radius: 5px;
   }
+
   .scar-avoided {
     color: #ffffff;
     font-size: 1.1em;
@@ -889,6 +1061,7 @@ input[type="submit"],
     border: 1px solid #4caf50;
     border-radius: 5px;
   }
+
   .scar-note {
     font-size: 0.9em;
     color: #e0e0e0;
@@ -896,6 +1069,7 @@ input[type="submit"],
     margin-top: 0.5em;
   }
 }
+
 .death-move-risk {
   padding: 1em;
   margin: 0.5em 0;
@@ -905,6 +1079,7 @@ input[type="submit"],
   text-align: center;
   position: relative;
   overflow: hidden;
+
   &::before {
     content: "";
     position: absolute;
@@ -915,23 +1090,28 @@ input[type="submit"],
     background: radial-gradient(circle, rgba(156, 39, 176, 0.2) 0%, transparent 70%);
     animation: riskPulse 2s ease-in-out infinite;
   }
+
   > * {
     position: relative;
     z-index: 1;
   }
+
   p {
     color: #ffffff;
   }
+
   strong {
     color: #e1bee7;
     font-size: 1.2em;
     text-shadow: 0 0 10px rgba(225, 190, 231, 0.8);
   }
+
   em {
     color: #f3e5f5;
     opacity: 0.95;
   }
 }
+
 .death-move-risk-critical {
   padding: 1.5em;
   margin: 0.5em 0;
@@ -941,8 +1121,10 @@ input[type="submit"],
   box-shadow: 0 0 20px rgba(255, 235, 59, 0.6), inset 0 0 20px rgba(255, 235, 59, 0.1);
   text-align: center;
   animation: criticalGlow 1.5s ease-in-out infinite;
+
   p {
     color: #ffffff;
+
     &:first-child {
       font-size: 1.3em;
       color: #ffeb3b;
@@ -952,11 +1134,13 @@ input[type="submit"],
       text-shadow: 0 0 15px rgba(255, 235, 59, 0.8);
     }
   }
+
   .miracle {
     color: #fff9c4;
     font-size: 1.2em;
     margin: 1em 0;
   }
+
   .full-heal {
     color: #ffffff;
     font-weight: bold;
@@ -967,6 +1151,7 @@ input[type="submit"],
     margin-top: 1em;
   }
 }
+
 .death-move-risk-hope {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -974,8 +1159,10 @@ input[type="submit"],
   border: 2px solid #66bb6a;
   border-radius: 10px;
   text-align: center;
+
   p {
     color: #ffffff;
+
     &:first-child {
       font-size: 1.2em;
       color: #a5d6a7;
@@ -984,6 +1171,7 @@ input[type="submit"],
       text-shadow: 0 0 8px rgba(165, 214, 167, 0.6);
     }
   }
+
   .recovery-available {
     color: #ffffff;
     font-size: 1.1em;
@@ -994,6 +1182,7 @@ input[type="submit"],
     margin-top: 1em;
   }
 }
+
 .death-move-risk-death {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -1002,8 +1191,10 @@ input[type="submit"],
   border-radius: 10px;
   text-align: center;
   box-shadow: inset 0 0 20px rgba(244, 67, 54, 0.3);
+
   p {
     color: #ffffff;
+
     &:first-child {
       font-size: 1.2em;
       color: #ffcdd2;
@@ -1012,11 +1203,13 @@ input[type="submit"],
       text-shadow: 0 0 8px rgba(255, 205, 210, 0.6);
     }
   }
+
   .final-words {
     color: #e0e0e0;
     font-style: italic;
     margin: 1em 0;
   }
+
   .death-result {
     color: #ffffff;
     font-weight: bold;
@@ -1027,6 +1220,7 @@ input[type="submit"],
     margin-top: 1em;
   }
 }
+
 .death-move-risk-recovery {
   padding: 1em;
   margin: 0.5em 0;
@@ -1034,8 +1228,10 @@ input[type="submit"],
   border: 2px solid #66bb6a;
   border-radius: 10px;
   text-align: center;
+
   p {
     color: #ffffff;
+
     &:first-child {
       font-size: 1.1em;
       color: #a5d6a7;
@@ -1044,12 +1240,14 @@ input[type="submit"],
       text-shadow: 0 0 8px rgba(165, 214, 167, 0.6);
     }
   }
+
   .recovery-result {
     color: #fff9c4;
     font-style: italic;
     margin-top: 0.5em;
   }
 }
+
 @keyframes riskPulse {
   0%, 100% {
     transform: scale(1);
@@ -1060,6 +1258,8 @@ input[type="submit"],
     opacity: 0.6;
   }
 }
+
+/* Fear Spend Message Styling */
 .fear-spend-message {
   background: linear-gradient(135deg, rgba(30, 24, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
   border: 1px solid var(--dh-color-purple-light);
@@ -1068,6 +1268,7 @@ input[type="submit"],
   margin: 4px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
   h3 {
     color: var(--dh-color-gold);
     font-size: 1.1em;
@@ -1077,16 +1278,19 @@ input[type="submit"],
     text-transform: uppercase;
     letter-spacing: 1px;
     border-bottom: none;
+
     i {
       margin-right: 8px;
       color: var(--dh-color-gold);
     }
   }
+
   p {
     color: var(--dh-color-off-white);
     font-size: 0.95em;
     margin: 4px 0;
     line-height: 1.4;
+
     &:last-child {
       margin-bottom: 0;
       color: var(--dh-color-teal);
@@ -1094,6 +1298,7 @@ input[type="submit"],
     }
   }
 }
+
 .fear-gain-message {
   background: linear-gradient(135deg, rgba(77, 38, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
   border: 1px solid #8e24aa;
@@ -1102,6 +1307,7 @@ input[type="submit"],
   margin: 4px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
   h3 {
     color: #ce93d8;
     font-size: 1.1em;
@@ -1111,22 +1317,26 @@ input[type="submit"],
     text-transform: uppercase;
     letter-spacing: 1px;
     border-bottom: none;
+
     i {
       margin-right: 8px;
       color: #ce93d8;
     }
   }
+
   p {
     color: var(--dh-color-off-white);
     font-size: 0.95em;
     margin: 4px 0;
     line-height: 1.4;
+
     &:last-child {
       margin-bottom: 0;
       color: #ba68c8;
       font-weight: 600;
     }
   }
+
   .fear-warning {
     color: #e91e63 !important;
     font-weight: bold !important;
@@ -1138,6 +1348,8 @@ input[type="submit"],
     margin-top: 8px;
   }
 }
+
+/* Stress Spend Message Styling */
 .stress-spend-message {
   background: linear-gradient(135deg, rgba(77, 38, 38, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
   border: 1px solid #d32f2f;
@@ -1146,6 +1358,7 @@ input[type="submit"],
   margin: 4px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
   h3 {
     color: #ff7043;
     font-size: 1.1em;
@@ -1155,22 +1368,26 @@ input[type="submit"],
     text-transform: uppercase;
     letter-spacing: 1px;
     border-bottom: none;
+
     i {
       margin-right: 8px;
       color: #ff7043;
     }
   }
+
   p {
     color: var(--dh-color-off-white);
     font-size: 0.95em;
     margin: 4px 0;
     line-height: 1.4;
+
     &:last-child {
       margin-bottom: 0;
       color: #ffab91;
       font-weight: 600;
     }
   }
+
   .stress-warning {
     color: #f44336 !important;
     font-weight: bold !important;
@@ -1182,6 +1399,8 @@ input[type="submit"],
     margin-top: 8px;
   }
 }
+
+/* Stress Clear Message Styling */
 .stress-clear-message {
   background: linear-gradient(135deg, rgba(38, 77, 38, 0.9) 0%, rgba(10, 19, 10, 0.9) 100%);
   border: 1px solid #4caf50;
@@ -1190,6 +1409,7 @@ input[type="submit"],
   margin: 4px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
   h3 {
     color: #81c784;
     font-size: 1.1em;
@@ -1199,16 +1419,19 @@ input[type="submit"],
     text-transform: uppercase;
     letter-spacing: 1px;
     border-bottom: none;
+
     i {
       margin-right: 8px;
       color: #81c784;
     }
   }
+
   p {
     color: var(--dh-color-off-white);
     font-size: 0.95em;
     margin: 4px 0;
     line-height: 1.4;
+
     &:last-child {
       margin-bottom: 0;
       color: #a5d6a7;
@@ -1216,6 +1439,8 @@ input[type="submit"],
     }
   }
 }
+
+/* Armor Slot Message Styling */
 .armor-slot-message {
   background: linear-gradient(135deg, rgba(96, 125, 139, 0.9) 0%, rgba(37, 47, 63, 0.9) 100%);
   border: 1px solid #607d8b;
@@ -1224,6 +1449,7 @@ input[type="submit"],
   margin: 4px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
   h3 {
     color: #90a4ae;
     font-size: 1.1em;
@@ -1233,16 +1459,19 @@ input[type="submit"],
     text-transform: uppercase;
     letter-spacing: 1px;
     border-bottom: none;
+
     i {
       margin-right: 8px;
       color: #90a4ae;
     }
   }
+
   p {
     color: var(--dh-color-off-white);
     font-size: 0.95em;
     margin: 4px 0;
     line-height: 1.4;
+
     &:last-child {
       margin-bottom: 0;
       color: #b0bec5;
@@ -1250,6 +1479,8 @@ input[type="submit"],
     }
   }
 }
+
+/* HP Adjust Message Styling */
 .hp-adjust-message {
   background: linear-gradient(135deg, rgba(139, 69, 19, 0.9) 0%, rgba(62, 39, 35, 0.9) 100%);
   border: 1px solid #8b4513;
@@ -1258,6 +1489,7 @@ input[type="submit"],
   margin: 4px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
   h3 {
     color: #cd853f;
     font-size: 1.1em;
@@ -1267,16 +1499,19 @@ input[type="submit"],
     text-transform: uppercase;
     letter-spacing: 1px;
     border-bottom: none;
+
     i {
       margin-right: 8px;
       color: #cd853f;
     }
   }
+
   p {
     color: var(--dh-color-off-white);
     font-size: 0.95em;
     margin: 4px 0;
     line-height: 1.4;
+
     &:last-child {
       margin-bottom: 0;
       color: #deb887;
@@ -1284,6 +1519,8 @@ input[type="submit"],
     }
   }
 }
+
+/* Hope Message Styling */
 .hope-spend-message {
   background: linear-gradient(135deg, rgba(57, 77, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
   border: 1px solid var(--dh-color-teal);
@@ -1292,6 +1529,7 @@ input[type="submit"],
   margin: 4px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
   h3 {
     color: var(--dh-color-gold);
     font-size: 1.1em;
@@ -1301,22 +1539,26 @@ input[type="submit"],
     text-transform: uppercase;
     letter-spacing: 1px;
     border-bottom: none;
+
     i {
       margin-right: 8px;
       color: var(--dh-color-gold);
     }
   }
+
   p {
     color: var(--dh-color-off-white);
     font-size: 0.95em;
     margin: 4px 0;
     line-height: 1.4;
+
     &:last-child {
       margin-bottom: 0;
       color: var(--dh-color-teal);
       font-weight: 600;
     }
   }
+
   .hope-warning {
     color: #ff9800 !important;
     font-weight: bold !important;
@@ -1328,6 +1570,7 @@ input[type="submit"],
     margin-top: 8px;
   }
 }
+
 .hope-gain-message {
   background: linear-gradient(135deg, rgba(77, 77, 38, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
   border: 1px solid var(--dh-color-gold);
@@ -1336,6 +1579,7 @@ input[type="submit"],
   margin: 4px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
   h3 {
     color: var(--dh-color-gold);
     font-size: 1.1em;
@@ -1345,22 +1589,26 @@ input[type="submit"],
     text-transform: uppercase;
     letter-spacing: 1px;
     border-bottom: none;
+
     i {
       margin-right: 8px;
       color: var(--dh-color-gold);
     }
   }
+
   p {
     color: var(--dh-color-off-white);
     font-size: 0.95em;
     margin: 4px 0;
     line-height: 1.4;
+
     &:last-child {
       margin-bottom: 0;
       color: var(--dh-color-gold);
       font-weight: 600;
     }
   }
+
   .hope-max {
     color: #ffeb3b !important;
     font-weight: bold !important;
@@ -1372,6 +1620,8 @@ input[type="submit"],
     margin-top: 8px;
   }
 }
+
+/* Undo Button Styling */
 .undo-damage-button,
 .undo-healing-button {
   background: rgba(11, 10, 19, 0.85);
@@ -1387,6 +1637,7 @@ input[type="submit"],
   align-items: center;
   justify-content: center;
   gap: 0.4em;
+
   &:hover {
     background: rgba(35, 34, 43, 0.9);
     border-color: #9d9bb3;
@@ -1394,23 +1645,28 @@ input[type="submit"],
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     color: #e1e1e1;
   }
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.6;
     transform: none;
     background: rgba(11, 10, 19, 0.4);
   }
+
   i {
     font-size: 0.9em;
     color: inherit;
   }
 }
+
+/* Undo Message Styling */
 .undo-message {
   padding: 1em;
   margin: 0.5em 0;
   border-radius: 10px;
   background: rgba(11, 10, 19, 0.85);
   border: 1px solid #6d6795;
+
   h3 {
     margin: 0 0 0.5em 0;
     color: #c4c4c4;
@@ -1419,10 +1675,12 @@ input[type="submit"],
     display: flex;
     align-items: center;
     gap: 0.5em;
+
     i {
       color: #c4c4c4;
     }
   }
+
   .undo-details {
     margin: 0.5em 0;
     padding: 0.5em;
@@ -1433,30 +1691,46 @@ input[type="submit"],
     color: #b0b0b0;
   }
 }
+
+/* Hope and Fear Dice Tooltip Styling */
+/* These styles will be applied via JavaScript by adding classes to dice elements */
+/* Using CSS filters to actually transform the dice icon appearance */
+
+/* Hope Die Styling - Golden appearance using filters */
 .dice-tooltip .dice-rolls .roll.die.hope-die,
 .dice-tooltip .dice-rolls .roll.die[data-flavor="Hope"] {
   color: #000 !important;
   filter: sepia(1) hue-rotate(15deg) saturate(1.8) brightness(1.1) !important;
   font-weight: bold !important;
 }
+
+/* Fear Die Styling - Red appearance using filters */
 .dice-tooltip .dice-rolls .roll.die.fear-die,
 .dice-tooltip .dice-rolls .roll.die[data-flavor="Fear"] {
   color: #000 !important;
   filter: sepia(1) hue-rotate(-175deg) saturate(2) brightness(0.9) !important;
   font-weight: bold !important;
 }
+
+/* Hope and Fear Flavor Text Styling */
 .dice-tooltip .tooltip-part .part-header .part-flavor.hope-flavor {
   color: var(--dh-color-gold) !important;
 }
+
 .dice-tooltip .tooltip-part .part-header .part-flavor.fear-flavor {
   color: #3b75c2 !important;
 }
+
+/* Hope and Fear Text in Roll Results */
 .roll-flavor-line .hope-result {
   color: var(--dh-color-gold) !important;
 }
+
 .roll-flavor-line .fear-result {
   color: #3b75c2 !important;
 }
+
+/* Hope Automation Notice Styling */
 .hope-automation-notice {
   background: linear-gradient(135deg, rgba(255, 187, 0, 0.1) 0%, rgba(129, 204, 195, 0.1) 100%);
   border: 1px solid var(--dh-color-gold);
@@ -1465,30 +1739,37 @@ input[type="submit"],
   margin: 4px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
   p {
     color: var(--dh-color-off-white);
     font-size: 0.9em;
     margin: 4px 0;
     line-height: 1.4;
+
     &:first-child {
       color: var(--dh-color-gold);
       font-weight: bold;
       margin-bottom: 8px;
     }
+
     em {
       color: #6c6a85;
       font-size: 0.85em;
     }
+
     i {
       margin-right: 6px;
       color: var(--dh-color-gold);
     }
   }
 }
+
+// Multi-target armor slots styling - Updated to match hope tracker design pattern
 .multi-target-armor-container {
   .multi-target-armor-header {
     text-align: center;
     margin-bottom: 0.75em;
+    
     label {
       font-weight: bold;
       color: var(--dh-color-gold);
@@ -1498,6 +1779,8 @@ input[type="submit"],
       text-shadow: 0 0 5px rgba(243, 194, 103, 0.6);
     }
   }
+  
+  // Individual armor slot containers in multi-target view
   .armor-slots-ui {
     background: rgba(11, 10, 19, 0.85);
     backdrop-filter: blur(5px);
@@ -1507,16 +1790,19 @@ input[type="submit"],
     margin: 0.5em 0;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    
     &:hover {
       background: rgba(11, 10, 19, 0.9);
       border-color: var(--dh-color-gold);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
+    
     .resource-content {
       display: flex;
       justify-content: center;
       margin-bottom: 0.5em;
+      
       .resource-box {
         background: #1c1c1c;
         border: 1px solid var(--dh-color-gold);
@@ -1531,22 +1817,26 @@ input[type="submit"],
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         min-width: 60px;
         justify-content: center;
+        
         .armor-slots-current, .armor-slots-max {
           color: var(--dh-color-off-white);
           text-align: center;
           min-width: 1em;
         }
+        
         span {
           color: var(--dh-color-gold);
           font-weight: bold;
         }
       }
     }
+    
     .resource-label-controls {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 0.5em;
+      
       label {
         font-size: 0.85em;
         color: var(--dh-color-off-white);
@@ -1559,10 +1849,12 @@ input[type="submit"],
         display: flex;
         flex-direction: column;
         gap: 0.2em;
+        
         strong {
           color: var(--dh-color-gold);
           text-shadow: 0 0 5px rgba(243, 194, 103, 0.6);
         }
+        
         .armor-availability {
           font-size: 1em;
           color: #6c6a85;
@@ -1572,6 +1864,7 @@ input[type="submit"],
           opacity: 0.9;
         }
       }
+      
       .resource-control {
         background: rgba(67, 63, 100, 0.5);
         border: 1px solid #6d6795;
@@ -1587,6 +1880,7 @@ input[type="submit"],
         font-size: 12px;
         text-decoration: none;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        
         &:hover {
           background: rgba(67, 63, 100, 0.8);
           border-color: var(--dh-color-gold);
@@ -1594,9 +1888,11 @@ input[type="submit"],
           transform: scale(1.1);
           box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
         }
+        
         &:active {
           transform: scale(0.95);
         }
+        
         i {
           color: inherit;
         }
@@ -1604,6 +1900,8 @@ input[type="submit"],
     }
   }
 }
+
+/* SHINE EFFECT */
 .item-card-chat .card-image-container {
   position: relative;
   overflow: hidden;
@@ -1631,9 +1929,11 @@ input[type="submit"],
   0% { left: -150%; }
   100% { left: 150%; }
 }
+
 .chat-message:has(.item-card-chat) .message-content {
   padding-bottom: 0;
 }
+
 .hp-healing-message {
   background: linear-gradient(135deg, rgba(46, 64, 34, 0.9) 0%, rgba(19, 40, 29, 0.9) 100%);
   border: 1px solid #5bb85c;
@@ -1642,6 +1942,7 @@ input[type="submit"],
   margin: 4px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
   h3 {
     color: #66cc66;
     font-size: 1.1em;
@@ -1649,16 +1950,19 @@ input[type="submit"],
     margin: 0 0 8px 0;
     text-transform: uppercase;
     letter-spacing: 1px;
+
     i {
       margin-right: 8px;
       color: #66cc66;
     }
   }
+
   p {
     color: var(--dh-color-off-white);
     font-size: 0.95em;
     margin: 4px 0;
     line-height: 1.4;
+
     &:last-child {
       margin-bottom: 0;
       color: #a5d6a7;

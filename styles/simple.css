@@ -1,4 +1,14 @@
 @charset "UTF-8";
+/* ============================================
+   DAGGERHEART SYSTEM STYLES
+   ============================================
+   Organized Architecture:
+   1. Foundation - Variables, resets, base styles
+   2. Layout - General sheet and window layouts  
+   3. Components - Reusable UI components
+   4. Features - Specific functionality modules
+   ============================================ */
+/* Foundation Layer */
 :root {
   --dh-color-dark-blue: #0a0f21;
   --dh-color-purple: #1e184d;
@@ -27,10 +37,12 @@
   --font-size-36: 2.25rem;
   --font-size-42: 2.625rem;
 }
+
 * {
   scrollbar-width: none !important;
   scrollbar-color: white transparent;
 }
+
 .window-app .window-header a {
   flex: 0 0 30px;
   overflow: hidden;
@@ -42,10 +54,13 @@
 .window-app .window-header a i {
   font-size: 14px;
 }
+
 ::-webkit-scrollbar {
   width: 5px !important;
   height: 5px !important;
 }
+
+/* Remove Foundry's built-in box shadow on focused inputs */
 body.game .app input[type=text]:focus,
 body.game .app input[type=number]:focus,
 body.game .app input[type=password]:focus,
@@ -54,7 +69,27 @@ body.game .app input[type=time]:focus,
 body.game .app input[type=search]:focus {
   box-shadow: none;
 }
+
+/* ============================================
+   DAGGERHEART GLOBAL DESIGN SYSTEM
+   ============================================
+   A unified, modular CSS design system for all
+   Daggerheart UI components including popups,
+   dialogs, modals, and interactive elements.
+
+   Architecture:
+   1. Foundation - Variables, tokens, base styles
+   2. Layout - Spacing, positioning, containers
+   3. Typography - Text styles and hierarchies
+   4. Components - Reusable UI elements
+   5. Utilities - Helper classes and modifiers
+   ============================================ */
+/* ============================================
+   1. FOUNDATION LAYER
+   ============================================ */
+/* Enhanced CSS Custom Properties */
 :root {
+  /* Core Color Palette */
   --dh-color-gold: #f3c267;
   --dh-color-gold-light: #fef790;
   --dh-color-gold-dark: #e38c3e;
@@ -64,47 +99,55 @@ body.game .app input[type=search]:focus {
   --dh-color-purple-light: #38227b;
   --dh-color-purple-accent: #433f64;
   --dh-color-purple-border: #6d6795;
+  /* Glassmorphism Colors */
   --dh-glass-primary: rgba(255, 255, 255, 0.1);
   --dh-glass-secondary: rgba(255, 255, 255, 0.05);
   --dh-glass-accent: rgba(255, 255, 255, 0.15);
   --dh-glass-border: rgba(255, 255, 255, 0.2);
   --dh-glass-subtle: rgba(255, 255, 255, 0.1);
+  /* Background Colors */
   --dh-bg-dark: rgba(11, 10, 19, 0.85);
   --dh-bg-darker: rgba(11, 10, 19, 0.95);
   --dh-bg-overlay: rgba(0, 0, 0, 0.6);
   --dh-bg-section: rgba(67, 63, 100, 0.2);
   --dh-bg-input: rgba(11, 10, 19, 0.5);
   --dh-bg-input-focus: rgba(11, 10, 19, 0.7);
+  /* Border Colors */
   --dh-border-gold: var(--dh-color-gold);
   --dh-border-gold-subtle: rgba(243, 194, 103, 0.5);
   --dh-border-purple: var(--dh-color-purple-accent);
   --dh-border-purple-light: var(--dh-color-purple-border);
   --dh-border-purple-subtle: rgba(109, 103, 149, 0.2);
   --dh-border-glass: var(--dh-glass-border);
-  --dh-font-size-xs: 0.75rem; 
-  --dh-font-size-sm: 0.85rem; 
-  --dh-font-size-base: 1rem; 
-  --dh-font-size-lg: 1.1rem; 
-  --dh-font-size-xl: 1.2rem; 
-  --dh-font-size-2xl: 1.4rem; 
-  --dh-font-size-3xl: 1.875rem; 
+  /* Typography Scale */
+  --dh-font-size-xs: 0.75rem; /* 12px */
+  --dh-font-size-sm: 0.85rem; /* 13.6px */
+  --dh-font-size-base: 1rem; /* 16px */
+  --dh-font-size-lg: 1.1rem; /* 17.6px */
+  --dh-font-size-xl: 1.2rem; /* 19.2px */
+  --dh-font-size-2xl: 1.4rem; /* 22.4px */
+  --dh-font-size-3xl: 1.875rem; /* 30px */
+  /* Font Weights */
   --dh-font-weight-normal: 400;
   --dh-font-weight-medium: 500;
   --dh-font-weight-semibold: 600;
   --dh-font-weight-bold: 700;
-  --dh-space-xs: 0.25rem; 
-  --dh-space-sm: 0.5rem; 
-  --dh-space-md: 0.75rem; 
-  --dh-space-lg: 1rem; 
-  --dh-space-xl: 1.5rem; 
-  --dh-space-2xl: 2rem; 
-  --dh-space-3xl: 3rem; 
+  /* Spacing Scale */
+  --dh-space-xs: 0.25rem; /* 4px */
+  --dh-space-sm: 0.5rem; /* 8px */
+  --dh-space-md: 0.75rem; /* 12px */
+  --dh-space-lg: 1rem; /* 16px */
+  --dh-space-xl: 1.5rem; /* 24px */
+  --dh-space-2xl: 2rem; /* 32px */
+  --dh-space-3xl: 3rem; /* 48px */
+  /* Border Radius Scale */
   --dh-radius-sm: 4px;
   --dh-radius-md: 6px;
   --dh-radius-lg: 8px;
   --dh-radius-xl: 10px;
   --dh-radius-2xl: 15px;
   --dh-radius-full: 50%;
+  /* Shadow Tokens */
   --dh-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
   --dh-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
   --dh-shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.9);
@@ -112,17 +155,25 @@ body.game .app input[type=search]:focus {
   --dh-shadow-glow-subtle: 0 0 8px rgba(243, 194, 103, 0.4);
   --dh-shadow-glow-strong: 0 0 15px rgba(243, 194, 103, 0.6);
   --dh-shadow-focus: 0 0 0 3px rgba(243, 194, 103, 0.2);
+  /* Backdrop Blur Tokens */
   --dh-blur-sm: blur(5px);
   --dh-blur-md: blur(10px);
   --dh-blur-lg: blur(20px);
+  /* Transition Tokens */
   --dh-transition-fast: all 0.2s ease;
   --dh-transition-normal: all 0.3s ease;
   --dh-transition-slow: all 0.5s ease;
+  /* Z-Index Scale */
   --dh-z-dropdown: 100;
   --dh-z-modal: 1000;
   --dh-z-popup: 1001;
   --dh-z-tooltip: 1002;
 }
+
+/* ============================================
+   2. LAYOUT SYSTEM
+   ============================================ */
+/* Popup Overlay Base */
 .dh-overlay {
   position: fixed;
   top: 0;
@@ -138,6 +189,8 @@ body.game .app input[type=search]:focus {
 .dh-overlay--blur {
   backdrop-filter: var(--dh-blur-sm);
 }
+
+/* Popup Container Base */
 .dh-popup {
   background: var(--dh-bg-dark);
   backdrop-filter: var(--dh-blur-md);
@@ -149,6 +202,7 @@ body.game .app input[type=search]:focus {
   max-height: 80vh;
   overflow: hidden;
   position: relative;
+  /* Animation states */
   transform: scale(0.8);
   opacity: 0;
   transition: var(--dh-transition-fast);
@@ -164,6 +218,8 @@ body.game .app input[type=search]:focus {
   min-width: 280px;
   max-width: 400px;
 }
+
+/* Glass Panel Base */
 .dh-glass {
   background: var(--dh-glass-primary);
   backdrop-filter: var(--dh-blur-md);
@@ -180,6 +236,8 @@ body.game .app input[type=search]:focus {
   background: var(--dh-bg-section);
   border-color: var(--dh-border-purple);
 }
+
+/* Flexbox Utilities */
 .dh-flex {
   display: flex;
 }
@@ -208,61 +266,84 @@ body.game .app input[type=search]:focus {
 .dh-flex--gap-xl {
   gap: var(--dh-space-xl);
 }
+
+/* Spacing Utilities */
 .dh-p-xs {
   padding: var(--dh-space-xs);
 }
+
 .dh-p-sm {
   padding: var(--dh-space-sm);
 }
+
 .dh-p-md {
   padding: var(--dh-space-md);
 }
+
 .dh-p-lg {
   padding: var(--dh-space-lg);
 }
+
 .dh-p-xl {
   padding: var(--dh-space-xl);
 }
+
 .dh-px-md {
   padding-left: var(--dh-space-md);
   padding-right: var(--dh-space-md);
 }
+
 .dh-px-lg {
   padding-left: var(--dh-space-lg);
   padding-right: var(--dh-space-lg);
 }
+
 .dh-py-md {
   padding-top: var(--dh-space-md);
   padding-bottom: var(--dh-space-md);
 }
+
 .dh-py-lg {
   padding-top: var(--dh-space-lg);
   padding-bottom: var(--dh-space-lg);
 }
+
 .dh-m-xs {
   margin: var(--dh-space-xs);
 }
+
 .dh-m-sm {
   margin: var(--dh-space-sm);
 }
+
 .dh-m-md {
   margin: var(--dh-space-md);
 }
+
 .dh-m-lg {
   margin: var(--dh-space-lg);
 }
+
 .dh-mt-xs {
   margin-top: var(--dh-space-xs);
 }
+
 .dh-mt-sm {
   margin-top: var(--dh-space-sm);
 }
+
 .dh-mt-md {
   margin-top: var(--dh-space-md);
 }
+
 .dh-mb-md {
   margin-bottom: var(--dh-space-md);
 }
+
+/* ============================================
+   3. TYPOGRAPHY SYSTEM
+   ============================================ */
+/* Base Typography Classes */
 .dh-text {
   color: var(--dh-color-off-white);
 }
@@ -281,36 +362,50 @@ body.game .app input[type=search]:focus {
 .dh-text--uppercase {
   text-transform: uppercase;
 }
+
+/* Typography Scale */
 .dh-text-xs {
   font-size: var(--dh-font-size-xs);
 }
+
 .dh-text-sm {
   font-size: var(--dh-font-size-sm);
 }
+
 .dh-text-base {
   font-size: var(--dh-font-size-base);
 }
+
 .dh-text-lg {
   font-size: var(--dh-font-size-lg);
 }
+
 .dh-text-xl {
   font-size: var(--dh-font-size-xl);
 }
+
 .dh-text-2xl {
   font-size: var(--dh-font-size-2xl);
 }
+
+/* Font Weights */
 .dh-font-normal {
   font-weight: var(--dh-font-weight-normal);
 }
+
 .dh-font-medium {
   font-weight: var(--dh-font-weight-medium);
 }
+
 .dh-font-semibold {
   font-weight: var(--dh-font-weight-semibold);
 }
+
 .dh-font-bold {
   font-weight: var(--dh-font-weight-bold);
 }
+
+/* Specialized Typography Components */
 .dh-heading, .dh-popup__title {
   color: var(--dh-color-gold);
   font-weight: var(--dh-font-weight-semibold);
@@ -320,6 +415,7 @@ body.game .app input[type=search]:focus {
   text-align: center;
   text-shadow: var(--dh-shadow-glow);
 }
+
 .dh-label {
   color: var(--dh-color-gold);
   font-weight: var(--dh-font-weight-semibold);
@@ -327,12 +423,18 @@ body.game .app input[type=search]:focus {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
 .dh-value {
   color: var(--dh-color-gold-light);
   font-weight: var(--dh-font-weight-bold);
   font-size: var(--dh-font-size-2xl);
   text-shadow: var(--dh-shadow-glow);
 }
+
+/* ============================================
+   4. BUTTON COMPONENT SYSTEM
+   ============================================ */
+/* Base Button */
 .dh-btn {
   display: flex;
   align-items: center;
@@ -350,6 +452,8 @@ body.game .app input[type=search]:focus {
   cursor: not-allowed;
   pointer-events: none;
 }
+
+/* Button Variants */
 .dh-btn--primary {
   background: var(--dh-bg-section);
   border: 1px solid var(--dh-border-purple-light);
@@ -361,6 +465,7 @@ body.game .app input[type=search]:focus {
   border-color: var(--dh-color-gold);
   color: var(--dh-color-gold);
 }
+
 .dh-btn--gold {
   background: rgba(243, 194, 103, 0.2);
   border: 1px solid var(--dh-color-gold);
@@ -372,6 +477,8 @@ body.game .app input[type=search]:focus {
   color: var(--dh-color-off-black);
   box-shadow: var(--dh-shadow-glow);
 }
+
+/* Specialized Button Types */
 .dh-btn--close, .dh-popup__close {
   background: var(--dh-bg-dark);
   border: 2px solid var(--dh-border-gold-subtle);
@@ -389,6 +496,7 @@ body.game .app input[type=search]:focus {
   transform: scale(1.1);
   box-shadow: var(--dh-shadow-glow-strong);
 }
+
 .dh-btn--add {
   background: rgba(243, 194, 103, 0.2);
   border: 1px solid var(--dh-color-gold);
@@ -406,6 +514,7 @@ body.game .app input[type=search]:focus {
   transform: scale(1.1) rotate(90deg);
   box-shadow: var(--dh-shadow-glow);
 }
+
 .dh-btn--delete {
   background: rgba(255, 68, 68, 0.2);
   border: 1px solid rgba(255, 68, 68, 0.4);
@@ -423,6 +532,7 @@ body.game .app input[type=search]:focus {
   transform: scale(1.1) rotate(90deg);
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
 }
+
 .dh-btn--increment,
 .dh-btn--decrement {
   background: var(--dh-bg-section);
@@ -447,6 +557,11 @@ body.game .app input[type=search]:focus {
   transform: scale(0.95);
   box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
 }
+
+/* ============================================
+   5. INPUT COMPONENT SYSTEM
+   ============================================ */
+/* Base Input */
 .dh-input {
   background: var(--dh-bg-input);
   border: 1px solid var(--dh-border-purple);
@@ -470,6 +585,8 @@ body.game .app input[type=search]:focus {
   border-color: rgba(67, 63, 100, 0.3);
   cursor: not-allowed;
 }
+
+/* Input Variants */
 .dh-input--base {
   padding: var(--dh-space-sm);
   text-align: center;
@@ -477,11 +594,13 @@ body.game .app input[type=search]:focus {
   font-weight: var(--dh-font-weight-bold);
   width: 50px;
 }
+
 .dh-input--modifier-name {
   flex: 1;
   padding: 0.4rem 0.6rem;
   font-size: var(--dh-font-size-sm);
 }
+
 .dh-input--modifier-value {
   padding: 0.4rem;
   text-align: center;
@@ -489,6 +608,7 @@ body.game .app input[type=search]:focus {
   font-weight: var(--dh-font-weight-semibold);
   width: 55px;
 }
+
 .dh-input--simple {
   padding: 0.6rem 1rem;
   text-align: center;
@@ -496,6 +616,8 @@ body.game .app input[type=search]:focus {
   font-weight: var(--dh-font-weight-bold);
   width: 120px;
 }
+
+/* Checkbox Component */
 .dh-checkbox {
   width: 18px;
   height: 18px;
@@ -530,6 +652,11 @@ body.game .app input[type=search]:focus {
   border-color: var(--dh-color-gold);
   transform: scale(1.1);
 }
+
+/* ============================================
+   6. POPUP COMPONENT SYSTEM
+   ============================================ */
+/* Popup Header */
 .dh-popup__header {
   background: rgba(11, 10, 19, 0.5);
   border-bottom: 1px solid var(--dh-color-gold);
@@ -539,12 +666,15 @@ body.game .app input[type=search]:focus {
   align-items: center;
   position: relative;
 }
+
 .dh-popup__close {
   position: absolute;
   right: var(--dh-space-lg);
   top: 50%;
   transform: translateY(-50%);
 }
+
+/* Popup Content */
 .dh-popup__content {
   padding: var(--dh-space-md) var(--dh-space-lg);
   display: flex;
@@ -553,6 +683,8 @@ body.game .app input[type=search]:focus {
   min-width: 320px;
   position: relative;
 }
+
+/* Popup Sections */
 .dh-popup__section {
   padding: var(--dh-space-xs) var(--dh-space-lg);
   border-radius: var(--dh-radius-xl);
@@ -576,6 +708,8 @@ body.game .app input[type=search]:focus {
   justify-content: center;
   gap: var(--dh-space-lg);
 }
+
+/* Base Value Controls */
 .dh-base-controls {
   display: flex;
   align-items: center;
@@ -585,6 +719,8 @@ body.game .app input[type=search]:focus {
   flex: 1;
   min-width: 80px;
 }
+
+/* Modifiers Section */
 .dh-modifiers__header {
   display: flex;
   justify-content: space-between;
@@ -594,6 +730,7 @@ body.game .app input[type=search]:focus {
 .dh-modifiers__header .dh-label {
   margin: 0;
 }
+
 .dh-modifiers__list {
   display: flex;
   flex-direction: column;
@@ -601,6 +738,7 @@ body.game .app input[type=search]:focus {
   overflow-y: auto;
   position: relative;
   padding-right: var(--dh-space-xs);
+  /* Custom Scrollbar */
 }
 .dh-modifiers__list::-webkit-scrollbar {
   width: 4px;
@@ -614,6 +752,8 @@ body.game .app input[type=search]:focus {
   border-radius: 2px;
   opacity: 0.6;
 }
+
+/* Modifier Row */
 .dh-modifier {
   display: flex;
   align-items: center;
@@ -624,6 +764,7 @@ body.game .app input[type=search]:focus {
   border: 1px solid transparent;
   position: relative;
   transition: var(--dh-transition-fast);
+  /* Ensure all controls are interactive */
 }
 .dh-modifier:nth-child(even) {
   background: rgba(141, 120, 151, 0.05);
@@ -652,6 +793,11 @@ body.game .app input[type=search]:focus {
   position: relative;
   z-index: 2;
 }
+
+/* ============================================
+   7. ANIMATION & TRANSITION SYSTEM
+   ============================================ */
+/* Popup Animations */
 @keyframes dh-popup-in {
   from {
     transform: scale(0.8);
@@ -672,24 +818,31 @@ body.game .app input[type=search]:focus {
     opacity: 0;
   }
 }
+/* Animation Classes */
 .dh-animate-in {
   animation: dh-popup-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .dh-animate-out {
   animation: dh-popup-out 150ms cubic-bezier(0.4, 0, 1, 1);
 }
+
+/* Hover Effects */
 .dh-hover-scale {
   transition: var(--dh-transition-fast);
 }
 .dh-hover-scale:hover {
   transform: scale(1.05);
 }
+
 .dh-hover-lift {
   transition: var(--dh-transition-fast);
 }
 .dh-hover-lift:hover {
   transform: translateY(-1px);
 }
+
+/* Interactive States */
 .dh-interactive {
   cursor: pointer;
   user-select: none;
@@ -701,17 +854,26 @@ body.game .app input[type=search]:focus {
 .dh-interactive:active {
   transform: scale(0.98);
 }
+
+/* ============================================
+   8. STATE MANAGEMENT CLASSES
+   ============================================ */
+/* Visibility States */
 .dh-hidden {
   display: none !important;
 }
+
 .dh-invisible {
   visibility: hidden;
   opacity: 0;
 }
+
 .dh-visible {
   visibility: visible;
   opacity: 1;
 }
+
+/* Loading States */
 .dh-loading {
   pointer-events: none;
   opacity: 0.7;
@@ -730,15 +892,19 @@ body.game .app input[type=search]:focus {
   border-radius: 50%;
   animation: dh-spin 1s linear infinite;
 }
+
 @keyframes dh-spin {
   to {
     transform: rotate(360deg);
   }
 }
+/* Focus States */
 .dh-focus-visible:focus-visible {
   outline: 2px solid var(--dh-color-gold);
   outline-offset: 2px;
 }
+
+/* Error States */
 .dh-error {
   border-color: #ff4444 !important;
   background: rgba(255, 68, 68, 0.1) !important;
@@ -746,130 +912,189 @@ body.game .app input[type=search]:focus {
 .dh-error::placeholder {
   color: rgba(255, 68, 68, 0.7);
 }
+
+/* Success States */
 .dh-success {
   border-color: #4caf50 !important;
   background: rgba(76, 175, 80, 0.1) !important;
 }
+
+/* ============================================
+   9. UTILITY CLASSES
+   ============================================ */
+/* Display Utilities */
 .dh-block {
   display: block;
 }
+
 .dh-inline {
   display: inline;
 }
+
 .dh-inline-block {
   display: inline-block;
 }
+
 .dh-flex {
   display: flex;
 }
+
 .dh-inline-flex {
   display: inline-flex;
 }
+
 .dh-grid {
   display: grid;
 }
+
+/* Position Utilities */
 .dh-relative {
   position: relative;
 }
+
 .dh-absolute {
   position: absolute;
 }
+
 .dh-fixed {
   position: fixed;
 }
+
 .dh-sticky {
   position: sticky;
 }
+
+/* Overflow Utilities */
 .dh-overflow-hidden {
   overflow: hidden;
 }
+
 .dh-overflow-auto {
   overflow: auto;
 }
+
 .dh-overflow-scroll {
   overflow: scroll;
 }
+
+/* Width & Height Utilities */
 .dh-w-full {
   width: 100%;
 }
+
 .dh-h-full {
   height: 100%;
 }
+
 .dh-w-auto {
   width: auto;
 }
+
 .dh-h-auto {
   height: auto;
 }
+
+/* Border Utilities */
 .dh-border {
   border: 1px solid var(--dh-border-purple);
 }
+
 .dh-border-gold {
   border: 1px solid var(--dh-color-gold);
 }
+
 .dh-border-none {
   border: none;
 }
+
 .dh-rounded-sm {
   border-radius: var(--dh-radius-sm);
 }
+
 .dh-rounded-md {
   border-radius: var(--dh-radius-md);
 }
+
 .dh-rounded-lg {
   border-radius: var(--dh-radius-lg);
 }
+
 .dh-rounded-xl {
   border-radius: var(--dh-radius-xl);
 }
+
 .dh-rounded-2xl {
   border-radius: var(--dh-radius-2xl);
 }
+
 .dh-rounded-full {
   border-radius: var(--dh-radius-full);
 }
+
+/* Shadow Utilities */
 .dh-shadow-sm {
   box-shadow: var(--dh-shadow-sm);
 }
+
 .dh-shadow-md {
   box-shadow: var(--dh-shadow-md);
 }
+
 .dh-shadow-lg {
   box-shadow: var(--dh-shadow-lg);
 }
+
 .dh-shadow-glow {
   box-shadow: var(--dh-shadow-glow);
 }
+
 .dh-shadow-none {
   box-shadow: none;
 }
+
+/* Backdrop Filter Utilities */
 .dh-backdrop-blur-sm {
   backdrop-filter: var(--dh-blur-sm);
 }
+
 .dh-backdrop-blur-md {
   backdrop-filter: var(--dh-blur-md);
 }
+
 .dh-backdrop-blur-lg {
   backdrop-filter: var(--dh-blur-lg);
 }
+
+/* Cursor Utilities */
 .dh-cursor-pointer {
   cursor: pointer;
 }
+
 .dh-cursor-not-allowed {
   cursor: not-allowed;
 }
+
 .dh-cursor-wait {
   cursor: wait;
 }
+
+/* User Select Utilities */
 .dh-select-none {
   user-select: none;
 }
+
 .dh-select-text {
   user-select: text;
 }
+
 .dh-select-all {
   user-select: all;
 }
+
+/* ============================================
+   10. RESPONSIVE DESIGN
+   ============================================ */
+/* Responsive Breakpoints */
 @media (max-width: 480px) {
   .dh-popup {
     min-width: 280px;
@@ -897,6 +1122,10 @@ body.game .app input[type=search]:focus {
     padding: var(--dh-space-sm) var(--dh-space-md);
   }
 }
+/* ============================================
+   11. ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+/* High Contrast Mode Support */
 @media (prefers-contrast: high) {
   .dh-popup {
     border: 2px solid var(--dh-color-gold);
@@ -908,6 +1137,7 @@ body.game .app input[type=search]:focus {
     border-width: 2px;
   }
 }
+/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
   .dh-animate-in,
   .dh-animate-out,
@@ -921,13 +1151,17 @@ body.game .app input[type=search]:focus {
     animation: none;
   }
 }
+/* Focus Visible Support */
 .dh-btn:focus-visible,
 .dh-input:focus-visible,
 .dh-checkbox:focus-visible {
   outline: 2px solid var(--dh-color-gold);
   outline-offset: 2px;
 }
+
+/* Core Daggerheart System Styles */
 .daggerheart {
+  /* Base styles */
 }
 .daggerheart a:hover {
   text-shadow: none;
@@ -996,19 +1230,27 @@ body.game .app input[type=search]:focus {
   filter: brightness(0.8);
   color: var(--dh-color-gold);
 }
+
+/* Layout Layer */
+/* General Sheet and Window Layouts */
+/* Sheet Sizing */
 .daggerheart.sheet.actor {
   min-width: 690px;
   min-height: 600px;
 }
+
 .daggerheart.sheet.npc,
 .daggerheart.sheet.companion {
   min-width: 690px;
   min-height: 500px;
 }
+
 .daggerheart.sheet.item {
   min-width: 350px;
   min-height: 400px;
 }
+
+/* Window Content Styling */
 .actor .window-content, .item .window-content, .npc .window-content, .companion .window-content {
   background: transparent;
   background-color: transparent;
@@ -1018,9 +1260,12 @@ body.game .app input[type=search]:focus {
   border-top: none;
   position: relative;
 }
+
 .item .window-content {
   padding: 1em 2em;
 }
+
+/* Window Header Styling */
 .actor .window-header, .npc .window-header, .companion .window-header, .item .window-header {
   background: transparent;
   backdrop-filter: blur(5px);
@@ -1035,33 +1280,45 @@ body.game .app input[type=search]:focus {
   border-radius: 10px 10px 0 0;
   position: relative;
 }
+
+/* Sheet Backgrounds */
 .actor {
   background: transparent;
 }
+
 .npc {
   background: transparent;
 }
+
 .companion {
   background: transparent;
 }
+
 .sheet.actor, .sheet.npc, .sheet.companion, .sheet.item {
   background: rgba(11, 10, 19, 0.8392156863);
   backdrop-filter: blur(5px);
 }
+
+/* Input Styling for Sheets */
 .daggerheart .actor input[type=text], .daggerheart .actor input[type=number], .daggerheart .actor input[type=password],
 .daggerheart .actor input[type=date], .daggerheart .actor input[type=time], .daggerheart .actor input[type=search] {
   color: #f0f0e0;
 }
+
 .daggerheart .npc input[type=text], .daggerheart .npc input[type=number], .daggerheart .npc input[type=password],
 .daggerheart .npc input[type=date], .daggerheart .npc input[type=time], .daggerheart .npc input[type=search] {
   color: #f0f0e0;
 }
+
 .daggerheart .companion input[type=text], .daggerheart .companion input[type=number], .daggerheart .companion input[type=password],
 .daggerheart .companion input[type=date], .daggerheart .companion input[type=time], .daggerheart .companion input[type=search] {
   color: #f0f0e0;
 }
+
+/* General Text and Label Styling for Companion Sheets */
 .daggerheart .companion {
   color: #f0f0e0;
+  /* Keep evasion defense text black for light background */
 }
 .daggerheart .companion label {
   color: var(--dh-color-off-white);
@@ -1089,11 +1346,16 @@ body.game .app input[type=search]:focus {
 .daggerheart .companion .defense[data-trait=evasion] {
   color: var(--dh-color-off-black) !important;
 }
+
+/* NPC Sheet Specific Styling */
 .daggerheart .npc {
+  /* Make evasion defense text white for dark background */
 }
 .daggerheart .npc .defense[data-trait=evasion] label {
   color: var(--dh-color-off-white) !important;
 }
+
+/* Item Sheet Specific Layouts */
 .item-bg {
   position: absolute;
   top: -2.25vh;
@@ -1110,6 +1372,7 @@ body.game .app input[type=search]:focus {
   -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   margin: auto;
 }
+
 .daggerheart.sheet.item {
   background-size: cover;
   background-position: center center;
@@ -1118,6 +1381,7 @@ body.game .app input[type=search]:focus {
   text-shadow: 1px 1px 2px black;
   border-radius: 10px;
 }
+
 .item .sheet-body .tab {
   height: 100%;
   overflow: visible;
@@ -1128,13 +1392,17 @@ body.game .app input[type=search]:focus {
   padding-bottom: 1.25em;
   border-top: 1px solid var(--dh-color-gold);
 }
+
 .item .flexcol {
   position: relative;
 }
+
 .item .sheet-header {
   position: relative;
   z-index: 1;
 }
+
+/* Base Sheet Body Layout */
 .daggerheart .window-content {
   height: 97%;
   padding: 5px;
@@ -1158,9 +1426,18 @@ body.game .app input[type=search]:focus {
   width: 100%;
   padding: 0.5em 5em;
 }
+
 body.game .app button:hover, body.game .app button:focus {
   box-shadow: none;
 }
+
+/* Components Layer */
+/* =================================== */
+/*  Component Layer
+/*  This file imports all individual
+/*  component style partials.
+/* =================================== */
+/* Counter UI Components */
 .counter-ui {
   display: flex;
   align-items: center;
@@ -1243,37 +1520,45 @@ body.game .app button:hover, body.game .app button:focus {
 .counter-ui .counter-plus:active {
   transform: scale(0.95);
 }
+
+/* Counter positioning */
 #ui-bottom {
   flex-direction: column;
   gap: 0;
   display: flex;
   align-items: center;
 }
+
 #counter-ui {
   isolation: isolate;
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
+
 .token-counter {
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
+
 #ui-bottom > .counter-ui {
   margin-left: 0.25em;
   margin-right: 0.25em;
 }
+
 #token-hp-counter {
   margin-right: 0.5em;
 }
 #token-hp-counter .counter-value {
   min-width: 60px;
 }
+
 #token-hope-counter {
   margin-left: 0.5em;
 }
 #token-hope-counter .counter-value {
   min-width: 60px;
 }
+
 .counters-wrapper {
   display: flex;
   flex-direction: row;
@@ -1282,6 +1567,8 @@ body.game .app button:hover, body.game .app button:focus {
   gap: 0;
   margin-bottom: 0.5em;
 }
+
+/* Countdown Tracker Components */
 .countdown-wrapper {
   position: fixed;
   top: 10px;
@@ -1290,6 +1577,7 @@ body.game .app button:hover, body.game .app button:focus {
   z-index: 10000;
   pointer-events: none;
 }
+
 .countdown-tracker-ui {
   display: flex;
   flex-direction: column;
@@ -1340,6 +1628,7 @@ body.game .app button:hover, body.game .app button:focus {
   padding: 0.5em;
   font-size: 0.9em;
 }
+
 .countdown-tracker {
   display: flex;
   flex-direction: column;
@@ -1491,6 +1780,8 @@ body.game .app button:hover, body.game .app button:focus {
   border-color: #f44336;
   color: var(--dh-color-off-white);
 }
+
+/* Management Dialog Styles - Using Global Design System */
 .daggerheart-dialog.countdown-management-dialog .window-content {
   background: var(--dh-bg-darker);
   backdrop-filter: var(--dh-blur-lg);
@@ -1781,6 +2072,8 @@ body.game .app button:hover, body.game .app button:focus {
   border: 1px solid var(--dh-border-purple-subtle);
   backdrop-filter: var(--dh-blur-sm);
 }
+
+/* Animations */
 @keyframes shimmer {
   0% {
     left: -100%;
@@ -1843,6 +2136,7 @@ body.game .app button:hover, body.game .app button:focus {
     opacity: 0;
   }
 }
+/* Responsive Design */
 @media (max-width: 1200px) {
   .countdown-tracker-ui {
     max-width: 600px;
@@ -1896,6 +2190,7 @@ body.game .app button:hover, body.game .app button:focus {
     max-width: none;
   }
 }
+/* Tooltip Components */
 .daggerheart [data-trait-tooltip] {
   position: relative;
 }
@@ -1905,6 +2200,8 @@ body.game .app button:hover, body.game .app button:focus {
 .daggerheart [data-trait-tooltip].resource [data-trait-tooltip], .daggerheart [data-trait-tooltip].header-main-container [data-trait-tooltip] {
   cursor: help;
 }
+
+/* JavaScript-based tooltips */
 .daggerheart-tooltip {
   position: fixed;
   z-index: 99999;
@@ -1950,6 +2247,8 @@ body.game .app button:hover, body.game .app button:focus {
   border-top: none;
   border-bottom: 6px solid var(--dh-color-gold);
 }
+
+/* Treasure Tracker Component */
 .treasure-tracker {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1963,6 +2262,7 @@ body.game .app button:hover, body.game .app button:focus {
   margin-left: auto;
   margin-right: auto;
 }
+
 .treasure-item {
   display: flex;
   flex-direction: row;
@@ -1994,6 +2294,7 @@ body.game .app button:hover, body.game .app button:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(243, 194, 103, 0.3);
 }
+
 .treasure-icon {
   display: flex;
   align-items: center;
@@ -2018,6 +2319,8 @@ body.game .app button:hover, body.game .app button:focus {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Responsive design for treasure tracker */
 @media (max-width: 768px) {
   .treasure-tracker {
     grid-template-columns: repeat(2, 1fr);
@@ -2043,11 +2346,14 @@ body.game .app button:hover, body.game .app button:focus {
     font-size: 1em;
   }
 }
+/* Click and rollable elements */
 .daggerheart .click-rollable:hover, .daggerheart .basic-rollable:hover {
   cursor: pointer;
   filter: brightness(0.8);
   color: var(--dh-color-gold);
 }
+
+/* Item list */
 .daggerheart .item-list {
   list-style: none;
   margin: 0.5em;
@@ -2059,6 +2365,7 @@ body.game .app button:hover, body.game .app button:focus {
   border-radius: 0.5em;
   min-height: 3em;
   transition: all 0.2s ease-in-out;
+  /* General drag-over styles (fallback) */
 }
 .daggerheart .item-list.is-empty {
   display: none;
@@ -2072,6 +2379,8 @@ body.game .app button:hover, body.game .app button:focus {
   border-color: var(--dh-color-gold);
   background-color: rgba(0, 0, 0, 0.1);
 }
+
+/* Show empty item lists during drag operations */
 .daggerheart .item-list.is-empty.drag-over,
 .daggerheart .dragging .item-list.is-empty {
   display: flex;
@@ -2082,12 +2391,16 @@ body.game .app button:hover, body.game .app button:focus {
   margin: 0.5em;
   opacity: 0.8;
 }
+
+/* Visual feedback for populated item lists during drag */
 .daggerheart .item-list:not(.is-empty).drag-over {
   border-color: var(--dh-color-gold);
   border-radius: 5px;
   background-color: rgba(243, 194, 103, 0.05);
   box-shadow: 0 0 10px rgba(243, 194, 103, 0.3);
 }
+
+/* Make section headers droppable during drag operations */
 .daggerheart .dragging .tab-category {
   position: relative;
   transition: all 0.2s ease-in-out;
@@ -2095,6 +2408,7 @@ body.game .app button:hover, body.game .app button:focus {
   padding: 0.5em;
   margin: 0.5em 0;
 }
+
 .daggerheart .tab-category.drag-over {
   background-color: rgba(243, 194, 103, 0.2);
   border: 1px dashed var(--dh-color-gold);
@@ -2102,20 +2416,27 @@ body.game .app button:hover, body.game .app button:focus {
   color: var(--dh-color-gold);
   font-weight: bold;
 }
+
+/* Vault animation styles */
 .daggerheart .item-list[data-item-type=vault] {
   max-height: 500px;
   opacity: 1;
+  /* Rely solely on max-height for the slide-down animation */
   transform-origin: top;
   transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
   overflow: hidden;
 }
+
 .daggerheart .item-list[data-item-type=vault].vault-collapsed {
   max-height: 0;
   opacity: 0;
+  /* No transform scaling – height handles the collapse */
   margin: 0 0.5em;
   padding: 0;
   border: none;
 }
+
+/* Category collapsible animation styles */
 .daggerheart .item-list[data-item-type=class],
 .daggerheart .item-list[data-item-type=subclass],
 .daggerheart .item-list[data-item-type=ancestry],
@@ -2125,49 +2446,70 @@ body.game .app button:hover, body.game .app button:focus {
 .daggerheart .item-list[data-item-type=inventory] {
   max-height: 500px;
   opacity: 1;
+  /* Use only max-height for smoother, single-direction animation */
   transform-origin: top;
   transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
   overflow: hidden;
 }
+
 .daggerheart .item-list.category-collapsed {
   max-height: 0;
   opacity: 0;
+  /* No transform scaling – height handles the collapse */
   margin: 0;
   padding: 0;
   border: none;
 }
+
+/* Dynamic spacing system for collapsed/expanded sections */
 .daggerheart .tab-category {
+  /* Only apply transitions when explicitly enabled for user interactions */
 }
+
+/* Completely disable all transitions during initialization */
 .daggerheart.no-transitions .tab-category,
 .daggerheart.no-transitions .item-list {
   transition: none !important;
 }
+
+/* Enable transitions only when the sheet allows them (user-initiated toggles) */
 .daggerheart.transitions-enabled .tab-category {
   transition: margin-bottom 0.3s ease-in-out;
 }
+
+/* Only the bottom margin changes between collapsed/expanded to keep the header anchored */
 .daggerheart .tab-category.dynamic-collapsed {
   margin-bottom: 0.05em;
 }
+
 .daggerheart .tab-category.dynamic-expanded {
   margin-bottom: 0.75em;
 }
+
+/* Fallback: Reduce tab-category spacing when associated section is collapsed (backwards compatibility) */
 .daggerheart .tab-category.section-collapsed:not(.dynamic-collapsed):not(.dynamic-expanded) {
   margin-bottom: 0.1em;
   margin-top: 0.1em;
 }
+
+/* Fallback: Ensure normal spacing when expanded (backwards compatibility) */
 .daggerheart .tab-category:not(.section-collapsed):not(.dynamic-collapsed):not(.dynamic-expanded) {
   margin-bottom: 0.75em;
 }
+
+/* Category controls styling */
 .daggerheart .category-controls {
   display: flex;
   align-items: center;
   gap: 5px;
 }
+
 .daggerheart .vault-controls {
   display: flex;
   align-items: center;
   gap: 5px;
 }
+
 .daggerheart .item-list .item {
   display: flex;
   flex-direction: column;
@@ -2179,9 +2521,11 @@ body.game .app button:hover, body.game .app button:focus {
   padding: 0em 0.5em;
   background: rgba(0, 0, 0, 0.2);
 }
+
 .daggerheart .item-list .item.expanded {
   padding-bottom: 0.5em;
 }
+
 .daggerheart .item-list .item .item-main-row {
   display: flex;
   align-items: center;
@@ -2190,9 +2534,11 @@ body.game .app button:hover, body.game .app button:focus {
   justify-content: space-between;
   min-height: 3em;
 }
+
 .daggerheart .item-list .item:nth-child(even) {
   background: rgba(141, 120, 151, 0.07);
 }
+
 .daggerheart .item-list .item .item-description {
   max-height: 0;
   opacity: 0;
@@ -2203,21 +2549,27 @@ body.game .app button:hover, body.game .app button:focus {
   border-left: solid 2px var(--dh-color-gold);
   padding: 0em 1.5em;
 }
+
 .daggerheart .item-list .item .item-description > * {
   opacity: 0;
   transition: opacity 0.2s ease-out 0.1s;
 }
+
 .daggerheart .item-list .item.expanded .item-description {
+  /* Limit the expanded height so huge descriptions don't blow out the sheet */
   max-height: 200px;
-  overflow-y: auto; 
+  overflow-y: auto; /* Allow scrolling once the description exceeds the max height */
   opacity: 1;
   padding-top: 0.5em;
 }
+
 .daggerheart .item-list .item.expanded .item-description > * {
   opacity: 1;
   height: auto;
   width: 50%;
 }
+
+/* Fix image display in item descriptions */
 .daggerheart .item-list .item .item-description img {
   max-width: 100%;
   height: auto;
@@ -2226,16 +2578,20 @@ body.game .app button:hover, body.game .app button:focus {
   margin: 0.5em 0;
   display: block;
   object-fit: contain;
-  max-height: 300px; 
+  max-height: 300px; /* Reasonable maximum height for card images */
 }
+
+/* Ensure images in expanded descriptions are properly scaled */
 .daggerheart .item-list .item.expanded .item-description img {
-  transform: none; 
+  transform: none; /* Override any inherited transform that might squish the image */
 }
+
 .daggerheart .item-list .item .item-top-row {
   display: flex;
   align-items: center;
   flex-grow: 1;
 }
+
 .daggerheart .item-list .item .item-name {
   padding-left: 0.5em;
   font-size: 0.9em;
@@ -2244,9 +2600,12 @@ body.game .app button:hover, body.game .app button:focus {
   margin: 0;
   cursor: pointer;
 }
+
 .daggerheart .item-list .item .item-name:hover {
   color: var(--dh-color-gold);
 }
+
+/* Weapon slot tags */
 .daggerheart .item-list .item .item-name .weapon-slot-tag {
   display: inline-block;
   font-size: 0.7em;
@@ -2271,6 +2630,7 @@ body.game .app button:hover, body.game .app button:focus {
   border: 1px solid #6a1b9a;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
 .daggerheart .item-list .item img {
   flex: 0 0 24px;
   margin-right: 5px;
@@ -2279,17 +2639,22 @@ body.game .app button:hover, body.game .app button:focus {
   width: 100%;
   height: 25px;
 }
+
 .daggerheart .item-list .item-controls {
   flex: 0 0 36px;
   display: flex;
   gap: 5px;
 }
+
 .daggerheart .item-control {
   cursor: pointer;
 }
+
 .daggerheart .vault-content .item-control {
   display: flex;
 }
+
+/* Weapon slot label styling */
 .weapon-slot-label {
   position: absolute;
   bottom: -2px;
@@ -2305,17 +2670,22 @@ body.game .app button:hover, body.game .app button:focus {
   min-width: 8px;
   text-align: center;
 }
+
 .weapon-equip-primary.equipped .weapon-slot-label,
 .weapon-equip-secondary.equipped .weapon-slot-label {
   background: var(--color-accent);
   color: var(--color-text-dark);
   border-color: var(--color-accent);
 }
+
+/* Adjust weapon button positioning to accommodate labels */
 .weapon-equip-primary,
 .weapon-equip-secondary {
   position: relative;
   margin-right: 2px;
 }
+
+/* Weapon slot tag styling for equipped weapons in item names */
 .weapon-slot-tag {
   display: inline-block;
   font-size: 10px;
@@ -2325,21 +2695,27 @@ body.game .app button:hover, body.game .app button:focus {
   margin-left: 6px;
   text-transform: uppercase;
 }
+
 .weapon-slot-tag.primary {
   background: rgba(var(--color-accent-rgb), 0.2);
   color: var(--color-accent);
   border: 1px solid var(--color-accent);
 }
+
 .weapon-slot-tag.secondary {
   background: rgba(var(--color-secondary-rgb), 0.2);
   color: var(--color-secondary);
   border: 1px solid var(--color-secondary);
 }
+
+/* =========================================
+   Domain Abilities Sidebar (left of sheet)
+   ========================================= */
 .domain-abilities-sidebar {
   position: absolute;
   top: 15%;
-  right: 100%; 
-  transform: translateX(-8px); 
+  right: 100%; /* sit just to the left of the sheet */
+  transform: translateX(-8px); /* little gutter spacing */
   width: 110px;
   display: flex;
   flex-direction: column;
@@ -2348,6 +2724,7 @@ body.game .app button:hover, body.game .app button:focus {
   z-index: 95;
   pointer-events: auto;
 }
+
 .domain-ability-button {
   position: relative;
   width: 96px;
@@ -2358,15 +2735,19 @@ body.game .app button:hover, body.game .app button:focus {
   box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
   transition: transform 0.2s ease;
 }
+
 .domain-ability-button:hover {
   transform: scale(1.05);
 }
+
 .domain-ability-button img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
+
+/* Overlay controls (edit / delete icons) */
 .domain-ability-button .ability-overlay {
   position: absolute;
   top: 4px;
@@ -2374,8 +2755,9 @@ body.game .app button:hover, body.game .app button:focus {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  pointer-events: none; 
+  pointer-events: none; /* icons inside will still receive events */
 }
+
 .domain-ability-button .ability-overlay .item-control {
   pointer-events: all;
   background: rgba(0, 0, 0, 0.6);
@@ -2389,11 +2771,14 @@ body.game .app button:hover, body.game .app button:focus {
   font-size: 10px;
   transition: background 0.2s ease, transform 0.2s ease;
 }
+
 .domain-ability-button .ability-overlay .item-control:hover {
   background: var(--dh-color-gold, #f3c267);
   color: var(--dh-color-off-black, #0b0a13);
   transform: scale(1.1);
 }
+
+/* Name label (appears on hover) */
 .domain-ability-button .ability-name {
   position: absolute;
   left: 0;
@@ -2408,35 +2793,46 @@ body.game .app button:hover, body.game .app button:focus {
   transition: opacity 0.2s ease;
   pointer-events: none;
 }
+
 .domain-ability-button:hover .ability-name {
   opacity: 1;
 }
+
 .domain-ability-preview {
   position: fixed;
+  /* very high z-index so it never appears behind other sheet or HUD elements */
   z-index: 4000;
   pointer-events: none;
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
+
 .domain-ability-preview.show {
   opacity: 1;
   transform: scale(1);
 }
+
+/* When pinned via middle-click, make the preview interactive */
 .domain-ability-preview.pinned {
   pointer-events: auto;
 }
+
+/* Ensure preview card has a maximum width */
 .domain-preview-card {
   max-width: 260px;
   border: 1px solid var(--dh-color-gold, #f3c267);
   border-radius: var(--dh-radius-lg, 8px);
   overflow: hidden;
   box-shadow: var(--dh-shadow-lg, 0 6px 12px rgba(0, 0, 0, 0.6));
-  background: rgba(11, 10, 19, 0.95); 
+  background: rgba(11, 10, 19, 0.95); /* opaque dark backdrop */
 }
+
+/* Ensure inner content panels also have solid backdrop */
 .domain-preview-card .card-content {
-  background: transparent; 
+  background: transparent; /* inherit from parent but keep no extra transparency */
 }
+
 .domain-ability-slot.empty {
   width: 96px;
   height: 96px;
@@ -2444,11 +2840,13 @@ body.game .app button:hover, body.game .app button:focus {
   border-radius: var(--dh-radius-lg, 8px);
   opacity: 0.2;
 }
+
 .domain-ability-slot.empty.drag-over,
 .domain-abilities-sidebar.drag-over .domain-ability-slot.empty {
   opacity: 0.6;
   border-style: solid;
 }
+
 .preview-hint {
   margin: 4px 6px 6px;
   font-size: 0.65rem;
@@ -2461,9 +2859,12 @@ body.game .app button:hover, body.game .app button:focus {
   justify-content: center;
   gap: 4px;
 }
+
 .preview-hint i {
   font-size: 0.7rem;
 }
+
+/* Header Loadout Bar */
 .header-loadout-bar {
   display: flex;
   gap: var(--dh-space-sm, 0.5rem);
@@ -2472,6 +2873,7 @@ body.game .app button:hover, body.game .app button:focus {
   position: relative;
   pointer-events: auto;
 }
+
 .loadout-card-slot {
   position: relative;
   width: 145px;
@@ -2482,6 +2884,7 @@ body.game .app button:hover, body.game .app button:focus {
   box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
   transition: transform 0.2s ease;
 }
+
 .loadout-card-slot.empty {
   border: 2px dashed var(--dh-color-gold, #f3c267);
   display: flex;
@@ -2491,19 +2894,23 @@ body.game .app button:hover, body.game .app button:focus {
   color: var(--dh-color-gold, #f3c267);
   font-size: 0.7rem;
   text-transform: uppercase;
+  /* Disable hover transforms for empty slots */
 }
 .loadout-card-slot.empty:hover {
   transform: none;
 }
+
 .loadout-card-slot.empty.drag-over {
   opacity: 0.6;
 }
+
 .loadout-card-slot img.slot-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
+
 .loadout-card-slot .slot-overlay {
   position: absolute;
   top: 4px;
@@ -2513,6 +2920,7 @@ body.game .app button:hover, body.game .app button:focus {
   gap: 2px;
   pointer-events: none;
 }
+
 .loadout-card-slot .slot-overlay .slot-control {
   pointer-events: all;
   width: 16px;
@@ -2525,13 +2933,16 @@ body.game .app button:hover, body.game .app button:focus {
   align-items: center;
   justify-content: center;
 }
+
 .loadout-card-slot .slot-overlay .slot-control:hover {
   background: var(--dh-color-gold, #f3c267);
   color: var(--dh-color-off-black, #0b0a13);
 }
+
 .loadout-card-slot:hover {
   transform: scale(1.05);
 }
+
 .loadout-card-slot .slot-name {
   position: absolute;
   left: 0;
@@ -2546,27 +2957,36 @@ body.game .app button:hover, body.game .app button:focus {
   transition: opacity 0.2s ease;
   pointer-events: none;
 }
+
 .loadout-card-slot:hover .slot-name {
   opacity: 1;
 }
+
+/* push nav tabs down a bit when bar present */
 .sheet-header + nav.sheet-tabs {
   margin-top: var(--dh-space-md, 0.75rem);
 }
+
+/* Header overall layout */
 .header-wrapper {
   display: flex;
   gap: 1rem;
   align-items: center;
   margin: 0 auto;
 }
+
 .header-left {
   flex: 0 0 140px;
-  margin-right: 1rem; 
+  margin-right: 1rem; /* space between portrait and other fields */
 }
+
+/* Constrain portrait exactly to left column */
 .header-left .portrait-container {
   width: auto;
   height: auto;
   position: relative;
 }
+
 .header-right {
   flex: 1;
   display: flex;
@@ -2574,6 +2994,7 @@ body.game .app button:hover, body.game .app button:focus {
   justify-content: space-between;
   height: 85%;
 }
+
 .header-top-fields {
   margin-bottom: 0.5rem;
   display: flex;
@@ -2583,6 +3004,7 @@ body.game .app button:hover, body.game .app button:focus {
   align-content: flex-start;
   flex-wrap: nowrap;
 }
+
 .header-resources-row {
   display: flex;
   gap: 0.5rem;
@@ -2592,19 +3014,26 @@ body.game .app button:hover, body.game .app button:focus {
   z-index: 1;
   margin-top: 0.5rem;
   justify-content: space-between;
+  /*.resource-label-controls label {
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.55), 0 0 8px rgba(0, 0, 0, 0.45);
+  }*/
 }
 .header-resources-row .resource {
   min-width: 120px;
   text-align: center;
 }
+
 .header-domain {
   justify-content: flex-end;
 }
+
+/* Full-width card bar positioning */
 .header-loadout-bar {
   display: flex;
   width: 100%;
   justify-content: space-between;
 }
+
 .header-left .profile-img {
   border: none;
   border-radius: 8px;
@@ -2614,6 +3043,9 @@ body.game .app button:hover, body.game .app button:focus {
   box-shadow: 0 0 12px 4px rgba(0, 0, 0, 0.4);
   border: 1px solid black;
 }
+
+/* Feature Layer */
+/* Header */
 .sheet-header {
   display: flex;
   flex-direction: column;
@@ -2625,12 +3057,15 @@ body.game .app button:hover, body.game .app button:focus {
   overflow: visible;
   max-height: 26em;
 }
+
 .companion .sheet-header {
   max-height: 22em;
 }
+
 .npc .sheet-header {
   max-height: 22em;
 }
+
 .header-top-container {
   display: flex;
   width: 100%;
@@ -2639,6 +3074,7 @@ body.game .app button:hover, body.game .app button:focus {
   align-items: flex-start;
   margin-bottom: 0.5em;
 }
+
 .charlevel {
   display: flex;
   flex-direction: column;
@@ -2666,6 +3102,7 @@ body.game .app button:hover, body.game .app button:focus {
   font-weight: 200;
   opacity: 0.6;
 }
+
 .header-main-container {
   display: flex;
   justify-content: center;
@@ -2674,6 +3111,7 @@ body.game .app button:hover, body.game .app button:focus {
   position: relative;
   flex-wrap: nowrap;
 }
+
 .header-name-level-prof {
   display: flex;
   width: 80%;
@@ -2683,18 +3121,21 @@ body.game .app button:hover, body.game .app button:focus {
   flex-direction: row;
   gap: 2em;
 }
+
 .portrait-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
 }
+
 .portrait-image-wrapper {
   position: relative;
   width: 200px;
   height: 200px;
   flex-shrink: 0;
 }
+
 .profile-img {
   position: absolute;
   top: 0;
@@ -2709,6 +3150,7 @@ body.game .app button:hover, body.game .app button:focus {
   display: block;
   box-sizing: border-box;
 }
+
 .portrait-resources {
   display: flex;
   gap: 2em;
@@ -2718,6 +3160,7 @@ body.game .app button:hover, body.game .app button:focus {
   position: relative;
   z-index: 10;
 }
+
 .resource {
   display: flex;
   flex-direction: column;
@@ -2755,16 +3198,19 @@ body.game .app button:hover, body.game .app button:focus {
   font-size: 0.8em;
   margin-top: 5px;
 }
+
 .resource-value {
   min-width: 20px;
   text-align: center;
 }
+
 .header-bottom-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5em;
 }
+
 .charname input {
   text-transform: uppercase;
   font-size: 2em;
@@ -2783,9 +3229,11 @@ body.game .app button:hover, body.game .app button:focus {
 .charname input:focus {
   box-shadow: none;
 }
+
 .actor .charname input {
   text-align: left;
 }
+
 .header-domain {
   display: flex;
   gap: 2em;
@@ -2807,12 +3255,15 @@ body.game .app button:hover, body.game .app button:focus {
   height: auto;
   background: transparent;
 }
+
 .actor .header-domain {
   justify-content: flex-start;
 }
 .actor .header-domain input {
   text-align: left;
 }
+
+/* Item sheet header specifics */
 .item .sheet-header {
   display: flex;
   flex-direction: column;
@@ -2878,9 +3329,11 @@ body.game .app button:hover, body.game .app button:focus {
   text-transform: uppercase;
   justify-content: center;
 }
+
 .npc .portrait-container {
   align-self: center;
 }
+
 .npc .portrait-image-wrapper {
   position: relative;
   width: 200px;
@@ -2889,12 +3342,15 @@ body.game .app button:hover, body.game .app button:focus {
   align-items: center;
   justify-content: center;
 }
+
 .portrait-buttons {
   display: flex;
   gap: 0.5em;
   margin-bottom: -1em;
   z-index: 10;
 }
+
+/* Character Tab */
 .character-main-section {
   display: flex;
   flex-direction: column;
@@ -2904,12 +3360,15 @@ body.game .app button:hover, body.game .app button:focus {
   padding-top: 1em;
   height: 100%;
 }
+
 .tab.character {
   padding: 20px;
 }
+
 .tab.biography .character-main-section {
   height: 100%;
 }
+
 .character-details {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2917,6 +3376,7 @@ body.game .app button:hover, body.game .app button:focus {
   margin: auto;
   max-width: 500px;
 }
+
 .char-detail-item {
   display: flex;
   flex-direction: column;
@@ -2937,6 +3397,8 @@ body.game .app button:hover, body.game .app button:focus {
   text-align: center;
   width: 100%;
 }
+
+/* Defenses */
 .defenses {
   display: flex;
   flex-wrap: nowrap;
@@ -2948,17 +3410,21 @@ body.game .app button:hover, body.game .app button:focus {
   justify-content: space-between;
   width: 100%;
 }
+
+/* Advancement Section */
 .advancement-section {
   display: flex;
   justify-content: center;
   margin: 1.5em 0;
 }
+
 .npc .defenses {
   gap: 2em;
   margin-bottom: 2em;
   margin-top: 1em;
   overflow: hidden;
 }
+
 .defense {
   flex: 1;
   max-width: 4em;
@@ -3001,6 +3467,7 @@ body.game .app button:hover, body.game .app button:focus {
   border-radius: 0px 10px;
   z-index: 1;
 }
+
 .armorslots {
   flex: 1;
   max-width: fit-content;
@@ -3034,6 +3501,8 @@ body.game .app button:hover, body.game .app button:focus {
   color: white;
   text-align: center;
 }
+
+/* Traits */
 .traits {
   display: flex;
   flex-wrap: wrap;
@@ -3041,6 +3510,7 @@ body.game .app button:hover, body.game .app button:focus {
   align-items: center;
   justify-content: center;
 }
+
 .trait {
   flex: 1;
   min-width: 80px;
@@ -3063,6 +3533,7 @@ body.game .app button:hover, body.game .app button:focus {
   font-weight: 700;
   padding-bottom: 8px;
 }
+
 .trait-label-wrapper {
   margin-bottom: -0.75em;
   z-index: 1;
@@ -3090,6 +3561,7 @@ body.game .app button:hover, body.game .app button:focus {
 .trait-label-wrapper label:hover .trait-d12-icon {
   transform: rotate(360deg);
 }
+
 .trait-toggle {
   position: relative;
   display: flex;
@@ -3132,6 +3604,7 @@ body.game .app button:hover, body.game .app button:focus {
   font-size: 12px;
   font-weight: bold;
 }
+
 .trait-effects {
   font-size: 12px;
   display: flex;
@@ -3139,6 +3612,7 @@ body.game .app button:hover, body.game .app button:focus {
   color: #6c6a85;
   font-weight: lighter;
 }
+
 input.trait-effects.resize-ta {
   font-size: 12px;
   border: none;
@@ -3149,6 +3623,8 @@ input.trait-effects.resize-ta {
   word-break: break-word;
   word-wrap: normal;
 }
+
+/* Experience */
 .experience-group {
   display: flex;
   flex-direction: column;
@@ -3156,6 +3632,7 @@ input.trait-effects.resize-ta {
   width: 97%;
   margin: auto;
 }
+
 .experience-row {
   display: flex;
   align-items: center;
@@ -3186,6 +3663,7 @@ input.trait-effects.resize-ta {
   color: white;
   text-align: center;
 }
+
 .experience-row-column {
   display: flex;
   flex-direction: column;
@@ -3195,6 +3673,7 @@ input.trait-effects.resize-ta {
   font-size: 11px;
   opacity: 0.6;
 }
+
 .experience-row-column-2 {
   flex-grow: 1;
 }
@@ -3208,6 +3687,8 @@ input.trait-effects.resize-ta {
   color: white;
   width: 100%;
 }
+
+/* Weapons */
 .weapon-group {
   display: flex;
   flex-direction: row;
@@ -3215,10 +3696,13 @@ input.trait-effects.resize-ta {
   gap: 1em;
   justify-content: center;
 }
+
 .weapon-row {
   flex-direction: column;
   display: flex;
   margin-bottom: 5px;
+  /* Primary weapon field styling */
+  /* Secondary weapon field styling */
 }
 .weapon-row .weapon-field {
   display: flex;
@@ -3306,6 +3790,8 @@ input.trait-effects.resize-ta {
   margin: 0;
   transition: all 0.2s ease;
   font-size: 18px;
+  /* Primary weapon styling - blue gradient to match tag */
+  /* Secondary weapon styling - purple gradient to match tag */
 }
 .weapon-row .weapon-attack-button:hover {
   background: rgb(67, 63, 100);
@@ -3360,6 +3846,7 @@ input.trait-effects.resize-ta {
   min-width: 0;
   margin-bottom: 0.15em;
 }
+
 .npc .weapon-row .weapon-label,
 .companion .weapon-row .weapon-label {
   font-size: 14px;
@@ -3372,6 +3859,7 @@ input.trait-effects.resize-ta {
   justify-content: center;
   text-transform: uppercase;
 }
+
 .weapon-box {
   color: white;
   padding: 0;
@@ -3383,6 +3871,7 @@ input.trait-effects.resize-ta {
   min-width: 0;
   display: flex;
 }
+
 .weapon-box-inner {
   display: flex;
   flex-direction: column;
@@ -3392,6 +3881,7 @@ input.trait-effects.resize-ta {
   padding: 0.25em;
   flex: 1;
 }
+
 .weapon-roller-box {
   display: flex;
   flex-wrap: nowrap;
@@ -3402,6 +3892,7 @@ input.trait-effects.resize-ta {
   align-items: center;
   justify-content: space-between;
 }
+
 .textarea-container {
   display: flex;
   width: 100%;
@@ -3410,28 +3901,35 @@ input.trait-effects.resize-ta {
   justify-content: center;
   height: fit-content;
 }
+
 .actor .weapon-damage {
   width: 4.5em;
 }
+
 .npc .weapon-damage,
 .companion .weapon-damage {
   width: 4.5em;
 }
+
+/* Dying/Dead Character Styling */
 .daggerheart.sheet.character.dying .item-bg,
 .daggerheart.sheet.npc.dying .item-bg,
 .daggerheart.sheet.companion.dying .item-bg {
   filter: saturate(0.3) brightness(0.6) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
 }
+
 .daggerheart.sheet.character.dying .profile-img,
 .daggerheart.sheet.npc.dying .profile-img,
 .daggerheart.sheet.companion.dying .profile-img {
   filter: saturate(0.3) brightness(0.7) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
 }
+
 .portrait-container {
   position: relative;
 }
+
 .death-overlay {
   position: absolute;
   top: 0;
@@ -3461,12 +3959,15 @@ input.trait-effects.resize-ta {
   transform: scale(1.1);
   text-shadow: 0 0 30px rgb(139, 0, 0), 0 0 60px rgba(139, 0, 0, 0.8);
 }
+
 .portrait-buttons {
   display: flex;
   gap: 0.5em;
   margin-bottom: -1em;
   z-index: 10;
 }
+
+/* Resource Controls on Actor Sheet */
 .resource-content {
   display: flex;
   align-items: center;
@@ -3477,6 +3978,7 @@ input.trait-effects.resize-ta {
   border-radius: 5px;
   text-align: center;
 }
+
 .resource-control {
   color: var(--dh-color-gold);
   text-decoration: none;
@@ -3489,6 +3991,7 @@ input.trait-effects.resize-ta {
   color: var(--dh-color-gold-light);
   transform: scale(1.2);
 }
+
 .resource-label-controls {
   display: flex;
   align-items: center;
@@ -3502,6 +4005,7 @@ input.trait-effects.resize-ta {
 .resource-label-controls [data-trait-tooltip] {
   box-shadow: 0 0 16px 6px rgba(0, 0, 0, 0.45);
 }
+
 .armor-controls {
   display: flex;
   align-items: center;
@@ -3510,9 +4014,11 @@ input.trait-effects.resize-ta {
   position: relative;
   z-index: 1;
 }
+
 .defense .armor-controls label {
   margin-top: 0;
 }
+
 .threshold-text {
   color: #6c6a85;
   font-size: 0.75em;
@@ -3530,6 +4036,7 @@ input.trait-effects.resize-ta {
   margin: 0 0.25em;
   margin-bottom: 1.33em;
 }
+
 .threshold-clickable {
   cursor: pointer;
   transition: all 0.2s ease;
@@ -3543,6 +4050,8 @@ input.trait-effects.resize-ta {
 .threshold-clickable:active {
   transform: scale(0.95);
 }
+
+/* Threshold Group */
 .threshold-group {
   display: flex;
   flex-direction: column;
@@ -3556,6 +4065,7 @@ input.trait-effects.resize-ta {
   color: var(--dh-color-off-white);
   margin-bottom: 0.25em;
 }
+
 .threshold-values {
   display: flex;
   align-items: center;
@@ -3563,6 +4073,7 @@ input.trait-effects.resize-ta {
   flex-wrap: wrap;
   justify-content: center;
 }
+
 .threshold-group input[name="system.threshold.major"],
 .threshold-group input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
@@ -3574,23 +4085,36 @@ input.trait-effects.resize-ta {
   color: white;
   text-align: center;
 }
+
 .threshold-group .trait-effects {
   color: #6c6a85;
 }
+
+/* Legacy support for .armorslots */
 .armorslots .trait-effects {
   color: #6c6a85;
 }
+
 .armorslots input[name="system.threshold.major"],
 .armorslots input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
   background-size: contain;
   border: none;
 }
+
+/* ====================================
+   UNIFIED DAGGERHEART DIALOG SYSTEM
+   Used by all dialogs from dialog-helper.js
+   Migrated to use Global Design System classes
+   ==================================== */
+/* Base Dialog Content Container - Using global content layout */
 .daggerheart-dialog-content {
   display: flex;
   flex-direction: column;
   gap: var(--dh-space-xl);
 }
+
+/* Dialog Description Text - Using global typography */
 .daggerheart-dialog .dialog-description {
   text-align: center;
   color: var(--dh-color-gold);
@@ -3598,6 +4122,8 @@ input.trait-effects.resize-ta {
   margin: 0;
   font-size: var(--dh-font-size-lg);
 }
+
+/* Dialog Reminders/Info Boxes - Using global glass effects */
 .daggerheart-dialog .dialog-reminder {
   background: rgba(129, 204, 195, 0.2);
   border: 1px solid #81ccc3;
@@ -3614,12 +4140,16 @@ input.trait-effects.resize-ta {
 .daggerheart-dialog .dialog-reminder strong {
   color: #81ccc3;
 }
+
+/* Checkbox/Radio Group Container - Using global layout */
 .daggerheart-dialog .checkbox-group {
   display: flex;
   flex-direction: column;
   gap: var(--dh-space-md);
   margin: var(--dh-space-lg) 0;
 }
+
+/* Individual Checkbox/Radio Items - Using global glass and interactive styles */
 .daggerheart-dialog .checkbox-item {
   background: var(--dh-bg-section);
   border: 1px solid var(--dh-border-purple-light);
@@ -3628,6 +4158,7 @@ input.trait-effects.resize-ta {
   transition: var(--dh-transition-fast);
   position: relative;
   cursor: pointer;
+  /* Input positioning for inline layout - Using global checkbox styling */
 }
 .daggerheart-dialog .checkbox-item:hover {
   background: rgba(67, 63, 100, 0.5);
@@ -3715,6 +4246,8 @@ input.trait-effects.resize-ta {
   color: #a0a0a0;
   font-style: italic;
 }
+
+/* Selection Counter for Multi-Option Dialogs - Using global section styling */
 .daggerheart-dialog .selection-counter {
   text-align: center;
   padding: var(--dh-space-md);
@@ -3735,9 +4268,12 @@ input.trait-effects.resize-ta {
   border-color: #f44336;
   color: #ffcdd2;
 }
+
+/* Dialog Window Styling - Using global popup styles */
 .daggerheart-dialog .dialog-content {
   padding: var(--dh-space-sm) var(--dh-space-lg);
 }
+
 .daggerheart-dialog .window-content {
   background: var(--dh-bg-dark);
   backdrop-filter: var(--dh-blur-sm);
@@ -3746,6 +4282,7 @@ input.trait-effects.resize-ta {
   border: 1px solid var(--dh-border-purple-light);
   border-top: none;
 }
+
 .daggerheart-dialog.window-app .window-header {
   background: var(--dh-bg-dark);
   backdrop-filter: var(--dh-blur-sm);
@@ -3755,6 +4292,8 @@ input.trait-effects.resize-ta {
   border: none;
   border-radius: 0;
 }
+
+/* Dialog Button Styling - Using global button styles */
 .daggerheart-dialog .dialog-buttons {
   display: flex;
   gap: var(--dh-space-lg);
@@ -3793,6 +4332,11 @@ input.trait-effects.resize-ta {
   border-color: #433f64;
   color: #666;
 }
+
+/* ====================================
+   RECOVERY ALLOCATION DIALOG STYLES
+   Used for Risk it All recovery allocation
+   ==================================== */
 .daggerheart-dialog.recovery-dialog .dialog-content {
   background: rgba(11, 10, 19, 0.95);
   border-radius: 15px;
@@ -3805,30 +4349,35 @@ input.trait-effects.resize-ta {
   gap: 0.5em;
   max-height: 3em;
 }
+
 .daggerheart-dialog .recovery-dialog-content {
   padding: 1em;
   display: flex;
   flex-direction: column;
   gap: 0.75em;
 }
+
 .daggerheart-dialog .recovery-header {
   text-align: center;
   border-bottom: 1px solid var(--dh-color-teal);
   padding-bottom: 0.5em;
   margin-bottom: 0.5em;
 }
+
 .daggerheart-dialog .recovery-title {
   font-size: 1.2em;
   color: var(--dh-color-teal);
   margin: 0;
   font-weight: bold;
 }
+
 .daggerheart-dialog .recovery-subtitle {
   font-size: 0.9em;
   color: var(--dh-color-gold);
   margin: 0.3em 0 0 0;
   font-style: italic;
 }
+
 .daggerheart-dialog .current-status {
   display: flex;
   justify-content: space-around;
@@ -3838,27 +4387,32 @@ input.trait-effects.resize-ta {
   border: 1px solid rgba(129, 204, 195, 0.3);
   margin-bottom: 0.5em;
 }
+
 .daggerheart-dialog .status-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25em;
 }
+
 .daggerheart-dialog .status-label {
   font-size: 0.85em;
   color: var(--dh-color-gray);
   font-weight: bold;
 }
+
 .daggerheart-dialog .status-value {
   font-size: 1.1em;
   color: var(--dh-color-gold);
   font-weight: bold;
 }
+
 .daggerheart-dialog .allocation-controls {
   display: flex;
   flex-direction: column;
   gap: 0.5em;
 }
+
 .daggerheart-dialog .allocation-group {
   display: flex;
   align-items: center;
@@ -3900,6 +4454,7 @@ input.trait-effects.resize-ta {
   color: var(--dh-color-gray);
   text-align: right;
 }
+
 .daggerheart-dialog .recovery-minus,
 .daggerheart-dialog .recovery-plus {
   width: 32px;
@@ -3928,6 +4483,7 @@ input.trait-effects.resize-ta {
 .daggerheart-dialog .recovery-plus:active {
   transform: scale(0.95);
 }
+
 .daggerheart-dialog .allocation-status {
   text-align: center;
   background: rgba(67, 63, 100, 0.2);
@@ -3947,6 +4503,7 @@ input.trait-effects.resize-ta {
 .daggerheart-dialog .allocation-status #pointsAvailable {
   color: var(--dh-color-teal);
 }
+
 .daggerheart-dialog .quick-buttons {
   display: flex;
   gap: 0.5em;
@@ -3954,6 +4511,7 @@ input.trait-effects.resize-ta {
   flex-wrap: wrap;
   margin-bottom: 0.5em;
 }
+
 .daggerheart-dialog .quick-btn {
   padding: 0.4em 0.8em;
   background: rgba(109, 103, 149, 0.6);
@@ -3971,9 +4529,15 @@ input.trait-effects.resize-ta {
   color: var(--dh-color-gold);
   transform: translateY(-1px);
 }
+
+/* ====================================
+   DUALITY ROLL DIALOG STYLES
+   Used for duality roll configuration
+   ==================================== */
 .daggerheart-dialog.daggerheart-roll-dialog .dialog-content {
   padding-bottom: 0;
 }
+
 .daggerheart-dialog.daggerheart-roll-dialog .flex-row {
   align-content: center;
   align-items: center;
@@ -4081,6 +4645,8 @@ input.trait-effects.resize-ta {
   background: #433f64;
   color: var(--dh-color-gold);
 }
+
+/* Chat Messages */
 .chat-message {
   margin: 7px 4px;
   padding: 0.75em 1em;
@@ -4090,6 +4656,7 @@ input.trait-effects.resize-ta {
   border: 1px solid #6d6795;
   backdrop-filter: blur(5px);
   border-radius: 10px;
+  /* Roll Outcome Styling */
 }
 .chat-message .message-header {
   line-height: 20px;
@@ -4156,12 +4723,16 @@ input.trait-effects.resize-ta {
 .chat-message .roll-flavor-line {
   margin: 0;
 }
+
+/* Remove padding and default styling from chat messages that contain an item card */
 .chat-message:has(.item-card-chat) {
   padding: 0;
   background: transparent;
   border: none;
   backdrop-filter: none;
 }
+
+/* Daggerheart Chat Cards */
 .daggerheart.chat-card.item-card {
   display: flex;
   flex-direction: row-reverse;
@@ -4193,6 +4764,8 @@ input.trait-effects.resize-ta {
   display: flex;
   width: 100%;
 }
+
+/* Item Card in Chat */
 .message-content .item-card-chat {
   width: 100%;
   max-width: 300px;
@@ -4207,6 +4780,7 @@ input.trait-effects.resize-ta {
   backdrop-filter: blur(5px);
   color: var(--dh-color-off-white);
 }
+
 .item-card-chat .card-image-container {
   height: 150px;
   background-size: cover;
@@ -4255,6 +4829,7 @@ input.trait-effects.resize-ta {
 }
 .item-card-chat .card-description {
   font-size: 0.9em;
+  /* Override dark header colors in item-card-chat descriptions */
 }
 .item-card-chat .card-description p {
   margin: 0.5em 0;
@@ -4269,6 +4844,8 @@ input.trait-effects.resize-ta {
   color: var(--dh-color-off-white) !important;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
+
+/* Damage Roll Button in Chat */
 .damage-roll-button {
   background: rgba(11, 10, 19, 0.85);
   border: 1px solid #433f64;
@@ -4283,6 +4860,7 @@ input.trait-effects.resize-ta {
   align-items: center;
   justify-content: center;
   gap: 0.5em;
+  /* Critical Damage Button Styling */
 }
 .damage-roll-button:hover {
   background: rgba(35, 34, 43, 0.9);
@@ -4307,6 +4885,7 @@ input.trait-effects.resize-ta {
 .damage-roll-button.critical i {
   color: #ff6b6b;
 }
+
 @keyframes criticalGlow {
   0%, 100% {
     box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
@@ -4315,11 +4894,13 @@ input.trait-effects.resize-ta {
     box-shadow: 0 0 10px rgba(255, 107, 107, 0.8), 0 0 20px rgba(255, 107, 107, 0.4);
   }
 }
+/* Damage Application Buttons */
 .damage-application-buttons {
   display: flex;
   gap: 0.25em;
   margin-top: 0.5em;
 }
+
 .apply-damage-button,
 .apply-healing-button {
   flex: 1;
@@ -4353,6 +4934,7 @@ input.trait-effects.resize-ta {
 .apply-healing-button i {
   font-size: 0.9em;
 }
+
 .apply-damage-button {
   border-color: #b94a48;
   color: #ff6b6b;
@@ -4364,6 +4946,7 @@ input.trait-effects.resize-ta {
 .apply-damage-button i {
   color: #ff6b6b;
 }
+
 .apply-healing-button {
   border-color: #5bb85c;
   color: #66cc66;
@@ -4375,6 +4958,8 @@ input.trait-effects.resize-ta {
 .apply-healing-button i {
   color: #66cc66;
 }
+
+/* Damage Application Chat Messages */
 .damage-application-message {
   padding: 1em;
   margin: 0.5em 0;
@@ -4431,6 +5016,7 @@ input.trait-effects.resize-ta {
 .damage-application-message.damage-severe .damage-details {
   border-left-color: #ff6b6b;
 }
+
 .healing-application-message {
   padding: 1em;
   margin: 0.5em 0;
@@ -4463,7 +5049,10 @@ input.trait-effects.resize-ta {
 .healing-application-message .healing-success i {
   color: #ffd700;
 }
+
+/* Resource Button Styling - Global Design System */
 .dh-resource-btn, .dh-fear-btn {
+  /* Base button styling from global design system */
   display: inline-block;
   padding: 0.1rem 0.3rem;
   margin: 0 0.05rem;
@@ -4479,11 +5068,16 @@ input.trait-effects.resize-ta {
   white-space: nowrap;
   vertical-align: baseline;
   line-height: 1.2;
+  /* Glassmorphism effect */
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   color: var(--dh-color-off-white);
+  /* Primary button variant */
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Focus state for accessibility */
 }
 .dh-resource-btn.dh-btn--primary, .dh-btn--primary.dh-fear-btn {
   background: rgba(243, 194, 103, 0.12);
@@ -4505,6 +5099,9 @@ input.trait-effects.resize-ta {
   outline: 1px solid rgba(243, 194, 103, 0.4);
   outline-offset: 1px;
 }
+
+/* Unified Button Styling - Apply glassmorphism to all Foundry button types */
+/* Inline rolls, content links, and rollable buttons */
 body.game .app a.inline-roll,
 a.inline-roll.roll,
 body.game .app a.content-link,
@@ -4514,6 +5111,7 @@ body.game .app a.content-link,
 .roll-link,
 .document-link,
 .entity-link {
+  /* Apply same glassmorphism styling as resource buttons */
   display: inline-block;
   padding: 0.1rem 0.3rem;
   margin: 0 0.05rem;
@@ -4529,11 +5127,16 @@ body.game .app a.content-link,
   white-space: nowrap;
   vertical-align: baseline;
   line-height: 1.2;
+  /* Glassmorphism effect */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
   color: var(--dh-color-gold) !important;
+  /* Icon styling */
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Focus state for accessibility */
 }
 body.game .app a.inline-roll i,
 a.inline-roll.roll i,
@@ -4586,15 +5189,22 @@ body.game .app a.content-link:focus,
   outline: 1px solid rgba(243, 194, 103, 0.4) !important;
   outline-offset: 1px;
 }
+
+/* Macro Hotbar Button Styling */
 #hotbar .macro,
 .macro-sheet .macro,
 .hotbar-page .macro {
+  /* Apply glassmorphism to macro buttons */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
   border-radius: 0.3rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
   transition: all 0.15s ease;
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Macro icon styling */
+  /* Macro key styling */
 }
 #hotbar .macro:hover,
 .macro-sheet .macro:hover,
@@ -4624,9 +5234,12 @@ body.game .app a.content-link:focus,
   padding: 0.1rem 0.2rem;
   font-size: 0.6rem;
 }
+
+/* Control Tool Buttons (canvas controls) */
 #controls .control-tool,
 .control-tool,
 .scene-control {
+  /* Apply glassmorphism to control buttons */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
@@ -4634,6 +5247,8 @@ body.game .app a.content-link:focus,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
   transition: all 0.15s ease;
   color: var(--dh-color-gold) !important;
+  /* Hover effects */
+  /* Active/selected state */
 }
 #controls .control-tool:hover,
 .control-tool:hover,
@@ -4653,6 +5268,8 @@ body.game .app a.content-link:focus,
   transform: translateY(0) !important;
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.3) !important;
 }
+
+/* Dialog and Form Buttons */
 .dialog .dialog-buttons button,
 .form-group button,
 .form-footer button,
@@ -4660,6 +5277,7 @@ button.default,
 button[type=submit],
 input[type=submit],
 .button {
+  /* Apply glassmorphism to form buttons */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
@@ -4672,6 +5290,10 @@ input[type=submit],
   text-transform: none;
   letter-spacing: 0.01em;
   cursor: pointer;
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Focus state for accessibility */
+  /* Disabled state */
 }
 .dialog .dialog-buttons button:hover,
 .form-group button:hover,
@@ -4717,9 +5339,12 @@ input[type=submit]:disabled,
   transform: none !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
 }
+
+/* Directory Item Controls */
 .directory-item .item-controls .item-control,
 .directory-header .header-control,
 .folder-header .folder-control {
+  /* Apply glassmorphism to directory controls */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
@@ -4728,6 +5353,7 @@ input[type=submit]:disabled,
   transition: all 0.15s ease;
   color: var(--dh-color-gold) !important;
   padding: 0.2rem 0.3rem;
+  /* Hover effects */
 }
 .directory-item .item-controls .item-control:hover,
 .directory-header .header-control:hover,
@@ -4737,8 +5363,11 @@ input[type=submit]:disabled,
   background: rgba(243, 194, 103, 0.18) !important;
   border-color: rgba(243, 194, 103, 0.35) !important;
 }
+
+/* Chat Control Buttons */
 #chat-controls .chat-control-icon,
 .chat-control-icon {
+  /* Apply glassmorphism to chat controls */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(243, 194, 103, 0.25) !important;
@@ -4746,6 +5375,7 @@ input[type=submit]:disabled,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
   transition: all 0.15s ease;
   color: var(--dh-color-gold) !important;
+  /* Hover effects */
 }
 #chat-controls .chat-control-icon:hover,
 .chat-control-icon:hover {
@@ -4754,6 +5384,8 @@ input[type=submit]:disabled,
   background: rgba(243, 194, 103, 0.18) !important;
   border-color: rgba(243, 194, 103, 0.35) !important;
 }
+
+/* Legacy fear button styling for backward compatibility */
 .dh-fear-btn[data-action=spendFear] {
   background: rgba(220, 38, 127, 0.15);
   border: 1px solid rgba(220, 38, 127, 0.3);
@@ -4774,6 +5406,8 @@ input[type=submit]:disabled,
   border-color: rgba(255, 140, 0, 0.4);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 140, 0, 0.3);
 }
+
+/* Death Move Messages */
 .death-move-blaze {
   padding: 1em;
   margin: 0.5em 0;
@@ -4823,6 +5457,7 @@ input[type=submit]:disabled,
   margin-top: 0.5em;
   text-shadow: 0 0 8px rgba(255, 213, 79, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
+
 .death-move-blaze-complete {
   padding: 1.5em;
   margin: 0.5em 0;
@@ -4863,6 +5498,7 @@ input[type=submit]:disabled,
   position: relative;
   z-index: 1;
 }
+
 @keyframes blazeComplete {
   0%, 100% {
     box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 235, 59, 0.6), 0 0 60px rgba(255, 140, 0, 0.4);
@@ -4954,6 +5590,7 @@ input[type=submit]:disabled,
   color: #ffffff;
   opacity: 0.95;
 }
+
 .death-move-avoid-result {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -5016,6 +5653,7 @@ input[type=submit]:disabled,
   font-style: italic;
   margin-top: 0.5em;
 }
+
 .death-move-risk {
   padding: 1em;
   margin: 0.5em 0;
@@ -5052,6 +5690,7 @@ input[type=submit]:disabled,
   color: #f3e5f5;
   opacity: 0.95;
 }
+
 .death-move-risk-critical {
   padding: 1.5em;
   margin: 0.5em 0;
@@ -5087,6 +5726,7 @@ input[type=submit]:disabled,
   border-radius: 8px;
   margin-top: 1em;
 }
+
 .death-move-risk-hope {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -5114,6 +5754,7 @@ input[type=submit]:disabled,
   border-radius: 5px;
   margin-top: 1em;
 }
+
 .death-move-risk-death {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -5147,6 +5788,7 @@ input[type=submit]:disabled,
   border-radius: 5px;
   margin-top: 1em;
 }
+
 .death-move-risk-recovery {
   padding: 1em;
   margin: 0.5em 0;
@@ -5170,6 +5812,7 @@ input[type=submit]:disabled,
   font-style: italic;
   margin-top: 0.5em;
 }
+
 @keyframes riskPulse {
   0%, 100% {
     transform: scale(1);
@@ -5180,6 +5823,7 @@ input[type=submit]:disabled,
     opacity: 0.6;
   }
 }
+/* Fear Spend Message Styling */
 .fear-spend-message {
   background: linear-gradient(135deg, rgba(30, 24, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
   border: 1px solid var(--dh-color-purple-light);
@@ -5214,6 +5858,7 @@ input[type=submit]:disabled,
   color: var(--dh-color-teal);
   font-weight: 600;
 }
+
 .fear-gain-message {
   background: linear-gradient(135deg, rgba(77, 38, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
   border: 1px solid #8e24aa;
@@ -5258,6 +5903,8 @@ input[type=submit]:disabled,
   padding: 4px 8px;
   margin-top: 8px;
 }
+
+/* Stress Spend Message Styling */
 .stress-spend-message {
   background: linear-gradient(135deg, rgba(77, 38, 38, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
   border: 1px solid #d32f2f;
@@ -5302,6 +5949,8 @@ input[type=submit]:disabled,
   padding: 4px 8px;
   margin-top: 8px;
 }
+
+/* Stress Clear Message Styling */
 .stress-clear-message {
   background: linear-gradient(135deg, rgba(38, 77, 38, 0.9) 0%, rgba(10, 19, 10, 0.9) 100%);
   border: 1px solid #4caf50;
@@ -5336,6 +5985,8 @@ input[type=submit]:disabled,
   color: #a5d6a7;
   font-weight: 500;
 }
+
+/* Armor Slot Message Styling */
 .armor-slot-message {
   background: linear-gradient(135deg, rgba(96, 125, 139, 0.9) 0%, rgba(37, 47, 63, 0.9) 100%);
   border: 1px solid #607d8b;
@@ -5370,6 +6021,8 @@ input[type=submit]:disabled,
   color: #b0bec5;
   font-weight: 500;
 }
+
+/* HP Adjust Message Styling */
 .hp-adjust-message {
   background: linear-gradient(135deg, rgba(139, 69, 19, 0.9) 0%, rgba(62, 39, 35, 0.9) 100%);
   border: 1px solid #8b4513;
@@ -5404,6 +6057,8 @@ input[type=submit]:disabled,
   color: #deb887;
   font-weight: 500;
 }
+
+/* Hope Message Styling */
 .hope-spend-message {
   background: linear-gradient(135deg, rgba(57, 77, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
   border: 1px solid var(--dh-color-teal);
@@ -5448,6 +6103,7 @@ input[type=submit]:disabled,
   padding: 4px 8px;
   margin-top: 8px;
 }
+
 .hope-gain-message {
   background: linear-gradient(135deg, rgba(77, 77, 38, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
   border: 1px solid var(--dh-color-gold);
@@ -5492,6 +6148,8 @@ input[type=submit]:disabled,
   padding: 4px 8px;
   margin-top: 8px;
 }
+
+/* Undo Button Styling */
 .undo-damage-button,
 .undo-healing-button {
   background: rgba(11, 10, 19, 0.85);
@@ -5528,6 +6186,8 @@ input[type=submit]:disabled,
   font-size: 0.9em;
   color: inherit;
 }
+
+/* Undo Message Styling */
 .undo-message {
   padding: 1em;
   margin: 0.5em 0;
@@ -5556,30 +6216,45 @@ input[type=submit]:disabled,
   font-style: italic;
   color: #b0b0b0;
 }
+
+/* Hope and Fear Dice Tooltip Styling */
+/* These styles will be applied via JavaScript by adding classes to dice elements */
+/* Using CSS filters to actually transform the dice icon appearance */
+/* Hope Die Styling - Golden appearance using filters */
 .dice-tooltip .dice-rolls .roll.die.hope-die,
 .dice-tooltip .dice-rolls .roll.die[data-flavor=Hope] {
   color: #000 !important;
   filter: sepia(1) hue-rotate(15deg) saturate(1.8) brightness(1.1) !important;
   font-weight: bold !important;
 }
+
+/* Fear Die Styling - Red appearance using filters */
 .dice-tooltip .dice-rolls .roll.die.fear-die,
 .dice-tooltip .dice-rolls .roll.die[data-flavor=Fear] {
   color: #000 !important;
   filter: sepia(1) hue-rotate(-175deg) saturate(2) brightness(0.9) !important;
   font-weight: bold !important;
 }
+
+/* Hope and Fear Flavor Text Styling */
 .dice-tooltip .tooltip-part .part-header .part-flavor.hope-flavor {
   color: var(--dh-color-gold) !important;
 }
+
 .dice-tooltip .tooltip-part .part-header .part-flavor.fear-flavor {
   color: #3b75c2 !important;
 }
+
+/* Hope and Fear Text in Roll Results */
 .roll-flavor-line .hope-result {
   color: var(--dh-color-gold) !important;
 }
+
 .roll-flavor-line .fear-result {
   color: #3b75c2 !important;
 }
+
+/* Hope Automation Notice Styling */
 .hope-automation-notice {
   background: linear-gradient(135deg, rgba(255, 187, 0, 0.1) 0%, rgba(129, 204, 195, 0.1) 100%);
   border: 1px solid var(--dh-color-gold);
@@ -5608,6 +6283,7 @@ input[type=submit]:disabled,
   margin-right: 6px;
   color: var(--dh-color-gold);
 }
+
 .multi-target-armor-container .multi-target-armor-header {
   text-align: center;
   margin-bottom: 0.75em;
@@ -5725,10 +6401,13 @@ input[type=submit]:disabled,
 .multi-target-armor-container .armor-slots-ui .resource-label-controls .resource-control i {
   color: inherit;
 }
+
+/* SHINE EFFECT */
 .item-card-chat .card-image-container {
   position: relative;
   overflow: hidden;
 }
+
 .item-card-chat .card-image-container::before {
   content: "";
   position: absolute;
@@ -5742,12 +6421,15 @@ input[type=submit]:disabled,
   animation: shineMove 1s ease-in-out forwards;
   z-index: 1;
 }
+
 .item-card-chat:hover .card-image-container::before {
   animation: shineMove 1s ease-in-out forwards;
 }
+
 .domain-preview-card .card-image-container::before {
   animation: shineMove 1s ease-in-out forwards;
 }
+
 @keyframes shineMove {
   0% {
     left: -150%;
@@ -5759,6 +6441,7 @@ input[type=submit]:disabled,
 .chat-message:has(.item-card-chat) .message-content {
   padding-bottom: 0;
 }
+
 .hp-healing-message {
   background: linear-gradient(135deg, rgba(46, 64, 34, 0.9) 0%, rgba(19, 40, 29, 0.9) 100%);
   border: 1px solid #5bb85c;
@@ -5775,7 +6458,6 @@ input[type=submit]:disabled,
   margin: 0 0 8px 0;
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-bottom: none;
 }
 .hp-healing-message h3 i {
   margin-right: 8px;
@@ -5792,6 +6474,7 @@ input[type=submit]:disabled,
   color: #a5d6a7;
   font-weight: 500;
 }
+
 .rest-button {
   display: flex;
   align-items: center;
@@ -5822,6 +6505,9 @@ input[type=submit]:disabled,
   font-size: 1em;
   margin-right: 0.3em;
 }
+
+/* All dialog styles moved to unified system in dialogs.scss */
+/* Short Rest Chat Message Styles */
 .short-rest-start {
   padding: 1em;
   margin: 0.5em 0;
@@ -5843,6 +6529,7 @@ input[type=submit]:disabled,
   color: #e8f5e8;
   opacity: 0.9;
 }
+
 .short-rest-tend-wounds,
 .short-rest-clear-stress,
 .short-rest-repair-armor,
@@ -5887,6 +6574,8 @@ input[type=submit]:disabled,
   font-size: 0.9em;
   opacity: 0.9;
 }
+
+/* Long Rest Chat Message Styles */
 .long-rest-start {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -5927,6 +6616,7 @@ input[type=submit]:disabled,
   opacity: 0.95;
   font-size: 1.1em;
 }
+
 .long-rest-tend-wounds,
 .long-rest-clear-stress,
 .long-rest-repair-armor,
@@ -5979,6 +6669,7 @@ input[type=submit]:disabled,
   opacity: 0.95;
   font-weight: bold;
 }
+
 .long-rest-prepare .prepare-note,
 .long-rest-work-project .project-note {
   margin-top: 1em;
@@ -5994,9 +6685,11 @@ input[type=submit]:disabled,
   color: #e0e0e0;
   line-height: 1.4;
 }
+
 .long-rest-work-project .project-note {
   text-align: left;
 }
+
 @keyframes longRestGlow {
   0%, 100% {
     transform: scale(1) rotate(0deg);
@@ -6007,6 +6700,7 @@ input[type=submit]:disabled,
     opacity: 0.3;
   }
 }
+/* Tabs */
 .daggerheart.sheet.actor:not(.npc) .sheet-tabs,
 .daggerheart.sheet.actor.npc .sheet-tabs,
 .daggerheart.sheet.companion .sheet-tabs,
@@ -6055,10 +6749,11 @@ input[type=submit]:disabled,
   color: var(--dh-color-gold);
   text-shadow: none;
 }
+
 .nav-gem {
   width: 20px;
   height: 35px;
-  background: url("https:
+  background: url("https://i.imgur.com/VSTKJWt.png") center/contain no-repeat;
   align-self: center;
   cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease;
@@ -6077,9 +6772,12 @@ input[type=submit]:disabled,
   cursor: grabbing;
   opacity: 0.8;
 }
+
 .item nav.sheet-tabs.tabs {
   margin-top: 0.1em;
 }
+
+/* Tab categories and titles */
 .tab-title {
   display: flex;
   align-items: center;
@@ -6093,6 +6791,7 @@ input[type=submit]:disabled,
   font-weight: 550;
   margin-bottom: 1.5em;
 }
+
 .tab-category {
   display: flex;
   border-bottom: 1px solid var(--dh-color-gold-dark);
@@ -6104,12 +6803,15 @@ input[type=submit]:disabled,
   align-items: center;
   text-shadow: none;
 }
+
 .editor-content * {
   -webkit-user-select: text;
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
 }
+
+/* Fix ProseMirror editor content styling - universal fix */
 .daggerheart .editor-content p,
 .daggerheart .ProseMirror p,
 .daggerheart .item-description p {
@@ -6177,12 +6879,22 @@ input[type=submit]:disabled,
   background-color: rgba(243, 194, 103, 0.1);
   font-style: italic;
 }
+
 .prosemirror menu button {
   color: var(--dh-color-off-white);
 }
 .prosemirror menu button.active {
   color: #0b0a13;
 }
+
+/* ============================================
+   MODIFIER SYSTEM - REFACTORED WITH GLOBAL DESIGN SYSTEM
+   ============================================
+   This file now uses the global design system classes
+   while maintaining backward compatibility for existing
+   HTML structure and JavaScript interactions.
+   ============================================ */
+/* Trait value display styles - Custom background images */
 .trait-value-display {
   width: 80px;
   height: 64px;
@@ -6208,6 +6920,8 @@ input[type=submit]:disabled,
 .trait-value-display:active {
   transform: scale(0.98);
 }
+
+/* Popup overlay styles */
 .trait-edit-popup-overlay,
 .attribute-edit-popup-overlay {
   position: fixed;
@@ -6221,6 +6935,8 @@ input[type=submit]:disabled,
   justify-content: center;
   z-index: var(--dh-z-modal);
 }
+
+/* Popup container */
 .trait-edit-popup,
 .attribute-edit-popup {
   background: var(--dh-bg-dark);
@@ -6242,6 +6958,8 @@ input[type=submit]:disabled,
   transform: scale(1);
   opacity: 1;
 }
+
+/* Popup header */
 .trait-edit-header,
 .attribute-edit-header {
   background: rgba(11, 10, 19, 0.5);
@@ -6252,6 +6970,8 @@ input[type=submit]:disabled,
   align-items: center;
   position: relative;
 }
+
+/* Popup title */
 .trait-edit-label,
 .attribute-edit-label {
   color: var(--dh-color-gold);
@@ -6262,6 +6982,8 @@ input[type=submit]:disabled,
   text-align: center;
   text-shadow: var(--dh-shadow-glow);
 }
+
+/* Close button */
 .trait-edit-close,
 .attribute-edit-close {
   background: var(--dh-bg-dark);
@@ -6290,6 +7012,8 @@ input[type=submit]:disabled,
   transform: translateY(-50%) scale(1.1);
   box-shadow: var(--dh-shadow-glow-strong);
 }
+
+/* Popup content */
 .trait-edit-content,
 .attribute-edit-content {
   padding: var(--dh-space-md) var(--dh-space-lg);
@@ -6299,6 +7023,8 @@ input[type=submit]:disabled,
   min-width: 320px;
   position: relative;
 }
+
+/* Base value section */
 .trait-base-value,
 .attribute-base-value {
   background: var(--dh-bg-section);
@@ -6319,6 +7045,8 @@ input[type=submit]:disabled,
   letter-spacing: 1px;
   min-width: 80px;
 }
+
+/* Base value controls */
 .base-value-controls {
   display: flex;
   align-items: center;
@@ -6328,6 +7056,8 @@ input[type=submit]:disabled,
   flex: 1;
   min-width: 80px;
 }
+
+/* Increment/Decrement buttons */
 .base-value-decrement,
 .base-value-increment {
   background: var(--dh-bg-section);
@@ -6381,6 +7111,8 @@ input[type=submit]:disabled,
   transform: none;
   box-shadow: none;
 }
+
+/* Base input */
 .trait-base-input,
 .attribute-base-input {
   background: var(--dh-bg-input);
@@ -6430,6 +7162,8 @@ input[type=submit]:disabled,
   font-size: 14px;
   opacity: 0.7;
 }
+
+/* Modifiers section */
 .trait-modifiers-section,
 .attribute-modifiers-section {
   background: rgba(0, 0, 0, 0.2);
@@ -6437,6 +7171,8 @@ input[type=submit]:disabled,
   border-radius: var(--dh-radius-xl);
   padding: var(--dh-space-sm) var(--dh-space-lg);
 }
+
+/* Modifiers header */
 .modifiers-header {
   display: flex;
   justify-content: space-between;
@@ -6450,6 +7186,8 @@ input[type=submit]:disabled,
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
+/* Add modifier button */
 .add-modifier-btn {
   background: rgba(243, 194, 103, 0.2);
   border: 1px solid var(--dh-color-gold);
@@ -6472,6 +7210,8 @@ input[type=submit]:disabled,
   transform: scale(1.1) rotate(90deg);
   box-shadow: var(--dh-shadow-glow);
 }
+
+/* Modifiers list */
 .modifiers-list {
   display: flex;
   flex-direction: column;
@@ -6492,6 +7232,8 @@ input[type=submit]:disabled,
   border-radius: 2px;
   opacity: 0.6;
 }
+
+/* Modifier row */
 .modifier-row {
   display: flex;
   align-items: center;
@@ -6531,6 +7273,8 @@ input[type=submit]:disabled,
   position: relative;
   z-index: 2;
 }
+
+/* Modifier inputs */
 .modifier-name {
   flex: 1;
   background: var(--dh-bg-input);
@@ -6546,6 +7290,7 @@ input[type=submit]:disabled,
   border-color: var(--dh-color-gold);
   background: var(--dh-bg-input-focus);
 }
+
 .modifier-value {
   background: var(--dh-bg-input);
   border: 1px solid var(--dh-border-purple);
@@ -6563,6 +7308,8 @@ input[type=submit]:disabled,
   border-color: var(--dh-color-gold);
   background: var(--dh-bg-input-focus);
 }
+
+/* Modifier checkbox */
 .modifier-toggle {
   width: 18px;
   height: 18px;
@@ -6597,6 +7344,8 @@ input[type=submit]:disabled,
   border-color: var(--dh-color-gold);
   transform: scale(1.1);
 }
+
+/* Modifier delete button */
 .modifier-delete {
   background: rgba(255, 68, 68, 0.2);
   border: 1px solid rgba(255, 68, 68, 0.4);
@@ -6619,6 +7368,8 @@ input[type=submit]:disabled,
   transform: scale(1.1) rotate(90deg);
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
 }
+
+/* Total section */
 .trait-total,
 .attribute-total {
   background: linear-gradient(135deg, rgba(243, 194, 103, 0.1) 0%, rgba(243, 194, 103, 0.05) 100%);
@@ -6640,6 +7391,8 @@ input[type=submit]:disabled,
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
+/* Total value */
 .trait-total-value,
 .attribute-total-value {
   color: var(--dh-color-gold-light);
@@ -6647,6 +7400,11 @@ input[type=submit]:disabled,
   font-size: var(--dh-font-size-2xl);
   text-shadow: var(--dh-shadow-glow);
 }
+
+/* ============================================
+   DISPLAY ELEMENTS - CUSTOM BACKGROUNDS
+   ============================================ */
+/* Generic attribute value display */
 .attribute-value-display {
   cursor: pointer;
   user-select: none;
@@ -6661,6 +7419,8 @@ input[type=submit]:disabled,
 .attribute-value-display:active {
   transform: scale(0.98);
 }
+
+/* Defense-specific value displays */
 .defense-value-display {
   cursor: pointer;
   user-select: none;
@@ -6683,13 +7443,21 @@ input[type=submit]:disabled,
 .defense-value-display:active {
   transform: scale(0.98);
 }
+
 .defense[data-defense=evasion] .defense-value-display {
   background-image: url("icons/Evade BG-2.png");
 }
+
+/* ============================================
+   SIMPLE POPUP STYLES
+   ============================================ */
+/* Simple popup content - Custom sizing */
 .attribute-edit-simple .attribute-edit-content {
   min-width: 250px;
   padding: 1.25rem;
 }
+
+/* Simple value container */
 .attribute-simple-value {
   background: var(--dh-bg-section);
   border: 1px solid var(--dh-border-purple);
@@ -6700,6 +7468,8 @@ input[type=submit]:disabled,
   justify-content: center;
   padding: 1rem;
 }
+
+/* Simple input */
 .attribute-simple-input {
   background: var(--dh-bg-input);
   border: 1px solid var(--dh-border-purple);
@@ -6718,6 +7488,11 @@ input[type=submit]:disabled,
   background: var(--dh-bg-input-focus);
   box-shadow: var(--dh-shadow-focus);
 }
+
+/* ============================================
+   WEAPON DISPLAY STYLES - CUSTOM COMPONENTS
+   ============================================ */
+/* Weapon modifier display */
 .weapon-modifier-display {
   cursor: pointer;
   user-select: none;
@@ -6745,6 +7520,8 @@ input[type=submit]:disabled,
 .weapon-modifier-display:active {
   transform: scale(0.98);
 }
+
+/* Weapon damage display */
 .weapon-damage-display {
   transition: var(--dh-transition-fast);
   width: 4.5em;
@@ -6768,6 +7545,11 @@ input[type=submit]:disabled,
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
   transform: translateY(-1px);
 }
+
+/* ============================================
+   DAMAGE POPUP STYLES - USING GLOBAL SYSTEM
+   ============================================ */
+/* Damage popup overlay */
 .damage-edit-popup-overlay {
   position: fixed;
   top: 0;
@@ -6781,6 +7563,8 @@ input[type=submit]:disabled,
   z-index: var(--dh-z-modal);
   backdrop-filter: blur(4px);
 }
+
+/* Damage popup container */
 .damage-edit-popup {
   background: linear-gradient(135deg, rgba(27, 25, 48, 0.95), rgba(11, 10, 19, 0.95));
   backdrop-filter: var(--dh-blur-md);
@@ -6801,6 +7585,8 @@ input[type=submit]:disabled,
   transform: scale(1);
   opacity: 1;
 }
+
+/* Damage popup header - Custom gold header */
 .damage-edit-header {
   background: var(--dh-color-gold);
   color: rgba(11, 10, 19, 0.9);
@@ -6813,11 +7599,15 @@ input[type=submit]:disabled,
   top: 0;
   z-index: 10;
 }
+
+/* Damage popup title */
 .damage-edit-label {
   font-size: 1.2rem;
   font-weight: 700;
   margin: 0;
 }
+
+/* Damage popup close button - Custom styling for gold header */
 .damage-edit-close {
   background: none;
   border: none;
@@ -6837,10 +7627,14 @@ input[type=submit]:disabled,
 .damage-edit-close:hover {
   background: rgba(11, 10, 19, 0.1);
 }
+
+/* Damage popup content - Using global content */
 .damage-edit-content {
   padding: 1.5rem;
   color: var(--dh-color-off-white);
 }
+
+/* Damage base value section */
 .damage-base-value {
   margin-bottom: 1.5rem;
 }
@@ -6853,6 +7647,8 @@ input[type=submit]:disabled,
   display: block;
   margin-bottom: 0.5rem;
 }
+
+/* Damage base input */
 .damage-base-input {
   background: var(--dh-bg-input);
   border: 1px solid var(--dh-border-purple);
@@ -6874,9 +7670,13 @@ input[type=submit]:disabled,
 .damage-base-input::placeholder {
   color: rgba(159, 159, 159, 0.6);
 }
+
+/* Damage modifiers section */
 .damage-modifiers-section {
   margin-bottom: 1.5rem;
 }
+
+/* Damage modifier row - Custom grid layout */
 .damage-modifier-row {
   display: grid;
   grid-template-columns: 1fr auto auto auto;
@@ -6900,6 +7700,8 @@ input[type=submit]:disabled,
 .damage-modifier-row.disabled .damage-modifier-value {
   opacity: 0.6;
 }
+
+/* Damage modifier inputs */
 .damage-modifier-name,
 .damage-modifier-value {
   background: var(--dh-bg-input);
@@ -6921,15 +7723,20 @@ input[type=submit]:disabled,
 .damage-modifier-value::placeholder {
   color: rgba(159, 159, 159, 0.5);
 }
+
 .damage-modifier-value {
   width: 80px;
   text-align: center;
 }
+
+/* Damage modifier toggle - Using global checkbox styling */
 .damage-modifier-toggle {
   width: 16px;
   height: 16px;
   accent-color: var(--dh-color-gold);
 }
+
+/* Damage modifier delete - Custom delete button */
 .damage-modifier-delete {
   background: rgba(185, 55, 55, 0.8);
   border: none;
@@ -6949,6 +7756,8 @@ input[type=submit]:disabled,
   background: rgb(185, 55, 55);
   transform: scale(1.1);
 }
+
+/* Damage total section */
 .damage-total {
   background: linear-gradient(135deg, rgba(243, 194, 103, 0.1) 0%, rgba(243, 194, 103, 0.05) 100%);
   border: 1px solid var(--dh-color-gold);
@@ -6971,12 +7780,19 @@ input[type=submit]:disabled,
   display: block;
   margin-bottom: 0.5rem;
 }
+
+/* Damage total value */
 .damage-total-value {
   color: var(--dh-color-gold-light);
   font-weight: var(--dh-font-weight-bold);
   font-size: var(--dh-font-size-2xl);
   text-shadow: var(--dh-shadow-glow);
 }
+
+/* ============================================
+   EQUIPPED WEAPON MODIFIER SYSTEM STYLES
+   ============================================ */
+/* Equipped weapon indicator */
 .equipped-weapon-indicator {
   margin-top: 0.5rem;
   padding: 0.5rem;
@@ -6990,6 +7806,8 @@ input[type=submit]:disabled,
   color: var(--dh-color-gold);
   font-style: italic;
 }
+
+/* Locked weapon inputs */
 .weapon-locked {
   background: rgba(67, 63, 100, 0.2) !important;
   border-color: rgba(67, 63, 100, 0.5) !important;
@@ -7005,6 +7823,8 @@ input[type=submit]:disabled,
   outline: none !important;
   border-color: rgba(67, 63, 100, 0.5) !important;
 }
+
+/* Locked buttons */
 button.weapon-locked {
   opacity: 0.5;
   cursor: not-allowed;
@@ -7014,6 +7834,9 @@ button.weapon-locked:hover {
   color: rgba(255, 255, 255, 0.6) !important;
   transform: none !important;
 }
+
+/* Sheet Tracker Styles */
+/* Ensure the Daggerheart actor, npc, and item sheets have proper positioning and overflow handling */
 .daggerheart.sheet.actor,
 .daggerheart.sheet.npc,
 .daggerheart.sheet.item {
@@ -7026,6 +7849,7 @@ button.weapon-locked:hover {
   overflow: visible !important;
   max-height: 97%;
 }
+
 .sheet-tracker-sidebar {
   position: absolute;
   left: 100%;
@@ -7038,7 +7862,10 @@ button.weapon-locked:hover {
   transition: all 0.3s ease-in-out;
 }
 .sheet-tracker-sidebar.expanded {
+  /* Keep the same left position but show the panel */
 }
+
+/* Main tracker button */
 .tracker-main-button {
   width: 45px;
   height: 36px;
@@ -7064,6 +7891,8 @@ button.weapon-locked:hover {
 .tracker-main-button i {
   font-size: 16px;
 }
+
+/* Container for individual tracker buttons */
 .tracker-buttons-container {
   display: flex;
   flex-direction: column;
@@ -7071,6 +7900,8 @@ button.weapon-locked:hover {
   margin-top: 4px;
   margin-left: 0.5em;
 }
+
+/* Individual tracker buttons */
 .tracker-button {
   width: 32px;
   height: 32px;
@@ -7126,6 +7957,8 @@ button.weapon-locked:hover {
   visibility: visible;
   margin-left: 12px;
 }
+
+/* Manager panel - Using global popup styling */
 .tracker-manager-panel {
   position: absolute;
   left: 120%;
@@ -7153,6 +7986,8 @@ button.weapon-locked:hover {
   transform: translateY(0) scale(1);
   pointer-events: all;
 }
+
+/* Manager header - Using global popup header styling */
 .tracker-manager-header {
   background: rgba(11, 10, 19, 0.5);
   border-bottom: 1px solid var(--dh-color-gold);
@@ -7198,6 +8033,8 @@ button.weapon-locked:hover {
   transform: translateY(-50%) scale(1.1);
   box-shadow: var(--dh-shadow-glow-strong);
 }
+
+/* Manager content - Using global content layout */
 .tracker-manager-content {
   padding: var(--dh-space-md) var(--dh-space-lg);
   display: flex;
@@ -7208,9 +8045,12 @@ button.weapon-locked:hover {
   overflow-y: auto;
   flex: 1;
 }
+
 .tracker-value-input {
   max-width: 40px;
 }
+
+/* Add tracker form - Using global section styling */
 .tracker-add-form {
   background: var(--dh-bg-section);
   padding: var(--dh-space-sm) var(--dh-space-lg);
@@ -7353,6 +8193,8 @@ button.weapon-locked:hover {
   transform: scale(0.98);
   box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
 }
+
+/* Tracker list */
 .tracker-list {
   background: rgba(0, 0, 0, 0.2);
   padding: 0.5em 1rem;
@@ -7376,6 +8218,8 @@ button.weapon-locked:hover {
   border-radius: 8px;
   border: 1px solid transparent;
 }
+
+/* Tracker list item */
 .tracker-list-item {
   display: flex;
   align-items: center;
@@ -7437,6 +8281,8 @@ button.weapon-locked:hover {
   transform: scale(1.1) rotate(90deg);
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
 }
+
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -7450,13 +8296,21 @@ button.weapon-locked:hover {
 .tracker-button {
   animation: fadeIn 0.3s ease-out;
 }
+
+/* Dark mode compatibility */
 .daggerheart .sheet-tracker-sidebar {
+  /* Additional theme-specific styles can go here */
 }
+
+/* ----------------------------------------- */
+/* Sidebar Navigation Buttons                */
+/* ----------------------------------------- */
 .sidebar-nav-buttons {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+
 .nav-button {
   width: 45px;
   height: 36px;
@@ -7512,10 +8366,16 @@ button.weapon-locked:hover {
   visibility: visible;
   margin-left: 12px;
 }
+
+/* Completely hide the original nav bar but keep it in the DOM for fallback */
 .daggerheart.sheet.actor .sheet-tabs,
 .daggerheart.sheet.npc .sheet-tabs {
   display: none !important;
 }
+
+/* ----------------------------------------- */
+/* Tooltip for tracker main button            */
+/* ----------------------------------------- */
 .tracker-main-button::after {
   content: attr(title);
   position: absolute;
@@ -7538,11 +8398,18 @@ button.weapon-locked:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   z-index: 1000;
 }
+
 .tracker-main-button:hover::after {
   opacity: 1;
   visibility: visible;
   margin-left: 12px;
 }
+
+/* ============================================
+   ITEM SHEET STYLES
+   Matching the chat card design for consistency
+   ============================================ */
+/* Item Sheet Card Structure */
 .daggerheart.sheet.item .item-sheet-card {
   background: none;
   border: none;
@@ -7551,6 +8418,8 @@ button.weapon-locked:hover {
   display: flex;
   flex-direction: column;
 }
+
+/* Image and Title Container */
 .daggerheart.sheet.item .image-title-container {
   position: relative;
   overflow: hidden;
@@ -7575,6 +8444,7 @@ button.weapon-locked:hover {
   z-index: 1;
   pointer-events: none;
 }
+
 .daggerheart.sheet.item .profile-img {
   position: absolute;
   top: 0;
@@ -7588,6 +8458,8 @@ button.weapon-locked:hover {
   border: none;
   border-radius: 0;
 }
+
+/* Item Title Styling */
 .daggerheart.sheet.item .image-title-container .card-header-text {
   z-index: 100;
   position: relative;
@@ -7616,6 +8488,8 @@ button.weapon-locked:hover {
   border-radius: 4px;
   padding: 2px;
 }
+
+/* Item Title Styling */
 .daggerheart.sheet.item .card-header-text {
   z-index: 1;
   position: relative;
@@ -7644,6 +8518,8 @@ button.weapon-locked:hover {
   border-radius: 4px;
   padding: 2px;
 }
+
+/* Card Content Area */
 .daggerheart.sheet.item .item-card-content {
   background: rgba(11, 10, 19, 0.8392156863);
   backdrop-filter: blur(5px);
@@ -7656,6 +8532,8 @@ button.weapon-locked:hover {
   overflow: auto;
   max-height: fit-content;
 }
+
+/* Category and Rarity Section */
 .daggerheart.sheet.item .card-subtitle {
   margin-bottom: 20px;
   border-bottom: 1px solid #433f64;
@@ -7695,11 +8573,15 @@ button.weapon-locked:hover {
   opacity: 0.8;
   font-weight: bold;
 }
+
+/* Description Editor Section */
 .daggerheart.sheet.item .card-description {
   height: auto;
 }
 .daggerheart.sheet.item .card-description .description-editor {
   min-height: auto;
+  /* ProseMirror Editor Styling */
+  /* Editor Menu Bar */
 }
 .daggerheart.sheet.item .card-description .description-editor .editor {
   border: 1px solid #433f64;
@@ -7713,6 +8595,10 @@ button.weapon-locked:hover {
   color: var(--dh-color-off-white);
   line-height: 1.6;
   font-size: 0.95em;
+  /* Style headers in the editor */
+  /* Style lists */
+  /* Style blockquotes */
+  /* Style code */
 }
 .daggerheart.sheet.item .card-description .description-editor .editor .ProseMirror:focus {
   outline: none;
@@ -7777,15 +8663,19 @@ button.weapon-locked:hover {
   color: var(--dh-color-gold);
   border-color: var(--dh-color-gold);
 }
+
+/* Window styling to match the card theme */
 .daggerheart.sheet.item .window-content {
   background: transparent;
   padding: 0;
   overflow: visible !important;
   position: relative;
 }
+
 .daggerheart.sheet.item {
   overflow: visible !important;
 }
+
 .daggerheart.sheet.item .window-header {
   background: rgba(11, 10, 19, 0.9);
   border-bottom: 1px solid #6d6795;
@@ -7795,9 +8685,17 @@ button.weapon-locked:hover {
   color: var(--dh-color-gold);
   font-weight: bold;
 }
+
+/* ============================================
+   WEAPON SHEET SPECIFIC STYLES
+   ============================================ */
+/* Extend existing item sheet styles to weapon sheets */
 .daggerheart.sheet.item,
 .daggerheart.sheet.weapon {
+  /* All existing item sheet styles automatically apply */
 }
+
+/* Weapon-specific field styling */
 .daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs {
   display: flex;
   align-items: center;
@@ -7918,6 +8816,8 @@ button.weapon-locked:hover {
   content: "1d8";
   opacity: 0.6;
 }
+
+/* Weapon toggle equip button styling */
 .daggerheart.sheet.actor .weapon-toggle-equip {
   display: inline-flex;
   align-items: center;
@@ -7949,6 +8849,8 @@ button.weapon-locked:hover {
   font-size: 12px;
   line-height: 1;
 }
+
+/* Responsive adjustments for weapons */
 @media (max-width: 768px) {
   .daggerheart.sheet.weapon .weapon-fields .weapon-top-row,
   .daggerheart.sheet.weapon .weapon-fields .weapon-bottom-row {
@@ -7965,6 +8867,7 @@ button.weapon-locked:hover {
     display: none;
   }
 }
+/* Original responsive adjustments */
 @media (max-width: 600px) {
   .daggerheart.sheet.item .card-image-container {
     height: 150px;
@@ -8011,10 +8914,12 @@ button.weapon-locked:hover {
   --font-size-36:2.25rem;
   --font-size-42:2.625rem;
 }
+
 * {
   scrollbar-width: none !important;
   scrollbar-color: white transparent;
 }
+
 .window-app .window-header a {
   flex: 0 0 30px;
   overflow: hidden;
@@ -8026,12 +8931,12 @@ button.weapon-locked:hover {
 .window-app .window-header a i {
   font-size: 14px;
 }
+
 ::-webkit-scrollbar {
   width: 5px !important;
   height: 5px !important;
 }
-.daggerheart {
-}
+
 .daggerheart a {
   cursor: auto;
   text-shadow: none;
@@ -8110,6 +9015,7 @@ button.weapon-locked:hover {
   min-width: 350px;
   min-height: 400px;
 }
+
 .actor .window-content, .item .window-content, .npc .window-content {
   background: transparent;
   background-color: transparent;
@@ -8119,9 +9025,11 @@ button.weapon-locked:hover {
   border-top: none;
   position: relative;
 }
+
 .item .window-content {
   padding: 1em 2em;
 }
+
 .actor .window-header, .npc .window-header, .item .window-header {
   background: transparent;
   backdrop-filter: blur(5px);
@@ -8136,19 +9044,23 @@ button.weapon-locked:hover {
   border-radius: 10px 10px 0 0;
   position: relative;
 }
+
 .actor, .npc {
   background: transparent;
 }
+
 .sheet.actor, .sheet.npc, .sheet.item {
   background: rgba(11, 10, 19, 0.8392156863);
   backdrop-filter: blur(5px);
 }
+
 .daggerheart .actor input[type=text], .daggerheart .actor input[type=number], .daggerheart .actor input[type=password], .daggerheart .actor input[type=date], .daggerheart .actor input[type=time], .daggerheart .actor input[type=search] {
   color: #f0f0e0;
 }
 .daggerheart .npc input[type=text], .daggerheart .npc input[type=number], .daggerheart .npc input[type=password], .daggerheart .npc input[type=date], .daggerheart .npc input[type=time], .daggerheart .npc input[type=search] {
   color: #f0f0e0;
 }
+
 .item-bg {
   position: absolute;
   top: -2vh;
@@ -8165,6 +9077,7 @@ button.weapon-locked:hover {
   -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   margin: auto;
 }
+
 .daggerheart.sheet.item {
   background-size: cover;
   background-position: center center;
@@ -8173,6 +9086,7 @@ button.weapon-locked:hover {
   text-shadow: 1px 1px 2px black;
   border-radius: 10px;
 }
+
 .item .sheet-header .profile-img {
   flex: 0 0 100px;
   margin-right: 10px;
@@ -8200,6 +9114,7 @@ button.weapon-locked:hover {
   position: relative;
   z-index: 1;
 }
+
 .counter-ui {
   display: flex;
   align-items: center;
@@ -8280,37 +9195,44 @@ button.weapon-locked:hover {
 .counter-ui .counter-minus:active, .counter-ui .counter-plus:active {
   transform: scale(0.95);
 }
+
 #ui-bottom {
   flex-direction: column;
   gap: 0;
   display: flex;
   align-items: center;
 }
+
 #counter-ui {
   isolation: isolate;
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
+
 .token-counter {
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
+
 #ui-bottom > .counter-ui {
   margin-left: 0.25em;
   margin-right: 0.25em;
 }
+
 #token-hp-counter {
   margin-right: 0.5em;
 }
 #token-hp-counter .counter-value {
   min-width: 60px;
 }
+
 #token-hope-counter {
   margin-left: 0.5em;
 }
 #token-hope-counter .counter-value {
   min-width: 60px;
 }
+
 .counters-wrapper {
   display: flex;
   flex-direction: row;
@@ -8319,6 +9241,7 @@ button.weapon-locked:hover {
   gap: 0;
   margin-bottom: 0.5em;
 }
+
 .daggerheart [data-trait-tooltip] {
   position: relative;
 }
@@ -8379,6 +9302,7 @@ button.weapon-locked:hover {
 .daggerheart [data-trait-tooltip][data-trait-tooltip=""]:not(.show-tooltip)::after, .daggerheart [data-trait-tooltip][data-trait-tooltip=""]:not(.show-tooltip)::before {
   display: none;
 }
+
 .treasure-tracker {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -8392,6 +9316,7 @@ button.weapon-locked:hover {
   margin-left: auto;
   margin-right: auto;
 }
+
 .treasure-item {
   display: flex;
   flex-direction: row;
@@ -8423,6 +9348,7 @@ button.weapon-locked:hover {
   outline: none;
   box-shadow: 0 0 0 2px rgba(243, 194, 103, 0.3);
 }
+
 .treasure-icon {
   display: flex;
   align-items: center;
@@ -8447,6 +9373,7 @@ button.weapon-locked:hover {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 @media (max-width: 768px) {
   .treasure-tracker {
     grid-template-columns: repeat(2, 1fr);
@@ -8598,7 +9525,7 @@ button.weapon-locked:hover {
 }
 .daggerheart .item-list .item.expanded .item-description {
   max-height: 200px;
-  overflow-y: auto; 
+  overflow-y: auto;
   opacity: 1;
   transform: scaleY(1);
   padding-top: 0.5em;
@@ -8641,6 +9568,7 @@ button.weapon-locked:hover {
 .daggerheart .vault-content .item-control {
   display: flex;
 }
+
 .sheet-header {
   display: flex;
   flex-direction: column;
@@ -8652,9 +9580,11 @@ button.weapon-locked:hover {
   overflow: visible;
   max-height: 26em;
 }
+
 .npc .sheet-header {
   max-height: 22em;
 }
+
 .header-top-container {
   display: flex;
   width: 100%;
@@ -8663,6 +9593,7 @@ button.weapon-locked:hover {
   align-items: flex-start;
   margin-bottom: 0.5em;
 }
+
 .charlevel {
   display: flex;
   flex-direction: column;
@@ -8690,6 +9621,7 @@ button.weapon-locked:hover {
   font-weight: 200;
   opacity: 0.6;
 }
+
 .header-main-container {
   display: flex;
   justify-content: center;
@@ -8698,6 +9630,7 @@ button.weapon-locked:hover {
   position: relative;
   flex-wrap: nowrap;
 }
+
 .header-name-level-prof {
   display: flex;
   width: 80%;
@@ -8707,18 +9640,21 @@ button.weapon-locked:hover {
   flex-direction: row;
   gap: 2em;
 }
+
 .portrait-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
 }
+
 .portrait-image-wrapper {
   position: relative;
   width: 200px;
   height: 200px;
   flex-shrink: 0;
 }
+
 .profile-img {
   position: absolute;
   top: 0;
@@ -8734,6 +9670,7 @@ button.weapon-locked:hover {
   display: block;
   box-sizing: border-box;
 }
+
 .portrait-resources {
   display: flex;
   gap: 2em;
@@ -8743,6 +9680,7 @@ button.weapon-locked:hover {
   position: relative;
   z-index: 10;
 }
+
 .resource {
   display: flex;
   flex-direction: column;
@@ -8780,16 +9718,19 @@ button.weapon-locked:hover {
   font-size: 0.8em;
   margin-top: 5px;
 }
+
 .resource-value {
   min-width: 20px;
   text-align: center;
 }
+
 .header-bottom-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5em;
 }
+
 .charname input {
   text-transform: uppercase;
   font-size: 2em;
@@ -8808,6 +9749,7 @@ button.weapon-locked:hover {
 .charname input:focus {
   box-shadow: none;
 }
+
 .header-domain {
   display: flex;
   gap: 2em;
@@ -8829,6 +9771,7 @@ button.weapon-locked:hover {
   height: auto;
   background: transparent;
 }
+
 .item .sheet-header {
   display: flex;
   flex-direction: column;
@@ -8894,6 +9837,7 @@ button.weapon-locked:hover {
   text-transform: uppercase;
   justify-content: center;
 }
+
 .npc .portrait-container {
   align-self: center;
 }
@@ -8905,12 +9849,14 @@ button.weapon-locked:hover {
   align-items: center;
   justify-content: center;
 }
+
 .portrait-buttons {
   display: flex;
   gap: 0.5em;
   margin-bottom: -1em;
   z-index: 10;
 }
+
 .character-main-section {
   display: flex;
   flex-direction: column;
@@ -8920,12 +9866,14 @@ button.weapon-locked:hover {
   padding-top: 1em;
   height: 100%;
 }
+
 .tab.character {
   padding: 20px;
 }
 .tab.biography .character-main-section {
   height: 100%;
 }
+
 .character-details {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -8933,6 +9881,7 @@ button.weapon-locked:hover {
   margin: auto;
   max-width: 500px;
 }
+
 .char-detail-item {
   display: flex;
   flex-direction: column;
@@ -8953,11 +9902,13 @@ button.weapon-locked:hover {
   text-align: center;
   width: 100%;
 }
+
 .advancement-section {
   display: flex;
   justify-content: center;
   margin: 1.5em 0;
 }
+
 .npc .defenses,
 .companion .defenses {
   gap: 2em;
@@ -8965,6 +9916,7 @@ button.weapon-locked:hover {
   margin-top: 1em;
   overflow: hidden;
 }
+
 .npc-defense-section,
 .companion-defense-section {
   display: flex;
@@ -8974,12 +9926,14 @@ button.weapon-locked:hover {
   gap: 2em;
   margin-bottom: 2em;
 }
+
 .companion-weapon-section {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .defense {
   flex: 1;
   max-width: 4em;
@@ -9022,6 +9976,7 @@ button.weapon-locked:hover {
   border-radius: 0px 10px;
   z-index: 1;
 }
+
 .advancement-group {
   flex: 1;
   max-width: fit-content;
@@ -9034,11 +9989,13 @@ button.weapon-locked:hover {
 .advancement-group label {
   text-transform: uppercase;
 }
+
 .advancement-values {
   display: flex;
   align-items: center;
   gap: 6px;
 }
+
 .advancement-group .resource-group {
   display: flex;
   flex-direction: column;
@@ -9055,6 +10012,7 @@ button.weapon-locked:hover {
   color: white;
   text-align: center;
 }
+
 .defense-group {
   display: flex;
   flex-direction: row;
@@ -9063,6 +10021,7 @@ button.weapon-locked:hover {
   justify-content: center;
   flex: 0 1 auto;
 }
+
 .threshold-group {
   flex: 1;
   max-width: fit-content;
@@ -9075,11 +10034,13 @@ button.weapon-locked:hover {
 .threshold-group label {
   text-transform: uppercase;
 }
+
 .threshold-values {
   display: flex;
   align-items: center;
   gap: 4px;
 }
+
 .threshold-group .resource-group {
   display: flex;
   flex-direction: column;
@@ -9096,6 +10057,7 @@ button.weapon-locked:hover {
   color: white;
   text-align: center;
 }
+
 .traits {
   display: flex;
   flex-wrap: wrap;
@@ -9103,6 +10065,7 @@ button.weapon-locked:hover {
   align-items: center;
   justify-content: center;
 }
+
 .trait {
   flex: 1;
   min-width: 80px;
@@ -9125,6 +10088,7 @@ button.weapon-locked:hover {
   font-weight: 700;
   padding-bottom: 8px;
 }
+
 .trait-label-wrapper {
   margin-bottom: -0.75em;
   z-index: 1;
@@ -9152,6 +10116,7 @@ button.weapon-locked:hover {
 .trait-label-wrapper label:hover .trait-d12-icon {
   transform: rotate(360deg);
 }
+
 .trait-toggle {
   position: relative;
   display: flex;
@@ -9194,6 +10159,7 @@ button.weapon-locked:hover {
   font-size: 12px;
   font-weight: bold;
 }
+
 .trait-effects {
   font-size: 12px;
   display: flex;
@@ -9201,6 +10167,7 @@ button.weapon-locked:hover {
   color: #6c6a85;
   font-weight: lighter;
 }
+
 input.trait-effects.resize-ta {
   font-size: 11px;
   border: none;
@@ -9215,6 +10182,7 @@ input.trait-effects.resize-ta {
   box-sizing: border-box;
   overflow: hidden;
 }
+
 .experience-group {
   display: flex;
   flex-direction: column;
@@ -9222,6 +10190,7 @@ input.trait-effects.resize-ta {
   width: 97%;
   margin: auto;
 }
+
 .experience-row {
   display: flex;
   align-items: center;
@@ -9252,6 +10221,7 @@ input.trait-effects.resize-ta {
   color: white;
   text-align: center;
 }
+
 .experience-row-column {
   display: flex;
   flex-direction: column;
@@ -9261,6 +10231,7 @@ input.trait-effects.resize-ta {
   font-size: 11px;
   opacity: 0.6;
 }
+
 .experience-row-column-2 {
   flex-grow: 1;
 }
@@ -9274,6 +10245,7 @@ input.trait-effects.resize-ta {
   color: white;
   width: 100%;
 }
+
 .weapon-group {
   display: flex;
   flex-direction: row;
@@ -9282,6 +10254,7 @@ input.trait-effects.resize-ta {
   justify-content: space-between;
   width: 100%;
 }
+
 .weapon-row {
   flex: 1;
   flex-direction: column;
@@ -9357,6 +10330,7 @@ input.trait-effects.resize-ta {
 .weapon-row .weapon-to-hit {
   width: 35px !important;
 }
+
 .npc .weapon-row .weapon-label,
 .companion .weapon-row .weapon-label {
   font-size: 14px;
@@ -9369,6 +10343,7 @@ input.trait-effects.resize-ta {
   justify-content: center;
   text-transform: uppercase;
 }
+
 .textarea-container {
   display: block;
   width: 100%;
@@ -9377,11 +10352,13 @@ input.trait-effects.resize-ta {
   box-sizing: border-box;
   overflow: hidden;
 }
+
 .actor .weapon-damage, .npc .weapon-damage {
   width: 4.5em;
   max-width: 4.5em;
   flex-shrink: 0;
 }
+
 .daggerheart.sheet.character.dying .item-bg, .daggerheart.sheet.npc.dying .item-bg {
   filter: saturate(0.3) brightness(0.6) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
@@ -9390,9 +10367,11 @@ input.trait-effects.resize-ta {
   filter: saturate(0.3) brightness(0.7) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
 }
+
 .portrait-container {
   position: relative;
 }
+
 .death-overlay {
   position: absolute;
   top: 0;
@@ -9422,12 +10401,14 @@ input.trait-effects.resize-ta {
   transform: scale(1.1);
   text-shadow: 0 0 30px rgb(139, 0, 0), 0 0 60px rgba(139, 0, 0, 0.8);
 }
+
 .portrait-buttons {
   display: flex;
   gap: 0.5em;
   margin-bottom: -1em;
   z-index: 10;
 }
+
 .resource-content {
   display: flex;
   align-items: center;
@@ -9438,6 +10419,7 @@ input.trait-effects.resize-ta {
   border-radius: 5px;
   text-align: center;
 }
+
 .resource-control {
   color: var(--dh-color-gold);
   text-decoration: none;
@@ -9450,6 +10432,7 @@ input.trait-effects.resize-ta {
   color: var(--dh-color-gold-light);
   transform: scale(1.2);
 }
+
 .resource-label-controls {
   display: flex;
   align-items: center;
@@ -9460,6 +10443,7 @@ input.trait-effects.resize-ta {
 .resource-label-controls label {
   margin: 0;
 }
+
 .armor-controls {
   display: flex;
   align-items: center;
@@ -9468,9 +10452,11 @@ input.trait-effects.resize-ta {
   position: relative;
   z-index: 1;
 }
+
 .defense .armor-controls label {
   margin-top: 0;
 }
+
 .threshold-clickable {
   cursor: pointer;
   transition: opacity 0.2s ease, color 0.2s ease;
@@ -9479,14 +10465,17 @@ input.trait-effects.resize-ta {
   opacity: 1;
   color: var(--dh-color-gold);
 }
+
 .threshold-group .trait-effects {
   color: #6c6a85;
 }
+
 .daggerheart-dialog-content {
   display: flex;
   flex-direction: column;
   gap: 1.5em;
 }
+
 .daggerheart-dialog .dialog-description {
   text-align: center;
   color: var(--dh-color-gold);
@@ -9962,6 +10951,7 @@ input.trait-effects.resize-ta {
   background: #433f64;
   color: var(--dh-color-gold);
 }
+
 .chat-message {
   margin: 7px 4px;
   padding: 0.75em 1em;
@@ -10043,6 +11033,7 @@ input.trait-effects.resize-ta {
   border: none;
   backdrop-filter: none;
 }
+
 .daggerheart.chat-card.item-card {
   display: flex;
   flex-direction: row-reverse;
@@ -10074,6 +11065,7 @@ input.trait-effects.resize-ta {
   display: flex;
   width: 100%;
 }
+
 .message-content .item-card-chat {
   width: 100%;
   box-sizing: border-box;
@@ -10085,6 +11077,7 @@ input.trait-effects.resize-ta {
   backdrop-filter: blur(5px);
   color: var(--dh-color-off-white);
 }
+
 .item-card-chat .card-image-container {
   height: 150px;
   background-size: cover;
@@ -10147,6 +11140,7 @@ input.trait-effects.resize-ta {
   color: var(--dh-color-off-white) !important;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
+
 .damage-roll-button {
   background: rgba(11, 10, 19, 0.85);
   border: 1px solid #433f64;
@@ -10185,6 +11179,7 @@ input.trait-effects.resize-ta {
 .damage-roll-button.critical i {
   color: #ff6b6b;
 }
+
 @keyframes criticalGlow {
   0%, 100% {
     box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
@@ -10205,6 +11200,7 @@ body.game .app a.inline-roll i,
 a.inline-roll.roll i {
   color: #f3c267;
 }
+
 body.game .app a.content-link,
 .content-link,
 .inline-roll {
@@ -10223,6 +11219,7 @@ body.game .app a.content-link i,
   color: var(--dh-color-gold);
   margin-right: 0.25em;
 }
+
 .death-move-blaze {
   padding: 1em;
   margin: 0.5em 0;
@@ -10272,6 +11269,7 @@ body.game .app a.content-link i,
   margin-top: 0.5em;
   text-shadow: 0 0 8px rgba(255, 213, 79, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
+
 .death-move-blaze-complete {
   padding: 1.5em;
   margin: 0.5em 0;
@@ -10312,6 +11310,7 @@ body.game .app a.content-link i,
   position: relative;
   z-index: 1;
 }
+
 @keyframes blazeComplete {
   0%, 100% {
     box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 235, 59, 0.6), 0 0 60px rgba(255, 140, 0, 0.4);
@@ -10403,6 +11402,7 @@ body.game .app a.content-link i,
   color: #ffffff;
   opacity: 0.95;
 }
+
 .death-move-avoid-result {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -10465,6 +11465,7 @@ body.game .app a.content-link i,
   font-style: italic;
   margin-top: 0.5em;
 }
+
 .death-move-risk {
   padding: 1em;
   margin: 0.5em 0;
@@ -10501,6 +11502,7 @@ body.game .app a.content-link i,
   color: #f3e5f5;
   opacity: 0.95;
 }
+
 .death-move-risk-critical {
   padding: 1.5em;
   margin: 0.5em 0;
@@ -10536,6 +11538,7 @@ body.game .app a.content-link i,
   border-radius: 8px;
   margin-top: 1em;
 }
+
 .death-move-risk-hope {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -10563,6 +11566,7 @@ body.game .app a.content-link i,
   border-radius: 5px;
   margin-top: 1em;
 }
+
 .death-move-risk-death {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -10596,6 +11600,7 @@ body.game .app a.content-link i,
   border-radius: 5px;
   margin-top: 1em;
 }
+
 .death-move-risk-recovery {
   padding: 1em;
   margin: 0.5em 0;
@@ -10619,6 +11624,7 @@ body.game .app a.content-link i,
   font-style: italic;
   margin-top: 0.5em;
 }
+
 @keyframes riskPulse {
   0%, 100% {
     transform: scale(1);
@@ -10659,6 +11665,7 @@ body.game .app a.content-link i,
   font-size: 1em;
   margin-right: 0.3em;
 }
+
 .short-rest-start {
   padding: 1em;
   margin: 0.5em 0;
@@ -10680,6 +11687,7 @@ body.game .app a.content-link i,
   color: #e8f5e8;
   opacity: 0.9;
 }
+
 .short-rest-tend-wounds, .short-rest-clear-stress, .short-rest-repair-armor, .short-rest-prepare {
   padding: 1em;
   margin: 0.5em 0;
@@ -10688,10 +11696,12 @@ body.game .app a.content-link i,
   border-radius: 8px;
   text-align: center;
 }
+
 .short-rest-tend-wounds p, .short-rest-clear-stress p, .short-rest-repair-armor p, .short-rest-prepare p {
   color: #ffffff;
   margin: 0.5em 0;
 }
+
 .short-rest-tend-wounds p:first-child, .short-rest-clear-stress p:first-child, .short-rest-repair-armor p:first-child, .short-rest-prepare p:first-child {
   color: #a5d6a7;
   font-weight: bold;
@@ -10700,15 +11710,18 @@ body.game .app a.content-link i,
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
 .short-rest-tend-wounds strong, .short-rest-clear-stress strong, .short-rest-repair-armor strong, .short-rest-prepare strong {
   color: var(--dh-color-gold);
   font-size: 1.1em;
 }
+
 .short-rest-tend-wounds em, .short-rest-clear-stress em, .short-rest-repair-armor em, .short-rest-prepare em {
   color: #e8f5e8;
   font-size: 0.9em;
   opacity: 0.9;
 }
+
 .long-rest-start {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -10749,6 +11762,7 @@ body.game .app a.content-link i,
   opacity: 0.95;
   font-size: 1.1em;
 }
+
 .long-rest-tend-wounds, .long-rest-clear-stress, .long-rest-repair-armor, .long-rest-prepare, .long-rest-work-project {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -10758,10 +11772,12 @@ body.game .app a.content-link i,
   text-align: center;
   box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
 }
+
 .long-rest-tend-wounds p, .long-rest-clear-stress p, .long-rest-repair-armor p, .long-rest-prepare p, .long-rest-work-project p {
   color: #ffffff;
   margin: 0.5em 0;
 }
+
 .long-rest-tend-wounds p:first-child, .long-rest-clear-stress p:first-child, .long-rest-repair-armor p:first-child, .long-rest-prepare p:first-child, .long-rest-work-project p:first-child {
   color: #ce93d8;
   font-weight: bold;
@@ -10771,16 +11787,19 @@ body.game .app a.content-link i,
   letter-spacing: 1px;
   margin-bottom: 0.75em;
 }
+
 .long-rest-tend-wounds strong, .long-rest-clear-stress strong, .long-rest-repair-armor strong, .long-rest-prepare strong, .long-rest-work-project strong {
   color: var(--dh-color-gold);
   font-size: 1.1em;
 }
+
 .long-rest-tend-wounds em, .long-rest-clear-stress em, .long-rest-repair-armor em, .long-rest-prepare em, .long-rest-work-project em {
   color: #f3e5f5;
   font-size: 0.95em;
   opacity: 0.95;
   font-weight: bold;
 }
+
 .long-rest-prepare .prepare-note, .long-rest-work-project .project-note {
   margin-top: 1em;
   padding: 0.75em;
@@ -10788,12 +11807,14 @@ body.game .app a.content-link i,
   border: 1px solid #6d6795;
   border-radius: 6px;
 }
+
 .long-rest-prepare .prepare-note p {
   margin: 0.25em 0;
   font-size: 0.9em;
   color: #e0e0e0;
   line-height: 1.4;
 }
+
 .long-rest-work-project .project-note {
   text-align: left;
 }
@@ -10803,6 +11824,7 @@ body.game .app a.content-link i,
   color: #e0e0e0;
   line-height: 1.4;
 }
+
 @keyframes longRestGlow {
   0%, 100% {
     transform: scale(1) rotate(0deg);
@@ -10850,10 +11872,12 @@ body.game .app a.content-link i,
   border-bottom: 4px solid var(--dh-color-gold);
   text-shadow: none;
 }
+
 .nav-gem {
   width: 20px;
   height: 35px;
-  background: url("https:
+  background: url("icons/svg/d20-grey.svg") no-repeat center center;
+  background-size: contain;
   align-self: center;
   cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease;
@@ -10872,9 +11896,11 @@ body.game .app a.content-link i,
   cursor: grabbing;
   opacity: 0.8;
 }
+
 .item nav.sheet-tabs.tabs {
   margin-top: 0.1em;
 }
+
 .tab-title {
   display: flex;
   align-items: center;
@@ -10888,12 +11914,14 @@ body.game .app a.content-link i,
   font-weight: 550;
   margin-bottom: 1.5em;
 }
+
 .editor-content * {
   -webkit-user-select: text;
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
 }
+
 .daggerheart .editor-content p, .daggerheart .ProseMirror p, .daggerheart .item-description p {
   margin: 0.5em 0 !important;
   padding-left: 0 !important;
@@ -10949,12 +11977,14 @@ body.game .app a.content-link i,
   background-color: rgba(243, 194, 103, 0.1);
   font-style: italic;
 }
+
 .prosemirror menu button {
   color: var(--dh-color-off-white);
 }
 .prosemirror menu button.active {
   color: #0b0a13;
 }
+
 .trait-value-display {
   width: 80px;
   height: 64px;
@@ -10977,6 +12007,7 @@ body.game .app a.content-link i,
 .trait-value-display:hover {
   transform: scale(1.05);
 }
+
 .trait-edit-popup-overlay, .attribute-edit-popup-overlay {
   position: fixed;
   top: 0;
@@ -10989,6 +12020,7 @@ body.game .app a.content-link i,
   justify-content: center;
   background: rgba(0, 0, 0, 0.6);
 }
+
 .trait-edit-popup, .attribute-edit-popup {
   background: rgba(11, 10, 19, 0.8392156863);
   backdrop-filter: blur(10px);
@@ -11002,6 +12034,7 @@ body.game .app a.content-link i,
   position: relative;
   overflow: hidden;
 }
+
 .trait-edit-header, .attribute-edit-header {
   background: rgba(11, 10, 19, 0.5);
   border-bottom: 1px solid var(--dh-color-gold);
@@ -11011,6 +12044,7 @@ body.game .app a.content-link i,
   align-items: center;
   position: relative;
 }
+
 .trait-edit-label, .attribute-edit-label {
   color: var(--dh-color-gold);
   font-weight: 600;
@@ -11020,6 +12054,7 @@ body.game .app a.content-link i,
   text-align: center;
   text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
 }
+
 .trait-edit-close, .attribute-edit-close {
   background: rgba(11, 10, 19, 0.85);
   border: 2px solid rgba(243, 194, 103, 0.5);
@@ -11041,12 +12076,14 @@ body.game .app a.content-link i,
   transform: translateY(-50%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
+
 .trait-edit-close:hover, .attribute-edit-close:hover {
   background: var(--dh-color-gold);
   color: var(--dh-color-off-black);
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 0 15px rgba(243, 194, 103, 0.6);
 }
+
 .trait-edit-content, .attribute-edit-content {
   padding: 0.75rem 1rem;
   display: flex;
@@ -11055,6 +12092,7 @@ body.game .app a.content-link i,
   min-width: 320px;
   position: relative;
 }
+
 .trait-base-value, .attribute-base-value {
   display: flex;
   align-items: center;
@@ -11065,6 +12103,7 @@ body.game .app a.content-link i,
   border: 1px solid rgba(109, 103, 149, 0.3);
   justify-content: center;
 }
+
 .trait-base-value label, .attribute-base-value label {
   color: var(--dh-color-gold);
   font-weight: 600;
@@ -11073,6 +12112,7 @@ body.game .app a.content-link i,
   font-size: 0.85rem;
   letter-spacing: 1px;
 }
+
 .base-value-controls {
   display: flex;
   align-items: center;
@@ -11082,6 +12122,7 @@ body.game .app a.content-link i,
   flex: 1;
   min-width: 80px;
 }
+
 .base-value-decrement, .base-value-increment {
   background: rgba(67, 63, 100, 0.6);
   border: 1px solid #6d6795;
@@ -11098,6 +12139,7 @@ body.game .app a.content-link i,
   transition: all 0.2s ease;
   user-select: none;
 }
+
 .base-value-decrement:hover, .base-value-increment:hover {
   background: var(--dh-color-gold);
   color: var(--dh-color-off-black);
@@ -11105,10 +12147,12 @@ body.game .app a.content-link i,
   transform: scale(1.1);
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.5);
 }
+
 .base-value-decrement:active, .base-value-increment:active {
   transform: scale(0.95);
   box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
 }
+
 .trait-base-input, .attribute-base-input {
   background: rgba(11, 10, 19, 0.6);
   border: 1px solid #433f64;
@@ -11121,18 +12165,21 @@ body.game .app a.content-link i,
   width: 50px;
   transition: all 0.3s ease;
 }
+
 .trait-base-input:focus, .attribute-base-input:focus {
   outline: none;
   border-color: var(--dh-color-gold);
   background: rgba(11, 10, 19, 0.8);
   box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
 }
+
 .trait-modifiers-section, .attribute-modifiers-section {
   background: rgba(0, 0, 0, 0.2);
   padding: 0.5em 1rem;
   border-radius: 10px;
   border: 1px solid #433f64;
 }
+
 .modifiers-header {
   display: flex;
   justify-content: space-between;
@@ -11146,6 +12193,7 @@ body.game .app a.content-link i,
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
 .add-modifier-btn {
   background: rgba(243, 194, 103, 0.2);
   color: var(--dh-color-gold);
@@ -11169,6 +12217,7 @@ body.game .app a.content-link i,
   transform: scale(1.1) rotate(90deg);
   box-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
 }
+
 .modifiers-list {
   display: flex;
   flex-direction: column;
@@ -11189,6 +12238,7 @@ body.game .app a.content-link i,
   border-radius: 2px;
   opacity: 0.6;
 }
+
 .modifier-row {
   display: flex;
   align-items: center;
@@ -11226,6 +12276,7 @@ body.game .app a.content-link i,
   position: relative;
   z-index: 2;
 }
+
 .modifier-name {
   flex: 1;
   background: rgba(11, 10, 19, 0.5);
@@ -11241,6 +12292,7 @@ body.game .app a.content-link i,
   background: rgba(11, 10, 19, 0.7);
   outline: none;
 }
+
 .modifier-value {
   background: rgba(11, 10, 19, 0.5);
   border: 1px solid #433f64;
@@ -11258,6 +12310,7 @@ body.game .app a.content-link i,
   background: rgba(11, 10, 19, 0.7);
   outline: none;
 }
+
 .modifier-toggle {
   width: 18px;
   height: 18px;
@@ -11297,6 +12350,7 @@ body.game .app a.content-link i,
   border-color: var(--dh-color-gold);
   transform: scale(1.1);
 }
+
 .modifier-delete {
   background: rgba(255, 68, 68, 0.2);
   color: #ff6b6b;
@@ -11320,6 +12374,7 @@ body.game .app a.content-link i,
   transform: scale(1.1) rotate(90deg);
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
 }
+
 .trait-total, .attribute-total {
   display: flex;
   align-items: center;
@@ -11332,6 +12387,7 @@ body.game .app a.content-link i,
   margin-top: 0.25rem;
   box-shadow: 0 2px 8px rgba(243, 194, 103, 0.2);
 }
+
 .trait-total label, .attribute-total label {
   color: var(--dh-color-gold);
   font-weight: 600;
@@ -11339,12 +12395,14 @@ body.game .app a.content-link i,
   font-size: 0.9rem;
   letter-spacing: 1px;
 }
+
 .trait-total-value, .attribute-total-value {
   color: var(--dh-color-gold-light);
   font-size: 1.4rem;
   font-weight: 700;
   text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
 }
+
 .attribute-value-display {
   cursor: pointer;
   transition: all 0.2s ease;
@@ -11356,6 +12414,7 @@ body.game .app a.content-link i,
 .attribute-value-display:hover {
   transform: scale(1.05);
 }
+
 .defense-value-display {
   width: 64px;
   height: 64px;
@@ -11369,13 +12428,16 @@ body.game .app a.content-link i,
   font-weight: 700;
   padding-bottom: 6px;
 }
+
 .defense[data-defense=evasion] .defense-value-display {
   background-image: url("icons/Evade BG-2.png");
 }
+
 .attribute-edit-simple .attribute-edit-content {
   min-width: 250px;
   padding: 1.25rem;
 }
+
 .attribute-simple-value {
   display: flex;
   justify-content: center;
@@ -11385,6 +12447,7 @@ body.game .app a.content-link i,
   border-radius: 10px;
   border: 1px solid rgba(109, 103, 149, 0.3);
 }
+
 .attribute-simple-input {
   background: rgba(11, 10, 19, 0.6);
   border: 1px solid #433f64;
@@ -11403,6 +12466,7 @@ body.game .app a.content-link i,
   background: rgba(11, 10, 19, 0.8);
   box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
 }
+
 .weapon-modifier-display {
   width: 45px;
   height: 30px;
@@ -11423,6 +12487,7 @@ body.game .app a.content-link i,
   border-color: var(--dh-color-gold-light);
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
 }
+
 .daggerheart.sheet.actor {
   overflow: visible !important;
 }
@@ -11431,6 +12496,7 @@ body.game .app a.content-link i,
   overflow: visible !important;
   max-height: 97%;
 }
+
 .sheet-tracker-sidebar {
   position: absolute;
   left: 100%;
@@ -11441,8 +12507,6 @@ body.game .app a.content-link i,
   gap: 0.5em;
   z-index: 100;
   transition: all 0.3s ease-in-out;
-}
-.sheet-tracker-sidebar.expanded {
 }
 .tracker-main-button {
   width: 45px;
@@ -11469,6 +12533,7 @@ body.game .app a.content-link i,
 .tracker-main-button i {
   font-size: 16px;
 }
+
 .tracker-buttons-container {
   display: flex;
   flex-direction: column;
@@ -11476,6 +12541,7 @@ body.game .app a.content-link i,
   margin-top: 4px;
   margin-left: 0.5em;
 }
+
 .tracker-button {
   width: 32px;
   height: 32px;
@@ -11531,6 +12597,7 @@ body.game .app a.content-link i,
   visibility: visible;
   margin-left: 12px;
 }
+
 .tracker-manager-panel {
   position: absolute;
   left: 120%;
@@ -11558,6 +12625,7 @@ body.game .app a.content-link i,
   transform: translateY(0) scale(1);
   pointer-events: all;
 }
+
 .tracker-manager-header {
   background: rgba(11, 10, 19, 0.5);
   border-bottom: 1px solid var(--dh-color-gold);
@@ -11603,6 +12671,7 @@ body.game .app a.content-link i,
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 0 15px rgba(243, 194, 103, 0.6);
 }
+
 .tracker-manager-content {
   padding: 0.75rem 1rem;
   display: flex;
@@ -11613,9 +12682,11 @@ body.game .app a.content-link i,
   overflow-y: auto;
   flex: 1;
 }
+
 .tracker-value-input {
   max-width: 40px;
 }
+
 .tracker-add-form {
   background: rgba(67, 63, 100, 0.2);
   padding: 0.5em 1rem;
@@ -11756,6 +12827,7 @@ body.game .app a.content-link i,
   transform: scale(0.98);
   box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
 }
+
 .tracker-list {
   background: rgba(0, 0, 0, 0.2);
   padding: 0.5em 1rem;
@@ -11779,6 +12851,7 @@ body.game .app a.content-link i,
   border-radius: 8px;
   border: 1px solid transparent;
 }
+
 .tracker-list-item {
   display: flex;
   align-items: center;
@@ -11840,6 +12913,7 @@ body.game .app a.content-link i,
   transform: scale(1.1) rotate(90deg);
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -11852,6 +12926,4 @@ body.game .app a.content-link i,
 }
 .tracker-button {
   animation: fadeIn 0.3s ease-out;
-}
-.daggerheart .sheet-tracker-sidebar {
 }

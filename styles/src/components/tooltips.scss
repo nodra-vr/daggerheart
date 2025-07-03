@@ -1,14 +1,19 @@
+/* Tooltip Components */
 .daggerheart [data-trait-tooltip] {
   position: relative;
+
   &.trait-label-wrapper [data-trait-tooltip],
   &.defense [data-trait-tooltip] {
     cursor: pointer;
   }
+
   &.resource [data-trait-tooltip],
   &.header-main-container [data-trait-tooltip] {
     cursor: help;
   }
 }
+
+/* JavaScript-based tooltips */
 .daggerheart-tooltip {
   position: fixed;
   z-index: 99999;
@@ -16,10 +21,12 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+  
   &.show {
     opacity: 1;
     visibility: visible;
   }
+  
   .tooltip-content {
     background: rgba(11, 10, 19, 0.95);
     color: var(--dh-color-off-white);
@@ -36,6 +43,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     font-family: inherit;
   }
+  
   .tooltip-arrow {
     position: absolute;
     bottom: -6px;
@@ -47,6 +55,7 @@
     border-right: 6px solid transparent;
     border-top: 6px solid var(--dh-color-gold);
   }
+  
   &.below {
     .tooltip-arrow {
       top: -6px;

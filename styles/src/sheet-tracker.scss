@@ -1,13 +1,18 @@
+/* Sheet Tracker Styles */
+
+/* Ensure the Daggerheart actor, npc, and item sheets have proper positioning and overflow handling */
 .daggerheart.sheet.actor,
 .daggerheart.sheet.npc,
 .daggerheart.sheet.item {
   overflow: visible !important;
+
   .window-content {
     position: relative;
     overflow: visible !important;
     max-height: 97%;
   }
 }
+
 .sheet-tracker-sidebar {
   position: absolute;
   left: 100%;
@@ -18,9 +23,13 @@
   gap: .5em;
   z-index: 100;
   transition: all 0.3s ease-in-out;
+  
   &.expanded {
+    /* Keep the same left position but show the panel */
   }
 }
+
+/* Main tracker button */
 .tracker-main-button {
   width: 45px;
   height: 36px;
@@ -36,16 +45,20 @@
   position: relative;
   z-index: 100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  
   &:hover {
     background: var(--dh-color-gold);
     color: var(--dh-color-off-black);
     transform: scale(1.1);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
   }
+  
   i {
     font-size: 16px;
   }
 }
+
+/* Container for individual tracker buttons */
 .tracker-buttons-container {
   display: flex;
   flex-direction: column;
@@ -53,6 +66,8 @@
   margin-top: 4px;
   margin-left: .5em;
 }
+
+/* Individual tracker buttons */
 .tracker-button {
   width: 32px;
   height: 32px;
@@ -68,18 +83,22 @@
   position: relative;
   user-select: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  
   &:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
+  
   &:active {
     transform: scale(0.95);
   }
+  
   .tracker-button-value {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     text-stroke: 1px rgba(0, 0, 0, 0.8);
     font-size: 2.15em;
   }
+  
   &::after {
     content: attr(data-tracker-name);
     position: absolute;
@@ -102,12 +121,15 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     z-index: 1000;
   }
+  
   &:hover::after {
     opacity: 1;
     visibility: visible;
     margin-left: 12px;
   }
 }
+
+/* Manager panel - Using global popup styling */
 .tracker-manager-panel {
   position: absolute;
   left: 120%;
@@ -128,6 +150,7 @@
   transition: var(--dh-transition-fast);
   pointer-events: none;
   overflow: hidden;
+
   &.show {
     opacity: 1;
     visibility: visible;
@@ -135,6 +158,8 @@
     pointer-events: all;
   }
 }
+
+/* Manager header - Using global popup header styling */
 .tracker-manager-header {
   background: rgba(11, 10, 19, 0.5);
   border-bottom: 1px solid var(--dh-color-gold);
@@ -143,6 +168,7 @@
   justify-content: center;
   align-items: center;
   position: relative;
+
   span {
     color: var(--dh-color-gold);
     font-weight: var(--dh-font-weight-semibold);
@@ -152,6 +178,7 @@
     text-align: center;
     text-shadow: var(--dh-shadow-glow);
   }
+
   .tracker-manager-close {
     background: var(--dh-bg-dark);
     border: 2px solid var(--dh-border-gold-subtle);
@@ -172,6 +199,7 @@
     top: 50%;
     transform: translateY(-50%);
     box-shadow: var(--dh-shadow-sm);
+
     &:hover {
       background: var(--dh-color-gold);
       color: var(--dh-color-off-black);
@@ -180,6 +208,8 @@
     }
   }
 }
+
+/* Manager content - Using global content layout */
 .tracker-manager-content {
   padding: var(--dh-space-md) var(--dh-space-lg);
   display: flex;
@@ -190,19 +220,25 @@
   overflow-y: auto;
   flex: 1;
 }
+
 .tracker-value-input {
   max-width: 40px;
 }
+
+/* Add tracker form - Using global section styling */
 .tracker-add-form {
   background: var(--dh-bg-section);
   padding: var(--dh-space-sm) var(--dh-space-lg);
   border-radius: var(--dh-radius-xl);
   border: 1px solid var(--dh-border-purple);
+
   .form-group {
     margin-bottom: var(--dh-space-md);
+
     &:last-of-type {
       margin-bottom: var(--dh-space-lg);
     }
+
     label {
       color: var(--dh-color-gold);
       font-weight: var(--dh-font-weight-semibold);
@@ -212,6 +248,7 @@
       margin-bottom: var(--dh-space-xs);
       display: block;
     }
+
     input[type="text"],
     input[type="number"] {
       background: var(--dh-bg-input);
@@ -222,6 +259,7 @@
       font-size: var(--dh-font-size-sm);
       width: 100%;
       transition: var(--dh-transition-normal);
+
       &:focus {
         outline: none;
         border-color: var(--dh-color-gold);
@@ -230,13 +268,16 @@
       }
     }
   }
+
   .form-group-horizontal {
     display: flex;
     gap: var(--dh-space-lg);
     margin-bottom: var(--dh-space-lg);
   }
+
   .form-group-half {
     flex: 1;
+
     label {
       color: var(--dh-color-gold);
       font-weight: var(--dh-font-weight-semibold);
@@ -247,6 +288,7 @@
       display: block;
     }
   }
+
   .value-inputs {
     background: var(--dh-color-off-black);
     border: 1px solid var(--dh-color-gold);
@@ -256,6 +298,7 @@
     align-items: center;
     gap: 5px;
     box-shadow: var(--dh-shadow-sm);
+    
     input[type="number"] {
       background: transparent;
       border: none;
@@ -265,6 +308,7 @@
       width: 2.5em;
       font-weight: 700;
       min-width: 0;
+      
       &:focus {
         box-shadow: none;
         background: rgba(255, 255, 255, 0.1);
@@ -272,16 +316,19 @@
         outline: none;
       }
     }
+    
     .value-separator {
       color: var(--dh-color-gold);
       font-weight: bold;
       font-size: 1.2em;
     }
   }
+  
   .color-input-wrapper {
     display: flex;
     align-items: center;
     gap: var(--dh-space-sm);
+
     input[type="color"] {
       width: 40px;
       height: 32px;
@@ -290,14 +337,17 @@
       border-radius: var(--dh-radius-md);
       cursor: pointer;
       padding: 2px;
+
       &::-webkit-color-swatch-wrapper {
         padding: 0;
       }
+
       &::-webkit-color-swatch {
         border: none;
         border-radius: var(--dh-radius-sm);
       }
     }
+
     .color-preview {
       width: 20px;
       height: 20px;
@@ -306,6 +356,7 @@
       box-shadow: var(--dh-shadow-sm);
     }
   }
+
   .tracker-add-button {
     background: rgba(243, 194, 103, 0.2);
     color: var(--dh-color-gold);
@@ -322,23 +373,28 @@
     gap: var(--dh-space-sm);
     width: 100%;
     box-shadow: var(--dh-shadow-sm);
+
     &:hover {
       background: var(--dh-color-gold);
       color: var(--dh-color-off-black);
       transform: scale(1.02);
       box-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
     }
+    
     &:active {
       transform: scale(0.98);
       box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
     }
   }
 }
+
+/* Tracker list */
 .tracker-list {
   background: rgba(0, 0, 0, 0.2);
   padding: 0.5em 1rem;
   border-radius: 10px;
   border: 1px solid #433f64;
+  
   .tracker-list-header {
     color: var(--dh-color-gold);
     font-weight: 600;
@@ -347,6 +403,7 @@
     letter-spacing: 1px;
     margin-bottom: 0.5rem;
   }
+  
   .tracker-list-items {
     .no-trackers {
       color: rgba(242, 243, 244, 0.6);
@@ -359,6 +416,8 @@
     }
   }
 }
+
+/* Tracker list item */
 .tracker-list-item {
   display: flex;
   align-items: center;
@@ -370,13 +429,16 @@
   position: relative;
   transition: all 0.2s ease;
   margin-bottom: 0.5rem;
+  
   &:nth-child(even) {
     background: rgba(141, 120, 151, 0.05);
   }
+  
   &:hover {
     background: rgba(67, 63, 100, 0.3);
     border-color: rgba(243, 194, 103, 0.3);
   }
+  
   .tracker-item-color {
     width: 18px;
     height: 18px;
@@ -384,17 +446,20 @@
     flex-shrink: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
+  
   .tracker-item-name {
     flex: 1;
     color: var(--dh-color-off-white);
     font-weight: 500;
     font-size: 0.85rem;
   }
+  
   .tracker-item-value {
     color: var(--dh-color-off-white);
     font-weight: bold;
     font-size: 0.85rem;
   }
+  
   .tracker-item-delete {
     background: rgba(255, 68, 68, 0.2);
     color: #ff6b6b;
@@ -412,6 +477,7 @@
     line-height: 1;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     padding: 0;
+    
     &:hover {
       background: #ff4444;
       color: white;
@@ -420,6 +486,8 @@
     }
   }
 }
+
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -430,18 +498,28 @@
     transform: translateY(0);
   }
 }
+
 .tracker-button {
   animation: fadeIn 0.3s ease-out;
 }
+
+/* Dark mode compatibility */
 .daggerheart {
   .sheet-tracker-sidebar {
+    /* Additional theme-specific styles can go here */
   }
 }
+
+/* ----------------------------------------- */
+/* Sidebar Navigation Buttons                */
+/* ----------------------------------------- */
+
 .sidebar-nav-buttons {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+
 .nav-button {
   width: 45px;
   height: 36px;
@@ -456,19 +534,23 @@
   transition: all 0.2s ease;
   position: relative;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
   i {
     font-size: 14px;
   }
+
   &:hover {
     background: var(--dh-color-gold);
     color: var(--dh-color-off-black);
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
+
   &.active {
     background: var(--dh-color-gold);
     color: var(--dh-color-off-black);
   }
+
   &::after {
     content: attr(title);
     position: absolute;
@@ -491,16 +573,24 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     z-index: 1000;
   }
+
   &:hover::after {
     opacity: 1;
     visibility: visible;
     margin-left: 12px;
   }
 }
+
+/* Completely hide the original nav bar but keep it in the DOM for fallback */
 .daggerheart.sheet.actor .sheet-tabs,
 .daggerheart.sheet.npc .sheet-tabs {
   display: none !important;
 }
+
+/* ----------------------------------------- */
+/* Tooltip for tracker main button            */
+/* ----------------------------------------- */
+
 .tracker-main-button::after {
   content: attr(title);
   position: absolute;
@@ -523,6 +613,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   z-index: 1000;
 }
+
 .tracker-main-button:hover::after {
   opacity: 1;
   visibility: visible;

@@ -1,3 +1,5 @@
+/* Countdown Tracker Components */
+
 .countdown-wrapper {
   position: fixed;
   top: 10px;
@@ -6,6 +8,7 @@
   z-index: 10000;
   pointer-events: none;
 }
+
 .countdown-tracker-ui {
   display: flex;
   flex-direction: column;
@@ -18,6 +21,7 @@
   position: relative;
   z-index: 9999;
   pointer-events: all;
+
   .countdown-manage-btn {
     background: rgba(243, 194, 103, 0.2);
     border: 1px solid #f3c267;
@@ -32,14 +36,17 @@
     transition: all 0.2s ease;
     font-size: 14px;
     backdrop-filter: blur(5px);
+
     &:hover {
       background: rgba(243, 194, 103, 0.3);
       transform: scale(1.05);
     }
+
     &:active {
       transform: scale(0.95);
     }
   }
+
   .countdown-trackers-container {
     display: flex;
     flex-direction: row;
@@ -48,6 +55,7 @@
     width: 100%;
     justify-content: center;
   }
+
   .no-trackers {
     color: #999;
     font-style: italic;
@@ -56,6 +64,7 @@
     font-size: 0.9em;
   }
 }
+
 .countdown-tracker {
   display: flex;
   flex-direction: column;
@@ -68,22 +77,26 @@
   transition: all 0.2s ease;
   min-width: 180px;
   max-width: 220px;
+
   &:hover {
     background: rgba(11, 10, 19, 0.9);
     border-color: #8a7bb8;
     transform: translateY(-1px);
   }
+
   .tracker-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5em;
     gap: 0.5em;
+
     .tracker-name-section {
       display: flex;
       flex-direction: column;
       gap: 0.25em;
       flex: 1;
+
       .tracker-name {
         font-weight: bold;
         color: var(--dh-color-gold);
@@ -91,6 +104,7 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
+
       .tracker-values {
         color: var(--dh-color-gray);
         font-size: 0.8em;
@@ -98,12 +112,14 @@
         font-weight: 600;
       }
     }
+
     .tracker-controls {
       display: flex;
       gap: 0.25em;
       flex-shrink: 0;
     }
   }
+
   .progress-bar-container {
     position: relative;
     height: 12px;
@@ -111,6 +127,7 @@
     border: 1px solid rgba(109, 103, 149, 0.5);
     border-radius: 6px;
     overflow: hidden;
+
     .progress-bar {
       position: absolute;
       top: 0;
@@ -119,6 +136,7 @@
       height: 100%;
       border-radius: 5px;
     }
+
     .progress-fill {
       height: 100%;
       border-radius: 5px;
@@ -126,6 +144,8 @@
       position: relative;
       overflow: hidden;
       box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+
+      // Idle shimmer animation
       &::after {
         content: '';
         position: absolute;
@@ -136,8 +156,11 @@
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
         animation: shimmer 3s infinite;
       }
+
+      // Value increase animation
       &.value-increased {
         animation: progressIncrease 0.6s ease-out;
+
         &::before {
           content: '';
           position: absolute;
@@ -149,8 +172,11 @@
           animation: brightShimmer 0.8s ease-out;
         }
       }
+
+      // Value decrease animation
       &.value-decreased {
         animation: progressDecrease 0.6s ease-out;
+
         &::before {
           content: '';
           position: absolute;
@@ -164,6 +190,7 @@
       }
     }
   }
+
   .tracker-btn {
     background: rgba(67, 63, 100, 0.5);
     border: 1px solid #6d6795;
@@ -178,27 +205,33 @@
     transition: all 0.2s ease;
     font-size: 11px;
     flex-shrink: 0;
+
     &:hover {
       background: rgba(67, 63, 100, 0.8);
       border-color: var(--dh-color-gold);
       color: var(--dh-color-gold);
       transform: scale(1.1);
     }
+
     &:active {
       transform: scale(0.95);
     }
+
     &.tracker-increase {
       border-color: var(--dh-color-teal);
       color: var(--dh-color-teal);
+
       &:hover {
         background: rgba(129, 204, 195, 0.2);
         border-color: var(--dh-color-teal);
         color: var(--dh-color-off-white);
       }
     }
+
     &.tracker-decrease {
       border-color: #f44336;
       color: #f44336;
+
       &:hover {
         background: rgba(244, 67, 54, 0.2);
         border-color: #f44336;
@@ -207,6 +240,8 @@
     }
   }
 }
+
+/* Management Dialog Styles - Using Global Design System */
 .daggerheart-dialog.countdown-management-dialog {
   .window-content {
     background: var(--dh-bg-darker);
@@ -216,12 +251,14 @@
     box-shadow: var(--dh-shadow-lg);
     padding: var(--dh-space-xs) var(--dh-space-md);
   }
+
   .window-header {
     background: var(--dh-bg-dark);
     backdrop-filter: var(--dh-blur-md);
     border: none;
     border-bottom: none;
     border-radius: 0;
+
     .window-title {
       color: var(--dh-color-gold);
       font-weight: var(--dh-font-weight-semibold);
@@ -232,6 +269,7 @@
       text-shadow: var(--dh-shadow-glow);
     }
   }
+
   .dialog-section {
     margin-bottom: var(--dh-space-xs);
     padding: var(--dh-space-xl);
@@ -239,9 +277,11 @@
     border: 1px solid var(--dh-border-purple);
     border-radius: var(--dh-radius-xl);
     backdrop-filter: var(--dh-blur-sm);
+
     &:last-child {
       margin-bottom: 0;
     }
+
     h3 {
       margin: 0 0 var(--dh-space-lg) 0;
       color: var(--dh-color-gold);
@@ -252,8 +292,10 @@
       text-shadow: var(--dh-shadow-glow-subtle);
     }
   }
+
   .form-group {
     margin-bottom: var(--dh-space-lg);
+
     label {
       display: block;
       margin-bottom: var(--dh-space-sm);
@@ -263,6 +305,7 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
+
     input[type="text"],
     input[type="number"] {
       width: 100%;
@@ -274,16 +317,19 @@
       font-size: var(--dh-font-size-sm);
       transition: var(--dh-transition-fast);
       backdrop-filter: var(--dh-blur-sm);
+
       &:focus {
         outline: none;
         border-color: var(--dh-color-gold);
         background: var(--dh-bg-input-focus);
         box-shadow: var(--dh-shadow-focus);
       }
+
       &::placeholder {
         color: rgba(240, 240, 224, 0.4);
       }
     }
+
     input[type="color"] {
       width: 60px;
       height: 40px;
@@ -293,11 +339,13 @@
       border-radius: var(--dh-radius-lg);
       cursor: pointer;
       transition: var(--dh-transition-fast);
+
       &:hover {
         border-color: var(--dh-color-gold);
         box-shadow: var(--dh-shadow-glow-subtle);
       }
     }
+
     input[type="checkbox"] {
       appearance: none;
       -webkit-appearance: none;
@@ -312,10 +360,12 @@
       position: relative;
       vertical-align: middle;
       backdrop-filter: var(--dh-blur-sm);
+
       &:checked {
         background: var(--dh-color-gold);
         border-color: var(--dh-color-gold);
         box-shadow: var(--dh-shadow-glow-subtle);
+
         &::after {
           content: "✓";
           position: absolute;
@@ -327,12 +377,14 @@
           font-weight: var(--dh-font-weight-bold);
         }
       }
+
       &:hover:not(:disabled) {
         border-color: var(--dh-color-gold);
         transform: scale(1.1);
         box-shadow: var(--dh-shadow-glow-subtle);
       }
     }
+
     .checkbox-label {
       display: flex;
       align-items: center;
@@ -340,18 +392,22 @@
       color: var(--dh-color-off-white);
       font-size: var(--dh-font-size-sm);
       font-weight: var(--dh-font-weight-medium);
+
       &:hover {
         color: var(--dh-color-gold);
       }
     }
   }
+
   .form-row {
     display: flex;
     gap: var(--dh-space-lg);
+
     .form-group {
       flex: 1;
     }
   }
+
   .create-tracker-btn {
     background: var(--dh-bg-input);
     border: 1px solid var(--dh-color-gold);
@@ -366,15 +422,18 @@
     width: 100%;
     backdrop-filter: var(--dh-blur-sm);
     box-shadow: var(--dh-shadow-md);
+
     &:hover:not(:disabled) {
       background: var(--dh-color-gold);
       color: var(--dh-color-off-black);
       transform: translateY(-2px);
       box-shadow: var(--dh-shadow-lg);
     }
+
     &:active {
       transform: translateY(0);
     }
+
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -383,6 +442,7 @@
       color: #666;
     }
   }
+
   .trackers-list {
     max-height: 300px;
     overflow-y: auto;
@@ -391,6 +451,7 @@
     background: var(--dh-bg-section);
     backdrop-filter: var(--dh-blur-sm);
   }
+
   .management-tracker {
     display: flex;
     justify-content: space-between;
@@ -399,16 +460,20 @@
     border-bottom: 1px solid var(--dh-border-purple-subtle);
     transition: var(--dh-transition-fast);
     background: rgba(0, 0, 0, 0.1);
+
     &:last-child {
       border-bottom: none;
     }
+
     &:hover {
       background: var(--dh-bg-section);
       transform: translateY(-1px);
       box-shadow: var(--dh-shadow-sm);
     }
+
     .tracker-info {
       flex: 1;
+
       .tracker-name-display {
         font-weight: var(--dh-font-weight-semibold);
         color: var(--dh-color-gold);
@@ -416,6 +481,7 @@
         font-size: var(--dh-font-size-base);
         text-shadow: var(--dh-shadow-glow-subtle);
       }
+
       .tracker-details {
         font-size: var(--dh-font-size-sm);
         color: var(--dh-color-off-white);
@@ -423,11 +489,13 @@
         align-items: center;
         gap: var(--dh-space-sm);
         font-family: monospace;
+
         .visibility-indicator {
           &.visible {
             color: var(--dh-color-teal);
             text-shadow: 0 0 4px rgba(129, 204, 195, 0.4);
           }
+
           &.hidden {
             color: #f44336;
             text-shadow: 0 0 4px rgba(244, 67, 54, 0.4);
@@ -435,9 +503,11 @@
         }
       }
     }
+
     .tracker-actions {
       display: flex;
       gap: var(--dh-space-sm);
+
       button {
         background: var(--dh-bg-input);
         border: 1px solid var(--dh-border-purple-light);
@@ -453,32 +523,39 @@
         font-size: 12px;
         backdrop-filter: var(--dh-blur-sm);
         box-shadow: var(--dh-shadow-sm);
+
         &:hover {
           background: var(--dh-bg-section);
           transform: scale(1.1);
           box-shadow: var(--dh-shadow-md);
         }
+
         &.edit-tracker-btn {
           border-color: var(--dh-color-blue);
           color: var(--dh-color-blue);
+
           &:hover {
             background: rgba(40, 120, 190, 0.2);
             border-color: var(--dh-color-blue);
             box-shadow: 0 0 8px rgba(40, 120, 190, 0.4);
           }
         }
+
         &.toggle-visibility-btn {
           border-color: var(--dh-color-teal);
           color: var(--dh-color-teal);
+
           &:hover {
             background: rgba(129, 204, 195, 0.2);
             border-color: var(--dh-color-teal);
             box-shadow: 0 0 8px rgba(129, 204, 195, 0.4);
           }
         }
+
         &.delete-tracker-btn {
           border-color: #f44336;
           color: #f44336;
+
           &:hover {
             background: rgba(244, 67, 54, 0.2);
             border-color: #f44336;
@@ -488,6 +565,7 @@
       }
     }
   }
+
   .no-trackers {
     color: rgba(242, 243, 244, 0.6);
     font-style: italic;
@@ -499,6 +577,8 @@
     backdrop-filter: var(--dh-blur-sm);
   }
 }
+
+/* Animations */
 @keyframes shimmer {
   0% {
     left: -100%;
@@ -507,6 +587,7 @@
     left: 100%;
   }
 }
+
 @keyframes progressIncrease {
   0% {
     transform: scale(1);
@@ -521,6 +602,7 @@
     filter: brightness(1);
   }
 }
+
 @keyframes progressDecrease {
   0% {
     transform: scale(1);
@@ -535,6 +617,7 @@
     filter: brightness(1);
   }
 }
+
 @keyframes brightShimmer {
   0% {
     left: -100%;
@@ -548,6 +631,7 @@
     opacity: 0;
   }
 }
+
 @keyframes warningPulse {
   0% {
     left: -100%;
@@ -561,56 +645,69 @@
     opacity: 0;
   }
 }
+
+/* Responsive Design */
 @media (max-width: 1200px) {
   .countdown-tracker-ui {
     max-width: 600px;
   }
+
   .countdown-tracker {
     min-width: 160px;
     max-width: 200px;
   }
 }
+
 @media (max-width: 768px) {
   .countdown-tracker-ui {
     max-width: 400px;
   }
+
   .countdown-trackers-container {
     flex-direction: column;
     align-items: center;
   }
+
   .countdown-tracker {
     min-width: 200px;
     max-width: 280px;
     padding: 0.6em;
   }
+
   .countdown-management-dialog {
     .form-row {
       flex-direction: column;
       gap: 0.5em;
     }
+
     .trackers-list {
       max-height: 200px;
     }
+
     .management-tracker {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.5em;
+
       .tracker-actions {
         align-self: flex-end;
       }
     }
   }
 }
+
 @media (max-width: 480px) {
   .countdown-wrapper {
     left: 10px;
     right: 10px;
     transform: none;
   }
+
   .countdown-tracker-ui {
     max-width: none;
     width: 100%;
   }
+
   .countdown-tracker {
     min-width: auto;
     max-width: none;

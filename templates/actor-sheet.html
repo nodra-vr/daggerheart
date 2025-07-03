@@ -1,9 +1,11 @@
 <form class="flexcol {{cssClass}} {{#if isDying}}dying{{/if}}" autocomplete="off">
+    
     <div class="item-bg" style="background-image: url('{{data.img}}');"></div>
     {{!-- Sheet Header --}}
     <header class="sheet-header">
         <div class="header-wrapper">
           <div class="header-left">
+            <!-- Portrait and rest buttons -->
             <div class="portrait-container">
                 <div class="portrait-buttons">
                     <button type="button" class="rest-button short-rest" data-rest-type="short" title="{{localize 'DH.ShortRest'}}">
@@ -24,6 +26,8 @@
             </div>
           </div>
           <div class="header-right">
+
+        <!-- resources and fields -->
         <div class="header-top-fields">
             <h1 class="charname">
                 <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
@@ -33,6 +37,7 @@
                 <input type="text" name="system.chosenDomains.domain-two" value="{{systemData.chosenDomains.domain-two}}" placeholder="{{localize "DH.DomainTwo"}}" />
             </div>
         </div>
+
         <div class="header-resources-row">
             <div class="resource health">
                 <div class="resource-content">
@@ -62,6 +67,7 @@
                     <a class="resource-control" data-action="increment" data-field="stress.value"><i class="fas fa-plus"></i></a>
                 </div>
             </div>
+            <!-- Hope -->
             <div class="resource hope">
                 <div class="resource-content">
                     <div class="resource-box">
@@ -76,6 +82,7 @@
                     <a class="resource-control" data-action="increment" data-field="hope.value"><i class="fas fa-plus"></i></a>
                 </div>
             </div>
+            <!-- Armor Slots -->
             <div class="resource armor-slots">
                 <div class="resource-content">
                     <div class="resource-box">
@@ -91,10 +98,14 @@
                 </div>
             </div>
         </div>
-        </div> 
-        </div> 
+        </div> <!-- close header-right -->
+
+        </div> <!-- header-wrapper -->
+        
+        <!-- Loadout Card Bar (Class / Subclass / Ancestry / Community) -->
         <div class="header-loadout-bar"></div>
     </header>
+    
     {{!-- Trait Edit Popup (backwards compatibility) --}}
     <div class="trait-edit-popup-overlay" style="display: none;">
         <div class="trait-edit-popup">
@@ -121,7 +132,9 @@
             </div>
         </div>
     </div>
+    
     {{!-- Sheet Tab Navigation --}}
+    <!-- CASE SENSITIVE! -->
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item active" data-tab="character">{{localize "DH.Character"}}</a>
         <a class="item" data-tab="equipment">{{localize "DH.Equipment"}}</a>
@@ -129,10 +142,13 @@
         <a class="item" data-tab="loadout">{{localize "DH.Loadout"}}</a>
         <a class="item" data-tab="biography">{{localize "DH.Biography"}}</a>
     </nav>
+    
     {{!-- Sheet Body --}}
     <section class="sheet-body">
+        
         <div class="tab character" data-group="primary" data-tab="character">
             <section class="character-main-section">
+
                 <section class="defenses">
                     <div class="advancement-group">
                         <label>{{localize "DH.Advancement"}}</label>
@@ -149,6 +165,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="defense-group">
                         <div class="defense" data-defense="armor">
                             <div class="attribute-value-display defense-value-display" 
@@ -169,6 +186,7 @@
                             <label data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize "DH.Evasion"}}</label>
                         </div>
                     </div>
+
                     <div class="threshold-group">
                         <label>{{localize "DH.Threshold"}}</label>
                         <div class="threshold-values">
@@ -188,6 +206,7 @@
                         </div>
                     </div>
                 </section>
+
                 <section class="traits">
                     <div class="trait" data-trait="agility">
                         <div class="trait-label-wrapper">
@@ -274,6 +293,7 @@
                         </div>
                     </div>
                 </section>
+
                 <div class="experience-group">
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
@@ -342,8 +362,10 @@
                 </div>
             </section>
         </div>
+
         <div class="tab biography" data-group="primary" data-tab="biography">
             <div class="tab-title">{{localize "DH.Biography"}}</div>
+
             <section class="character-main-section">                
                 <div class="character-details">
                     <div class="char-detail-item">
@@ -363,11 +385,14 @@
                         <input type="text" name="system.nationality" value="{{systemData.nationality}}" />
                     </div>
                 </div>
+
                 {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
             </section>
         </div>
+
         <div class="tab equipment" data-group="primary" data-tab="equipment">
             <div class="tab-title">{{localize "DH.Equipment"}}</div>
+
             {{!-- Weapon Tab --}}
             <div class="weapons">
                 <div class="weapon-group">
@@ -408,6 +433,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="weapon-row">
                         <label class="weapon-label">{{weaponDisplay.secondary.name}}</label>
                         <div class="weapon-box click-rollable-group basic-rollable-group">
@@ -447,6 +473,7 @@
                     </div>
                 </div>
             </div>
+                
             {{!-- Treasure Tracking Section --}}
             <div class="treasure-tracker">
                 <div class="treasure-item">
@@ -482,6 +509,7 @@
                     </div>
                 </div>
             </div>
+
             {{!-- Owned Inventory Tab --}}
             <div class="inventory">
                 <div class="tab-category {{#unless uiState.categoryStates.worn}}section-collapsed{{/unless}}">{{localize "DH.Worn"}}
@@ -529,6 +557,7 @@
                     {{/if}}
                     {{/each}}
                 </ol>
+
                 <div class="tab-category {{#unless uiState.categoryStates.backpack}}section-collapsed{{/unless}}">{{localize "DH.Backpack"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
@@ -537,6 +566,7 @@
                         <a class="item-control category-toggle" data-category="backpack" title="Toggle Backpack Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
+
                 <ol class="item-list {{#unless uiState.categoryStates.backpack}}category-collapsed{{/unless}}" data-location="backpack">
                     {{#each data.items as |item id|}}
                     {{#if (or (eq item.system.location "backpack") (and (not item.system.location) (eq item.type "inventory")) (and (not item.system.location) (eq item.type "weapon")))}}
@@ -576,10 +606,12 @@
                 </ol>
             </div>
         </div>
+
         <div class="tab loadout" data-group="primary" data-tab="loadout">
             {{!-- Owned Items Tab --}}
             <div class="features">
                 <div class="tab-title">{{localize "DH.Loadout"}}</div>
+
                 <div class="tab-category {{#unless uiState.categoryStates.class}}section-collapsed{{/unless}}">{{localize "DH.Class"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-class"
@@ -670,6 +702,7 @@
                     {{/if}}
                     {{/each}}
                 </ol>
+
                 <div class="tab-category {{#unless uiState.categoryStates.ancestry}}section-collapsed{{/unless}}">{{localize "DH.Ancestry"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-ancestry"
@@ -715,6 +748,7 @@
                     {{/if}}
                     {{/each}}
                 </ol>
+                
                 <div class="tab-category {{#unless uiState.categoryStates.community}}section-collapsed{{/unless}}">{{localize "DH.Community"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-community"
@@ -760,6 +794,7 @@
                     {{/if}}
                     {{/each}}
                 </ol>
+
                 <div class="tab-category {{#unless uiState.categoryStates.abilities}}section-collapsed{{/unless}}">{{localize "DH.Abilities"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create"
@@ -810,6 +845,7 @@
                     {{/if}}
                     {{/each}}
                 </ol>
+
                 <div class="tab-category {{#unless uiState.vaultOpen}}section-collapsed{{/unless}}">{{localize "DH.Vault"}}
                     <div class="vault-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
@@ -864,3 +900,4 @@
         </div>
     </section>
 </form>
+    

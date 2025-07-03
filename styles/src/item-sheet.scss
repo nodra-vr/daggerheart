@@ -1,3 +1,9 @@
+/* ============================================
+   ITEM SHEET STYLES
+   Matching the chat card design for consistency
+   ============================================ */
+
+/* Item Sheet Card Structure */
 .daggerheart.sheet.item .item-sheet-card {
   background: none;
   border: none;
@@ -6,6 +12,8 @@
   display: flex;
   flex-direction: column;
 }
+
+/* Image and Title Container */
 .daggerheart.sheet.item .image-title-container {
 	position: relative;
 	overflow: hidden;
@@ -18,6 +26,7 @@
 	justify-content: flex-end;
 	padding: 15px;
 	color: white;
+
 	&::after {
 		content: "";
 		position: absolute;
@@ -30,6 +39,7 @@
 		pointer-events: none;
 	}
 }
+
 .daggerheart.sheet.item .profile-img {
 	position: absolute;
 	top: 0;
@@ -43,11 +53,15 @@
   border: none;
   border-radius: 0;
 }
+
+/* Item Title Styling */
 .daggerheart.sheet.item .image-title-container .card-header-text {
 	z-index: 100;
 	position: relative;
+
 	.item-title {
 		margin: 0;
+		
 		input {
 			background: transparent;
 			border: none;
@@ -59,9 +73,11 @@
 			padding: 0;
 			height: auto;
 			min-height: fit-content;
+
 			&::placeholder {
 				color: rgba(243, 194, 103, 0.6);
 			}
+
 			&:focus {
 				outline: none;
 				box-shadow: 0 0 0 2px var(--dh-color-gold);
@@ -71,11 +87,15 @@
 		}
 	}
 }
+
+/* Item Title Styling */
 .daggerheart.sheet.item .card-header-text {
   z-index: 1;
   position: relative;
+
   .item-title {
     margin: 0;
+    
     input {
       background: transparent;
       border: none;
@@ -87,9 +107,11 @@
       padding: 0;
       height: auto;
       min-height: fit-content;
+
       &::placeholder {
         color: rgba(243, 194, 103, 0.6);
       }
+
       &:focus {
         outline: none;
         box-shadow: 0 0 0 2px var(--dh-color-gold);
@@ -99,6 +121,8 @@
     }
   }
 }
+
+/* Card Content Area */
 .daggerheart.sheet.item .item-card-content {
   background: rgba(11, 10, 19, 0.8392156863);
   backdrop-filter: blur(5px);
@@ -111,15 +135,19 @@
   overflow: auto;
   max-height: fit-content;
 }
+
+/* Category and Rarity Section */
 .daggerheart.sheet.item .card-subtitle {
   margin-bottom: 20px;
   border-bottom: 1px solid #433f64;
   padding-bottom: 10px;
+
   .category-rarity-inputs {
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 0.9em;
+
     .category-input,
     .rarity-input {
       background: rgba(67, 63, 100, 0.3);
@@ -131,9 +159,11 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       transition: all 0.3s ease;
+
       &::placeholder {
         color: rgba(170, 170, 170, 0.6);
       }
+
       &:focus {
         outline: none;
         border-color: var(--dh-color-gold);
@@ -141,6 +171,7 @@
         color: var(--dh-color-off-white);
       }
     }
+
     .separator {
       color: var(--dh-color-gray);
       opacity: 0.8;
@@ -148,45 +179,62 @@
     }
   }
 }
+
+/* Description Editor Section */
 .daggerheart.sheet.item .card-description {
   height: auto;
+
   .description-editor {
     min-height: auto;
+    
+    /* ProseMirror Editor Styling */
     .editor {
       border: 1px solid #433f64;
       border-radius: 8px;
       background: rgba(67, 63, 100, 0.2);
       height: 25em;
+      
       .ProseMirror {
         padding: 15px;
         min-height: auto;
         color: var(--dh-color-off-white);
         line-height: 1.6;
         font-size: 0.95em;
+
         &:focus {
           outline: none;
         }
+
         p {
           margin: 0.8em 0;
+
           &:first-child {
             margin-top: 0;
           }
+
           &:last-child {
             margin-bottom: 0;
           }
         }
+
+        /* Style headers in the editor */
         h1, h2, h3, h4, h5, h6 {
           color: var(--dh-color-gold) !important;
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
           margin: 1em 0 0.5em 0;
+
           &:first-child {
             margin-top: 0;
           }
         }
+
+        /* Style lists */
         ul, ol {
           margin: 0.8em 0;
           padding-left: 1.5em;
         }
+
+        /* Style blockquotes */
         blockquote {
           border-left: 3px solid var(--dh-color-gold);
           padding-left: 1em;
@@ -194,6 +242,8 @@
           font-style: italic;
           opacity: 0.9;
         }
+
+        /* Style code */
         code {
           background: rgba(0, 0, 0, 0.3);
           padding: 2px 4px;
@@ -202,12 +252,15 @@
         }
       }
     }
+
+    /* Editor Menu Bar */
     .editor-menu {
       background: rgba(67, 63, 100, 0.4);
       border: 1px solid #433f64;
       border-bottom: none;
       border-radius: 8px 8px 0 0;
       padding: 8px;
+
       button {
         background: transparent;
         border: 1px solid transparent;
@@ -216,11 +269,13 @@
         padding: 4px 8px;
         cursor: pointer;
         transition: all 0.2s ease;
+
         &:hover {
           background: rgba(243, 194, 103, 0.2);
           color: var(--dh-color-gold);
           border-color: var(--dh-color-gold);
         }
+
         &.active {
           background: rgba(243, 194, 103, 0.3);
           color: var(--dh-color-gold);
@@ -230,27 +285,41 @@
     }
   }
 }
+
+/* Window styling to match the card theme */
 .daggerheart.sheet.item .window-content {
   background: transparent;
   padding: 0;
   overflow: visible !important;
   position: relative;
 }
+
 .daggerheart.sheet.item {
   overflow: visible !important;
 }
+
 .daggerheart.sheet.item .window-header {
   background: rgba(11, 10, 19, 0.9);
   border-bottom: 1px solid #6d6795;
   backdrop-filter: blur(5px);
+
   .window-title {
     color: var(--dh-color-gold);
     font-weight: bold;
   }
 }
+
+/* ============================================
+   WEAPON SHEET SPECIFIC STYLES
+   ============================================ */
+
+/* Extend existing item sheet styles to weapon sheets */
 .daggerheart.sheet.item,
 .daggerheart.sheet.weapon {
+  /* All existing item sheet styles automatically apply */
 }
+
+/* Weapon-specific field styling */
 .daggerheart.sheet.weapon .weapon-fields {
   .card-subtitle {
     .category-tier-inputs {
@@ -258,6 +327,7 @@
       align-items: center;
       gap: 10px;
       font-size: 0.9em;
+
       .category-input,
       .tier-input {
         background: rgba(67, 63, 100, 0.3);
@@ -269,9 +339,11 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
         transition: all 0.3s ease;
+
         &::placeholder {
           color: rgba(170, 170, 170, 0.6);
         }
+
         &:focus {
           outline: none;
           border-color: var(--dh-color-gold);
@@ -279,32 +351,40 @@
           color: var(--dh-color-off-white);
         }
       }
+
       .separator {
         color: var(--dh-color-gray);
         opacity: 0.8;
         font-weight: bold;
       }
     }
+
+
   }
+
   .weapon-fields-grid {
     margin-bottom: 20px;
     padding: 15px 0;
     border-bottom: 1px solid #433f64;
   }
+
   .weapon-top-row,
   .weapon-bottom-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
     margin-bottom: 15px;
+
     &:last-child {
       margin-bottom: 0;
     }
   }
+
   .weapon-dropdown-group {
     display: flex;
     flex-direction: column;
     gap: 5px;
+
     label {
       font-size: 0.8em;
       color: var(--dh-color-gold);
@@ -312,6 +392,7 @@
       letter-spacing: 0.5px;
       font-weight: bold;
     }
+
     select {
       background: rgba(67, 63, 100, 0.3);
       border: 1px solid #433f64;
@@ -321,24 +402,29 @@
       font-size: 0.9em;
       transition: all 0.3s ease;
       cursor: pointer;
+
       &:focus {
         outline: none;
         border-color: var(--dh-color-gold);
         background: rgba(67, 63, 100, 0.5);
       }
+
       &:hover {
         background: rgba(67, 63, 100, 0.4);
       }
+
       option {
         background: rgba(11, 10, 19, 0.95);
         color: var(--dh-color-off-white);
       }
     }
   }
+
   .weapon-damage-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
+
     label {
       font-size: 0.8em;
       color: var(--dh-color-gold);
@@ -346,6 +432,7 @@
       letter-spacing: 0.5px;
       font-weight: bold;
     }
+
     .weapon-damage-display {
       background: rgba(243, 194, 103, 0.15);
       border: 1px solid var(--dh-color-gold);
@@ -360,11 +447,13 @@
       min-height: 20px;
       display: flex;
       align-items: center;
+
       &:hover {
         background: rgba(243, 194, 103, 0.25);
         transform: translateY(-1px);
         box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
       }
+
       &:empty::before {
         content: "1d8";
         opacity: 0.6;
@@ -372,6 +461,8 @@
     }
   }
 }
+
+/* Weapon toggle equip button styling */
 .daggerheart.sheet.actor .weapon-toggle-equip {
   display: inline-flex;
   align-items: center;
@@ -384,25 +475,31 @@
   text-decoration: none;
   border-radius: 2px;
   margin: 0 2px;
+  
   &:hover {
     color: rgba(255, 255, 255, 0.8);
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
     transform: scale(1.1);
   }
+  
   &.equipped {
     color: var(--dh-color-gold);
     text-shadow: 0 0 5px rgba(243, 194, 103, 0.7);
+    
     &:hover {
       color: var(--dh-color-gold);
       text-shadow: 0 0 8px rgba(243, 194, 103, 0.9);
       transform: scale(1.1);
     }
   }
+  
   i {
     font-size: 12px;
     line-height: 1;
   }
 }
+
+/* Responsive adjustments for weapons */
 @media (max-width: 768px) {
   .daggerheart.sheet.weapon .weapon-fields {
     .weapon-top-row,
@@ -412,28 +509,35 @@
     }
   }
 }
+
 @media (max-width: 480px) {
   .daggerheart.sheet.weapon .weapon-fields {
     .card-subtitle .category-tier-inputs {
       flex-direction: column;
       gap: 8px;
+      
       .separator {
         display: none;
       }
     }
   }
 }
+
+/* Original responsive adjustments */
 @media (max-width: 600px) {
   .daggerheart.sheet.item .card-image-container {
     height: 150px;
     padding: 10px;
   }
+
   .daggerheart.sheet.item .card-header-text .item-title input {
     font-size: 1.4em;
   }
+
   .daggerheart.sheet.item .item-card-content {
     padding: 15px;
   }
+
   .daggerheart.sheet.item .image-upload-area .profile-img {
     width: 50px;
     height: 50px;

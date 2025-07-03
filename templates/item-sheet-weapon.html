@@ -7,6 +7,7 @@
             </h1>
         </div>
     </div>
+
     {{!-- Card content area --}}
     <div class="item-card-content">
         {{!-- Weapon-specific fields --}}
@@ -19,6 +20,7 @@
                     <input type="text" name="system.tier" value="{{systemData.tier}}" placeholder="{{localize "DH.Tier"}} X" class="tier-input"/>
                 </div>
             </div>
+
             {{!-- Weapon fields arranged in 2x2 grid --}}
             <div class="weapon-fields-grid">
                 {{!-- Top row: Trait and Range --}}
@@ -31,6 +33,7 @@
                             {{/each}}
                         </select>
                     </div>
+
                     <div class="weapon-dropdown-group">
                         <label>{{localize "DH.WeaponRange"}}</label>
                         <select name="system.range">
@@ -40,6 +43,7 @@
                         </select>
                     </div>
                 </div>
+
                 {{!-- Bottom row: Damage and Damage Type --}}
                 <div class="weapon-bottom-row">
                     <div class="weapon-damage-group">
@@ -52,6 +56,7 @@
                             {{#if systemData.damage.value}}{{systemData.damage.value}}{{else}}{{#if systemData.damage.baseValue}}{{systemData.damage.baseValue}}{{else}}1d8{{/if}}{{/if}}
                         </div>
                     </div>
+
                     <div class="weapon-dropdown-group">
                         <label>{{localize "DH.DamageType"}}</label>
                         <select name="system.damageType">
@@ -63,6 +68,7 @@
                 </div>
             </div>
         </div>
+
         {{!-- Description section --}}
         <div class="card-description">
             <div class="description-editor">

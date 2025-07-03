@@ -1,5 +1,8 @@
+// HeaderLoadoutBar: displays Class / Subclass / Ancestry / Community cards inside the sheet header
+
 import { buildItemCardChat } from "./helper.js";
 import { DaggerheartDialogHelper } from "./dialog-helper.js";
+
 export class HeaderLoadoutBar {
   constructor(actorSheet) {
     this.actorSheet = actorSheet;
@@ -16,24 +19,32 @@ export class HeaderLoadoutBar {
     this.previewPinned = false;
     this.pinnedItemId = null;
   }
+
   initialize() {
     this.render();
   }
+
   _findContainer() {
     if (!this.actorSheet.element?.length) return null;
     const cont = this.actorSheet.element.find('.header-loadout-bar');
     return cont.length ? cont : null;
   }
+
   render() {
     this.container = this._findContainer();
     if (!this.container) return;
+
+    // Build HTML for 4 slots
     const html = this.slotTypes.map(t => this._buildSlotHTML(t)).join('');
     this.container.html(html);
+
     this._activateListeners();
   }
+
   _getItemForType(typeKey) {
     return this.actor.items.find(i => (i.system?.location ?? i.type) === typeKey);
   }
+
   _buildSlotHTML(slot) {
     const item = this._getItemForType(slot.key);
     if (item) {
@@ -51,8 +62,11 @@ export class HeaderLoadoutBar {
       <span class="slot-placeholder">${slot.label}</span>
     </div>`;
   }
+
   _activateListeners() {
     if (!this.container) return;
+
+    // Overlay click
     this.container.on('click', '.slot-control', async ev => {
       ev.preventDefault();
       ev.stopPropagation();
@@ -87,6 +101,8 @@ export class HeaderLoadoutBar {
         }
       }
     });
+
+    // Drag events
     this.container.on('dragover', '.loadout-card-slot', ev => { ev.preventDefault(); $(ev.currentTarget).addClass('drag-over'); });
     this.container.on('dragleave', '.loadout-card-slot', ev => { $(ev.currentTarget).removeClass('drag-over'); });
     this.container.on('drop', '.loadout-card-slot', async ev => {
@@ -98,9 +114,18 @@ export class HeaderLoadoutBar {
       if (data.type !== 'Item') return;
       const item = await Item.implementation.fromDropData(data);
       if (!item) return;
+
+      // Validate matching type/location
+      //if (item.type !== typeKey && (item.system?.location ?? '') !== typeKey) {
+      //  ui.notifications?.warn(`That item is not a ${typeKey} card.`);
+      //  return;
+      //}
+
+      // If already embedded, just move to correct location
       if (this.actor.items.has(item.id)) {
         await this.actor.items.get(item.id).update({ 'system.location': typeKey });
       } else {
+        // create new embedded
         const toCreate = duplicate(item.toObject());
         toCreate.system = toCreate.system || {};
         toCreate.system.location = typeKey;
@@ -108,6 +133,8 @@ export class HeaderLoadoutBar {
       }
       this.render();
     });
+
+    // Hover preview
     this.container.on('mouseenter', '.loadout-card-slot:not(.empty)', (ev) => {
       const el = ev.currentTarget;
       const hoveredItemId = $(el).data('item-id');
@@ -121,17 +148,22 @@ export class HeaderLoadoutBar {
       clearTimeout(this.previewTimeout);
       if (!this.previewPinned) this._hidePreview();
     });
+
+    // Click-to-chat (ignore overlay)
     this.container.on('click', '.loadout-card-slot:not(.empty)', async (ev) => {
-      if ($(ev.target).closest('.slot-control').length) return; 
+      if ($(ev.target).closest('.slot-control').length) return; // overlay click handled elsewhere
       const itemId = $(ev.currentTarget).data('item-id');
       const item = this.actor.items.get(itemId);
       if (!item) return;
       await this._postToChat(item);
     });
+
+    // Middle-click pin/unpin
     this.container.on('mousedown', '.loadout-card-slot:not(.empty)', (ev) => {
       if (ev.which !== 2) return;
       ev.preventDefault();
       ev.stopPropagation();
+
       const slotEl = ev.currentTarget;
       if (this.previewPinned) {
         this._unpinPreview();
@@ -145,8 +177,10 @@ export class HeaderLoadoutBar {
       }
     });
   }
+
   async _postToChat(item) {
     const itemData = item.system;
+    // Don't pre-enrich for chat cards - let Foundry enrich it when the chat message is created
     const chatCard = buildItemCardChat({
       itemId: item.id,
       actorId: this.actor.id,
@@ -158,11 +192,13 @@ export class HeaderLoadoutBar {
     });
     ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: chatCard });
   }
+
   async _showPreview(el) {
     const itemId = $(el).data('item-id');
     const item = this.actor.items.get(itemId);
     if (!item) return;
     const itemData = item.system;
+    // For preview cards, we DO want enrichment since they're not going through chat
     const description = await TextEditor.enrichHTML(itemData.description, { secrets: this.actor.isOwner, async: true });
     const cardHtml = buildItemCardChat({
       itemId: item.id,
@@ -189,18 +225,23 @@ export class HeaderLoadoutBar {
     if (top < 10) top = 10;
     this.previewElement.css({ left:left+'px', top:top+'px' }).addClass('show');
   }
+
   _hidePreview() {
     if (!this.previewElement) return;
     this.previewElement.removeClass('show pinned');
     this.previewElement.css('pointer-events', 'none');
   }
+
   _pinPreview() {
     if (!this.previewElement) return;
     this.previewPinned = true;
     this.pinnedItemId = this.previewElement.attr('data-item-id');
     this.previewElement.addClass('pinned');
     this.previewElement.css('pointer-events', 'auto');
+
     this.previewElement.find('.preview-hint').html('<i class="fas fa-mouse"></i> Middle-click to unpin');
+
+    // Adjust position to compensate new size and avoid jump
     const old = this.previewElement[0].getBoundingClientRect();
     const updated = this.previewElement[0].getBoundingClientRect();
     const dx = (updated.width - old.width) / 2;
@@ -208,12 +249,14 @@ export class HeaderLoadoutBar {
     const leftPos = parseFloat(this.previewElement.css('left')) - dx;
     const topPos = parseFloat(this.previewElement.css('top')) - dy;
     this.previewElement.css({ left: `${leftPos}px`, top: `${topPos}px` });
+
     const offHandler = (ev) => {
       if ($(ev.target).closest('.domain-ability-preview').length) return;
       this._unpinPreview();
     };
     $(document).on('mousedown.loadoutPreview', offHandler);
   }
+
   _unpinPreview() {
     this.previewPinned = false;
     this.pinnedItemId = null;

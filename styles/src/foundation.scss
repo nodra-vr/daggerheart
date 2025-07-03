@@ -26,10 +26,12 @@
   --font-size-36: 2.25rem;
   --font-size-42: 2.625rem;
 }
+
 * {
   scrollbar-width: none !important;
   scrollbar-color: white transparent;
 }
+
 .window-app {
   .window-header {
     a {
@@ -45,10 +47,13 @@
     }
   }
 }
+
 ::-webkit-scrollbar {
   width: 5px !important;
   height: 5px !important;
 }
+
+/* Remove Foundry's built-in box shadow on focused inputs */
 body.game .app input[type="text"]:focus, 
 body.game .app input[type="number"]:focus, 
 body.game .app input[type="password"]:focus, 

@@ -1,3 +1,12 @@
+/* ============================================
+   MODIFIER SYSTEM - REFACTORED WITH GLOBAL DESIGN SYSTEM
+   ============================================
+   This file now uses the global design system classes
+   while maintaining backward compatibility for existing
+   HTML structure and JavaScript interactions.
+   ============================================ */
+
+/* Trait value display styles - Custom background images */
 .trait-value-display {
   width: 80px;
   height: 64px;
@@ -16,13 +25,17 @@
   cursor: pointer;
   user-select: none;
   transition: var(--dh-transition-fast);
+
   &:hover {
     transform: scale(1.05);
   }
+
   &:active {
     transform: scale(0.98);
   }
 }
+
+/* Popup overlay styles */
 .trait-edit-popup-overlay,
 .attribute-edit-popup-overlay {
   position: fixed;
@@ -36,6 +49,8 @@
   justify-content: center;
   z-index: var(--dh-z-modal);
 }
+
+/* Popup container */
 .trait-edit-popup,
 .attribute-edit-popup {
   background: var(--dh-bg-dark);
@@ -51,11 +66,14 @@
   transform: scale(0.8);
   opacity: 0;
   transition: var(--dh-transition-fast);
+
   &.show {
     transform: scale(1);
     opacity: 1;
   }
 }
+
+/* Popup header */
 .trait-edit-header,
 .attribute-edit-header {
   background: rgba(11, 10, 19, 0.5);
@@ -66,6 +84,8 @@
   align-items: center;
   position: relative;
 }
+
+/* Popup title */
 .trait-edit-label,
 .attribute-edit-label {
   color: var(--dh-color-gold);
@@ -76,6 +96,8 @@
   text-align: center;
   text-shadow: var(--dh-shadow-glow);
 }
+
+/* Close button */
 .trait-edit-close,
 .attribute-edit-close {
   background: var(--dh-bg-dark);
@@ -96,6 +118,7 @@
   right: var(--dh-space-lg);
   top: 50%;
   transform: translateY(-50%);
+
   &:hover {
     background: var(--dh-color-gold);
     color: var(--dh-color-off-black);
@@ -103,6 +126,8 @@
     box-shadow: var(--dh-shadow-glow-strong);
   }
 }
+
+/* Popup content */
 .trait-edit-content,
 .attribute-edit-content {
   padding: var(--dh-space-md) var(--dh-space-lg);
@@ -112,6 +137,8 @@
   min-width: 320px;
   position: relative;
 }
+
+/* Base value section */
 .trait-base-value,
 .attribute-base-value {
   background: var(--dh-bg-section);
@@ -122,6 +149,7 @@
   align-items: center;
   gap: var(--dh-space-lg);
   justify-content: center;
+
   label {
     color: var(--dh-color-gold);
     font-weight: var(--dh-font-weight-semibold);
@@ -131,15 +159,20 @@
     min-width: 80px;
   }
 }
+
+/* Base value controls */
 .base-value-controls {
   display: flex;
   align-items: center;
   gap: var(--dh-space-sm);
+
   .attribute-base-input {
     flex: 1;
     min-width: 80px;
   }
 }
+
+/* Increment/Decrement buttons */
 .base-value-decrement,
 .base-value-increment {
   background: var(--dh-bg-section);
@@ -155,6 +188,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   &:hover {
     background: var(--dh-color-gold);
     color: var(--dh-color-off-black);
@@ -162,10 +196,12 @@
     transform: scale(1.1);
     box-shadow: 0 0 8px rgba(243, 194, 103, 0.5);
   }
+
   &:active {
     transform: scale(0.95);
     box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
   }
+
   &.weapon-locked,
   &.restriction-locked {
     background: rgba(0, 0, 0, 0.3);
@@ -173,6 +209,7 @@
     border-color: rgba(67, 63, 100, 0.4);
     cursor: not-allowed;
     opacity: 0.6;
+
     &:hover {
       background: rgba(0, 0, 0, 0.3);
       color: rgba(242, 243, 244, 0.4);
@@ -180,12 +217,15 @@
       transform: none;
       box-shadow: none;
     }
+
     &:active {
       transform: none;
       box-shadow: none;
     }
   }
 }
+
+/* Base input */
 .trait-base-input,
 .attribute-base-input {
   background: var(--dh-bg-input);
@@ -198,26 +238,31 @@
   font-size: var(--dh-font-size-xl);
   font-weight: var(--dh-font-weight-bold);
   width: 50px;
+
   &:focus {
     outline: none;
     border-color: var(--dh-color-gold);
     background: var(--dh-bg-input-focus);
     box-shadow: var(--dh-shadow-focus);
   }
+
   &.weapon-locked,
   &.restriction-locked {
     background: rgba(0, 0, 0, 0.4);
     color: rgba(242, 243, 244, 0.6);
     border-color: rgba(67, 63, 100, 0.6);
     cursor: not-allowed;
+
     &:focus {
       border-color: rgba(67, 63, 100, 0.6);
       background: rgba(0, 0, 0, 0.4);
       box-shadow: none;
     }
   }
+
   &.restriction-locked {
     border-color: rgba(243, 194, 103, 0.3);
+    
     &::after {
       content: "🔒";
       position: absolute;
@@ -229,6 +274,8 @@
     }
   }
 }
+
+/* Modifiers section */
 .trait-modifiers-section,
 .attribute-modifiers-section {
   background: rgba(0, 0, 0, 0.2);
@@ -236,11 +283,14 @@
   border-radius: var(--dh-radius-xl);
   padding: var(--dh-space-sm) var(--dh-space-lg);
 }
+
+/* Modifiers header */
 .modifiers-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: var(--dh-space-sm);
+
   span {
     color: var(--dh-color-gold);
     font-weight: var(--dh-font-weight-semibold);
@@ -249,6 +299,8 @@
     letter-spacing: 1px;
   }
 }
+
+/* Add modifier button */
 .add-modifier-btn {
   background: rgba(243, 194, 103, 0.2);
   border: 1px solid var(--dh-color-gold);
@@ -264,6 +316,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   &:hover {
     background: var(--dh-color-gold);
     color: var(--dh-color-off-black);
@@ -271,6 +324,8 @@
     box-shadow: var(--dh-shadow-glow);
   }
 }
+
+/* Modifiers list */
 .modifiers-list {
   display: flex;
   flex-direction: column;
@@ -278,19 +333,24 @@
   overflow-y: auto;
   position: relative;
   padding-right: var(--dh-space-xs);
+
   &::-webkit-scrollbar {
     width: 4px;
   }
+
   &::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 2px;
   }
+
   &::-webkit-scrollbar-thumb {
     background: var(--dh-color-gold);
     border-radius: 2px;
     opacity: 0.6;
   }
 }
+
+/* Modifier row */
 .modifier-row {
   display: flex;
   align-items: center;
@@ -301,15 +361,19 @@
   border: 1px solid transparent;
   position: relative;
   transition: var(--dh-transition-fast);
+
   &:nth-child(even) {
     background: rgba(141, 120, 151, 0.05);
   }
+
   &:hover {
     background: var(--dh-bg-section);
     border-color: rgba(243, 194, 103, 0.3);
   }
+
   &.disabled {
     opacity: 0.7;
+
     .modifier-name,
     .modifier-value {
       opacity: 0.6;
@@ -317,6 +381,7 @@
       color: rgba(242, 243, 244, 0.5);
       border-color: rgba(67, 63, 100, 0.3);
     }
+
     .modifier-toggle,
     .modifier-delete {
       opacity: 1;
@@ -324,12 +389,15 @@
       pointer-events: auto;
     }
   }
+
   input,
   button {
     position: relative;
     z-index: 2;
   }
 }
+
+/* Modifier inputs */
 .modifier-name {
   flex: 1;
   background: var(--dh-bg-input);
@@ -339,12 +407,14 @@
   transition: var(--dh-transition-fast);
   padding: 0.4rem 0.6rem;
   font-size: var(--dh-font-size-sm);
+
   &:focus {
     outline: none;
     border-color: var(--dh-color-gold);
     background: var(--dh-bg-input-focus);
   }
 }
+
 .modifier-value {
   background: var(--dh-bg-input);
   border: 1px solid var(--dh-border-purple);
@@ -356,12 +426,15 @@
   font-size: var(--dh-font-size-sm);
   font-weight: var(--dh-font-weight-semibold);
   width: 55px;
+
   &:focus {
     outline: none;
     border-color: var(--dh-color-gold);
     background: var(--dh-bg-input-focus);
   }
 }
+
+/* Modifier checkbox */
 .modifier-toggle {
   width: 18px;
   height: 18px;
@@ -373,9 +446,11 @@
   cursor: pointer;
   position: relative;
   transition: var(--dh-transition-fast);
+
   &:checked {
     background: var(--dh-color-gold);
     border-color: var(--dh-color-gold-light);
+
     &::after {
       content: "✓";
       position: absolute;
@@ -391,11 +466,14 @@
       justify-content: center;
     }
   }
+
   &:hover {
     border-color: var(--dh-color-gold);
     transform: scale(1.1);
   }
 }
+
+/* Modifier delete button */
 .modifier-delete {
   background: rgba(255, 68, 68, 0.2);
   border: 1px solid rgba(255, 68, 68, 0.4);
@@ -411,6 +489,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   &:hover {
     background: #ff4444;
     color: white;
@@ -418,6 +497,8 @@
     box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
   }
 }
+
+/* Total section */
 .trait-total,
 .attribute-total {
   background: linear-gradient(135deg, rgba(243, 194, 103, 0.1) 0%, rgba(243, 194, 103, 0.05) 100%);
@@ -430,6 +511,7 @@
   justify-content: center;
   gap: var(--dh-space-lg);
   padding: var(--dh-space-xs) var(--dh-space-lg);
+
   label {
     color: var(--dh-color-gold);
     font-weight: var(--dh-font-weight-semibold);
@@ -438,6 +520,8 @@
     letter-spacing: 1px;
   }
 }
+
+/* Total value */
 .trait-total-value,
 .attribute-total-value {
   color: var(--dh-color-gold-light);
@@ -445,6 +529,12 @@
   font-size: var(--dh-font-size-2xl);
   text-shadow: var(--dh-shadow-glow);
 }
+
+/* ============================================
+   DISPLAY ELEMENTS - CUSTOM BACKGROUNDS
+   ============================================ */
+
+/* Generic attribute value display */
 .attribute-value-display {
   cursor: pointer;
   user-select: none;
@@ -452,13 +542,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   &:hover {
     transform: scale(1.05);
   }
+
   &:active {
     transform: scale(0.98);
   }
 }
+
+/* Defense-specific value displays */
 .defense-value-display {
   cursor: pointer;
   user-select: none;
@@ -474,20 +568,31 @@
   font-size: 20px;
   font-weight: 700;
   padding-bottom: 6px;
+
   &:hover {
     transform: scale(1.05);
   }
+
   &:active {
     transform: scale(0.98);
   }
 }
+
 .defense[data-defense="evasion"] .defense-value-display {
   background-image: url("icons/Evade BG-2.png");
 }
+
+/* ============================================
+   SIMPLE POPUP STYLES
+   ============================================ */
+
+/* Simple popup content - Custom sizing */
 .attribute-edit-simple .attribute-edit-content {
   min-width: 250px;
   padding: 1.25rem;
 }
+
+/* Simple value container */
 .attribute-simple-value {
   background: var(--dh-bg-section);
   border: 1px solid var(--dh-border-purple);
@@ -498,6 +603,8 @@
   justify-content: center;
   padding: 1rem;
 }
+
+/* Simple input */
 .attribute-simple-input {
   background: var(--dh-bg-input);
   border: 1px solid var(--dh-border-purple);
@@ -509,6 +616,7 @@
   font-size: var(--dh-font-size-2xl);
   font-weight: var(--dh-font-weight-bold);
   width: 120px;
+
   &:focus {
     outline: none;
     border-color: var(--dh-color-gold);
@@ -516,6 +624,12 @@
     box-shadow: var(--dh-shadow-focus);
   }
 }
+
+/* ============================================
+   WEAPON DISPLAY STYLES - CUSTOM COMPONENTS
+   ============================================ */
+
+/* Weapon modifier display */
 .weapon-modifier-display {
   cursor: pointer;
   user-select: none;
@@ -533,16 +647,20 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+
   &:hover {
     background: rgba(243, 194, 103, 0.25);
     border-color: var(--dh-color-gold-light);
     box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
     transform: scale(1.05);
   }
+
   &:active {
     transform: scale(0.98);
   }
 }
+
+/* Weapon damage display */
 .weapon-damage-display {
   transition: var(--dh-transition-fast);
   width: 4.5em;
@@ -559,6 +677,7 @@
   justify-content: center;
   cursor: pointer;
   padding: 0.25em;
+
   &:hover {
     background: rgba(243, 194, 103, 0.25);
     border-color: var(--dh-color-gold-light);
@@ -566,6 +685,12 @@
     transform: translateY(-1px);
   }
 }
+
+/* ============================================
+   DAMAGE POPUP STYLES - USING GLOBAL SYSTEM
+   ============================================ */
+
+/* Damage popup overlay */
 .damage-edit-popup-overlay {
   position: fixed;
   top: 0;
@@ -579,6 +704,8 @@
   z-index: var(--dh-z-modal);
   backdrop-filter: blur(4px);
 }
+
+/* Damage popup container */
 .damage-edit-popup {
   background: linear-gradient(135deg, rgba(27, 25, 48, 0.95), rgba(11, 10, 19, 0.95));
   backdrop-filter: var(--dh-blur-md);
@@ -594,11 +721,14 @@
   opacity: 0;
   transition: var(--dh-transition-fast);
   overflow-y: auto;
+
   &.show {
     transform: scale(1);
     opacity: 1;
   }
 }
+
+/* Damage popup header - Custom gold header */
 .damage-edit-header {
   background: var(--dh-color-gold);
   color: rgba(11, 10, 19, 0.9);
@@ -611,11 +741,15 @@
   top: 0;
   z-index: 10;
 }
+
+/* Damage popup title */
 .damage-edit-label {
   font-size: 1.2rem;
   font-weight: 700;
   margin: 0;
 }
+
+/* Damage popup close button - Custom styling for gold header */
 .damage-edit-close {
   background: none;
   border: none;
@@ -631,16 +765,22 @@
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s ease;
+
   &:hover {
     background: rgba(11, 10, 19, 0.1);
   }
 }
+
+/* Damage popup content - Using global content */
 .damage-edit-content {
   padding: 1.5rem;
   color: var(--dh-color-off-white);
 }
+
+/* Damage base value section */
 .damage-base-value {
   margin-bottom: 1.5rem;
+
   label {
     color: var(--dh-color-gold);
     font-weight: var(--dh-font-weight-semibold);
@@ -651,6 +791,8 @@
     margin-bottom: 0.5rem;
   }
 }
+
+/* Damage base input */
 .damage-base-input {
   background: var(--dh-bg-input);
   border: 1px solid var(--dh-border-purple);
@@ -662,19 +804,25 @@
   font-size: 1.2rem;
   font-weight: 700;
   width: 100%;
+
   &:focus {
     outline: none;
     border-color: var(--dh-color-gold);
     background: var(--dh-bg-input-focus);
     box-shadow: var(--dh-shadow-focus);
   }
+
   &::placeholder {
     color: rgba(159, 159, 159, 0.6);
   }
 }
+
+/* Damage modifiers section */
 .damage-modifiers-section {
   margin-bottom: 1.5rem;
 }
+
+/* Damage modifier row - Custom grid layout */
 .damage-modifier-row {
   display: grid;
   grid-template-columns: 1fr auto auto auto;
@@ -686,18 +834,23 @@
   border: 1px solid rgba(109, 103, 149, 0.3);
   margin-bottom: 0.5rem;
   transition: all 0.2s ease;
+
   &:hover {
     background: rgba(67, 63, 100, 0.3);
     border-color: rgba(243, 194, 103, 0.3);
   }
+
   &.disabled {
     opacity: 0.7;
+
     .damage-modifier-name,
     .damage-modifier-value {
       opacity: 0.6;
     }
   }
 }
+
+/* Damage modifier inputs */
 .damage-modifier-name,
 .damage-modifier-value {
   background: var(--dh-bg-input);
@@ -707,25 +860,32 @@
   transition: var(--dh-transition-fast);
   padding: 0.4rem 0.6rem;
   font-size: 0.9rem;
+
   &:focus {
     outline: none;
     border-color: var(--dh-color-gold);
     background: var(--dh-bg-input-focus);
     box-shadow: 0 0 0 2px rgba(243, 194, 103, 0.2);
   }
+
   &::placeholder {
     color: rgba(159, 159, 159, 0.5);
   }
 }
+
 .damage-modifier-value {
   width: 80px;
   text-align: center;
 }
+
+/* Damage modifier toggle - Using global checkbox styling */
 .damage-modifier-toggle {
   width: 16px;
   height: 16px;
   accent-color: var(--dh-color-gold);
 }
+
+/* Damage modifier delete - Custom delete button */
 .damage-modifier-delete {
   background: rgba(185, 55, 55, 0.8);
   border: none;
@@ -740,11 +900,14 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+
   &:hover {
     background: rgba(185, 55, 55, 1);
     transform: scale(1.1);
   }
 }
+
+/* Damage total section */
 .damage-total {
   background: linear-gradient(135deg, rgba(243, 194, 103, 0.1) 0%, rgba(243, 194, 103, 0.05) 100%);
   border: 1px solid var(--dh-color-gold);
@@ -757,6 +920,7 @@
   gap: var(--dh-space-lg);
   padding: var(--dh-space-xs) var(--dh-space-lg);
   text-align: center;
+
   label {
     color: var(--dh-color-gold);
     font-weight: var(--dh-font-weight-semibold);
@@ -767,12 +931,20 @@
     margin-bottom: 0.5rem;
   }
 }
+
+/* Damage total value */
 .damage-total-value {
   color: var(--dh-color-gold-light);
   font-weight: var(--dh-font-weight-bold);
   font-size: var(--dh-font-size-2xl);
   text-shadow: var(--dh-shadow-glow);
 }
+
+/* ============================================
+   EQUIPPED WEAPON MODIFIER SYSTEM STYLES
+   ============================================ */
+
+/* Equipped weapon indicator */
 .equipped-weapon-indicator {
   margin-top: 0.5rem;
   padding: 0.5rem;
@@ -780,30 +952,38 @@
   border: 1px solid rgba(243, 194, 103, 0.3);
   border-radius: var(--dh-radius-lg);
   text-align: center;
+  
   .equipped-weapon-text {
     font-size: 0.8rem;
     color: var(--dh-color-gold);
     font-style: italic;
   }
 }
+
+/* Locked weapon inputs */
 .weapon-locked {
   background: rgba(67, 63, 100, 0.2) !important;
   border-color: rgba(67, 63, 100, 0.5) !important;
   color: rgba(255, 255, 255, 0.6) !important;
   cursor: not-allowed !important;
+  
   &:hover {
     background: rgba(67, 63, 100, 0.2) !important;
     transform: none !important;
     box-shadow: none !important;
   }
+  
   &:focus {
     outline: none !important;
     border-color: rgba(67, 63, 100, 0.5) !important;
   }
 }
+
+/* Locked buttons */
 button.weapon-locked {
   opacity: 0.5;
   cursor: not-allowed;
+  
   &:hover {
     background: rgba(67, 63, 100, 0.2) !important;
     color: rgba(255, 255, 255, 0.6) !important;

@@ -1,4 +1,6 @@
 @use "components/itemList";
+
+/* Character Tab */
 .character-main-section {
   display: flex;
   flex-direction: column;
@@ -8,12 +10,15 @@
   padding-top: 1em;
   height: 100%;
 }
+
 .tab.character {
   padding: 20px;
 }
+
 .tab.biography .character-main-section {
   height: 100%;
 }
+
 .character-details {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -21,16 +26,19 @@
   margin: auto;
   max-width: 500px;
 }
+
 .char-detail-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
+
   label {
     color: white;
     text-transform: uppercase;
     font-size: 0.9em;
   }
+
   input {
     background: transparent;
     border: 1px solid #433f64;
@@ -41,6 +49,8 @@
     width: 100%;
   }
 }
+
+/* Defenses */
 .defenses {
   display: flex;
   flex-wrap: nowrap;
@@ -52,17 +62,21 @@
   justify-content: space-between;
   width: 100%;
 }
+
+/* Advancement Section */
 .advancement-section {
   display: flex;
   justify-content: center;
   margin: 1.5em 0;
 }
+
 .npc .defenses {
 	gap: 2em;
 	margin-bottom: 2em;
 	margin-top: 1em;
 	overflow: hidden;
 }
+
 .defense {
   flex: 1;
   max-width: 4em;
@@ -72,6 +86,7 @@
   align-items: center;
   align-content: center;
   justify-content: flex-end;
+
   input[type="number"] {
     color: black;
     text-align: center;
@@ -86,12 +101,15 @@
     background-position: center;
     background-repeat: no-repeat;
   }
+
   input[name="system.defenses.evasion.value"] {
     background-image: url("icons/Evade BG-2.png");
   }
+
   input[name="system.defenses.armor.value"] {
     background-image: url("icons/Shield BG-2.png");
   }
+
   label {
     margin-top: -15px;
     position: relative;
@@ -105,6 +123,7 @@
     z-index: 1;
   }
 }
+
 .armorslots {
   flex: 1;
   max-width: fit-content;
@@ -113,19 +132,23 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
+
   label {
     text-transform: uppercase;
   }
+
   .values {
     display: flex;
     align-items: center;
     gap: 3px;
   }
+
   .resource-group {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
+
   input {
     width: 50px;
     font-size: 18px;
@@ -138,6 +161,8 @@
     text-align: center;
   }
 }
+
+/* Traits */
 .traits {
   display: flex;
   flex-wrap: wrap;
@@ -145,6 +170,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .trait {
   flex: 1;
   min-width: 80px;
@@ -153,6 +179,7 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
+
   input {
     width: 80px;
     height: 64px;
@@ -167,9 +194,11 @@
     padding-bottom: 8px;
   }
 }
+
 .trait-label-wrapper {
   margin-bottom: -0.75em;
   z-index: 1;
+
   label {
     text-transform: uppercase;
     font-size: 10px;
@@ -181,6 +210,7 @@
     z-index: 1;
     white-space: nowrap;
   }
+
   .trait-d12-icon {
     margin-right: 2px;
     transition: transform 0.4s ease-in-out;
@@ -190,10 +220,12 @@
     vertical-align: middle;
     margin-bottom: 1px;
   }
+
   label:hover .trait-d12-icon {
     transform: rotate(360deg);
   }
 }
+
 .trait-toggle {
   position: relative;
   display: flex;
@@ -202,6 +234,7 @@
   margin-top: -1.5em;
   margin-bottom: 0;
   z-index: 2;
+
   input[type="checkbox"] {
     width: 20px;
     height: 20px;
@@ -215,14 +248,17 @@
     position: relative;
     transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
     &:hover {
       border-color: var(--dh-color-gold-light);
       background: rgb(11, 10, 19);
       transform: scale(1.1);
     }
+
     &:checked {
       background: var(--dh-color-gold);
       border-color: var(--dh-color-gold-light);
+
       &::after {
         content: "✓";
         position: absolute;
@@ -236,6 +272,7 @@
     }
   }
 }
+
 .trait-effects {
   font-size: 12px;
   display: flex;
@@ -243,6 +280,7 @@
   color: #6c6a85;
   font-weight: lighter;
 }
+
 input.trait-effects.resize-ta {
   font-size: 12px;
   border: none;
@@ -253,6 +291,8 @@ input.trait-effects.resize-ta {
   word-break: break-word;
   word-wrap: normal;
 }
+
+/* Experience */
 .experience-group {
   display: flex;
   flex-direction: column;
@@ -260,6 +300,7 @@ input.trait-effects.resize-ta {
   width: 97%;
   margin: auto;
 }
+
 .experience-row {
   display: flex;
   align-items: center;
@@ -267,9 +308,11 @@ input.trait-effects.resize-ta {
   background: rgba(0, 0, 0, 0.2);
   padding: 0.5em 0.5em;
   border-radius: 5px;
+
   &:nth-child(even) {
     background: rgba(141, 120, 151, 0.07);
   }
+
   .exp-level input {
     color: var(--dh-color-off-white);
     background: none;
@@ -278,6 +321,7 @@ input.trait-effects.resize-ta {
     width: 25px;
     text-align: center;
   }
+
   .click-rollable-modifier {
     width: 2em;
     font-size: 18px;
@@ -290,17 +334,21 @@ input.trait-effects.resize-ta {
     text-align: center;
   }
 }
+
 .experience-row-column {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   a {
     font-size: 11px;
     opacity: 0.6;
   }
 }
+
 .experience-row-column-2 {
   flex-grow: 1;
+
   input {
     text-align: left;
     height: 30px;
@@ -312,6 +360,8 @@ input.trait-effects.resize-ta {
     width: 100%;
   }
 }
+
+/* Weapons */
 .weapon-group {
   display: flex;
   flex-direction: row;
@@ -319,10 +369,12 @@ input.trait-effects.resize-ta {
   gap: 1em;
   justify-content: center;
 }
+
 .weapon-row {
   flex-direction: column;
   display: flex;
   margin-bottom: 5px;
+
   .weapon-field {
     display: flex;
     border: none;
@@ -333,13 +385,16 @@ input.trait-effects.resize-ta {
     padding: 0px;
     margin: 0px;
     height: fit-content;
+    
     &.weapon-field-hidden {
       display: none;
     }
   }
+
   input::placeholder {
     color: rgba(159, 159, 159, 0.4117647059);
   }
+
   .weapon-label {
     font-size: 14px;
     display: flex;
@@ -357,6 +412,7 @@ input.trait-effects.resize-ta {
     width: 100%; 
     margin: auto;
   }
+
   .weapon-desc {
     font-size: 12px;
     line-height: 12px;
@@ -374,10 +430,12 @@ input.trait-effects.resize-ta {
     align-items: center;
     word-break: break-word;
     word-wrap: normal;
+
     &::placeholder {
       color: rgba(169, 169, 169, 0.7019607843);
     }
   }
+
   .weapon-to-hit, .weapon-damage {
     display: flex;
     justify-content: center;
@@ -392,9 +450,11 @@ input.trait-effects.resize-ta {
     color: white;
     text-align: center;
   }
+
   .weapon-to-hit {
     width: 35px !important;
   }
+
   .weapon-attack-button {
     background: var(--dh-color-gold);
     border: none;
@@ -409,50 +469,65 @@ input.trait-effects.resize-ta {
     margin: 0;
     transition: all 0.2s ease;
     font-size: 18px;
+
     &:hover {
       background: rgb(67, 63, 100);
       transform: scale(1.02);
       color: var(--dh-color-gold);
       box-shadow: none;
     }
+
     &:active {
       transform: scale(0.98);
     }
+
     i {
       color: white;
       font-size: inherit;
     }
+    
+    /* Primary weapon styling - blue gradient to match tag */
     &.primary-weapon {
       background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      
       &:hover {
         background: linear-gradient(135deg, #1d4ed8, #60a5fa);
         color: white;
       }
     }
+    
+    /* Secondary weapon styling - purple gradient to match tag */
     &.secondary-weapon {
       background: linear-gradient(135deg, #8a2be2, #9370db);
+      
       &:hover {
         background: linear-gradient(135deg, #9333ea, #a855f7);
         color: white;
       }
     }
   }
+
+  /* Primary weapon field styling */
   .weapon-to-hit.primary-weapon,
   .weapon-damage.primary-weapon {
     border-color: #3b82f6;
     box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
   }
+  
+  /* Secondary weapon field styling */
   .weapon-to-hit.secondary-weapon,
   .weapon-damage.secondary-weapon {
     border-color: #9370db;
     box-shadow: 0 0 0 1px rgba(147, 112, 219, 0.3);
   }
+
   .weapon-infobox {
     display: flex;
     flex-direction: column;
     align-items: center;
     align-content: center;
   }
+
   .weapon-infobox-first {
     display: flex;
     flex-direction: column;
@@ -464,6 +539,7 @@ input.trait-effects.resize-ta {
     margin-bottom: 0.15em;
   }
 }
+
 .npc .weapon-row .weapon-label,
 .companion .weapon-row .weapon-label {
   font-size: 14px;
@@ -476,6 +552,7 @@ input.trait-effects.resize-ta {
   justify-content: center;
   text-transform: uppercase;
 }
+
 .weapon-box {
 	color: white;
 	padding: 0;
@@ -487,6 +564,7 @@ input.trait-effects.resize-ta {
 	min-width: 0;
   display: flex;
 }
+
 .weapon-box-inner {
   display: flex;
   flex-direction: column;
@@ -496,6 +574,7 @@ input.trait-effects.resize-ta {
   padding: .25em;
   flex: 1;
 }
+
 .weapon-roller-box {
   display: flex;
   flex-wrap: nowrap;
@@ -506,6 +585,7 @@ input.trait-effects.resize-ta {
   align-items: center;
   justify-content: space-between;
 }
+
 .textarea-container {
   display: flex;
   width: 100%;
@@ -514,28 +594,35 @@ input.trait-effects.resize-ta {
   justify-content: center;
   height: fit-content;
 }
+
 .actor .weapon-damage {
   width: 4.5em;
 }
+
 .npc .weapon-damage,
 .companion .weapon-damage {
   width: 4.5em;
 }
+
+/* Dying/Dead Character Styling */
 .daggerheart.sheet.character.dying .item-bg,
 .daggerheart.sheet.npc.dying .item-bg,
 .daggerheart.sheet.companion.dying .item-bg {
   filter: saturate(0.3) brightness(0.6) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
 }
+
 .daggerheart.sheet.character.dying .profile-img,
 .daggerheart.sheet.npc.dying .profile-img,
 .daggerheart.sheet.companion.dying .profile-img {
   filter: saturate(0.3) brightness(0.7) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
 }
+
 .portrait-container {
   position: relative;
 }
+
 .death-overlay {
   position: absolute;
   top: 0;
@@ -550,9 +637,11 @@ input.trait-effects.resize-ta {
   cursor: pointer;
   transition: background 0.3s ease;
   pointer-events: auto;
+
   &:hover {
     background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.8) 0%, rgba(139, 0, 0, 0.4) 50%, transparent 70%);
   }
+
   .fa-skull {
     font-size: 3.5rem;
     color: rgba(255, 255, 255, 0.9);
@@ -560,27 +649,33 @@ input.trait-effects.resize-ta {
     transition: transform 0.3s ease, text-shadow 0.3s ease;
     position: relative;
   }
+
   &:hover .fa-skull {
     transform: scale(1.1);
     text-shadow: 0 0 30px rgb(139, 0, 0), 0 0 60px rgba(139, 0, 0, 0.8);
   }
 }
+
 .portrait-buttons {
   display: flex;
   gap: 0.5em;
   margin-bottom: -1em;
   z-index: 10;
 }
+
+/* Resource Controls on Actor Sheet */
 .resource-content {
   display: flex;
   align-items: center;
   justify-content: center;
+
   .resource-box {
     margin: 0 5px;
     border-radius: 5px;
     text-align: center;
   }
 }
+
 .resource-control {
   color: var(--dh-color-gold);
   text-decoration: none;
@@ -588,17 +683,20 @@ input.trait-effects.resize-ta {
   padding: 0 5px;
   cursor: pointer;
   transition: all 0.2s ease;
+
   &:hover {
     color: var(--dh-color-gold-light);
     transform: scale(1.2);
   }
 }
+
 .resource-label-controls {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5em;
   margin-top: 0.25em;
+
   label {
     margin: 0;
   }
@@ -606,6 +704,7 @@ input.trait-effects.resize-ta {
     box-shadow: 0 0 16px 6px rgb(0 0 0 / 45%);
   }
 }
+
 .armor-controls {
   display: flex;
   align-items: center;
@@ -614,9 +713,11 @@ input.trait-effects.resize-ta {
   position: relative;
   z-index: 1;
 }
+
 .defense .armor-controls label {
   margin-top: 0;
 }
+
 .threshold-text {
 	color: #6c6a85;
   font-size: 0.75em;
@@ -634,25 +735,31 @@ input.trait-effects.resize-ta {
   margin: 0 0.25em;
   margin-bottom: 1.33em;
 }
+
 .threshold-clickable {
 	cursor: pointer;
 	transition: all 0.2s ease;
 	user-select: none;
+	
 	&:hover {
 		color: var(--dh-color-gold-light);
 		opacity: 1;
 		transform: scale(1.1);
 	}
+	
 	&:active {
 		transform: scale(0.95);
 	}
 }
+
+/* Threshold Group */
 .threshold-group {
   display: flex;
   flex-direction: column;
   gap: 0.5em;
   align-items: center;
   margin-bottom: 1em;
+
   > label {
     font-size: 12px;
     text-transform: uppercase;
@@ -660,6 +767,7 @@ input.trait-effects.resize-ta {
     margin-bottom: 0.25em;
   }
 }
+
 .threshold-values {
   display: flex;
   align-items: center;
@@ -667,6 +775,7 @@ input.trait-effects.resize-ta {
   flex-wrap: wrap;
   justify-content: center;
 }
+
 .threshold-group input[name="system.threshold.major"],
 .threshold-group input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
@@ -678,12 +787,16 @@ input.trait-effects.resize-ta {
   color: white;
   text-align: center;
 }
+
 .threshold-group .trait-effects {
   color: #6c6a85;
 }
+
+/* Legacy support for .armorslots */
 .armorslots .trait-effects {
   color: #6c6a85;
 }
+
 .armorslots input[name="system.threshold.major"],
 .armorslots input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;

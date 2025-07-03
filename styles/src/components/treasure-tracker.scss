@@ -1,3 +1,4 @@
+/* Treasure Tracker Component */
 .treasure-tracker {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -11,6 +12,7 @@
   margin-left: auto;
   margin-right: auto;
 }
+
 .treasure-item {
   display: flex;
   flex-direction: row;
@@ -22,6 +24,7 @@
   border-radius: 6px;
   transition: all 0.2s ease;
   min-width: 0;
+
   input[type="number"] {
     width: 30px;
     padding: 0.25em 0.4em;
@@ -34,6 +37,7 @@
     font-size: 0.85em;
     transition: all 0.2s ease;
     flex-shrink: 0;
+
     &:focus {
       border-color: var(--dh-color-gold);
       background: rgba(11, 10, 19, 0.8);
@@ -42,17 +46,20 @@
     }
   }
 }
+
 .treasure-icon {
   display: flex;
   align-items: center;
   gap: 0.3em;
   flex-grow: 1;
   justify-content: center;
+
   i {
     color: var(--dh-color-gold);
     font-size: 1.1em;
     flex-shrink: 0;
   }
+
   label {
     font-size: 0.7em;
     font-weight: 600;
@@ -66,27 +73,34 @@
     text-overflow: ellipsis;
   }
 }
+
+/* Responsive design for treasure tracker */
 @media (max-width: 768px) {
   .treasure-tracker {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.3em;
   }
 }
+
 @media (max-width: 480px) {
   .treasure-tracker {
     grid-template-columns: 1fr;
     gap: 0.3em;
   }
+
   .treasure-item {
     padding: 0.3em 0.5em;
+
     label {
       font-size: 0.7em;
     }
+
     input[type="number"] {
       width: 50px;
       padding: 0.25em 0.4em;
     }
   }
+
   .treasure-icon {
     font-size: 1em;
   }

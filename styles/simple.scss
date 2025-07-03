@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 /* ============================================
    DAGGERHEART SYSTEM STYLES
    ============================================
@@ -8,14 +9,18 @@
    3. Components - Reusable UI components
    4. Features - Specific functionality modules
    ============================================ */
+
 /* Foundation Layer */
 @use "src/foundation";
 @use "src/global-design-system";
 @use "src/base";
+
 /* Layout Layer */
 @use "src/layout";
+
 /* Components Layer */
 @use "src/components";
+
 /* Feature Layer */
 @use "src/header";
 @use "src/character";
