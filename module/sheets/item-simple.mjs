@@ -1,6 +1,6 @@
-import { EntitySheetHelper } from "./helper.js";
-import {ATTRIBUTE_TYPES} from "./constants.js";
-import { SheetTracker } from "./sheet-tracker.js";
+import { EntitySheetHelper } from "../helper.js";
+import { ATTRIBUTE_TYPES } from "../constants.js";
+import { SheetTracker } from "../sheet-tracker.js";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
@@ -11,8 +11,8 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
   /** @inheritdoc */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-          classes: ["daggerheart", "sheet", "item"],
-    template: "systems/daggerheart/templates/item-sheet.html",
+      classes: ["daggerheart", "sheet", "item"],
+      template: "systems/daggerheart/templates/item-sheet.html",
       width: 350,
       height: 550,
       resizable: true,
@@ -42,7 +42,7 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
     super.activateListeners(html);
 
     // Everything below here is only needed if the sheet is editable
-    if ( !this.isEditable ) return;
+    if (!this.isEditable) return;
 
     // Attribute Management
     html.find(".attributes").on("click", ".attribute-control", EntitySheetHelper.onClickAttributeControl.bind(this));
@@ -54,13 +54,13 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
       event.preventDefault(); // Prevents the browser's context menu from opening
       this._onProfileImageClick(event.target);
     });
-    
+
     // Also allow left click for easier image upload
     html.find('.profile-img').on('click', event => {
       event.preventDefault();
       this._onImageEdit(event);
     });
-    
+
     // Add draggable for Macro creation
     html.find(".attributes a.attribute-roll").each((i, a) => {
       a.setAttribute("draggable", true);
@@ -97,7 +97,7 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
       type: "image",
       current: this.object.img,
       callback: path => {
-        this.object.update({"img": path});
+        this.object.update({ "img": path });
       },
       top: this.position.top + 40,
       left: this.position.left + 10

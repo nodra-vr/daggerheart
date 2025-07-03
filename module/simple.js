@@ -1,8 +1,8 @@
 // Import Modules
 import { SimpleActor } from "./actor.js";
-import { SimpleItem } from "./item.js";
-import { SimpleItemSheet } from "./item-sheet.js";
-import { SimpleWeaponSheet } from "./weapon-sheet.js";
+import { SimpleItem } from "./documents/item.mjs";
+import { SimpleItemSheet } from "./sheets/item-simple.mjs";
+import { SimpleWeaponSheet } from "./sheets/item-simple-weapon.mjs";
 import { SimpleActorSheet, NPCActorSheet } from "./actor-sheet.js";
 import { CompanionActorSheet } from "./actor-sheet-companion.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
