@@ -1,17 +1,8 @@
-/* ====================================
-   UNIFIED DAGGERHEART DIALOG SYSTEM
-   Used by all dialogs from dialog-helper.js
-   Migrated to use Global Design System classes
-   ==================================== */
-
-/* Base Dialog Content Container - Using global content layout */
 .daggerheart-dialog-content {
   display: flex;
   flex-direction: column;
   gap: var(--dh-space-xl);
 }
-
-/* Dialog Description Text - Using global typography */
 .daggerheart-dialog .dialog-description {
   text-align: center;
   color: var(--dh-color-gold);
@@ -19,8 +10,6 @@
   margin: 0;
   font-size: var(--dh-font-size-lg);
 }
-
-/* Dialog Reminders/Info Boxes - Using global glass effects */
 .daggerheart-dialog .dialog-reminder {
   background: rgba(129, 204, 195, 0.2);
   border: 1px solid #81ccc3;
@@ -28,27 +17,21 @@
   padding: var(--dh-space-md);
   margin-bottom: var(--dh-space-lg);
   text-align: center;
-
   p {
     margin: 0;
     color: var(--dh-color-off-white);
     font-size: var(--dh-font-size-sm);
   }
-
   strong {
     color: #81ccc3;
   }
 }
-
-/* Checkbox/Radio Group Container - Using global layout */
 .daggerheart-dialog .checkbox-group {
   display: flex;
   flex-direction: column;
   gap: var(--dh-space-md);
   margin: var(--dh-space-lg) 0;
 }
-
-/* Individual Checkbox/Radio Items - Using global glass and interactive styles */
 .daggerheart-dialog .checkbox-item {
   background: var(--dh-bg-section);
   border: 1px solid var(--dh-border-purple-light);
@@ -57,15 +40,12 @@
   transition: var(--dh-transition-fast);
   position: relative;
   cursor: pointer;
-
   &:hover {
     background: rgba(67, 63, 100, 0.5);
     border-color: var(--dh-color-gold);
     transform: translateY(-2px);
     box-shadow: var(--dh-shadow-md);
   }
-
-  /* Input positioning for inline layout - Using global checkbox styling */
   input[type=checkbox],
   input[type=radio] {
     appearance: none;
@@ -81,16 +61,13 @@
     top: var(--dh-space-lg);
     right: var(--dh-space-lg);
     flex-shrink: 0;
-
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
-
     &:checked {
       background: var(--dh-color-gold);
       border-color: var(--dh-color-gold-light);
-
       &::after {
         content: "✓";
         position: absolute;
@@ -101,21 +78,17 @@
         font-size: 14px;
         font-weight: var(--dh-font-weight-bold);
       }
-
       + label {
         color: var(--dh-color-gold);
       }
     }
-
     &:hover:not(:disabled) {
       border-color: var(--dh-color-gold);
       transform: scale(1.1);
     }
   }
-
   input[type=radio] {
     border-radius: var(--dh-radius-full);
-
     &:checked::after {
       content: "";
       position: absolute;
@@ -128,14 +101,12 @@
       border-radius: var(--dh-radius-full);
     }
   }
-
   label {
     display: block;
     margin-right: 2.5em;
     cursor: pointer;
     color: var(--dh-color-off-white);
     line-height: 1.4;
-
     strong {
       display: block;
       font-size: var(--dh-font-size-lg);
@@ -145,15 +116,12 @@
       letter-spacing: 1px;
     }
   }
-
   .option-description {
     font-size: var(--dh-font-size-sm);
     color: #a0a0a0;
     font-style: italic;
   }
 }
-
-/* Selection Counter for Multi-Option Dialogs - Using global section styling */
 .daggerheart-dialog .selection-counter {
   text-align: center;
   padding: var(--dh-space-md);
@@ -163,25 +131,20 @@
   border-radius: var(--dh-radius-md);
   font-weight: var(--dh-font-weight-bold);
   transition: var(--dh-transition-fast);
-
   &.valid {
     background: rgba(76, 175, 80, 0.2);
     border-color: #4caf50;
     color: #a5d6a7;
   }
-
   &.invalid {
     background: rgba(244, 67, 54, 0.2);
     border-color: #f44336;
     color: #ffcdd2;
   }
 }
-
-/* Dialog Window Styling - Using global popup styles */
 .daggerheart-dialog .dialog-content {
   padding: var(--dh-space-sm) var(--dh-space-lg);
 }
-
 .daggerheart-dialog .window-content {
   background: var(--dh-bg-dark);
   backdrop-filter: var(--dh-blur-sm);
@@ -190,7 +153,6 @@
   border: 1px solid var(--dh-border-purple-light);
   border-top: none;
 }
-
 .daggerheart-dialog.window-app .window-header {
   background: var(--dh-bg-dark);
   backdrop-filter: var(--dh-blur-sm);
@@ -200,8 +162,6 @@
   border: none;
   border-radius: 0;
 }
-
-/* Dialog Button Styling - Using global button styles */
 .daggerheart-dialog .dialog-buttons {
 	display: flex;
 	gap: var(--dh-space-lg);
@@ -209,7 +169,6 @@
 	align-items: center;
 	margin-top: 0;
 	padding: 0;
-
   button {
     background: var(--dh-bg-section);
     border: 1px solid var(--dh-border-purple-light);
@@ -223,18 +182,15 @@
     align-items: center;
     justify-content: center;
     gap: 0.5em;
-
     i {
       line-height: 1;
       vertical-align: middle;
     }
-
     &:hover:not(:disabled) {
       background: rgba(67, 63, 100, 0.8);
       border-color: var(--dh-color-gold);
       color: var(--dh-color-gold);
     }
-
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -244,12 +200,6 @@
     }
   }
 }
-
-/* ====================================
-   RECOVERY ALLOCATION DIALOG STYLES
-   Used for Risk it All recovery allocation
-   ==================================== */
-
 .daggerheart-dialog.recovery-dialog {
   .dialog-content {
     background: rgba(11, 10, 19, 0.95);
@@ -257,7 +207,6 @@
     padding: 0;
     overflow: hidden;
   }
-
   .dialog-buttons {
     margin-top: 0.5em;
     padding-top: 0.5em;
@@ -265,35 +214,30 @@
     max-height: 3em;
   }
 }
-
 .daggerheart-dialog .recovery-dialog-content {
   padding: 1em;
   display: flex;
   flex-direction: column;
   gap: 0.75em;
 }
-
 .daggerheart-dialog .recovery-header {
   text-align: center;
   border-bottom: 1px solid var(--dh-color-teal);
   padding-bottom: 0.5em;
   margin-bottom: 0.5em;
 }
-
 .daggerheart-dialog .recovery-title {
   font-size: 1.2em;
   color: var(--dh-color-teal);
   margin: 0;
   font-weight: bold;
 }
-
 .daggerheart-dialog .recovery-subtitle {
   font-size: 0.9em;
   color: var(--dh-color-gold);
   margin: 0.3em 0 0 0;
   font-style: italic;
 }
-
 .daggerheart-dialog .current-status {
   display: flex;
   justify-content: space-around;
@@ -303,32 +247,27 @@
   border: 1px solid rgba(129, 204, 195, 0.3);
   margin-bottom: 0.5em;
 }
-
 .daggerheart-dialog .status-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25em;
 }
-
 .daggerheart-dialog .status-label {
   font-size: 0.85em;
   color: var(--dh-color-gray);
   font-weight: bold;
 }
-
 .daggerheart-dialog .status-value {
   font-size: 1.1em;
   color: var(--dh-color-gold);
   font-weight: bold;
 }
-
 .daggerheart-dialog .allocation-controls {
   display: flex;
   flex-direction: column;
   gap: 0.5em;
 }
-
 .daggerheart-dialog .allocation-group {
   display: flex;
   align-items: center;
@@ -338,14 +277,12 @@
   border: 1px solid rgba(109, 103, 149, 0.3);
   gap: 0.75em;
   min-height: 50px;
-
   label {
     color: var(--dh-color-off-white);
     font-weight: bold;
     flex: 0 0 90px;
     font-size: 0.9em;
   }
-
   .stepper-group {
     display: flex;
     align-items: center;
@@ -353,7 +290,6 @@
     flex: 1;
     justify-content: center;
   }
-
   input[type=number] {
     width: 70px;
     padding: 0.5em;
@@ -366,7 +302,6 @@
     font-size: 1em;
     line-height: 1;
   }
-
   .max-available {
     font-size: 0.8em;
     white-space: nowrap;
@@ -374,7 +309,6 @@
     text-align: right;
   }
 }
-
 .daggerheart-dialog .recovery-minus,
 .daggerheart-dialog .recovery-plus {
   width: 32px;
@@ -392,18 +326,15 @@
   font-size: 16px;
   line-height: 1;
   flex-shrink: 0;
-
   &:hover {
     background: rgba(129, 204, 195, 0.4);
     color: var(--dh-color-off-white);
     transform: scale(1.05);
   }
-
   &:active {
     transform: scale(0.95);
   }
 }
-
 .daggerheart-dialog .allocation-status {
   text-align: center;
   background: rgba(67, 63, 100, 0.2);
@@ -411,22 +342,18 @@
   border-radius: 8px;
   border: 1px solid rgba(243, 194, 103, 0.3);
   margin-top: 0.5em;
-
   p {
     margin: 0.1em 0;
     font-weight: bold;
     font-size: 0.9em;
   }
-
   #pointsUsed {
     color: var(--dh-color-gold);
   }
-
   #pointsAvailable {
     color: var(--dh-color-teal);
   }
 }
-
 .daggerheart-dialog .quick-buttons {
   display: flex;
   gap: 0.5em;
@@ -434,7 +361,6 @@
   flex-wrap: wrap;
   margin-bottom: 0.5em;
 }
-
 .daggerheart-dialog .quick-btn {
   padding: 0.4em 0.8em;
   background: rgba(109, 103, 149, 0.6);
@@ -445,7 +371,6 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-
   &:hover {
     background: rgba(109, 103, 149,.8);
     border-color: var(--dh-color-gold);
@@ -453,16 +378,9 @@
     transform: translateY(-1px);
   }
 }
-
-/* ====================================
-   DUALITY ROLL DIALOG STYLES
-   Used for duality roll configuration
-   ==================================== */
-
 .daggerheart-dialog.daggerheart-roll-dialog .dialog-content {
   padding-bottom: 0;
 }
-
 .daggerheart-dialog.daggerheart-roll-dialog {
   .flex-row {
     align-content: center;
@@ -471,7 +389,6 @@
     flex-direction: row;
     justify-content: space-around;
   }
-
   .flex-col {
     align-content: center;
     align-items: center;
@@ -480,10 +397,8 @@
     justify-content: space-around;
     gap: 0.5em;
   }
-
   .stepper-group {
     flex: 1;
-
     input {
       margin: 0 0.25rem;
       max-width: 5em;
@@ -496,7 +411,6 @@
       color: white;
     }
   }
-
   .label-bar {
     margin-bottom: 0.25em;
     overflow: hidden;
@@ -506,7 +420,6 @@
     text-transform: uppercase;
     font-size: 0.9em;
     letter-spacing: 1px;
-
     &::before,
     &::after {
       background-color: var(--dh-color-gold-dark);
@@ -517,18 +430,15 @@
       vertical-align: middle;
       width: 50%;
     }
-
     &::before {
       margin-left: -50%;
       right: 0.5em;
     }
-
     &::after {
       left: 0.5em;
       margin-right: -50%;
     }
   }
-
   .clicker-button {
     background: rgba(67, 63, 100, 0.5);
     border: 1px solid #6d6795;
@@ -545,7 +455,6 @@
     font-size: 1.2em;
     line-height: 1;
     flex-shrink: 0;
-
     &:hover {
       background: rgba(67, 63, 100, 0.8);
       border-color: var(--dh-color-gold);
@@ -553,17 +462,14 @@
       transform: scale(1.1);
     }
   }
-
   .clicker-plus-button::before {
     content: "+";
     font-weight: 800;
   }
-
   .clicker-minus-button::before {
     content: "-";
     font-weight: 800;
   }
-
   select {
     background: transparent;
     border: 1px solid #433f64;
@@ -571,16 +477,13 @@
     padding: 0.25em;
     color: white;
     text-align: center;
-
     option {
       background: rgba(11, 10, 19, 0.85);
       color: var(--dh-color-off-white);
-
       &:hover {
         background: rgba(67, 63, 100, 0.9);
         color: var(--dh-color-gold);
       }
-
       &:checked {
         background: #433f64;
         color: var(--dh-color-gold);

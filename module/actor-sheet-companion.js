@@ -1,31 +1,17 @@
 import { SheetTracker } from "./sheet-tracker.js";
 import { SimpleActorSheet } from "./actor-sheet.js";
-
-/**
-* Extend the basic ActorSheet with some very simple modifications
-* @extends {ActorSheet}
-*/
 export class CompanionActorSheet extends SimpleActorSheet {
-  /** @inheritdoc */
   static get defaultOptions() {
-    // Calculate responsive dimensions based on screen size
     const screenHeight = window.innerHeight;
     const screenWidth = window.innerWidth;
-    
-    // Calculate optimal height for companion sheet (typically smaller than PC sheet)
     const maxHeight = Math.floor(screenHeight * 0.85);
-    const minHeight = 500; // Minimum usable height for companion
-    const preferredHeight = 840; // Ideal height for larger screens
-    
+    const minHeight = 500; 
+    const preferredHeight = 840; 
     const height = Math.max(minHeight, Math.min(preferredHeight, maxHeight));
-    
-    // Calculate width for companion sheet
     const maxWidth = Math.floor(screenWidth * 0.9);
-    const minWidth = 690; // Maintain minimum width for usability
-    const preferredWidth = 650; // Standard width for companion
-    
+    const minWidth = 690; 
+    const preferredWidth = 650; 
     const width = Math.max(minWidth, Math.min(preferredWidth, maxWidth));
-    
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["daggerheart", "sheet", "companion"],
       template: "systems/daggerheart/templates/actor-sheet-companion.html",
@@ -36,8 +22,6 @@ export class CompanionActorSheet extends SimpleActorSheet {
       dragDrop: [],
     });
   }
-  
-  /** @inheritdoc */
   async getData(options) {
     const context = await super.getData(options);
     context.shorthand = !!game.settings.get("daggerheart", "macroShorthand");
@@ -49,34 +33,22 @@ export class CompanionActorSheet extends SimpleActorSheet {
     });
     context.actor = this.actor;
     context.imageStyle = `background: url(${context.data.img});`;
-    
     const stress = context.systemData.stress;
     context.isOutOfScene = stress && stress.value === stress.max && stress.max > 0;
-    
     return context;
   }
-  
-  /** @inheritdoc */
   activateListeners(html) {
     super.activateListeners(html);
-    
     if (!this.sheetTracker) {
       this.sheetTracker = new SheetTracker(this);
     }
-
-    // Always initialize on re-render to recreate the DOM
     this.sheetTracker.initialize();
   }
-  
   async _rollTrait(traitName, traitValue) {
     const traitNamePrint = traitName.charAt(0).toUpperCase() + traitName.slice(1);
     const title = `Roll for ${traitNamePrint}`;
-    
-    // For companions, we'll call for an npc dialog roll (same as NPCs)
     await game.daggerheart.rollHandler.npcRollWithDialog({title, traitValue, actor: this.actor});
   }
-  
-  /** @inheritdoc */
   _getSubmitData(updateData) {
     let formData = super._getSubmitData(updateData);
     if (this.actor.type === "companion") {

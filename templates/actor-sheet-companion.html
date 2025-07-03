@@ -12,7 +12,6 @@
                     </div>
                     {{/if}}
                 </div>
-
                 <div class="portrait-resources">
                     <div class="resource stress">
                         <div class="resource-content">
@@ -31,20 +30,17 @@
                 </div>
             </div>
         </div>
-
         <div class="header-bottom-container">
             <h1 class="charname">
                 <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
             </h1>
         </div>
     </header>
-
     {{!-- Sheet Tab Navigation --}}
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item active" data-tab="companion">{{localize "DH.Companion"}}</a>
         <a class="item" data-tab="biography">{{localize "DH.Biography"}}</a>
     </nav>
-
     {{!-- Sheet Body --}}
     <section class="sheet-body">
         <div class="tab companion" data-group="primary" data-tab="companion">
@@ -54,7 +50,6 @@
                         value="{{systemData.defenses.evasion.value}}" />
                     <label for="system.defenses.evasion.value">{{localize "DH.Evasion"}}</label>
                 </div>
-
                 <div class="companion-weapon-section">
                     <div class="weapon-group">
                         <div class="weapon-row">
@@ -93,7 +88,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="experience-group">
                 <div class="experience-row click-rollable-group">
                     <div class="experience-row-column">
@@ -161,7 +155,6 @@
                 </div>
             </div>
         </div>
-
         <div class="tab biography" data-group="primary" data-tab="biography">
             {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
         </div>

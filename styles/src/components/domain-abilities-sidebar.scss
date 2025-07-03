@@ -1,12 +1,8 @@
-/* =========================================
-   Domain Abilities Sidebar (left of sheet)
-   ========================================= */
-
 .domain-abilities-sidebar {
   position: absolute;
   top: 15%;
-  right: 100%; /* sit just to the left of the sheet */
-  transform: translateX(-8px); /* little gutter spacing */
+  right: 100%; 
+  transform: translateX(-8px); 
   width: 110px;
   display: flex;
   flex-direction: column;
@@ -15,7 +11,6 @@
   z-index: 95;
   pointer-events: auto;
 }
-
 .domain-ability-button {
   position: relative;
   width: 96px;
@@ -26,19 +21,15 @@
   box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
   transition: transform 0.2s ease;
 }
-
 .domain-ability-button:hover {
   transform: scale(1.05);
 }
-
 .domain-ability-button img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-
-/* Overlay controls (edit / delete icons) */
 .domain-ability-button .ability-overlay {
   position: absolute;
   top: 4px;
@@ -46,9 +37,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  pointer-events: none; /* icons inside will still receive events */
+  pointer-events: none; 
 }
-
 .domain-ability-button .ability-overlay .item-control {
   pointer-events: all;
   background: rgba(0, 0, 0, 0.6);
@@ -62,14 +52,11 @@
   font-size: 10px;
   transition: background 0.2s ease, transform 0.2s ease;
 }
-
 .domain-ability-button .ability-overlay .item-control:hover {
   background: var(--dh-color-gold, #f3c267);
   color: var(--dh-color-off-black, #0b0a13);
   transform: scale(1.1);
 }
-
-/* Name label (appears on hover) */
 .domain-ability-button .ability-name {
   position: absolute;
   left: 0;
@@ -84,46 +71,35 @@
   transition: opacity 0.2s ease;
   pointer-events: none;
 }
-
 .domain-ability-button:hover .ability-name {
   opacity: 1;
 }
-
 .domain-ability-preview {
   position: fixed;
-  /* very high z-index so it never appears behind other sheet or HUD elements */
   z-index: 4000;
   pointer-events: none;
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
-
 .domain-ability-preview.show {
   opacity: 1;
   transform: scale(1);
 }
-
-/* When pinned via middle-click, make the preview interactive */
 .domain-ability-preview.pinned {
   pointer-events: auto;
 }
-
-/* Ensure preview card has a maximum width */
 .domain-preview-card {
   max-width: 260px;
   border: 1px solid var(--dh-color-gold, #f3c267);
   border-radius: var(--dh-radius-lg, 8px);
   overflow: hidden;
   box-shadow: var(--dh-shadow-lg, 0 6px 12px rgba(0,0,0,0.6));
-  background: rgba(11, 10, 19, 0.95); /* opaque dark backdrop */
+  background: rgba(11, 10, 19, 0.95); 
 }
-
-/* Ensure inner content panels also have solid backdrop */
 .domain-preview-card .card-content {
-  background: transparent; /* inherit from parent but keep no extra transparency */
+  background: transparent; 
 }
-
 .domain-ability-slot.empty {
   width: 96px;
   height: 96px;
@@ -131,13 +107,11 @@
   border-radius: var(--dh-radius-lg, 8px);
   opacity: 0.2;
 }
-
 .domain-ability-slot.empty.drag-over,
 .domain-abilities-sidebar.drag-over .domain-ability-slot.empty {
   opacity: 0.6;
   border-style: solid;
 }
-
 .preview-hint {
   margin: 4px 6px 6px;
   font-size: 0.65rem;
@@ -150,7 +124,6 @@
   justify-content: center;
   gap: 4px;
 }
-
 .preview-hint i {
   font-size: 0.7rem;
 } 

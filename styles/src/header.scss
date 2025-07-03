@@ -1,4 +1,3 @@
-/* Header */
 .sheet-header {
   display: flex;
   flex-direction: column;
@@ -10,15 +9,12 @@
   overflow: visible;
   max-height: 26em;
 }
-
 .companion .sheet-header {
   max-height: 22em;
 }
-
 .npc .sheet-header {
   max-height: 22em;
 }
-
 .header-top-container {
   display: flex;
   width: 100%;
@@ -27,7 +23,6 @@
   align-items: flex-start;
   margin-bottom: 0.5em;
 }
-
 .charlevel {
   display: flex;
   flex-direction: column;
@@ -37,7 +32,6 @@
   margin: 0px;
   padding: 5px 25px;
   border-radius: 5px;
-
   input {
     color: var(--dh-color-gold-dark);
     text-align: center;
@@ -48,7 +42,6 @@
     border: none;
     background: transparent;
   }
-
   a {
     padding: 0px;
     height: min-content;
@@ -57,7 +50,6 @@
     opacity: 0.6;
   }
 }
-
 .header-main-container {
   display: flex;
   justify-content: center;
@@ -66,7 +58,6 @@
   position: relative;
   flex-wrap: nowrap;
 }
-
 .header-name-level-prof {
   display: flex;
   width: 80%;
@@ -76,21 +67,18 @@
   flex-direction: row;
   gap: 2em;
 }
-
 .portrait-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
 }
-
 .portrait-image-wrapper {
   position: relative;
   width: 200px;
   height: 200px;
   flex-shrink: 0;
 }
-
 .profile-img {
   position: absolute;
   top: 0;
@@ -105,7 +93,6 @@
   display: block;
   box-sizing: border-box;
 }
-
 .portrait-resources {
   display: flex;
   gap: 2em;
@@ -115,16 +102,13 @@
   position: relative;
   z-index: 10;
 }
-
 .resource {
   display: flex;
   flex-direction: column;
   align-items: center;
-
   &.hope {
     position: relative;
   }
-
   .resource-box {
     background: #1c1c1c;
     border: 1px solid var(--dh-color-gold);
@@ -135,7 +119,6 @@
     display: flex;
     gap: 5px;
     align-items: center;
-
     input {
       background: transparent;
       border: none;
@@ -143,7 +126,6 @@
       width: 1.5em;
       color: white;
       font-size: 1em;
-
       &:focus {
         box-shadow: none;
         background: rgba(255, 255, 255, 0.1);
@@ -151,26 +133,22 @@
       }
     }
   }
-
   label {
     text-transform: uppercase;
     font-size: 0.8em;
     margin-top: 5px;
   }
 }
-
 .resource-value {
   min-width: 20px;
   text-align: center;
 }
-
 .header-bottom-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5em;
 }
-
 .charname {
   input {
     text-transform: uppercase;
@@ -186,13 +164,11 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-
     &:focus {
       box-shadow: none;
     }
   }
 }
-
 .actor {
   .charname {
     input {
@@ -200,14 +176,12 @@
     }
   }
 }
-
 .header-domain {
   display: flex;
   gap: 2em;
   justify-content: center;
   margin-top: 0.5em;
   width: 100%;
-
   input {
     font-size: 1rem;
     font-weight: 200;
@@ -223,18 +197,14 @@
     background: transparent;
   }
 }
-
 .actor {
   .header-domain {
     justify-content: flex-start;
-
     input {
       text-align: left;
     }
   }
 }
-
-/* Item sheet header specifics */
 .item .sheet-header {
   display: flex;
   flex-direction: column;
@@ -246,7 +216,6 @@
   overflow: visible;
   max-height: 24em;
   align-content: stretch;
-
   .header-fields {
     flex: 1;
     border: none;
@@ -262,16 +231,13 @@
     align-items: center;
     gap: 0.5em;
     max-width: 100%;
-
     input {
       background: transparent;
-
       &::placeholder {
         color: rgba(230, 230, 230, 0.4196078431);
       }
     }
   }
-
   .item-charname {
     max-height: 30px;
     padding: 0px;
@@ -281,7 +247,6 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-
     input {
       text-transform: uppercase;
       font-size: clamp(10px, 2vw, 17px);
@@ -305,11 +270,9 @@
     }
   }
 }
-
 .npc .portrait-container {
   align-self: center;
 }
-
 .npc .portrait-image-wrapper {
   position: relative;
   width: 200px;
@@ -318,7 +281,6 @@
   align-items: center;
   justify-content: center;
 }
-
 .portrait-buttons {
   display: flex;
   gap: 0.5em;

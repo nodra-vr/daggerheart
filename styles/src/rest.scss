@@ -13,28 +13,21 @@
   cursor: pointer;
   transition: all 0.2s ease;
   outline: none;
-
   &:hover {
     background: var(--dh-color-gold);
     color: var(--dh-color-off-black);
     transform: translateY(-1px) scale(1.1);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
-
   &:active {
     transform: translateY(0) scale(1.05);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   }
-
   i {
     font-size: 1em;
     margin-right: 0.3em;
   }
 }
-
-/* All dialog styles moved to unified system in dialogs.scss */
-
-/* Short Rest Chat Message Styles */
 .short-rest-start {
   padding: 1em;
   margin: 0.5em 0;
@@ -42,24 +35,20 @@
   border: 2px solid #81ccc3;
   border-radius: 10px;
   text-align: center;
-
   p {
     color: #ffffff;
     margin: 0.5em 0;
   }
-
   strong {
     color: #a5d6a7;
     font-size: 1.2em;
     text-shadow: 0 0 8px rgba(165, 214, 167, 0.6);
   }
-
   em {
     color: #e8f5e8;
     opacity: 0.9;
   }
 }
-
 .short-rest-tend-wounds,
 .short-rest-clear-stress,
 .short-rest-repair-armor,
@@ -70,11 +59,9 @@
   border: 1px solid #66bb6a;
   border-radius: 8px;
   text-align: center;
-
   p {
     color: #ffffff;
     margin: 0.5em 0;
-
     &:first-child {
       color: #a5d6a7;
       font-weight: bold;
@@ -84,20 +71,16 @@
       letter-spacing: 1px;
     }
   }
-
   strong {
     color: var(--dh-color-gold);
     font-size: 1.1em;
   }
-
   em {
     color: #e8f5e8;
     font-size: 0.9em;
     opacity: 0.9;
   }
 }
-
-/* Long Rest Chat Message Styles */
 .long-rest-start {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -107,7 +90,6 @@
   text-align: center;
   position: relative;
   overflow: hidden;
-
   &::before {
     content: "";
     position: absolute;
@@ -118,17 +100,14 @@
     background: radial-gradient(circle, rgba(156, 39, 176, 0.1) 0%, transparent 70%);
     animation: longRestGlow 3s ease-in-out infinite;
   }
-
   > * {
     position: relative;
     z-index: 1;
   }
-
   p {
     color: #ffffff;
     margin: 0.5em 0;
   }
-
   strong {
     color: #ce93d8;
     font-size: 1.3em;
@@ -136,14 +115,12 @@
     text-transform: uppercase;
     letter-spacing: 2px;
   }
-
   em {
     color: #f3e5f5;
     opacity: 0.95;
     font-size: 1.1em;
   }
 }
-
 .long-rest-tend-wounds,
 .long-rest-clear-stress,
 .long-rest-repair-armor,
@@ -156,11 +133,9 @@
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
-
   p {
     color: #ffffff;
     margin: 0.5em 0;
-
     &:first-child {
       color: #ce93d8;
       font-weight: bold;
@@ -171,12 +146,10 @@
       margin-bottom: 0.75em;
     }
   }
-
   strong {
     color: var(--dh-color-gold);
     font-size: 1.1em;
   }
-
   em {
     color: #f3e5f5;
     font-size: 0.95em;
@@ -184,7 +157,6 @@
     font-weight: bold;
   }
 }
-
 .long-rest-prepare .prepare-note,
 .long-rest-work-project .project-note {
   margin-top: 1em;
@@ -192,7 +164,6 @@
   background: rgba(67, 63, 100, 0.3);
   border: 1px solid #6d6795;
   border-radius: 6px;
-
   p {
     margin: 0.25em 0;
     font-size: 0.9em;
@@ -200,11 +171,9 @@
     line-height: 1.4;
   }
 }
-
 .long-rest-work-project .project-note {
   text-align: left;
 }
-
 @keyframes longRestGlow {
   0%, 100% {
     transform: scale(1) rotate(0deg);

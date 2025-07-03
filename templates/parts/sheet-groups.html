@@ -14,7 +14,6 @@
             <a class="attribute-control" data-action="create" data-group="{{groupKey}}" data-dtype="{{group.dtype}}"><i class="fas fa-plus"></i></a>
             <a class="group-control" data-action="delete-group"><i class="fas fa-trash"></i></a>
         </div>
-
         {{> "systems/daggerheart/templates/parts/sheet-attributes.html" attributes=group.attributes group=groupKey dtypes=../dtypes}}
     </li>
     {{/each}}
