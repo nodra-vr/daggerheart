@@ -12010,29 +12010,6 @@ body.game .app a.content-link i,
   color: #0b0a13;
 }
 
-.trait-value-display {
-  width: 80px;
-  height: 64px;
-  background: url("icons/Stats BG-2.png") no-repeat;
-  background-size: contain;
-  background-position: center center;
-  border: none;
-  color: black;
-  text-align: center;
-  font-size: 22px;
-  font-weight: 700;
-  padding-bottom: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.trait-value-display:hover {
-  transform: scale(1.05);
-}
-
 .trait-edit-popup-overlay, .attribute-edit-popup-overlay {
   position: fixed;
   top: 0;
