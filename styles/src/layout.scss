@@ -208,7 +208,19 @@
     }
   }
 }
+body.game .app {
+  border-radius: 10px;
 
-body.game .app button:hover, body.game .app button:focus {
-	box-shadow: none;
+  img {
+    /* no border on images */
+  }
+
+  button:hover, button:focus {
+    box-shadow: none;
+  }
+
+  button {
+    border: 1px solid var(--dh-color-gold);
+  }
+
 }

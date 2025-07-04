@@ -54,11 +54,11 @@
 }
 
 /* Remove Foundry's built-in box shadow on focused inputs */
-body.game .app input[type="text"]:focus, 
-body.game .app input[type="number"]:focus, 
-body.game .app input[type="password"]:focus, 
-body.game .app input[type="date"]:focus, 
-body.game .app input[type="time"]:focus, 
-body.game .app input[type="search"]:focus {
+ input[type="text"]:focus, 
+ input[type="number"]:focus, 
+ input[type="password"]:focus, 
+ input[type="date"]:focus, 
+ input[type="time"]:focus, 
+ input[type="search"]:focus {
   box-shadow: none;
 }

@@ -61,12 +61,12 @@
 }
 
 /* Remove Foundry's built-in box shadow on focused inputs */
-body.game .app input[type=text]:focus,
-body.game .app input[type=number]:focus,
-body.game .app input[type=password]:focus,
-body.game .app input[type=date]:focus,
-body.game .app input[type=time]:focus,
-body.game .app input[type=search]:focus {
+input[type=text]:focus,
+input[type=number]:focus,
+input[type=password]:focus,
+input[type=date]:focus,
+input[type=time]:focus,
+input[type=search]:focus {
   box-shadow: none;
 }
 
@@ -1428,8 +1428,17 @@ body.game .app input[type=search]:focus {
   padding: 0.5em 5em;
 }
 
+body.game .app {
+  border-radius: 10px;
+}
+body.game .app img {
+  /* no border on images */
+}
 body.game .app button:hover, body.game .app button:focus {
   box-shadow: none;
+}
+body.game .app button {
+  border: 1px solid var(--dh-color-gold);
 }
 
 /* Components Layer */
@@ -2714,10 +2723,9 @@ body.game .app button:hover, body.game .app button:focus {
    ========================================= */
 .domain-abilities-sidebar {
   position: absolute;
-  top: 15%;
+  top: -3%;
   right: 100%; /* sit just to the left of the sheet */
   transform: translateX(-8px); /* little gutter spacing */
-  width: 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2726,9 +2734,20 @@ body.game .app button:hover, body.game .app button:focus {
   pointer-events: auto;
 }
 
+.domain-abilities-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--dh-color-gold, #f3c267);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--dh-space-xs, 0.25rem);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
 .domain-ability-button {
   position: relative;
-  width: 96px;
+  width: 130px;
   height: 96px;
   border-radius: var(--dh-radius-lg, 8px);
   overflow: hidden;
@@ -2845,8 +2864,8 @@ body.game .app button:hover, body.game .app button:focus {
 }
 
 .domain-ability-slot.empty {
-  width: 96px;
-  height: 96px;
+  width: 130px;
+  height: 65px;
   border: 2px dashed var(--dh-color-gold, #f3c267);
   border-radius: var(--dh-radius-lg, 8px);
   opacity: 0.2;

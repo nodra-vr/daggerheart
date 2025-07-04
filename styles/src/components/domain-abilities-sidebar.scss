@@ -1,18 +1,13 @@
 /* =========================================
    Domain Abilities Sidebar (left of sheet)
    ========================================= */
-   
-body.game .app img {
-
-}
-
+  
 
 .domain-abilities-sidebar {
   position: absolute;
-  top: 15%;
+  top:-3%;
   right: 100%; /* sit just to the left of the sheet */
   transform: translateX(-8px); /* little gutter spacing */
-  width: 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,9 +16,20 @@ body.game .app img {
   pointer-events: auto;
 }
 
+.domain-abilities-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--dh-color-gold, #f3c267);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--dh-space-xs, 0.25rem);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
 .domain-ability-button {
   position: relative;
-  width: 96px;
+  width: 130px;
   height: 96px;
   border-radius: var(--dh-radius-lg, 8px);
   overflow: hidden;
@@ -141,8 +147,8 @@ body.game .app img {
 }
 
 .domain-ability-slot.empty {
-  width: 96px;
-  height: 96px;
+  width: 130px;
+  height: 65px;
   border: 2px dashed var(--dh-color-gold, #f3c267);
   border-radius: var(--dh-radius-lg, 8px);
   opacity: 0.2;

@@ -33,7 +33,8 @@ export class DomainAbilitySidebar {
     const buttonsHtml = this._renderAbilityButtons();
     if (!buttonsHtml) return; // Nothing to display
 
-    const sidebarHtml = `<div class="domain-abilities-sidebar">${buttonsHtml}</div>`;
+    const titleHtml = `<div class="domain-abilities-title">Domain</div>`;
+    const sidebarHtml = `<div class="domain-abilities-sidebar">${titleHtml}${buttonsHtml}</div>`;
 
     // Append to the FIRST window-content element so it stays inside the sheet chrome
     windowContent.first().append(sidebarHtml);
