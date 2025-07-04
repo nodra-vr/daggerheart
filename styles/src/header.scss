@@ -1,14 +1,14 @@
 /* Header */
 .sheet-header {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5em 1.5em 0.5em;
-  gap: 1em;
-  overflow: visible;
-  max-height: 26em;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	padding: 0.5em 1.5em;
+	gap: 1em;
+	overflow: visible;
+	max-height: 31em;
 }
 
 .companion .sheet-header {

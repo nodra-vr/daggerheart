@@ -25,6 +25,7 @@
   cursor: pointer;
   user-select: none;
   transition: var(--dh-transition-fast);
+  z-index: 0;
 
   &:hover {
     transform: scale(1.05);

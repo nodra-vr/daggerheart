@@ -2723,7 +2723,7 @@ body.game .app button {
    ========================================= */
 .domain-abilities-sidebar {
   position: absolute;
-  top: -3%;
+  top: 0%;
   right: 100%; /* sit just to the left of the sheet */
   transform: translateX(-8px); /* little gutter spacing */
   display: flex;
@@ -2737,18 +2737,22 @@ body.game .app button {
 .domain-abilities-title {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--dh-color-gold, #f3c267);
+  color: var(--dh-color-gray);
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: var(--dh-space-xs, 0.25rem);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  width: fit-content;
+  padding: 0.25em 1em;
+  background: rgba(67, 63, 100, 0.3);
+  border: 1px solid #433f64;
+  border-radius: 5px;
 }
 
 .domain-ability-button {
   position: relative;
   width: 130px;
-  height: 96px;
+  height: 65px;
   border-radius: var(--dh-radius-lg, 8px);
   overflow: hidden;
   cursor: pointer;
@@ -2819,12 +2823,13 @@ body.game .app button {
   color: var(--dh-color-gold, #f3c267);
   font-size: 0.65rem;
   text-align: center;
-  opacity: 1;
+  opacity: 0;
   transition: opacity 0.2s ease;
   pointer-events: none;
 }
 
-.domain-ability-button:hover .ability-name {
+.domain-ability-button:hover .ability-name,
+.domain-ability-button:focus .ability-name {
   opacity: 1;
 }
 
@@ -2892,6 +2897,24 @@ body.game .app button {
 
 .preview-hint i {
   font-size: 0.7rem;
+}
+
+.sidebar-separator {
+  width: 120px;
+  height: 1px;
+  background: var(--dh-color-gold, #f3c267);
+  opacity: 0.3;
+  margin: var(--dh-space-xs, 0.25rem) 0;
+}
+
+.domain-ability-button, .domain-ability-slot.empty {
+  width: 130px;
+  height: 55px;
+  transition: height 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.domain-ability-button:hover, .domain-ability-button:focus {
+  height: 90px;
 }
 
 /* Header Loadout Bar */
@@ -3096,10 +3119,10 @@ body.game .app button {
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  padding: 0.5em 1.5em 0.5em;
+  padding: 0.5em 1.5em;
   gap: 1em;
   overflow: visible;
-  max-height: 26em;
+  max-height: 31em;
 }
 
 .companion .sheet-header {
@@ -3553,6 +3576,11 @@ body.game .app button {
   gap: 0.7em;
   align-items: center;
   justify-content: center;
+  background: rgba(11, 10, 19, 0.8);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 15px;
+  backdrop-filter: blur(3px);
+  width: 100%;
 }
 
 .trait {
@@ -6958,6 +6986,7 @@ input[type=submit]:disabled,
   cursor: pointer;
   user-select: none;
   transition: var(--dh-transition-fast);
+  z-index: 0;
 }
 .trait-value-display:hover {
   transform: scale(1.05);
@@ -9158,10 +9187,6 @@ button.weapon-locked:hover {
 .item .flexcol {
   position: relative;
 }
-.item .sheet-header {
-  position: relative;
-  z-index: 1;
-}
 
 .counter-ui {
   display: flex;
@@ -9615,18 +9640,6 @@ button.weapon-locked:hover {
 }
 .daggerheart .vault-content .item-control {
   display: flex;
-}
-
-.sheet-header {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5em 1.5em 0.5em;
-  gap: 1em;
-  overflow: visible;
-  max-height: 26em;
 }
 
 .npc .sheet-header {
@@ -10106,22 +10119,17 @@ button.weapon-locked:hover {
   text-align: center;
 }
 
-.traits {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7em;
-  align-items: center;
-  justify-content: center;
-}
-
 .trait {
+  display: flex;
   flex: 1;
   min-width: 80px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 5px;
+  padding: 1em 0.25em;
 }
 .trait input {
   width: 80px;
@@ -12641,52 +12649,6 @@ body.game .app a.content-link i,
   visibility: visible;
   transform: translateY(0) scale(1);
   pointer-events: all;
-}
-
-.tracker-manager-header {
-  background: rgba(11, 10, 19, 0.5);
-  border-bottom: 1px solid var(--dh-color-gold);
-  padding: 0.75rem 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-.tracker-manager-header span {
-  color: var(--dh-color-gold);
-  font-weight: 600;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-align: center;
-  text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
-}
-.tracker-manager-header .tracker-manager-close {
-  background: rgba(11, 10, 19, 0.85);
-  border: 2px solid rgba(243, 194, 103, 0.5);
-  color: var(--dh-color-gold);
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-.tracker-manager-header .tracker-manager-close:hover {
-  background: var(--dh-color-gold);
-  color: var(--dh-color-off-black);
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 15px rgba(243, 194, 103, 0.6);
 }
 
 .tracker-manager-content {

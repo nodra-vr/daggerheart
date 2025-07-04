@@ -169,6 +169,11 @@
   gap: 0.7em;
   align-items: center;
   justify-content: center;
+  background: rgb(11, 10, 19, 0.8);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 15px;
+  backdrop-filter: blur(3px);
+  width: 100%;
 }
 
 .trait {

@@ -8,9 +8,15 @@ export class DomainAbilitySidebar {
     this.sidebarElement = null;
     this.previewTimeout = null;
     this.previewElement = null;
-    // Track whether the preview is currently pinned via middle-click
     this.previewPinned = false;
     this.pinnedItemId = null;
+    this.slotTypes = [
+      { key: 'domain', label: 'ITEM.TypeDomain' },
+      { key: 'class', label: 'ITEM.TypeClass' },
+      { key: 'subclass', label: 'ITEM.TypeSubclass' },
+      { key: 'community', label: 'ITEM.TypeCommunity' },
+      { key: 'ancestry', label: 'ITEM.TypeAncestry' }
+    ];
   }
 
   /** Re-creates the sidebar every time the sheet renders */
@@ -23,79 +29,91 @@ export class DomainAbilitySidebar {
     const sheet = this.actorSheet.element;
     if (!sheet || !sheet.length) return;
 
-    // Remove any previous instance to avoid duplicates on re-render
     sheet.find('.domain-abilities-sidebar').remove();
 
     const windowContent = sheet.find('.window-content');
     if (windowContent.length === 0) return;
 
-    // Build buttons for every relevant ability item
-    const buttonsHtml = this._renderAbilityButtons();
-    if (!buttonsHtml) return; // Nothing to display
+    const sectionsHtml = this._renderAllSections();
+    if (!sectionsHtml) return;
 
-    const titleHtml = `<div class="domain-abilities-title">Domain</div>`;
-    const sidebarHtml = `<div class="domain-abilities-sidebar">${titleHtml}${buttonsHtml}</div>`;
+    const sidebarHtml = `<div class="domain-abilities-sidebar">${sectionsHtml}</div>`;
 
-    // Append to the FIRST window-content element so it stays inside the sheet chrome
     windowContent.first().append(sidebarHtml);
 
     this.sidebarElement = sheet.find('.domain-abilities-sidebar');
     this._activateListeners();
   }
 
-  /** Pull Domain Ability items from the actor */
-  _getDomainAbilityItems() {
+  /** Render all slot sections */
+  _renderAllSections() {
+    const sections = [];
+    
+    this.slotTypes.forEach((slotType) => {
+      const items = this._getItemsForSlotType(slotType);
+      const sectionHtml = this._renderSection(slotType, items);
+      sections.push(sectionHtml);
+    });
+    
+    return sections.join('');
+  }
+
+  /** Get items for a specific slot type */
+  _getItemsForSlotType(slotType) {
     return this.actor.items.filter((item) => {
       const loc = item.system?.location;
-      // Accept several legacy or current location strings that indicate this
-      // item is meant for the domain-ability bar.
-      const isAbilityLocation =
-        loc === 'abilities' ||
-        loc === 'domain' || // legacy value on some actors
-        loc === undefined ||
-        loc === null;
-
-      // Many existing worlds stored domain abilities under different item types.
-      // Accept anything flagged "domain" or the generic "item" type.
-      const isDomainType = item.type === 'domain' || item.type === 'item' || item.type === 'ability';
-
-      return isAbilityLocation && isDomainType;
+      // Exclude items in the vault
+      if (loc === 'vault') return false;
+      
+      if (slotType.key === 'domain') {
+        // Mirror the domain logic: location is abilities/domain/undefined/null, but not vault
+        return (
+          loc === 'abilities' ||
+          loc === 'domain' ||
+          loc === undefined ||
+          loc === null
+        );
+      }
+      // For all other sections, only show items with location matching the slot key
+      return loc === slotType.key;
     });
   }
 
-  /** Produce HTML for each button */
-  _renderAbilityButtons() {
-    const abilityItems = this._getDomainAbilityItems();
-    // Limit to 5 display slots
-    const maxSlots = 5;
+  /** Render a single section */
+  _renderSection(slotType, items) {
+    const titleHtml = `<div class="domain-abilities-title">${game.i18n.localize(slotType.label)}</div>`;
+    const buttonsHtml = this._renderSectionButtons(slotType, items);
+    return titleHtml + buttonsHtml;
+  }
 
-    // Sort alphabetically
-    abilityItems.sort((a, b) => a.name.localeCompare(b.name));
+  /** Render buttons for a section */
+  _renderSectionButtons(slotType, items) {
+    items.sort((a, b) => a.name.localeCompare(b.name));
 
-    let html = abilityItems
-      .slice(0, maxSlots)
+    let html = items
       .map(
         (item) => `
-        <div class="domain-ability-button" data-item-id="${item.id}" title="${item.name}">
+        <div class="domain-ability-button" data-item-id="${item.id}" data-slot-type="${slotType.key}" title="${item.name}">
           <img class="ability-img" src="${item.img}" />
           <div class="ability-overlay">
             <a class="item-control" data-action="edit" title="Edit"><i class="fas fa-edit"></i></a>
             <a class="item-control" data-action="delete" title="Delete"><i class="fas fa-trash"></i></a>
-            <a class="item-control" data-action="send-to-vault" title="Send to Vault"><i class="fas fa-arrow-right"></i></a>
+            ${slotType.key === 'domain' ? `<a class="item-control" data-action="send-to-vault" title="Send to Vault"><i class="fas fa-arrow-right"></i></a>` : ''}
           </div>
           <span class="ability-name">${item.name}</span>
         </div>`
       )
       .join('');
 
-    // Add empty slots up to max
-    const emptyCount = Math.max(0, maxSlots - abilityItems.length);
-    for (let i = 0; i < emptyCount; i++) {
-      html += `<div class="domain-ability-slot empty" title="Drag a Domain Ability here"></div>`;
-    }
-
     return html;
   }
+
+  /** Pull Domain Ability items from the actor (legacy method) */
+  _getDomainAbilityItems() {
+    return this._getItemsForSlotType({ key: 'domain' });
+  }
+
+
 
   /** Wire up click handlers */
   _activateListeners() {
@@ -244,16 +262,16 @@ export class DomainAbilitySidebar {
     });
 
     // Drag & Drop handlers for adding abilities
-    this.sidebarElement.on('dragover', '.domain-ability-slot.empty, .domain-abilities-sidebar', (ev) => {
+    this.sidebarElement.on('dragover', '.domain-ability-slot.empty', (ev) => {
       ev.preventDefault();
       $(ev.currentTarget).addClass('drag-over');
     });
 
-    this.sidebarElement.on('dragleave', '.domain-ability-slot.empty, .domain-abilities-sidebar', (ev) => {
+    this.sidebarElement.on('dragleave', '.domain-ability-slot.empty', (ev) => {
       $(ev.currentTarget).removeClass('drag-over');
     });
 
-    this.sidebarElement.on('drop', '.domain-ability-slot.empty, .domain-abilities-sidebar', async (ev) => {
+    this.sidebarElement.on('drop', '.domain-ability-slot.empty', async (ev) => {
       ev.preventDefault();
       $(ev.currentTarget).removeClass('drag-over');
       await this._handleDrop(ev);
@@ -353,12 +371,20 @@ export class DomainAbilitySidebar {
     this._hidePreview();
   }
 
-  /** Handle item drops to add new domain ability */
+  /** Handle item drops to add new item */
   async _handleDrop(event) {
     const dragEvent = event.originalEvent ?? event;
-    // Respect max slots
-    if (this._getDomainAbilityItems().length >= 5) {
-      ui.notifications?.warn('Maximum of 5 Domain Abilities reached.');
+    const dropTarget = $(event.currentTarget);
+    const slotType = dropTarget.data('slot-type');
+    
+    if (!slotType) return false;
+
+    const slotConfig = this.slotTypes.find(st => st.key === slotType);
+    if (!slotConfig) return false;
+
+    const existingItems = this._getItemsForSlotType(slotConfig);
+    if (existingItems.length >= slotConfig.maxSlots) {
+      ui.notifications?.warn(`Maximum of ${slotConfig.maxSlots} ${slotConfig.label} items reached.`);
       return false;
     }
 
@@ -368,21 +394,16 @@ export class DomainAbilitySidebar {
     const item = await Item.implementation.fromDropData(data);
     if (!item) return false;
 
-    // If same actor already has item
     if (this.actor.items.has(item.id)) {
       const existing = this.actor.items.get(item.id);
-      // Update location to abilities if not already
-      await existing.update({ 'system.location': 'domain' });
+      await existing.update({ 'system.location': slotType });
       this.render();
       return true;
     }
 
-    // Otherwise create a copy on the actor with location abilities
     const newItemData = duplicate(item.toObject());
     newItemData.system = newItemData.system || {};
-    // Normalise to the canonical location string for the sidebar. Use "domain" to
-    // maintain backwards-compatibility with actors created before this feature.
-    newItemData.system.location = 'domain';
+    newItemData.system.location = slotType;
 
     await this.actor.createEmbeddedDocuments('Item', [newItemData]);
     this.render();

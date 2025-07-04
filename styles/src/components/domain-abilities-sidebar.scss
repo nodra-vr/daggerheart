@@ -5,7 +5,7 @@
 
 .domain-abilities-sidebar {
   position: absolute;
-  top:-3%;
+  top: 0%;
   right: 100%; /* sit just to the left of the sheet */
   transform: translateX(-8px); /* little gutter spacing */
   display: flex;
@@ -17,20 +17,24 @@
 }
 
 .domain-abilities-title {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--dh-color-gold, #f3c267);
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: var(--dh-space-xs, 0.25rem);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--dh-color-gray);
+	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+	width: fit-content;
+	padding: 0.25em 1em;
+	background: rgba(67, 63, 100, 0.3);
+	border: 1px solid #433f64;
+	border-radius: 5px;
 }
 
 .domain-ability-button {
   position: relative;
   width: 130px;
-  height: 96px;
+  height: 65px;
   border-radius: var(--dh-radius-lg, 8px);
   overflow: hidden;
   cursor: pointer;
@@ -102,12 +106,13 @@
   color: var(--dh-color-gold, #f3c267);
   font-size: 0.65rem;
   text-align: center;
-  opacity: 1;
+  opacity: 0;
   transition: opacity 0.2s ease;
   pointer-events: none;
 }
 
-.domain-ability-button:hover .ability-name {
+.domain-ability-button:hover .ability-name,
+.domain-ability-button:focus .ability-name {
   opacity: 1;
 }
 
@@ -176,3 +181,21 @@
 .preview-hint i {
   font-size: 0.7rem;
 } 
+
+.sidebar-separator {
+  width: 120px;
+  height: 1px;
+  background: var(--dh-color-gold, #f3c267);
+  opacity: 0.3;
+  margin: var(--dh-space-xs, 0.25rem) 0;
+}
+
+.domain-ability-button, .domain-ability-slot.empty {
+  width: 130px;
+  height: 55px;
+  transition: height 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.domain-ability-button:hover, .domain-ability-button:focus {
+  height: 90px;
+}

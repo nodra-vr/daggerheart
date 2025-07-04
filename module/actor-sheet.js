@@ -66,7 +66,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
           classes: ["daggerheart", "sheet", "actor"],
     template: "systems/daggerheart/templates/actor-sheet.html",
       width: 690,
-      height: 980,
+      height: 915,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
       scrollY: [".biography", ".items", ".attributes"],
       dragDrop: [
