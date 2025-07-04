@@ -477,14 +477,23 @@ export class CountdownTracker {
       const tracker = this.trackers.find(t => t.id === trackerId);
 
       if (tracker) {
-        const confirmed = await Dialog.confirm({
+        const result = await DaggerheartDialogHelper.showDialog({
           title: "Delete Tracker",
           content: `<p>Are you sure you want to delete the tracker "${tracker.name}"?</p>`,
-          yes: () => true,
-          no: () => false
+          dialogClass: "daggerheart-dialog delete-confirmation-dialog",
+          buttons: {
+            yes: {
+              label: "Delete",
+              callback: () => true
+            },
+            no: {
+              label: "Cancel",
+              callback: () => false
+            }
+          }
         });
 
-        if (confirmed) {
+        if (result) {
           await this.removeTracker(trackerId);
 
           // Refresh the management dialog
