@@ -936,6 +936,95 @@ async function _cleanupDuplicateMacros() {
   }
 }
 
+
+
+/**
+ * Hook to add countdown tracker management button to scene controls
+ * This is the official FoundryVTT v13 API approach
+ */
+Hooks.on("getSceneControlButtons", (controls) => {
+  console.log("🎯 DAGGERHEART: getSceneControlButtons hook triggered!");
+  console.log("🎯 DAGGERHEART: Controls received:", controls);
+  console.log("🎯 DAGGERHEART: Controls type:", typeof controls);
+  console.log("🎯 DAGGERHEART: Controls keys:", Object.keys(controls));
+
+  // Check permissions - only show to GMs and Assistant GMs
+  const canManage = game.user.isGM || game.user.hasRole("ASSISTANT");
+  if (!canManage) {
+    console.log("🎯 DAGGERHEART: User doesn't have permission to manage countdown trackers");
+    return;
+  }
+
+  // In v13, controls is a Record<string, SceneControl>
+  // The control is called "tokens" (plural), not "token" (singular)
+  if (controls.tokens) {
+    console.log("🎯 DAGGERHEART: Found tokens controls:", controls.tokens);
+    console.log("🎯 DAGGERHEART: Tokens controls tools:", controls.tokens.tools);
+    console.log("🎯 DAGGERHEART: Tokens controls tools type:", typeof controls.tokens.tools);
+    console.log("🎯 DAGGERHEART: Tokens controls tools is array:", Array.isArray(controls.tokens.tools));
+
+    // In v13, tools is a Record<string, SceneControlTool>, not an array
+    if (!controls.tokens.tools) {
+      controls.tokens.tools = {};
+      console.log("🎯 DAGGERHEART: Created tools object for tokens controls");
+    }
+
+    console.log("🎯 DAGGERHEART: Adding countdown tracker button to tokens controls");
+    controls.tokens.tools["countdown-tracker-manage"] = {
+      name: "countdown-tracker-manage",
+      title: "Manage Countdown Trackers",
+      icon: "fas fa-stopwatch",
+      button: true,
+      onClick: async () => {
+        console.log("🎯 DAGGERHEART: Countdown tracker button clicked!");
+        if (game.daggerheart?.countdownTracker) {
+          await game.daggerheart.countdownTracker.showManagementDialog();
+        } else {
+          ui.notifications.error("Countdown tracker not initialized");
+        }
+      }
+    };
+
+    console.log("🎯 DAGGERHEART: Button added successfully to tokens controls");
+  } else {
+    console.log("🎯 DAGGERHEART: Tokens controls not found");
+    console.log("🎯 DAGGERHEART: Available control groups:", Object.keys(controls));
+
+    // Try to add to the first available control group as fallback
+    const firstControlKey = Object.keys(controls)[0];
+    if (firstControlKey && controls[firstControlKey]) {
+      console.log(`🎯 DAGGERHEART: Trying to add to first available control group: ${firstControlKey}`);
+      console.log(`🎯 DAGGERHEART: Control structure:`, controls[firstControlKey]);
+
+      // In v13, tools is a Record<string, SceneControlTool>, not an array
+      if (!controls[firstControlKey].tools) {
+        console.log(`🎯 DAGGERHEART: Creating tools object for ${firstControlKey}`);
+        controls[firstControlKey].tools = {};
+      }
+
+      console.log(`🎯 DAGGERHEART: Adding button to ${firstControlKey} controls`);
+      controls[firstControlKey].tools["countdown-tracker-manage"] = {
+        name: "countdown-tracker-manage",
+        title: "Manage Countdown Trackers",
+        icon: "fas fa-stopwatch",
+        button: true,
+        onClick: async () => {
+          console.log("🎯 DAGGERHEART: Countdown tracker button clicked (fallback)!");
+          if (game.daggerheart?.countdownTracker) {
+            await game.daggerheart.countdownTracker.showManagementDialog();
+          } else {
+            ui.notifications.error("Countdown tracker not initialized");
+          }
+        }
+      };
+
+      console.log(`🎯 DAGGERHEART: Button added to fallback control group: ${firstControlKey}`);
+    }
+  }
+});
+
+
+
 /**
  * Hook to set default prototype token settings for actors
  */

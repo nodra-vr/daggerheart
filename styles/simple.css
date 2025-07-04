@@ -1601,28 +1601,6 @@ body.game .app button {
   z-index: 9999;
   pointer-events: all;
 }
-.countdown-tracker-ui .countdown-manage-btn {
-  background: rgba(243, 194, 103, 0.2);
-  border: 1px solid #f3c267;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #f3c267;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
-  backdrop-filter: blur(5px);
-}
-.countdown-tracker-ui .countdown-manage-btn:hover {
-  background: rgba(243, 194, 103, 0.3);
-  transform: scale(1.05);
-}
-.countdown-tracker-ui .countdown-manage-btn:active {
-  transform: scale(0.95);
-}
 .countdown-tracker-ui .countdown-trackers-container {
   display: flex;
   flex-direction: row;
@@ -2856,9 +2834,10 @@ body.game .app button {
 /* Ensure preview card has a maximum width */
 .domain-preview-card {
   max-width: 260px;
+  max-height: 400px;
   border: 1px solid var(--dh-color-gold, #f3c267);
   border-radius: var(--dh-radius-lg, 8px);
-  overflow: hidden;
+  overflow: auto;
   box-shadow: var(--dh-shadow-lg, 0 6px 12px rgba(0, 0, 0, 0.6));
   background: rgba(11, 10, 19, 0.95); /* opaque dark backdrop */
 }
@@ -5173,17 +5152,20 @@ input.trait-effects.resize-ta {
   outline-offset: 1px;
 }
 
-/* Unified Button Styling - Apply glassmorphism to all Foundry button types */
-/* Inline rolls, content links, and rollable buttons */
-body.game .app a.inline-roll,
-a.inline-roll.roll,
-body.game .app a.content-link,
-.content-link,
-.inline-roll,
-.rollable,
-.roll-link,
-.document-link,
-.entity-link {
+/* Unified Button Styling - Apply glassmorphism only to Daggerheart-specific elements */
+/* Inline rolls, content links, and rollable buttons within Daggerheart contexts */
+.daggerheart a.inline-roll,
+.daggerheart a.inline-roll.roll,
+.daggerheart a.content-link,
+.daggerheart .content-link,
+.daggerheart .inline-roll,
+.daggerheart .rollable,
+.daggerheart .roll-link,
+.daggerheart .document-link,
+.daggerheart .entity-link,
+.chat-message .daggerheart a.inline-roll,
+.chat-message .daggerheart .inline-roll,
+.chat-message .daggerheart .rollable {
   /* Apply same glassmorphism styling as resource buttons */
   display: inline-block;
   padding: 0.1rem 0.3rem;
@@ -5211,145 +5193,85 @@ body.game .app a.content-link,
   /* Active/pressed state */
   /* Focus state for accessibility */
 }
-body.game .app a.inline-roll i,
-a.inline-roll.roll i,
-body.game .app a.content-link i,
-.content-link i,
-.inline-roll i,
-.rollable i,
-.roll-link i,
-.document-link i,
-.entity-link i {
+.daggerheart a.inline-roll i,
+.daggerheart a.inline-roll.roll i,
+.daggerheart a.content-link i,
+.daggerheart .content-link i,
+.daggerheart .inline-roll i,
+.daggerheart .rollable i,
+.daggerheart .roll-link i,
+.daggerheart .document-link i,
+.daggerheart .entity-link i,
+.chat-message .daggerheart a.inline-roll i,
+.chat-message .daggerheart .inline-roll i,
+.chat-message .daggerheart .rollable i {
   color: var(--dh-color-gold) !important;
   margin-right: 0.25em;
 }
-body.game .app a.inline-roll:hover,
-a.inline-roll.roll:hover,
-body.game .app a.content-link:hover,
-.content-link:hover,
-.inline-roll:hover,
-.rollable:hover,
-.roll-link:hover,
-.document-link:hover,
-.entity-link:hover {
+.daggerheart a.inline-roll:hover,
+.daggerheart a.inline-roll.roll:hover,
+.daggerheart a.content-link:hover,
+.daggerheart .content-link:hover,
+.daggerheart .inline-roll:hover,
+.daggerheart .rollable:hover,
+.daggerheart .roll-link:hover,
+.daggerheart .document-link:hover,
+.daggerheart .entity-link:hover,
+.chat-message .daggerheart a.inline-roll:hover,
+.chat-message .daggerheart .inline-roll:hover,
+.chat-message .daggerheart .rollable:hover {
   transform: translateY(-0.5px) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
   background: rgba(243, 194, 103, 0.18) !important;
   border-color: rgba(243, 194, 103, 0.35) !important;
   color: var(--dh-color-gold) !important;
 }
-body.game .app a.inline-roll:active,
-a.inline-roll.roll:active,
-body.game .app a.content-link:active,
-.content-link:active,
-.inline-roll:active,
-.rollable:active,
-.roll-link:active,
-.document-link:active,
-.entity-link:active {
+.daggerheart a.inline-roll:active,
+.daggerheart a.inline-roll.roll:active,
+.daggerheart a.content-link:active,
+.daggerheart .content-link:active,
+.daggerheart .inline-roll:active,
+.daggerheart .rollable:active,
+.daggerheart .roll-link:active,
+.daggerheart .document-link:active,
+.daggerheart .entity-link:active,
+.chat-message .daggerheart a.inline-roll:active,
+.chat-message .daggerheart .inline-roll:active,
+.chat-message .daggerheart .rollable:active {
   transform: translateY(0) !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
-body.game .app a.inline-roll:focus,
-a.inline-roll.roll:focus,
-body.game .app a.content-link:focus,
-.content-link:focus,
-.inline-roll:focus,
-.rollable:focus,
-.roll-link:focus,
-.document-link:focus,
-.entity-link:focus {
+.daggerheart a.inline-roll:focus,
+.daggerheart a.inline-roll.roll:focus,
+.daggerheart a.content-link:focus,
+.daggerheart .content-link:focus,
+.daggerheart .inline-roll:focus,
+.daggerheart .rollable:focus,
+.daggerheart .roll-link:focus,
+.daggerheart .document-link:focus,
+.daggerheart .entity-link:focus,
+.chat-message .daggerheart a.inline-roll:focus,
+.chat-message .daggerheart .inline-roll:focus,
+.chat-message .daggerheart .rollable:focus {
   outline: 1px solid rgba(243, 194, 103, 0.4) !important;
   outline-offset: 1px;
 }
 
-/* Macro Hotbar Button Styling */
-#hotbar .macro,
-.macro-sheet .macro,
-.hotbar-page .macro {
-  /* Apply glassmorphism to macro buttons */
-  background: rgba(243, 194, 103, 0.12) !important;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(243, 194, 103, 0.25) !important;
-  border-radius: 0.3rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
-  transition: all 0.15s ease;
-  /* Hover effects */
-  /* Active/pressed state */
-  /* Macro icon styling */
-  /* Macro key styling */
-}
-#hotbar .macro:hover,
-.macro-sheet .macro:hover,
-.hotbar-page .macro:hover {
-  transform: translateY(-0.5px) !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
-  background: rgba(243, 194, 103, 0.18) !important;
-  border-color: rgba(243, 194, 103, 0.35) !important;
-}
-#hotbar .macro:active,
-.macro-sheet .macro:active,
-.hotbar-page .macro:active {
-  transform: translateY(0) !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
-}
-#hotbar .macro .macro-icon,
-.macro-sheet .macro .macro-icon,
-.hotbar-page .macro .macro-icon {
-  color: var(--dh-color-gold) !important;
-}
-#hotbar .macro .macro-key,
-.macro-sheet .macro .macro-key,
-.hotbar-page .macro .macro-key {
-  color: var(--dh-color-off-white) !important;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 0.2rem;
-  padding: 0.1rem 0.2rem;
-  font-size: 0.6rem;
-}
-
-/* Control Tool Buttons (canvas controls) */
-#controls .control-tool,
-.control-tool,
-.scene-control {
-  /* Apply glassmorphism to control buttons */
-  background: rgba(243, 194, 103, 0.12) !important;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(243, 194, 103, 0.25) !important;
-  border-radius: 0.3rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
-  transition: all 0.15s ease;
-  color: var(--dh-color-gold) !important;
-  /* Hover effects */
-  /* Active/selected state */
-}
-#controls .control-tool:hover,
-.control-tool:hover,
-.scene-control:hover {
-  transform: translateY(-0.5px) !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
-  background: rgba(243, 194, 103, 0.18) !important;
-  border-color: rgba(243, 194, 103, 0.35) !important;
-}
-#controls .control-tool.active, #controls .control-tool:active,
-.control-tool.active,
-.control-tool:active,
-.scene-control.active,
-.scene-control:active {
-  background: rgba(243, 194, 103, 0.25) !important;
-  border-color: rgba(243, 194, 103, 0.4) !important;
-  transform: translateY(0) !important;
-  box-shadow: 0 0 8px rgba(243, 194, 103, 0.3) !important;
-}
-
-/* Dialog and Form Buttons */
-.dialog .dialog-buttons button,
-.form-group button,
-.form-footer button,
-button.default,
-button[type=submit],
-input[type=submit],
-.button {
+/* Macro Hotbar Button Styling - Remove global styling, only apply to Daggerheart-specific macros if needed */
+/* Note: Removed global macro styling to prevent affecting all FoundryVTT macros */
+/* Control Tool Buttons - Remove global styling, only apply to Daggerheart-specific controls if needed */
+/* Note: Removed global control tool styling to prevent affecting all FoundryVTT canvas controls */
+/* Dialog and Form Buttons - Only target Daggerheart-specific dialogs and forms */
+.daggerheart-dialog .dialog-buttons button,
+.daggerheart .dialog .dialog-buttons button,
+.daggerheart .form-group button,
+.daggerheart .form-footer button,
+.daggerheart button.default,
+.daggerheart button[type=submit],
+.daggerheart input[type=submit],
+.daggerheart .button,
+.daggerheart-dialog button,
+.daggerheart-dialog input[type=submit] {
   /* Apply glassmorphism to form buttons */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
@@ -5368,55 +5290,67 @@ input[type=submit],
   /* Focus state for accessibility */
   /* Disabled state */
 }
-.dialog .dialog-buttons button:hover,
-.form-group button:hover,
-.form-footer button:hover,
-button.default:hover,
-button[type=submit]:hover,
-input[type=submit]:hover,
-.button:hover {
+.daggerheart-dialog .dialog-buttons button:hover,
+.daggerheart .dialog .dialog-buttons button:hover,
+.daggerheart .form-group button:hover,
+.daggerheart .form-footer button:hover,
+.daggerheart button.default:hover,
+.daggerheart button[type=submit]:hover,
+.daggerheart input[type=submit]:hover,
+.daggerheart .button:hover,
+.daggerheart-dialog button:hover,
+.daggerheart-dialog input[type=submit]:hover {
   transform: translateY(-0.5px) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
   background: rgba(243, 194, 103, 0.18) !important;
   border-color: rgba(243, 194, 103, 0.35) !important;
 }
-.dialog .dialog-buttons button:active,
-.form-group button:active,
-.form-footer button:active,
-button.default:active,
-button[type=submit]:active,
-input[type=submit]:active,
-.button:active {
+.daggerheart-dialog .dialog-buttons button:active,
+.daggerheart .dialog .dialog-buttons button:active,
+.daggerheart .form-group button:active,
+.daggerheart .form-footer button:active,
+.daggerheart button.default:active,
+.daggerheart button[type=submit]:active,
+.daggerheart input[type=submit]:active,
+.daggerheart .button:active,
+.daggerheart-dialog button:active,
+.daggerheart-dialog input[type=submit]:active {
   transform: translateY(0) !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
-.dialog .dialog-buttons button:focus,
-.form-group button:focus,
-.form-footer button:focus,
-button.default:focus,
-button[type=submit]:focus,
-input[type=submit]:focus,
-.button:focus {
+.daggerheart-dialog .dialog-buttons button:focus,
+.daggerheart .dialog .dialog-buttons button:focus,
+.daggerheart .form-group button:focus,
+.daggerheart .form-footer button:focus,
+.daggerheart button.default:focus,
+.daggerheart button[type=submit]:focus,
+.daggerheart input[type=submit]:focus,
+.daggerheart .button:focus,
+.daggerheart-dialog button:focus,
+.daggerheart-dialog input[type=submit]:focus {
   outline: 1px solid rgba(243, 194, 103, 0.4) !important;
   outline-offset: 1px;
 }
-.dialog .dialog-buttons button:disabled,
-.form-group button:disabled,
-.form-footer button:disabled,
-button.default:disabled,
-button[type=submit]:disabled,
-input[type=submit]:disabled,
-.button:disabled {
+.daggerheart-dialog .dialog-buttons button:disabled,
+.daggerheart .dialog .dialog-buttons button:disabled,
+.daggerheart .form-group button:disabled,
+.daggerheart .form-footer button:disabled,
+.daggerheart button.default:disabled,
+.daggerheart button[type=submit]:disabled,
+.daggerheart input[type=submit]:disabled,
+.daggerheart .button:disabled,
+.daggerheart-dialog button:disabled,
+.daggerheart-dialog input[type=submit]:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Directory Item Controls */
-.directory-item .item-controls .item-control,
-.directory-header .header-control,
-.folder-header .folder-control {
+/* Directory Item Controls - Only target Daggerheart-specific directories */
+.daggerheart .directory-item .item-controls .item-control,
+.daggerheart .directory-header .header-control,
+.daggerheart .folder-header .folder-control {
   /* Apply glassmorphism to directory controls */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
@@ -5428,18 +5362,18 @@ input[type=submit]:disabled,
   padding: 0.2rem 0.3rem;
   /* Hover effects */
 }
-.directory-item .item-controls .item-control:hover,
-.directory-header .header-control:hover,
-.folder-header .folder-control:hover {
+.daggerheart .directory-item .item-controls .item-control:hover,
+.daggerheart .directory-header .header-control:hover,
+.daggerheart .folder-header .folder-control:hover {
   transform: translateY(-0.5px) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
   background: rgba(243, 194, 103, 0.18) !important;
   border-color: rgba(243, 194, 103, 0.35) !important;
 }
 
-/* Chat Control Buttons */
-#chat-controls .chat-control-icon,
-.chat-control-icon {
+/* Chat Control Buttons - Only target Daggerheart-specific chat controls */
+.daggerheart #chat-controls .chat-control-icon,
+.daggerheart .chat-control-icon {
   /* Apply glassmorphism to chat controls */
   background: rgba(243, 194, 103, 0.12) !important;
   backdrop-filter: blur(4px);
@@ -5450,8 +5384,8 @@ input[type=submit]:disabled,
   color: var(--dh-color-gold) !important;
   /* Hover effects */
 }
-#chat-controls .chat-control-icon:hover,
-.chat-control-icon:hover {
+.daggerheart #chat-controls .chat-control-icon:hover,
+.daggerheart .chat-control-icon:hover {
   transform: translateY(-0.5px) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
   background: rgba(243, 194, 103, 0.18) !important;
