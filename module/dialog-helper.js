@@ -17,41 +17,49 @@ export class DaggerheartDialogHelper {
    */
   static async showDialog(config) {
     const dialogClass = `daggerheart-dialog ${config.dialogClass || ''}`;
-    
     return new Promise(resolve => {
-      const dialogButtons = {};
       let isResolved = false;
-      
       const safeResolve = (value) => {
         if (!isResolved) {
           isResolved = true;
           resolve(value);
         }
       };
-      
-      // Process buttons to wrap callbacks with resolve
+
+      const buttonsArray = [];
+      const defaultKey = config.default || Object.keys(config.buttons || {})[0];
       for (const [key, button] of Object.entries(config.buttons || {})) {
-        dialogButtons[key] = {
-          ...button,
-          callback: (html) => {
+        buttonsArray.push({
+          action: key,
+          label: button.label,
+          default: key === defaultKey,
+          callback: (event, btn, dialog) => {
+            const html = $(dialog.window.content);
             const result = button.callback ? button.callback(html) : { html, button: key };
             safeResolve(result);
           }
-        };
+        });
       }
-      
-      new Dialog({
-        title: config.title,
+
+      const dlg = new foundry.applications.api.DialogV2({
+        window: { title: config.title },
         content: config.content,
-        buttons: dialogButtons,
-        default: config.default || Object.keys(dialogButtons)[0],
-        render: config.render,
-        close: () => {
-          safeResolve(null);
+        buttons: buttonsArray,
+        classes: [dialogClass],
+        submit: (result) => {
+          safeResolve(result);
         }
-      }, {
-        classes: [dialogClass]
-      }).render(true);
+      });
+
+      dlg.addEventListener('close', () => safeResolve(null));
+      if (config.render) {
+        dlg.addEventListener('render', () => {
+          const html = $(dlg.window.content);
+          config.render(html);
+        }, { once: true });
+      }
+
+      dlg.render({ force: true });
     });
   }
 

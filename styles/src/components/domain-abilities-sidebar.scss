@@ -1,6 +1,11 @@
 /* =========================================
    Domain Abilities Sidebar (left of sheet)
    ========================================= */
+   
+body.game .app img {
+
+}
+
 
 .domain-abilities-sidebar {
   position: absolute;
@@ -25,6 +30,11 @@
   cursor: pointer;
   box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
   transition: transform 0.2s ease;
+  border: 1px solid var(--dh-color-gold);
+
+  .ability-img {
+    border: none;
+  }
 }
 
 .domain-ability-button:hover {
@@ -47,6 +57,12 @@
   flex-direction: column;
   gap: 2px;
   pointer-events: none; /* icons inside will still receive events */
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.domain-ability-button:hover .ability-overlay {
+  opacity: 1;
 }
 
 .domain-ability-button .ability-overlay .item-control {
@@ -80,7 +96,7 @@
   color: var(--dh-color-gold, #f3c267);
   font-size: 0.65rem;
   text-align: center;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.2s ease;
   pointer-events: none;
 }

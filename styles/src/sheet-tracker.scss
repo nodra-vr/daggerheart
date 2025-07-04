@@ -200,6 +200,10 @@
     transform: translateY(-50%);
     box-shadow: var(--dh-shadow-sm);
 
+    i {
+      margin: 0;
+    }
+
     &:hover {
       background: var(--dh-color-gold);
       color: var(--dh-color-off-black);
