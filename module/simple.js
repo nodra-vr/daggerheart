@@ -17,7 +17,7 @@ import { EquipmentHandler } from "./equipmentHandler.js";
 import { EntitySheetHelper } from "./helper.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
-import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
+import { applyDamage, applyHealing, applyDirectDamage, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
 
 /**
  @param {Actor|null} actor (optional if level is provided)
@@ -747,6 +747,17 @@ Hooks.once("ready", async function() {
     }
   };
   
+  // Initialize damage application module
+  game.daggerheart.damageApplication = {
+    applyDamage,
+    applyHealing,
+    applyDirectDamage,
+    rollDamage,
+    rollHealing,
+    undoDamageHealing,
+    debugUndoData
+  };
+
   // Also add to the game.daggerheart object for consistency
   game.daggerheart.spendFear = window.spendFear;
   game.daggerheart.gainFear = window.gainFear;
@@ -768,6 +779,15 @@ Hooks.once("ready", async function() {
       return false;
     }
     return await game.daggerheart.damageApplication.applyHealing(targetActor, healAmount, sourceActor);
+  };
+
+  window.applyDirectDamage = async function(targetActor, hpDamage, sourceActor, createUndo = true) {
+    if (!game.daggerheart?.damageApplication?.applyDirectDamage) {
+      console.error("Direct damage application not initialized");
+      ui.notifications.error("Direct damage application not available");
+      return false;
+    }
+    return await game.daggerheart.damageApplication.applyDirectDamage(targetActor, hpDamage, sourceActor, createUndo);
   };
   
   window.rollDamage = async function(formula, options) {
@@ -808,6 +828,7 @@ Hooks.once("ready", async function() {
   // Also add to the game.daggerheart object for consistency
   game.daggerheart.applyDamage = window.applyDamage;
   game.daggerheart.applyHealing = window.applyHealing;
+  game.daggerheart.applyDirectDamage = window.applyDirectDamage;
   game.daggerheart.rollDamage = window.rollDamage;
   game.daggerheart.rollHealing = window.rollHealing;
   game.daggerheart.undoDamageHealing = window.undoDamageHealing;
@@ -1230,7 +1251,7 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   }
   
   // Add undo button handlers for damage/healing applied messages
-  if (flags.messageType === "damageApplied" || flags.messageType === "healingApplied") {
+  if (flags.messageType === "damageApplied" || flags.messageType === "healingApplied" || flags.messageType === "directDamageApplied") {
     _addUndoButtonHandlers(html, flags);
   }
 });

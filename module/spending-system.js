@@ -1,3 +1,6 @@
+// Import damage application functions
+import { applyDamage, applyHealing, applyDirectDamage } from './damage-application.js';
+
 /**
  * Create spendFear macro
  * @param {number} amount
@@ -849,10 +852,61 @@ function _wordToNumber(word) {
 }
 
 Hooks.once("init", () => {
+  // Configuration for phrase detection
+  //
+  // EXCLUSIONS: Phrases that should never be converted to buttons
+  // INCLUSIONS: Custom phrases that should be treated as aliases for standard resource actions
+  //
+  // To add new exclusions or inclusions, modify the PHRASE_CONFIG object below
+  const PHRASE_CONFIG = {
+    exclusions: [
+      "without marking a stress",
+      "without marking stress"
+    ],
+    inclusions: {
+      // Example mappings - add custom phrase mappings here
+      // "take damage": "mark 1 hit point",
+      // "use energy": "spend 1 hope",
+      // "get stressed": "mark 1 stress"
+    }
+  };
+
   const VERB_PATTERN = "spend|use|gain|add|lose|remove|clear|mark|recover|heal";
   const NUM_PATTERN = "\\d+|a|one|two|three|four|five|six|seven|eight|nine|ten";
   const RES_PATTERN = "fear(?:s)?|hope(?:s)?|stress|armor\\s+slots?|hit\\s+points?";
   const masterPattern = new RegExp(`(?:^|[^>a-zA-Z])(?:(${VERB_PATTERN})\\s+)?([+\\-]?\\s*(?:${NUM_PATTERN}))\\s+(${RES_PATTERN})(?![^<]*</a>)`, "gi");
+
+  // Create patterns for inclusions
+  const inclusionPatterns = Object.keys(PHRASE_CONFIG.inclusions).map(phrase => ({
+    pattern: new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'),
+    replacement: PHRASE_CONFIG.inclusions[phrase]
+  }));
+
+  /**
+   * Check if text should be excluded from enrichment
+   * @param {string} contextText
+   * @returns {boolean}
+   */
+  function _shouldExclude(contextText) {
+    return PHRASE_CONFIG.exclusions.some(exclusion => {
+      const pattern = new RegExp(exclusion.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+      return pattern.test(contextText);
+    });
+  }
+
+  /**
+   * Check for inclusion aliases and return replacement text
+   * @param {string} text
+   * @returns {string|null}
+   */
+  function _checkInclusions(text) {
+    for (const inclusion of inclusionPatterns) {
+      if (inclusion.pattern.test(text)) {
+        return inclusion.replacement;
+      }
+    }
+    return null;
+  }
 
   /**
    * Canonical resource
@@ -942,32 +996,41 @@ Hooks.once("init", () => {
     enricher: (match, options) => {
       // Skip if we're in an item card context
       if (options?.inItemCard) return match[0];
-      
+
       // Skip if the content is already enriched (contains our buttons)
       const fullText = match.input || "";
       if (fullText.includes('dh-resource-btn') || fullText.includes('data-enriched="true"')) {
         return match[0];
       }
-      
+
       // Skip if we're inside dh-no-enrich spans
       const matchIndex = match.index || 0;
       const beforeMatch = fullText.substring(0, matchIndex);
-      const afterMatch = fullText.substring(matchIndex);
-      
+
       // Check if we're inside a dh-no-enrich span
       const lastNoEnrichOpen = beforeMatch.lastIndexOf('<span class="dh-no-enrich"');
       const lastNoEnrichClose = beforeMatch.lastIndexOf('</span>');
       if (lastNoEnrichOpen > lastNoEnrichClose) {
         return match[0];
       }
-      
+
       // Skip if we're inside any existing button or anchor
       const lastAnchorOpen = beforeMatch.lastIndexOf('<a');
       const lastAnchorClose = beforeMatch.lastIndexOf('</a>');
       const lastButtonOpen = beforeMatch.lastIndexOf('<button');
       const lastButtonClose = beforeMatch.lastIndexOf('</button>');
-      
+
       if (lastAnchorOpen > lastAnchorClose || lastButtonOpen > lastButtonClose) {
+        return match[0];
+      }
+
+      // Skip specific phrases that should not be enriched
+      const matchText = match[0];
+      const contextStart = Math.max(0, matchIndex - 20);
+      const contextText = fullText.substring(contextStart, matchIndex + matchText.length + 10);
+
+      // Check exclusions
+      if (_shouldExclude(contextText)) {
         return match[0];
       }
       
@@ -1002,6 +1065,47 @@ Hooks.once("init", () => {
       return anchor;
     }
   });
+
+  // Register enricher for inclusion aliases
+  if (inclusionPatterns.length > 0) {
+    const inclusionPattern = new RegExp(
+      inclusionPatterns.map(p => `(${p.pattern.source})`).join('|'),
+      'gi'
+    );
+
+    _safeRegisterEnricher({
+      pattern: inclusionPattern,
+      enricher: (match, options) => {
+        // Skip if we're in an item card context
+        if (options?.inItemCard) return match[0];
+
+        const fullText = match.input || "";
+
+        // Skip if already enriched
+        if (fullText.includes('dh-resource-btn') || fullText.includes('data-enriched="true"')) {
+          return match[0];
+        }
+
+        // Check for inclusion replacement
+        const replacement = _checkInclusions(match[0]);
+        if (!replacement) return match[0];
+
+        // Parse the replacement text using the same logic as the main enricher
+        const replacementMatch = replacement.match(masterPattern);
+        if (!replacementMatch) return match[0];
+
+        const verb = replacementMatch[1];
+        const amountStr = replacementMatch[2];
+        const resStr = replacementMatch[3];
+        const resourceKey = _canonicalResource(resStr);
+        const delta = _parseDelta(amountStr, verb, resourceKey);
+
+        const anchor = _buildAnchor(resourceKey, delta, verb);
+        anchor.setAttribute('data-enriched', 'true');
+        return anchor;
+      }
+    });
+  }
 });
 
 /**
@@ -1040,7 +1144,13 @@ Hooks.once("ready", () => {
         await adjustArmorSlots(null, delta);
         break;
       case "hp":
-        await adjustHitPoints(null, delta);
+        if (delta > 0) {
+          // Positive delta means damage (mark hit points) - use direct damage to bypass thresholds
+          await applyDirectDamage(null, delta, null, true);
+        } else {
+          // Negative delta means healing (clear hit points)
+          await applyHealing(null, -delta, null, true);
+        }
         break;
       default:
         ui.notifications.warn("Unknown resource type.");
@@ -1140,75 +1250,32 @@ export async function adjustArmorSlots(actor = null, delta = 1) {
   }
 }
 
+
+
 /**
- * Adjust hit points
- * @param {number} delta
+ * Configure phrase detection for the text enricher
+ * @param {Object} config - Configuration object
+ * @param {string[]} config.exclusions - Array of phrases to exclude from enrichment
+ * @param {Object} config.inclusions - Object mapping custom phrases to standard resource actions
+ * @example
+ * // Add exclusions and inclusions
+ * configurePhraseDetection({
+ *   exclusions: ["without marking a stress", "avoid spending hope"],
+ *   inclusions: {
+ *     "take damage": "mark 1 hit point",
+ *     "use energy": "spend 1 hope",
+ *     "get stressed": "mark 1 stress"
+ *   }
+ * });
  */
-export async function adjustHitPoints(actor = null, delta = -1) {
-  if (!Number.isInteger(delta) || delta === 0) {
-    ui.notifications.error("Hit point delta must be a non-zero integer.");
-    return false;
-  }
-  let targetActor = actor;
-  if (!targetActor) {
-    const activeSheet = Object.values(ui.windows).find(app => app instanceof ActorSheet && app.rendered);
-    if (activeSheet?.actor) targetActor = activeSheet.actor;
-    else {
-      const sel = canvas.tokens?.controlled || [];
-      if (sel.length === 1) targetActor = sel[0].actor;
-    }
-  }
-  if (!targetActor) {
-    ui.notifications.error("No target actor found for HP adjustment.");
-    return false;
+export function configurePhraseDetection(config) {
+  if (!config) {
+    console.warn("Daggerheart | configurePhraseDetection called with no config");
+    return;
   }
 
-  const hpObj = targetActor.system?.health;
-  if (!hpObj) {
-    ui.notifications.error("Actor has no health data.");
-    return false;
-  }
-  const current = parseInt(hpObj.value) || 0;
-  const max = parseInt(hpObj.max) || 0;
-  const newVal = Math.max(0, Math.min(max, current + delta));
-  const actual = newVal - current;
-  if (actual === 0) {
-    ui.notifications.info("HP already at limit.");
-    return false;
-  }
-
-  const canModify = game.user.isGM || game.user.hasRole("ASSISTANT") || targetActor.isOwner;
-  if (!canModify) {
-    ui.notifications.warn("You do not have permission to modify this actor's HP.");
-    return false;
-  }
-  try {
-    await targetActor.update({ "system.health.value": newVal });
-
-    const actionText = actual > 0 ? "DAMAGE TAKEN" : "HEALING";
-    const detailText = actual > 0 ?
-      `${targetActor.name} damaged for ${actual} point${actual === 1 ? "" : "s"}.` :
-      `${targetActor.name} healed for ${-actual} point${actual === -1 ? "" : "s"}.`;
-
-    const messageClass = actual > 0 ? "hp-adjust-message" : "hp-healing-message";
-
-    ui.notifications.info(detailText);
-    ChatMessage.create({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: targetActor }),
-      content: `<div class="${messageClass}">
-        <h3><i class="fa-solid fa-heart"></i>${actionText}</h3>
-        <p>${detailText}</p>
-        <p>Hit points: ${newVal}/${max}</p>
-      </div>`,
-      flags: { daggerheart: { messageType: "hpAdjust", delta: actual } }
-    });
-    return true;
-  } catch (e) {
-    console.error("Error updating HP", e);
-    ui.notifications.error("Failed to update HP.");
-    return false;
-  }
+  console.log("Daggerheart | Phrase detection configuration is static and must be set before system initialization.");
+  console.log("Daggerheart | To modify phrase detection, edit the PHRASE_CONFIG object in module/spending-system.js");
+  console.log("Daggerheart | Requested config:", config);
 }
 
- 
