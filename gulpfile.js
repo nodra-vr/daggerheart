@@ -3,8 +3,7 @@ const path = require('path');
 const gulp = require('gulp');
 const shell = require('gulp-shell');
 const sass = require('gulp-sass')(require('sass'));
-
-const mergeStream = require('merge-stream');
+const merge = require('merge-stream');
 
 const PACK_SRC = `./data`;
 const PACK_DEST = `./packs`;
@@ -32,7 +31,7 @@ function watchUpdates() {
 /*  Compile and Extract packs to yaml
 /* ----------------------------------------- */
 
-function compilePacks() {
+function packData() {
   // Every folder in the src dir will become a compendium.
   const folders = fs.readdirSync(PACK_SRC).filter((file) => {
     return fs.statSync(path.join(PACK_SRC, file)).isDirectory();
@@ -46,10 +45,10 @@ function compilePacks() {
       ]))
   })
 
-  return mergeStream.call(null, packs);
+  return merge.call(null, packs);
 }
 
-function extractPacks() {
+function unpackData() {
   // Start a stream for all db files in the packs dir.
   const packs = gulp.src(`${PACK_DEST}/*`)
     .pipe(shell([
@@ -57,7 +56,7 @@ function extractPacks() {
     ]));
 
   // Call the streams.
-  return mergeStream.call(null, packs);
+  return merge.call(null, packs);
 }
 
 /* ----------------------------------------- */
@@ -70,6 +69,6 @@ module.exports = {
     watchUpdates
   ),
   css: compileSass,
-  pack: compilePacks,
-  unpack: extractPacks,
+  pack: packData,
+  unpack: unpackData,
 }

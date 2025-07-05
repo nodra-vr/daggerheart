@@ -34,65 +34,10 @@
   "download": "https://github.com/unofficial-daggerheart/daggerheart/archive/refs/tags/v2.9.3.zip",
   "packs": [
     {
-      "name": "srd-adversaries",
-      "label": "srd-adversaries",
-      "path": "packs/srd-adversaries",
-      "type": "Actor",
-      "system": "daggerheart",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      }
-    },
-    {
-      "name": "srd-frames",
-      "label": "srd-frames",
-      "path": "packs/srd-frames",
-      "type": "JournalEntry",
-      "system": "daggerheart",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      }
-    },
-    {
-      "name": "srd-items",
-      "label": "srd-items",
-      "path": "packs/srd-items",
-      "type": "Item",
-      "system": "daggerheart",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      }
-    },
-    {
-      "name": "srd-macros",
-      "label": "srd-macros",
-      "path": "packs/srd-macros",
+      "name": "sys-macros",
+      "label": "sys-macros",
+      "path": "packs/sys-macros",
       "type": "Macro",
-      "system": "daggerheart",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      }
-    },
-    {
-      "name": "srd-materials",
-      "label": "srd-materials",
-      "path": "packs/srd-materials",
-      "type": "Item",
-      "system": "daggerheart",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      }
-    },
-    {
-      "name": "srd-rules",
-      "label": "srd-rules",
-      "path": "packs/srd-rules",
-      "type": "JournalEntry",
       "system": "daggerheart",
       "ownership": {
         "PLAYER": "OBSERVER",
