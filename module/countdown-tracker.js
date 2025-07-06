@@ -97,17 +97,9 @@ export class CountdownTracker {
       this.element.remove();
     }
 
-    // Check permissions for management button
-    const canManage = game.user.isGM || game.user.hasRole("ASSISTANT");
-    
     // Create main container
     const html = `
       <div id="countdown-tracker-ui" class="faded-ui countdown-tracker-ui">
-        ${canManage ? `
-        <button type="button" class="countdown-manage-btn" title="Manage Countdown Trackers">
-          <i class="fas fa-stopwatch"></i>
-        </button>
-        ` : ''}
         <div class="countdown-trackers-container">
           ${this.renderTrackers()}
         </div>
@@ -223,13 +215,6 @@ export class CountdownTracker {
     // Clean up existing listeners first
     this.cleanupListeners();
 
-    // Management button
-    const manageBtn = this.element.querySelector('.countdown-manage-btn');
-    if (manageBtn) {
-      this.manageBtnHandler = () => this.showManagementDialog();
-      manageBtn.addEventListener('click', this.manageBtnHandler);
-    }
-
     // Tracker control buttons
     this.trackerBtnHandlers = [];
     this.element.querySelectorAll('.tracker-btn').forEach(btn => {
@@ -252,13 +237,6 @@ export class CountdownTracker {
    * Clean up event listeners
    */
   cleanupListeners() {
-    if (this.element) {
-      const manageBtn = this.element.querySelector('.countdown-manage-btn');
-      if (manageBtn && this.manageBtnHandler) {
-        manageBtn.removeEventListener('click', this.manageBtnHandler);
-      }
-    }
-
     if (this.trackerBtnHandlers) {
       this.trackerBtnHandlers.forEach(({ element, handler }) => {
         element.removeEventListener('click', handler);
@@ -499,14 +477,23 @@ export class CountdownTracker {
       const tracker = this.trackers.find(t => t.id === trackerId);
 
       if (tracker) {
-        const confirmed = await Dialog.confirm({
+        const result = await DaggerheartDialogHelper.showDialog({
           title: "Delete Tracker",
           content: `<p>Are you sure you want to delete the tracker "${tracker.name}"?</p>`,
-          yes: () => true,
-          no: () => false
+          dialogClass: "daggerheart-dialog delete-confirmation-dialog",
+          buttons: {
+            yes: {
+              label: "Delete",
+              callback: () => true
+            },
+            no: {
+              label: "Cancel",
+              callback: () => false
+            }
+          }
         });
 
-        if (confirmed) {
+        if (result) {
           await this.removeTracker(trackerId);
 
           // Refresh the management dialog

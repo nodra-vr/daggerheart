@@ -224,6 +224,151 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
 }
 
 /**
+ * Apply direct HP damage to target actors (bypasses threshold calculations)
+ * @param {Actor[]|Actor|null} targetActors - The actors to apply damage to (optional, will auto-select)
+ * @param {number} hpDamage - The direct HP damage amount to apply
+ * @param {Actor|null} sourceActor - The actor causing the damage (optional)
+ * @param {boolean} createUndo - Whether to create undo data (default: true)
+ * @returns {Promise<Object>} Result object with success status and undo data
+ */
+export async function applyDirectDamage(targetActors = null, hpDamage, sourceActor = null, createUndo = true) {
+  // Validate HP damage amount
+  if (!Number.isInteger(hpDamage) || hpDamage <= 0) {
+    console.error("HP damage amount must be a positive integer");
+    ui.notifications.error("HP damage amount must be a positive integer.");
+    return { success: false, undoId: null };
+  }
+
+  let targets = targetActors;
+
+  // Auto-select targets if not provided
+  if (!targets) {
+    try {
+      targets = _getTargetActors();
+    } catch (error) {
+      console.error("Target selection failed:", error.message);
+      ui.notifications.error(error.message);
+      return { success: false, undoId: null };
+    }
+  }
+
+  // Ensure targets is an array
+  if (!Array.isArray(targets)) {
+    targets = [targets];
+  }
+
+  // Validate that we have valid target actors
+  if (!targets || targets.length === 0) {
+    console.error("No valid target actors found for direct damage application");
+    ui.notifications.error("No valid target actors found.");
+    return { success: false, undoId: null };
+  }
+
+  // Generate unique undo ID and record only if requested
+  let undoId = null;
+  let undoRecord = null;
+
+  if (createUndo) {
+    undoId = `direct_damage_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    undoRecord = {
+      type: "direct_damage",
+      actors: [],
+      hpDamage: hpDamage,
+      sourceActorId: sourceActor?.id || null,
+      timestamp: Date.now()
+    };
+  }
+
+  let successfulApplications = 0;
+  const results = [];
+
+  for (const target of targets) {
+    // Validate target actor
+    if (!target) {
+      console.warn("Skipping null target actor");
+      continue;
+    }
+
+    // Check if actor has health system
+    if (!target.system?.health) {
+      console.warn(`Actor ${target.name} does not have a health system`);
+      ui.notifications.warn(`${target.name} does not have a health system.`);
+      continue;
+    }
+
+    const currentHealth = parseInt(target.system.health.value) || 0;
+    const maxHealth = parseInt(target.system.health.max) || 6;
+
+    // Store original health for undo - work with tokens directly (only if creating undo)
+    if (createUndo && undoRecord) {
+      const isFromToken = !!target.token;
+
+      const actorData = {
+        originalHealth: currentHealth,
+        actorName: target.name,
+        actorType: target.type,
+        isFromToken: isFromToken,
+        tokenId: target.token?.id || null,
+        sceneId: target.token?.scene?.id || null,
+        actorId: isFromToken ? null : target.id  // Only store actor ID for non-token actors
+      };
+
+      undoRecord.actors.push(actorData);
+    }
+
+    // Apply direct HP damage (no threshold calculations)
+    const newHealth = Math.min(maxHealth, currentHealth + hpDamage);
+    const actualDamage = newHealth - currentHealth;
+
+    // Check if we can actually apply damage
+    if (actualDamage <= 0) {
+      console.warn(`${target.name} already has maximum damage (${maxHealth})`);
+      ui.notifications.warn(`${target.name} is already at maximum damage.`);
+      continue;
+    }
+
+    try {
+      // Update the actor
+      await target.update({
+        "system.health.value": newHealth
+      });
+
+      successfulApplications++;
+      results.push({
+        target: target,
+        actualDamage: actualDamage,
+        hpDamage: hpDamage,
+        newHealth: newHealth,
+        maxHealth: maxHealth
+      });
+
+    } catch (error) {
+      console.error(`Error applying direct damage to ${target.name}:`, error);
+      ui.notifications.error(`Error applying direct damage to ${target.name}.`);
+    }
+  }
+
+  if (successfulApplications === 0) {
+    return { success: false, undoId: null };
+  }
+
+  // Store undo data only if we had successful applications and createUndo is true
+  if (createUndo && undoRecord && undoRecord.actors.length > 0) {
+    undoData.set(undoId, undoRecord);
+  }
+
+  // Send chat messages for successful applications
+  await _sendDirectDamageApplicationMessages(results, sourceActor, hpDamage, createUndo ? undoId : null);
+
+  // Success notification
+  const targetNames = results.map(r => r.target.name).join(", ");
+  const message = `Applied direct damage to: ${targetNames}`;
+  ui.notifications.info(message);
+
+  return { success: true, undoId: createUndo ? undoId : null };
+}
+
+/**
  * Apply healing to target actors (multiple targets supported)
  * @param {Actor[]|Actor|null} targetActors - The actors to heal (optional, will auto-select)
  * @param {number} healAmount - The amount of healing to apply
@@ -482,10 +627,21 @@ export async function undoDamageHealing(undoId) {
         // Actor was healed, so damage them back
         const damageAmount = Math.abs(healthDifference);
         console.log(`Daggerheart | Damaging ${actor.name} by ${damageAmount} to restore to ${originalHealth}`);
-        const damageResult = await applyDamage([actor], damageAmount, null, false, 0); // Don't use armor for undo
-        if (damageResult.success) {
-          successfulUndos++;
-          results.push({ actor: actor, restoredHealth: originalHealth });
+
+        // Use direct damage for undo to avoid threshold calculations
+        if (record.type === "direct_damage" || record.type === "healing") {
+          const damageResult = await applyDirectDamage([actor], damageAmount, null, false);
+          if (damageResult.success) {
+            successfulUndos++;
+            results.push({ actor: actor, restoredHealth: originalHealth });
+          }
+        } else {
+          // For regular damage undo, use normal damage application
+          const damageResult = await applyDamage([actor], damageAmount, null, false, 0); // Don't use armor for undo
+          if (damageResult.success) {
+            successfulUndos++;
+            results.push({ actor: actor, restoredHealth: originalHealth });
+          }
         }
       } else {
         // No health change needed
@@ -527,7 +683,12 @@ export async function undoDamageHealing(undoId) {
 
     // Success notification
     const targetNames = results.map(r => r.actor.name).join(", ");
-    const actionType = record.type === "damage" ? "damage" : "healing";
+    let actionType = "damage";
+    if (record.type === "healing") {
+      actionType = "healing";
+    } else if (record.type === "direct_damage") {
+      actionType = "direct damage";
+    }
     ui.notifications.info(`Undid ${actionType} for: ${targetNames}`);
 
     return true;
@@ -837,123 +998,138 @@ export async function rollHealing(formula, options = {}) {
 }
 
 /**
- * Send chat messages for damage application (supports multiple targets)
+ * Send chat messages for direct damage application (supports multiple targets)
  * @private
  */
-async function _sendDamageApplicationMessages(results, sourceActor, damageAmount, undoId) {
-  // Group results for batch messaging
-  let publicMessages = [];
-  let gmMessages = [];
-  
+async function _sendDirectDamageApplicationMessages(results, sourceActor, hpDamage, undoId) {
   for (const result of results) {
-    const { target, actualDamage, hpDamage, finalHpDamage, armorSlotsUsed, newHealth, maxHealth, thresholds } = result;
-    
-    // Determine damage severity for message
-    let severityText = "";
-    let severityClass = "";
-    let severityLevel = 1;
-    
-    if (hpDamage >= 3) {
-      severityText = "Severe";
-      severityClass = "severe-damage";
-      severityLevel = 3;
-    } else if (hpDamage >= 2) {
-      severityText = "Major";
-      severityClass = "major-damage";
-      severityLevel = 2;
-    } else {
-      severityText = "Minor";
-      severityClass = "minor-damage";
-      severityLevel = 1;
-    }
-    
+    const { target, actualDamage, newHealth, maxHealth } = result;
+
     // Check if character is dead
     const isDead = newHealth >= maxHealth;
-    const deathWarning = isDead ? `<p class="death-warning"><i class="fas fa-skull"></i> ${target.name} has fallen!</p>` : "";
-    
-    // Build armor reduction text
-    let armorReductionText = "";
-    if (armorSlotsUsed > 0) {
-      const damageReduction = hpDamage - finalHpDamage;
-      if (damageReduction > 0) {
-        armorReductionText = ` (${hpDamage} reduced by ${armorSlotsUsed} armor)`;
-      }
-    }
-    
-    // Public message content (visible to all)
-    let publicContent = `
-      <div class="damage-application-result ${severityClass}">
-        <p class="damage-summary">
-          <i class="fas fa-sword"></i> <strong>${severityText} Damage Applied</strong>
-        </p>
-        <p class="target-info">
-          ${target.name} takes <strong>${finalHpDamage} HP damage</strong>${armorReductionText}${sourceActor ? ` from ${sourceActor.name}` : ''}.
-        </p>
-        <p class="damage-roll">Damage Roll: ${damageAmount}</p>
-        ${armorSlotsUsed > 0 ? `<p class="armor-used">Armor Slots Used: ${armorSlotsUsed}</p>` : ''}
-        ${deathWarning}
-        ${undoId ? `<button class="undo-damage-button" data-undo-id="${undoId}"><i class="fas fa-undo"></i> Undo</button>` : ''}
-      </div>
-    `;
-    
-    publicMessages.push({
-      content: publicContent,
-      target: target
-    });
-    
-    // GM-only detailed message
-    const detailedThresholdInfo = _getThresholdDescription(damageAmount, thresholds, hpDamage);
-    let gmContent = `
-      <div class="damage-application-detail gm-only">
-        <p class="threshold-calculation">
-          <i class="fas fa-calculator"></i> <strong>Threshold Calculation</strong>
-        </p>
-        <p>${detailedThresholdInfo}</p>
-        ${armorSlotsUsed > 0 ? `<p>Armor Reduction: ${hpDamage} HP - ${armorSlotsUsed} armor = ${finalHpDamage} HP final</p>` : ''}
-        <p>Current HP: ${newHealth}/${maxHealth}</p>
-      </div>
-    `;
-    
-    gmMessages.push({
-      content: gmContent,
-      target: target
-    });
-  }
-  
-  // Send public messages
-  for (const msg of publicMessages) {
+
+    // Main damage message using stress-style formatting
+    const publicContent = `<div class="damage-application-message">
+      <h3><i class="fas fa-sword"></i> Direct Damage Applied</h3>
+      <p><strong>${target.name}</strong> takes <strong>${actualDamage} HP damage</strong>${sourceActor ? ` from <strong>${sourceActor.name}</strong>` : ''}.</p>
+      <p>Current damage: <strong>${newHealth}/${maxHealth}</strong></p>
+      ${isDead ? '<p class="damage-warning"><em>Character has fallen!</em></p>' : ''}
+      ${undoId ? `<div class="damage-undo-container" style="margin-top: 0.5em;">
+        <button class="undo-damage-button" data-undo-id="${undoId}" style="width: 100%;">
+          <i class="fas fa-undo"></i> Undo
+        </button>
+      </div>` : ''}
+    </div>`;
+
+    // Send the main damage message (visible to all players)
     await ChatMessage.create({
-      content: msg.content,
       user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: msg.target }),
+      speaker: sourceActor ? ChatMessage.getSpeaker({ actor: sourceActor }) : ChatMessage.getSpeaker(),
+      content: publicContent,
       flags: {
         daggerheart: {
-          messageType: "damageApplied",
-          targetActorId: msg.target.id,
+          messageType: "directDamageApplied",
+          targetActorId: target.id,
           sourceActorId: sourceActor?.id || null,
-          damageRoll: damageAmount,
+          hpDamage: actualDamage,
+          currentHealth: newHealth,
+          maxHealth: maxHealth,
           undoId: undoId
         }
       }
     });
   }
-  
-  // Send GM-only messages
-  if (game.user.isGM || gmMessages.length > 0) {
-    for (const msg of gmMessages) {
-      await ChatMessage.create({
-        content: msg.content,
-        user: game.user.id,
-        speaker: ChatMessage.getSpeaker({ actor: msg.target }),
-        whisper: game.users.filter(u => u.isGM).map(u => u.id),
-        flags: {
-          daggerheart: {
-            messageType: "damageAppliedDetail",
-            targetActorId: msg.target.id
-          }
-        }
-      });
+}
+
+/**
+ * Send chat messages for damage application (supports multiple targets)
+ * @private
+ */
+async function _sendDamageApplicationMessages(results, sourceActor, damageAmount, undoId) {
+  for (const result of results) {
+    const { target, hpDamage, finalHpDamage, armorSlotsUsed, newHealth, maxHealth, thresholds } = result;
+
+    // Determine damage severity for message
+    let severityText = "";
+    let severityIcon = "fas fa-sword";
+
+    if (hpDamage >= 3) {
+      severityText = "Severe Damage Applied";
+      severityIcon = "fas fa-skull-crossbones";
+    } else if (hpDamage >= 2) {
+      severityText = "Major Damage Applied";
+      severityIcon = "fas fa-sword";
+    } else {
+      severityText = "Minor Damage Applied";
+      severityIcon = "fas fa-sword";
     }
+
+    // Check if character is dead
+    const isDead = newHealth >= maxHealth;
+
+    // Build armor reduction text
+    let armorReductionText = "";
+    if (armorSlotsUsed > 0) {
+      const damageReduction = hpDamage - finalHpDamage;
+      if (damageReduction > 0) {
+        armorReductionText = ` (reduced by ${armorSlotsUsed} armor)`;
+      }
+    }
+
+    // Main damage message using stress-style formatting
+    const publicContent = `<div class="damage-application-message">
+      <h3><i class="${severityIcon}"></i> ${severityText}</h3>
+      <p><strong>${target.name}</strong> takes <strong>${finalHpDamage} HP damage</strong>${armorReductionText}${sourceActor ? ` from <strong>${sourceActor.name}</strong>` : ''}.</p>
+      <p>Current damage: <strong>${newHealth}/${maxHealth}</strong></p>
+      ${isDead ? '<p class="damage-warning"><em>Character has fallen!</em></p>' : ''}
+      ${undoId ? `<div class="damage-undo-container" style="margin-top: 0.5em;">
+        <button class="undo-damage-button" data-undo-id="${undoId}" style="width: 100%;">
+          <i class="fas fa-undo"></i> Undo
+        </button>
+      </div>` : ''}
+    </div>`;
+
+    // Send the main damage message (visible to all players)
+    await ChatMessage.create({
+      user: game.user.id,
+      speaker: sourceActor ? ChatMessage.getSpeaker({ actor: sourceActor }) : ChatMessage.getSpeaker(),
+      content: publicContent,
+      flags: {
+        daggerheart: {
+          messageType: "damageApplied",
+          targetActorId: target.id,
+          sourceActorId: sourceActor?.id || null,
+          damageRoll: damageAmount,
+          hpDamage: finalHpDamage,
+          currentHealth: newHealth,
+          maxHealth: maxHealth,
+          undoId: undoId
+        }
+      }
+    });
+
+    // Send GM-only message with mechanical details
+    const detailedThresholdInfo = _getThresholdDescription(damageAmount, thresholds, hpDamage);
+    const gmContent = `<div class="damage-gm-info">
+      <h4><i class="fas fa-eye"></i> GM Info: ${target.name}</h4>
+      <p><strong>Threshold Calculation:</strong> ${detailedThresholdInfo}</p>
+      ${armorSlotsUsed > 0 ? `<p><strong>Armor Reduction:</strong> ${hpDamage} HP - ${armorSlotsUsed} armor = ${finalHpDamage} HP final</p>` : ''}
+      <p><strong>Current Damage:</strong> ${newHealth}/${maxHealth}</p>
+    </div>`;
+
+    await ChatMessage.create({
+      user: game.user.id,
+      speaker: sourceActor ? ChatMessage.getSpeaker({ actor: sourceActor }) : ChatMessage.getSpeaker(),
+      content: gmContent,
+      whisper: ChatMessage.getWhisperRecipients("GM"),
+      flags: {
+        daggerheart: {
+          messageType: "damageGMInfo",
+          targetActorId: target.id,
+          sourceActorId: sourceActor?.id || null
+        }
+      }
+    });
   }
 }
 
@@ -965,18 +1141,14 @@ async function _sendDamageApplicationMessages(results, sourceActor, damageAmount
  * @param {string} undoId - The undo ID for this application
  */
 async function _sendHealingApplicationMessages(results, sourceActor, healAmount, undoId) {
-  const sourceText = sourceActor ? ` from <strong>${sourceActor.name}</strong>` : "";
-  
   for (const result of results) {
     const { target, actualHealing, newHealth, maxHealth } = result;
-    
+
     const chatContent = `<div class="healing-application-message">
       <h3><i class="fas fa-heart"></i> Healing Applied</h3>
-      <p><strong>${target.name}</strong> heals <strong>${actualHealing} HP</strong>${sourceText}.</p>
-      <div class="healing-details">
-        <p><strong>Healing Roll:</strong> ${healAmount}</p>
-      </div>
-      ${newHealth === 0 ? '<p class="healing-success"><em><i class="fas fa-sparkles"></i> Fully healed!</em></p>' : ''}
+      <p><strong>${target.name}</strong> heals <strong>${actualHealing} HP</strong>${sourceActor ? ` from <strong>${sourceActor.name}</strong>` : ''}.</p>
+      <p>Current damage: <strong>${newHealth}/${maxHealth}</strong></p>
+      ${newHealth === 0 ? '<p class="healing-success"><em>Fully healed!</em></p>' : ''}
       ${undoId ? `<div class="healing-undo-container" style="margin-top: 0.5em;">
         <button class="undo-healing-button" data-undo-id="${undoId}" style="width: 100%;">
           <i class="fas fa-undo"></i> Undo
@@ -1031,10 +1203,14 @@ async function _sendHealingApplicationMessages(results, sourceActor, healAmount,
  * @param {Array} results - Array of undo results
  */
 async function _sendUndoMessage(record, results) {
-  const actionType = record.type === "damage" ? "damage" : "healing";
-  const actionIcon = record.type === "damage" ? "fa-sword" : "fa-heart";
+  let actionType = "damage";
+  if (record.type === "healing") {
+    actionType = "healing";
+  } else if (record.type === "direct_damage") {
+    actionType = "direct damage";
+  }
   const targetNames = results.map(r => r.actor.name).join(", ");
-  
+
   const chatContent = `<div class="undo-message">
     <h3><i class="fas fa-undo"></i> ${actionType.charAt(0).toUpperCase() + actionType.slice(1)} Undone</h3>
     <p>Reverted ${actionType} application for: <strong>${targetNames}</strong></p>

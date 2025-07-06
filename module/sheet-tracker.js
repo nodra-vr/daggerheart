@@ -281,9 +281,11 @@ export class SheetTracker {
     // Listen for actor updates
     this._setupUpdateHooks();
 
-    // Highlight the currently active tab in the sidebar navigation
-    const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'character';
-    this._updateNavActiveState(currentTab);
+    // Highlight the currently active tab in the sidebar navigation (character sheets only)
+    if (this.sidebarElement && this.sidebarElement.find('.sidebar-nav-buttons').length > 0) {
+      const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'character';
+      this._updateNavActiveState(currentTab);
+    }
   }
 
   /**
@@ -327,16 +329,19 @@ export class SheetTracker {
     // Remove any existing sidebar first
     sheet.find('.sheet-tracker-sidebar').remove();
 
+    // Check if this is a character sheet to determine if navigation buttons should be shown
+    const isCharacterSheet = this.actor.type === "character" && this.actorSheet.constructor.name === "SimpleActorSheet";
+    
     // Create the sidebar container
     const sidebarHtml = `
       <div class="sheet-tracker-sidebar" data-actor-id="${this.actor.id}">
-        <!-- Sidebar Navigation Buttons -->
+        ${isCharacterSheet ? `<!-- Sidebar Navigation Buttons -->
         <div class="sidebar-nav-buttons">
           <div class="nav-button" data-tab="character" title="Character"><i class="fas fa-user"></i></div>
           <div class="nav-button" data-tab="equipment" title="Equipment"><i class="fas fa-hammer"></i></div>
           <div class="nav-button" data-tab="loadout" title="Loadout"><i class="fas fa-suitcase"></i></div>
           <div class="nav-button" data-tab="biography" title="Biography"><i class="fas fa-book-open"></i></div>
-        </div>
+        </div>` : ''}
         <div class="tracker-main-button" title="Resource Tracker">
           <i class="fas fa-stopwatch"></i>
         </div>
@@ -530,28 +535,31 @@ export class SheetTracker {
     /* Sidebar Navigation Buttons                */
     /* ----------------------------------------- */
 
-    // Navigate to the corresponding tab when a nav button is clicked
-    this.sidebarElement.on('click', '.nav-button', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const tab = $(e.currentTarget).data('tab');
-      if (!tab) return;
+    // Only set up navigation button listeners if they exist (character sheets only)
+    if (this.sidebarElement.find('.sidebar-nav-buttons').length > 0) {
+      // Navigate to the corresponding tab when a nav button is clicked
+      this.sidebarElement.on('click', '.nav-button', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const tab = $(e.currentTarget).data('tab');
+        if (!tab) return;
 
-      // Mimic original nav behaviour by programmatically clicking the corresponding (hidden) nav anchor
-      const anchor = this.actorSheet.element.find(`.sheet-tabs .item[data-tab="${tab}"]`);
-      if (anchor.length) {
-        // Use native click to ensure all handlers fire (jQuery + DOM)
-        anchor[0].click();
-      }
+        // Mimic original nav behaviour by programmatically clicking the corresponding (hidden) nav anchor
+        const anchor = this.actorSheet.element.find(`.sheet-tabs .item[data-tab="${tab}"]`);
+        if (anchor.length) {
+          // Use native click to ensure all handlers fire (jQuery + DOM)
+          anchor[0].click();
+        }
 
-      this._updateNavActiveState(tab);
-    });
+        this._updateNavActiveState(tab);
+      });
 
-    // Keep sidebar navigation state in sync with other tab changes
-    this.actorSheet.element.find('.sheet-tabs .item').on('click', (e) => {
-      const tab = $(e.currentTarget).data('tab');
-      this._updateNavActiveState(tab);
-    });
+      // Keep sidebar navigation state in sync with other tab changes
+      this.actorSheet.element.find('.sheet-tabs .item').on('click', (e) => {
+        const tab = $(e.currentTarget).data('tab');
+        this._updateNavActiveState(tab);
+      });
+    }
   }
 
   /**
@@ -712,8 +720,13 @@ export class SheetTracker {
    */
   _updateNavActiveState(activeTab) {
     if (!this.sidebarElement) return;
-    this.sidebarElement.find('.nav-button').removeClass('active');
-    this.sidebarElement.find(`.nav-button[data-tab="${activeTab}"]`).addClass('active');
+    
+    // Only update navigation state if navigation buttons exist (character sheets only)
+    const navButtons = this.sidebarElement.find('.nav-button');
+    if (navButtons.length > 0) {
+      navButtons.removeClass('active');
+      this.sidebarElement.find(`.nav-button[data-tab="${activeTab}"]`).addClass('active');
+    }
   }
 
   /**

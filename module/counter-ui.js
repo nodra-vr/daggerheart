@@ -27,9 +27,9 @@ export class CounterUI {
     await this.render();
     
     // Listen for setting changes
-    Hooks.on("updateSetting", (namespace, key, value) => {
-      if (namespace === "daggerheart" && key === "counterValue") {
-        const parsed = parseInt(value);
+    Hooks.on("updateSetting", (setting) => {
+      if (setting.key === "daggerheart.counterValue") {
+        const parsed = parseInt(setting.value);
         this.count = Number.isNaN(parsed) ? 0 : Math.max(0, Math.min(12, parsed));
         this.updateDisplay();
       }

@@ -1,6 +1,6 @@
 {
   "id": "daggerheart",
-  "version": "2.9.3",
+  "version": "2.10.3",
   "title": "Daggerheart",
   "url": "",
   "description": "Unofficial Daggerheart Game System",
@@ -28,10 +28,6 @@
     "minimum": "13",
     "verified": "13"
   },
-  "primaryTokenAttribute": "barHealth",
-  "secondaryTokenAttribute": "barStress",
-  "manifest": "https://raw.githubusercontent.com/unofficial-daggerheart/daggerheart/master/system.json",
-  "download": "https://github.com/unofficial-daggerheart/daggerheart/archive/refs/tags/v2.9.3.zip",
   "packs": [
     {
       "name": "sys-macros",
@@ -55,5 +51,9 @@
         ]
       }
     }
-  }
+  },
+  "primaryTokenAttribute": "barHealth",
+  "secondaryTokenAttribute": "barStress",
+  "manifest": "https://raw.githubusercontent.com/unofficial-daggerheart/daggerheart/master/system.json",
+  "download": "https://github.com/unofficial-daggerheart/daggerheart/archive/refs/tags/v2.10.3.zip"
 }

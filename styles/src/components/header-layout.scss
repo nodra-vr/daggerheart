@@ -37,14 +37,19 @@
 }
 
 .header-resources-row {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    margin-left: -8em;
-    z-index: 1;
-    margin-top: 0.5rem;
-    justify-content: space-between;
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	margin-left: -8em;
+	z-index: 1;
+	margin-top: 0;
+	justify-content: space-between;
+	padding: 0.8em 0.25em;
+	background: rgb(11, 10, 19, 0.8);
+	border: 1px solid var(--dh-color-gold);
+	border-radius: 15px;
+  backdrop-filter: blur(3px);
 
   .resource {
     min-width: 120px;
@@ -74,5 +79,5 @@
   width: 100%;
   height: auto;
   box-shadow: 0 0 12px 4px rgba(0, 0, 0, 0.4);
-  border: 1px solid black;
+  border: 1px solid var(--dh-color-gold);
 }

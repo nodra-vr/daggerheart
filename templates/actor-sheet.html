@@ -102,8 +102,94 @@
 
         </div> <!-- header-wrapper -->
         
-        <!-- Loadout Card Bar (Class / Subclass / Ancestry / Community) -->
-        <div class="header-loadout-bar"></div>
+        <!-- Loadout Card Bar (Class / Subclass / Ancestry / Community) 
+        <div class="header-loadout-bar"></div> -->
+        <section class="traits">
+            <div class="trait" data-trait="agility">
+                <div class="trait-label-wrapper">
+                    <label for="system.agility.value" data-trait-tooltip="{{systemData.agility.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Agility"}}</label>
+                </div>
+                <div class="trait-value-display" data-field="system.agility.value">{{systemData.agility.value}}</div>
+                <div class="trait-toggle">
+                    <input type="checkbox" name="system.agility.levelled" {{#if systemData.agility.levelled}}checked{{/if}} />
+                </div>
+                <div class="trait-effects">
+                    <a>{{localize "DH.Sprint"}}</a>
+                    <a>{{localize "DH.Dodge"}}</a>
+                    <a>{{localize "DH.Leap"}}</a>
+                </div>
+            </div>
+            <div class="trait" data-trait="strength">
+                <div class="trait-label-wrapper">
+                    <label for="system.strength.value" data-trait-tooltip="{{systemData.strength.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Strength"}}</label>
+                </div>
+                <div class="trait-value-display" data-field="system.strength.value">{{systemData.strength.value}}</div>
+                <div class="trait-toggle">
+                    <input type="checkbox" name="system.strength.levelled" {{#if systemData.strength.levelled}}checked{{/if}} />
+                </div>
+                <div class="trait-effects">
+                    <a>{{localize "DH.Lift"}}</a>
+                    <a>{{localize "DH.Smash"}}</a>
+                    <a>{{localize "DH.Grapple"}}</a>
+                </div>
+            </div>
+            <div class="trait" data-trait="finesse">
+                <div class="trait-label-wrapper">
+                    <label for="system.finesse.value" data-trait-tooltip="{{systemData.finesse.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Finesse"}}</label>
+                </div>
+                <div class="trait-value-display" data-field="system.finesse.value">{{systemData.finesse.value}}</div>
+                <div class="trait-toggle">
+                    <input type="checkbox" name="system.finesse.levelled" {{#if systemData.finesse.levelled}}checked{{/if}} />
+                </div>
+                <div class="trait-effects">
+                    <a>{{localize "DH.Control"}}</a>
+                    <a>{{localize "DH.Hide"}}</a>
+                    <a>{{localize "DH.Tinker"}}</a>
+                </div>
+            </div>
+            <div class="trait" data-trait="instinct">
+                <div class="trait-label-wrapper">
+                    <label for="system.instinct.value" data-trait-tooltip="{{systemData.instinct.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Instinct"}}</label>
+                </div>
+                <div class="trait-value-display" data-field="system.instinct.value">{{systemData.instinct.value}}</div>
+                <div class="trait-toggle">
+                    <input type="checkbox" name="system.instinct.levelled" {{#if systemData.instinct.levelled}}checked{{/if}} />
+                </div>
+                <div class="trait-effects">
+                    <a>{{localize "DH.Perceive"}}</a>
+                    <a>{{localize "DH.Sense"}}</a>
+                    <a>{{localize "DH.Navigate"}}</a>
+                </div>
+            </div>
+            <div class="trait" data-trait="presence">
+                <div class="trait-label-wrapper">
+                    <label for="system.presence.value" data-trait-tooltip="{{systemData.presence.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Presence"}}</label>
+                </div>
+                <div class="trait-value-display" data-field="system.presence.value">{{systemData.presence.value}}</div>
+                <div class="trait-toggle">
+                    <input type="checkbox" name="system.presence.levelled" {{#if systemData.presence.levelled}}checked{{/if}} />
+                </div>
+                <div class="trait-effects">
+                    <a>{{localize "DH.Charm"}}</a>
+                    <a>{{localize "DH.Perform"}}</a>
+                    <a>{{localize "DH.Deceive"}}</a>
+                </div>
+            </div>
+            <div class="trait" data-trait="knowledge">
+                <div class="trait-label-wrapper">
+                    <label for="system.knowledge.value" data-trait-tooltip="{{systemData.knowledge.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Knowledge"}}</label>
+                </div>
+                <div class="trait-value-display" data-field="system.knowledge.value">{{systemData.knowledge.value}}</div>
+                <div class="trait-toggle">
+                    <input type="checkbox" name="system.knowledge.levelled" {{#if systemData.knowledge.levelled}}checked{{/if}} />
+                </div>
+                <div class="trait-effects">
+                    <a>{{localize "DH.Recall"}}</a>
+                    <a>{{localize "DH.Analyze"}}</a>
+                    <a>{{localize "DH.Comprehend"}}</a>
+                </div>
+            </div>
+        </section>
     </header>
     
     {{!-- Trait Edit Popup (backwards compatibility) --}}
@@ -207,92 +293,7 @@
                     </div>
                 </section>
 
-                <section class="traits">
-                    <div class="trait" data-trait="agility">
-                        <div class="trait-label-wrapper">
-                            <label for="system.agility.value" data-trait-tooltip="{{systemData.agility.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Agility"}}</label>
-                        </div>
-                        <div class="trait-value-display" data-field="system.agility.value">{{systemData.agility.value}}</div>
-                        <div class="trait-toggle">
-                            <input type="checkbox" name="system.agility.levelled" {{#if systemData.agility.levelled}}checked{{/if}} />
-                        </div>
-                        <div class="trait-effects">
-                            <a>{{localize "DH.Sprint"}}</a>
-                            <a>{{localize "DH.Dodge"}}</a>
-                            <a>{{localize "DH.Leap"}}</a>
-                        </div>
-                    </div>
-                    <div class="trait" data-trait="strength">
-                        <div class="trait-label-wrapper">
-                            <label for="system.strength.value" data-trait-tooltip="{{systemData.strength.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Strength"}}</label>
-                        </div>
-                        <div class="trait-value-display" data-field="system.strength.value">{{systemData.strength.value}}</div>
-                        <div class="trait-toggle">
-                            <input type="checkbox" name="system.strength.levelled" {{#if systemData.strength.levelled}}checked{{/if}} />
-                        </div>
-                        <div class="trait-effects">
-                            <a>{{localize "DH.Lift"}}</a>
-                            <a>{{localize "DH.Smash"}}</a>
-                            <a>{{localize "DH.Grapple"}}</a>
-                        </div>
-                    </div>
-                    <div class="trait" data-trait="finesse">
-                        <div class="trait-label-wrapper">
-                            <label for="system.finesse.value" data-trait-tooltip="{{systemData.finesse.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Finesse"}}</label>
-                        </div>
-                        <div class="trait-value-display" data-field="system.finesse.value">{{systemData.finesse.value}}</div>
-                        <div class="trait-toggle">
-                            <input type="checkbox" name="system.finesse.levelled" {{#if systemData.finesse.levelled}}checked{{/if}} />
-                        </div>
-                        <div class="trait-effects">
-                            <a>{{localize "DH.Control"}}</a>
-                            <a>{{localize "DH.Hide"}}</a>
-                            <a>{{localize "DH.Tinker"}}</a>
-                        </div>
-                    </div>
-                    <div class="trait" data-trait="instinct">
-                        <div class="trait-label-wrapper">
-                            <label for="system.instinct.value" data-trait-tooltip="{{systemData.instinct.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Instinct"}}</label>
-                        </div>
-                        <div class="trait-value-display" data-field="system.instinct.value">{{systemData.instinct.value}}</div>
-                        <div class="trait-toggle">
-                            <input type="checkbox" name="system.instinct.levelled" {{#if systemData.instinct.levelled}}checked{{/if}} />
-                        </div>
-                        <div class="trait-effects">
-                            <a>{{localize "DH.Perceive"}}</a>
-                            <a>{{localize "DH.Sense"}}</a>
-                            <a>{{localize "DH.Navigate"}}</a>
-                        </div>
-                    </div>
-                    <div class="trait" data-trait="presence">
-                        <div class="trait-label-wrapper">
-                            <label for="system.presence.value" data-trait-tooltip="{{systemData.presence.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Presence"}}</label>
-                        </div>
-                        <div class="trait-value-display" data-field="system.presence.value">{{systemData.presence.value}}</div>
-                        <div class="trait-toggle">
-                            <input type="checkbox" name="system.presence.levelled" {{#if systemData.presence.levelled}}checked{{/if}} />
-                        </div>
-                        <div class="trait-effects">
-                            <a>{{localize "DH.Charm"}}</a>
-                            <a>{{localize "DH.Perform"}}</a>
-                            <a>{{localize "DH.Deceive"}}</a>
-                        </div>
-                    </div>
-                    <div class="trait" data-trait="knowledge">
-                        <div class="trait-label-wrapper">
-                            <label for="system.knowledge.value" data-trait-tooltip="{{systemData.knowledge.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Knowledge"}}</label>
-                        </div>
-                        <div class="trait-value-display" data-field="system.knowledge.value">{{systemData.knowledge.value}}</div>
-                        <div class="trait-toggle">
-                            <input type="checkbox" name="system.knowledge.levelled" {{#if systemData.knowledge.levelled}}checked{{/if}} />
-                        </div>
-                        <div class="trait-effects">
-                            <a>{{localize "DH.Recall"}}</a>
-                            <a>{{localize "DH.Analyze"}}</a>
-                            <a>{{localize "DH.Comprehend"}}</a>
-                        </div>
-                    </div>
-                </section>
+                <!-- Traits used to be here -->
 
                 <div class="experience-group">
                     <div class="experience-row click-rollable-group">

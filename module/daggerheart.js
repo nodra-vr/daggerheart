@@ -21,7 +21,7 @@ import { EquipmentHandler } from "./equipmentHandler.js";
 import { EntitySheetHelper } from "./helper.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
-import { applyDamage, applyHealing, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
+import { applyDamage, applyHealing, applyDirectDamage, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
 
 /**
  @param {Actor|null} actor (optional if level is provided)
@@ -759,6 +759,17 @@ Hooks.once("ready", async function () {
       console.log(JSON.stringify(resolvedSecondary, null, 2));
     }
   };
+  
+  // Initialize damage application module
+  game.daggerheart.damageApplication = {
+    applyDamage,
+    applyHealing,
+    applyDirectDamage,
+    rollDamage,
+    rollHealing,
+    undoDamageHealing,
+    debugUndoData
+  };
 
   // Also add to the game.daggerheart object for consistency
   game.daggerheart.spendFear = window.spendFear;
@@ -783,7 +794,16 @@ Hooks.once("ready", async function () {
     return await game.daggerheart.damageApplication.applyHealing(targetActor, healAmount, sourceActor);
   };
 
-  window.rollDamage = async function (formula, options) {
+  window.applyDirectDamage = async function(targetActor, hpDamage, sourceActor, createUndo = true) {
+    if (!game.daggerheart?.damageApplication?.applyDirectDamage) {
+      console.error("Direct damage application not initialized");
+      ui.notifications.error("Direct damage application not available");
+      return false;
+    }
+    return await game.daggerheart.damageApplication.applyDirectDamage(targetActor, hpDamage, sourceActor, createUndo);
+  };
+  
+  window.rollDamage = async function(formula, options) {
     if (!game.daggerheart?.damageApplication?.rollDamage) {
       console.error("Damage rolling not initialized");
       ui.notifications.error("Damage rolling not available");
@@ -821,6 +841,7 @@ Hooks.once("ready", async function () {
   // Also add to the game.daggerheart object for consistency
   game.daggerheart.applyDamage = window.applyDamage;
   game.daggerheart.applyHealing = window.applyHealing;
+  game.daggerheart.applyDirectDamage = window.applyDirectDamage;
   game.daggerheart.rollDamage = window.rollDamage;
   game.daggerheart.rollHealing = window.rollHealing;
   game.daggerheart.undoDamageHealing = window.undoDamageHealing;
@@ -948,6 +969,95 @@ async function _cleanupDuplicateMacros() {
     console.log("Daggerheart | No duplicate macros found to clean up.");
   }
 }
+
+
+
+/**
+ * Hook to add countdown tracker management button to scene controls
+ * This is the official FoundryVTT v13 API approach
+ */
+Hooks.on("getSceneControlButtons", (controls) => {
+  console.log("🎯 DAGGERHEART: getSceneControlButtons hook triggered!");
+  console.log("🎯 DAGGERHEART: Controls received:", controls);
+  console.log("🎯 DAGGERHEART: Controls type:", typeof controls);
+  console.log("🎯 DAGGERHEART: Controls keys:", Object.keys(controls));
+
+  // Check permissions - only show to GMs and Assistant GMs
+  const canManage = game.user.isGM || game.user.hasRole("ASSISTANT");
+  if (!canManage) {
+    console.log("🎯 DAGGERHEART: User doesn't have permission to manage countdown trackers");
+    return;
+  }
+
+  // In v13, controls is a Record<string, SceneControl>
+  // The control is called "tokens" (plural), not "token" (singular)
+  if (controls.tokens) {
+    console.log("🎯 DAGGERHEART: Found tokens controls:", controls.tokens);
+    console.log("🎯 DAGGERHEART: Tokens controls tools:", controls.tokens.tools);
+    console.log("🎯 DAGGERHEART: Tokens controls tools type:", typeof controls.tokens.tools);
+    console.log("🎯 DAGGERHEART: Tokens controls tools is array:", Array.isArray(controls.tokens.tools));
+
+    // In v13, tools is a Record<string, SceneControlTool>, not an array
+    if (!controls.tokens.tools) {
+      controls.tokens.tools = {};
+      console.log("🎯 DAGGERHEART: Created tools object for tokens controls");
+    }
+
+    console.log("🎯 DAGGERHEART: Adding countdown tracker button to tokens controls");
+    controls.tokens.tools["countdown-tracker-manage"] = {
+      name: "countdown-tracker-manage",
+      title: "Manage Countdown Trackers",
+      icon: "fas fa-stopwatch",
+      button: true,
+      onClick: async () => {
+        console.log("🎯 DAGGERHEART: Countdown tracker button clicked!");
+        if (game.daggerheart?.countdownTracker) {
+          await game.daggerheart.countdownTracker.showManagementDialog();
+        } else {
+          ui.notifications.error("Countdown tracker not initialized");
+        }
+      }
+    };
+
+    console.log("🎯 DAGGERHEART: Button added successfully to tokens controls");
+  } else {
+    console.log("🎯 DAGGERHEART: Tokens controls not found");
+    console.log("🎯 DAGGERHEART: Available control groups:", Object.keys(controls));
+
+    // Try to add to the first available control group as fallback
+    const firstControlKey = Object.keys(controls)[0];
+    if (firstControlKey && controls[firstControlKey]) {
+      console.log(`🎯 DAGGERHEART: Trying to add to first available control group: ${firstControlKey}`);
+      console.log(`🎯 DAGGERHEART: Control structure:`, controls[firstControlKey]);
+
+      // In v13, tools is a Record<string, SceneControlTool>, not an array
+      if (!controls[firstControlKey].tools) {
+        console.log(`🎯 DAGGERHEART: Creating tools object for ${firstControlKey}`);
+        controls[firstControlKey].tools = {};
+      }
+
+      console.log(`🎯 DAGGERHEART: Adding button to ${firstControlKey} controls`);
+      controls[firstControlKey].tools["countdown-tracker-manage"] = {
+        name: "countdown-tracker-manage",
+        title: "Manage Countdown Trackers",
+        icon: "fas fa-stopwatch",
+        button: true,
+        onClick: async () => {
+          console.log("🎯 DAGGERHEART: Countdown tracker button clicked (fallback)!");
+          if (game.daggerheart?.countdownTracker) {
+            await game.daggerheart.countdownTracker.showManagementDialog();
+          } else {
+            ui.notifications.error("Countdown tracker not initialized");
+          }
+        }
+      };
+
+      console.log(`🎯 DAGGERHEART: Button added to fallback control group: ${firstControlKey}`);
+    }
+  }
+});
+
+
 
 /**
  * Hook to set default prototype token settings for actors
@@ -1152,7 +1262,7 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   }
 
   // Add undo button handlers for damage/healing applied messages
-  if (flags.messageType === "damageApplied" || flags.messageType === "healingApplied") {
+  if (flags.messageType === "damageApplied" || flags.messageType === "healingApplied" || flags.messageType === "directDamageApplied") {
     _addUndoButtonHandlers(html, flags);
   }
 });
@@ -1726,31 +1836,12 @@ function _getArmorSlotsUI(currentSlots = 0, maxSlots = 3, showUI = true) {
  * @returns {Object} Object with showUI flag and maxSlots value
  */
 function _getTargetArmorInfo() {
-  // Check targeted tokens first (priority)
   const targets = Array.from(game.user.targets);
-
-  if (targets.length > 0) {
-    // Find first character target to get max armor slots
-    const characterTarget = targets.find(t => t.actor?.type === 'character');
-    if (characterTarget) {
-      const maxSlots = parseInt(characterTarget.actor.system.defenses?.["armor-slots"]?.max) || 3;
-      return { showUI: true, maxSlots: maxSlots };
-    }
-  }
-
-  // Check selected tokens
-  const controlled = canvas.tokens?.controlled || [];
-
-  if (controlled.length > 0) {
-    // Find first character to get max armor slots
-    const characterToken = controlled.find(t => t.actor?.type === 'character');
-    if (characterToken) {
-      const maxSlots = parseInt(characterToken.actor.system.defenses?.["armor-slots"]?.max) || 3;
-      return { showUI: true, maxSlots: maxSlots };
-    }
-  }
-
-  return { showUI: false, maxSlots: 0 };
+  if (targets.length === 0) return { showUI: false, maxSlots: 0 };
+  const characterTarget = targets.find(t => t.actor?.type === "character");
+  if (!characterTarget) return { showUI: false, maxSlots: 0 };
+  const maxSlots = parseInt(characterTarget.actor.system.defenses?.["armor-slots"]?.max) || 3;
+  return { showUI: true, maxSlots };
 }
 
 /**
@@ -2045,56 +2136,24 @@ function _addUndoButtonHandlers(html, flags) {
  */
 function _getMultiTargetArmorInfo() {
   const characterTargets = [];
-
-  // Check targeted tokens first (priority)
   const targets = Array.from(game.user.targets);
-
-  if (targets.length > 0) {
-    // Get all character targets
-    targets.forEach(token => {
-      if (token.actor?.type === 'character') {
-        // New data structure: armor.value = max slots, armor-slots.value = current used slots
-        const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
-        const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
-        const availableSlots = maxSlots - currentSlots; // How many slots they have available
-        const usableSlots = Math.min(availableSlots, 3); // Cap at 3 due to damage threshold system
-
-        characterTargets.push({
-          actor: token.actor,
-          name: token.actor.name,
-          id: token.actor.id,
-          maxSlots: maxSlots,
-          currentSlots: currentSlots,
-          availableSlots: availableSlots,
-          usableSlots: usableSlots
-        });
-      }
-    });
-  } else {
-    // Check selected tokens
-    const controlled = canvas.tokens?.controlled || [];
-
-    controlled.forEach(token => {
-      if (token.actor?.type === 'character') {
-        // New data structure: armor.value = max slots, armor-slots.value = current used slots
-        const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
-        const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
-        const availableSlots = maxSlots - currentSlots; // How many slots they have available
-        const usableSlots = Math.min(availableSlots, 3); // Cap at 3 due to damage threshold system
-
-        characterTargets.push({
-          actor: token.actor,
-          name: token.actor.name,
-          id: token.actor.id,
-          maxSlots: maxSlots,
-          currentSlots: currentSlots,
-          availableSlots: availableSlots,
-          usableSlots: usableSlots
-        });
-      }
-    });
-  }
-
+  targets.forEach(token => {
+    if (token.actor?.type === "character") {
+      const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
+      const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
+      const availableSlots = maxSlots - currentSlots;
+      const usableSlots = Math.min(availableSlots, 3);
+      characterTargets.push({
+        actor: token.actor,
+        name: token.actor.name,
+        id: token.actor.id,
+        maxSlots,
+        currentSlots,
+        availableSlots,
+        usableSlots
+      });
+    }
+  });
   return characterTargets;
 }
 

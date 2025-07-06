@@ -61,12 +61,12 @@
 }
 
 /* Remove Foundry's built-in box shadow on focused inputs */
-body.game .app input[type=text]:focus,
-body.game .app input[type=number]:focus,
-body.game .app input[type=password]:focus,
-body.game .app input[type=date]:focus,
-body.game .app input[type=time]:focus,
-body.game .app input[type=search]:focus {
+input[type=text]:focus,
+input[type=number]:focus,
+input[type=password]:focus,
+input[type=date]:focus,
+input[type=time]:focus,
+input[type=search]:focus {
   box-shadow: none;
 }
 
@@ -1224,6 +1224,7 @@ body.game .app input[type=search]:focus {
   margin: 0px;
   width: 100%;
   padding: 0.5em 5em;
+  border-top: 1px solid var(--dh-color-gold);
 }
 .daggerheart .click-rollable:hover, .daggerheart .basic-rollable:hover {
   cursor: pointer;
@@ -1427,8 +1428,17 @@ body.game .app input[type=search]:focus {
   padding: 0.5em 5em;
 }
 
+body.game .app {
+  border-radius: 10px;
+}
+body.game .app img {
+  /* no border on images */
+}
 body.game .app button:hover, body.game .app button:focus {
   box-shadow: none;
+}
+body.game .app button {
+  border: 1px solid var(--dh-color-gold);
 }
 
 /* Components Layer */
@@ -1590,28 +1600,6 @@ body.game .app button:hover, body.game .app button:focus {
   position: relative;
   z-index: 9999;
   pointer-events: all;
-}
-.countdown-tracker-ui .countdown-manage-btn {
-  background: rgba(243, 194, 103, 0.2);
-  border: 1px solid #f3c267;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #f3c267;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
-  backdrop-filter: blur(5px);
-}
-.countdown-tracker-ui .countdown-manage-btn:hover {
-  background: rgba(243, 194, 103, 0.3);
-  transform: scale(1.05);
-}
-.countdown-tracker-ui .countdown-manage-btn:active {
-  transform: scale(0.95);
 }
 .countdown-tracker-ui .countdown-trackers-container {
   display: flex;
@@ -2566,7 +2554,7 @@ body.game .app button:hover, body.game .app button:focus {
 .daggerheart .item-list .item.expanded .item-description > * {
   opacity: 1;
   height: auto;
-  width: 50%;
+  width: 85%;
 }
 
 /* Fix image display in item descriptions */
@@ -2713,10 +2701,9 @@ body.game .app button:hover, body.game .app button:focus {
    ========================================= */
 .domain-abilities-sidebar {
   position: absolute;
-  top: 15%;
+  top: 0%;
   right: 100%; /* sit just to the left of the sheet */
   transform: translateX(-8px); /* little gutter spacing */
-  width: 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2725,15 +2712,34 @@ body.game .app button:hover, body.game .app button:focus {
   pointer-events: auto;
 }
 
+.domain-abilities-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--dh-color-gray);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  width: fit-content;
+  padding: 0.25em 1em;
+  background: rgba(67, 63, 100, 0.3);
+  border: 1px solid #433f64;
+  border-radius: 5px;
+}
+
 .domain-ability-button {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 130px;
+  height: 65px;
   border-radius: var(--dh-radius-lg, 8px);
   overflow: hidden;
   cursor: pointer;
   box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
   transition: transform 0.2s ease;
+  border: 1px solid var(--dh-color-gold);
+}
+.domain-ability-button .ability-img {
+  border: none;
 }
 
 .domain-ability-button:hover {
@@ -2756,6 +2762,12 @@ body.game .app button:hover, body.game .app button:focus {
   flex-direction: column;
   gap: 2px;
   pointer-events: none; /* icons inside will still receive events */
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.domain-ability-button:hover .ability-overlay {
+  opacity: 1;
 }
 
 .domain-ability-button .ability-overlay .item-control {
@@ -2794,7 +2806,8 @@ body.game .app button:hover, body.game .app button:focus {
   pointer-events: none;
 }
 
-.domain-ability-button:hover .ability-name {
+.domain-ability-button:hover .ability-name,
+.domain-ability-button:focus .ability-name {
   opacity: 1;
 }
 
@@ -2821,9 +2834,10 @@ body.game .app button:hover, body.game .app button:focus {
 /* Ensure preview card has a maximum width */
 .domain-preview-card {
   max-width: 260px;
+  max-height: 400px;
   border: 1px solid var(--dh-color-gold, #f3c267);
   border-radius: var(--dh-radius-lg, 8px);
-  overflow: hidden;
+  overflow: auto;
   box-shadow: var(--dh-shadow-lg, 0 6px 12px rgba(0, 0, 0, 0.6));
   background: rgba(11, 10, 19, 0.95); /* opaque dark backdrop */
 }
@@ -2834,8 +2848,8 @@ body.game .app button:hover, body.game .app button:focus {
 }
 
 .domain-ability-slot.empty {
-  width: 96px;
-  height: 96px;
+  width: 130px;
+  height: 65px;
   border: 2px dashed var(--dh-color-gold, #f3c267);
   border-radius: var(--dh-radius-lg, 8px);
   opacity: 0.2;
@@ -2864,6 +2878,24 @@ body.game .app button:hover, body.game .app button:focus {
   font-size: 0.7rem;
 }
 
+.sidebar-separator {
+  width: 120px;
+  height: 1px;
+  background: var(--dh-color-gold, #f3c267);
+  opacity: 0.3;
+  margin: var(--dh-space-xs, 0.25rem) 0;
+}
+
+.domain-ability-button, .domain-ability-slot.empty {
+  width: 130px;
+  height: 55px;
+  transition: height 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.domain-ability-button:hover, .domain-ability-button:focus {
+  height: 90px;
+}
+
 /* Header Loadout Bar */
 .header-loadout-bar {
   display: flex;
@@ -2883,6 +2915,7 @@ body.game .app button:hover, body.game .app button:focus {
   cursor: pointer;
   box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
   transition: transform 0.2s ease;
+  border: 1px solid var(--dh-color-gold);
 }
 
 .loadout-card-slot.empty {
@@ -2894,6 +2927,7 @@ body.game .app button:hover, body.game .app button:focus {
   color: var(--dh-color-gold, #f3c267);
   font-size: 0.7rem;
   text-transform: uppercase;
+  border: 1px solid var(--dh-color-gold);
   /* Disable hover transforms for empty slots */
 }
 .loadout-card-slot.empty:hover {
@@ -2909,6 +2943,7 @@ body.game .app button:hover, body.game .app button:focus {
   height: 100%;
   object-fit: cover;
   display: block;
+  border: none;
 }
 
 .loadout-card-slot .slot-overlay {
@@ -2919,6 +2954,12 @@ body.game .app button:hover, body.game .app button:focus {
   flex-direction: column;
   gap: 2px;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.loadout-card-slot:hover .slot-overlay {
+  opacity: 1;
 }
 
 .loadout-card-slot .slot-overlay .slot-control {
@@ -2953,7 +2994,7 @@ body.game .app button:hover, body.game .app button:focus {
   color: var(--dh-color-gold, #f3c267);
   font-size: 0.65rem;
   text-align: center;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.2s ease;
   pointer-events: none;
 }
@@ -3012,8 +3053,13 @@ body.game .app button:hover, body.game .app button:focus {
   flex-direction: row;
   margin-left: -8em;
   z-index: 1;
-  margin-top: 0.5rem;
+  margin-top: 0;
   justify-content: space-between;
+  padding: 0.8em 0.25em;
+  background: rgba(11, 10, 19, 0.8);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 15px;
+  backdrop-filter: blur(3px);
   /*.resource-label-controls label {
     text-shadow: 0 0 4px rgba(0, 0, 0, 0.55), 0 0 8px rgba(0, 0, 0, 0.45);
   }*/
@@ -3041,7 +3087,7 @@ body.game .app button:hover, body.game .app button:focus {
   width: 100%;
   height: auto;
   box-shadow: 0 0 12px 4px rgba(0, 0, 0, 0.4);
-  border: 1px solid black;
+  border: 1px solid var(--dh-color-gold);
 }
 
 /* Feature Layer */
@@ -3052,10 +3098,10 @@ body.game .app button:hover, body.game .app button:focus {
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  padding: 0.5em 1.5em 0.5em;
+  padding: 0.5em 1.5em;
   gap: 1em;
   overflow: visible;
-  max-height: 26em;
+  max-height: 31em;
 }
 
 .companion .sheet-header {
@@ -3516,6 +3562,11 @@ body.game .app button:hover, body.game .app button:focus {
   gap: 0.7em;
   align-items: center;
   justify-content: center;
+  background: rgba(11, 10, 19, 0.8);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 15px;
+  backdrop-filter: blur(3px);
+  width: 100%;
 }
 
 .trait {
@@ -3550,11 +3601,12 @@ body.game .app button:hover, body.game .app button:focus {
   font-size: 10px;
   letter-spacing: 1px;
   padding: 0.25em 0.25em;
-  background: rgb(11, 10, 19);
+  background: rgba(11, 10, 19, 0.8);
   border: 1px solid var(--dh-color-gold);
   border-radius: 0.5em;
   z-index: 1;
   white-space: nowrap;
+  backdrop-filter: blur(3px);
 }
 .trait-label-wrapper .trait-d12-icon {
   margin-right: 2px;
@@ -4013,7 +4065,7 @@ input.trait-effects.resize-ta {
   margin: 0;
 }
 .resource-label-controls [data-trait-tooltip] {
-  box-shadow: 0 0 16px 6px rgba(0, 0, 0, 0.45);
+  box-shadow: none;
 }
 
 .armor-controls {
@@ -4977,120 +5029,453 @@ input.trait-effects.resize-ta {
 
 /* Damage Application Chat Messages */
 .damage-application-message {
-  padding: 1em;
-  margin: 0.5em 0;
-  border-radius: 10px;
-  background: rgba(11, 10, 19, 0.85);
-  border: 1px solid #433f64;
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
+  border: 1px solid #d32f2f;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 .damage-application-message h3 {
-  margin: 0 0 0.5em 0;
-  color: #f3c267;
+  color: #ff7043;
   font-size: 1.1em;
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
 }
-.damage-application-message .damage-details {
-  margin: 0.5em 0;
-  padding: 0.5em;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 5px;
-  border-left: 3px solid #6d6795;
+.damage-application-message h3 i {
+  margin-right: 8px;
+  color: #ff7043;
+}
+.damage-application-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.damage-application-message p:last-child {
+  margin-bottom: 0;
+  color: #ffab91;
+  font-weight: 600;
 }
 .damage-application-message .damage-warning {
-  color: #ff6b6b;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 0.5em;
-}
-.damage-application-message .damage-warning i {
-  color: #ff6b6b;
-}
-.damage-application-message.damage-minor {
-  border-color: #f3c267;
-}
-.damage-application-message.damage-minor h3 {
-  color: #f3c267;
-}
-.damage-application-message.damage-major {
-  border-color: #ff8c00;
-}
-.damage-application-message.damage-major h3 {
-  color: #ff8c00;
-}
-.damage-application-message.damage-major .damage-details {
-  border-left-color: #ff8c00;
-}
-.damage-application-message.damage-severe {
-  border-color: #ff6b6b;
-}
-.damage-application-message.damage-severe h3 {
-  color: #ff6b6b;
-}
-.damage-application-message.damage-severe .damage-details {
-  border-left-color: #ff6b6b;
+  color: #ff6b6b !important;
+  font-weight: bold !important;
+  font-style: italic;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 8px;
 }
 
 .healing-application-message {
-  padding: 1em;
-  margin: 0.5em 0;
-  border-radius: 10px;
-  background: rgba(11, 10, 19, 0.85);
+  background: linear-gradient(135deg, rgba(46, 64, 34, 0.9) 0%, rgba(19, 40, 29, 0.9) 100%);
   border: 1px solid #5bb85c;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 .healing-application-message h3 {
-  margin: 0 0 0.5em 0;
   color: #66cc66;
   font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.healing-application-message h3 i {
+  margin-right: 8px;
+  color: #66cc66;
+}
+.healing-application-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.healing-application-message p:last-child {
+  margin-bottom: 0;
+  color: #a5d6a7;
+  font-weight: 600;
+}
+.healing-application-message .healing-success {
+  color: #66cc66 !important;
+  font-weight: bold !important;
+  font-style: italic;
+  background: rgba(102, 204, 102, 0.1);
+  border: 1px solid rgba(102, 204, 102, 0.3);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 8px;
+}
+
+/* GM Info Messages */
+.damage-gm-info, .healing-gm-info {
+  padding: 0.5em;
+  margin: 0.25em 0;
+  border-radius: 5px;
+  background: rgba(11, 10, 19, 0.7);
+  border: 1px solid #6d6795;
+  font-size: 0.9em;
+}
+.damage-gm-info h4, .healing-gm-info h4 {
+  margin: 0 0 0.25em 0;
+  color: #c4c4c4;
+  font-size: 1em;
   border: none;
   display: flex;
   align-items: center;
   gap: 0.5em;
 }
-.healing-application-message .healing-details {
-  margin: 0.5em 0;
-  padding: 0.5em;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 5px;
-  border-left: 3px solid #5bb85c;
+.damage-gm-info h4 i, .healing-gm-info h4 i {
+  color: #c4c4c4;
 }
-.healing-application-message .healing-success {
-  color: #66cc66;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 0.5em;
-}
-.healing-application-message .healing-success i {
-  color: #ffd700;
+.damage-gm-info p, .healing-gm-info p {
+  color: #b0b0b0;
+  margin: 0.25em 0;
+  font-size: 0.85em;
 }
 
-/* Inline links and rolls */
-body.game .app a.inline-roll, a.inline-roll.roll {
-  background: rgba(11, 10, 19, 0.85);
-  border: 1px solid #433f64;
-  border-radius: 0.5em;
-  color: #f3c267;
-  font-weight: 600;
+/* Undo Buttons */
+.undo-damage-button, .undo-healing-button {
+  background: linear-gradient(135deg, rgba(108, 117, 125, 0.8) 0%, rgba(52, 58, 64, 0.8) 100%);
+  border: 1px solid #6c757d;
+  border-radius: 4px;
+  color: #f8f9fa;
+  padding: 6px 12px;
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
-body.game .app a.inline-roll i, a.inline-roll.roll i {
-  color: #f3c267;
+.undo-damage-button:hover, .undo-healing-button:hover {
+  background: linear-gradient(135deg, rgb(108, 117, 125) 0%, rgb(52, 58, 64) 100%);
+  border-color: #adb5bd;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.undo-damage-button i, .undo-healing-button i {
+  margin-right: 4px;
 }
 
-body.game .app a.content-link, .content-link, .inline-roll {
-  background: rgba(12, 10, 19, 0.85);
-  border: 1px solid #433f64;
-  border-radius: 0.5em;
-  color: #f3c267;
-  font-weight: 600;
-  padding: 1px 4px;
+/* Resource Button Styling - Global Design System */
+.dh-resource-btn, .dh-fear-btn {
+  /* Base button styling from global design system */
+  display: inline-block;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.05rem;
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.15s ease;
   white-space: nowrap;
-  word-break: break-all;
+  vertical-align: baseline;
+  line-height: 1.2;
+  /* Glassmorphism effect */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  color: var(--dh-color-off-white);
+  /* Primary button variant */
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Focus state for accessibility */
 }
-body.game .app a.content-link i, .content-link i, .inline-roll i {
+.dh-resource-btn.dh-btn--primary, .dh-btn--primary.dh-fear-btn {
+  background: rgba(243, 194, 103, 0.12);
+  border: 1px solid rgba(243, 194, 103, 0.25);
   color: var(--dh-color-gold);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+}
+.dh-resource-btn:hover, .dh-fear-btn:hover {
+  transform: translateY(-0.5px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2);
+  background: rgba(243, 194, 103, 0.18);
+  border-color: rgba(243, 194, 103, 0.35);
+}
+.dh-resource-btn:active, .dh-fear-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.dh-resource-btn:focus, .dh-fear-btn:focus {
+  outline: 1px solid rgba(243, 194, 103, 0.4);
+  outline-offset: 1px;
+}
+
+/* Unified Button Styling - Apply glassmorphism only to Daggerheart-specific elements */
+/* Inline rolls, content links, and rollable buttons within Daggerheart contexts */
+.daggerheart a.inline-roll,
+.daggerheart a.inline-roll.roll,
+.daggerheart a.content-link,
+.daggerheart .content-link,
+.daggerheart .inline-roll,
+.daggerheart .rollable,
+.daggerheart .roll-link,
+.daggerheart .document-link,
+.daggerheart .entity-link,
+.chat-message .daggerheart a.inline-roll,
+.chat-message .daggerheart .inline-roll,
+.chat-message .daggerheart .rollable {
+  /* Apply same glassmorphism styling as resource buttons */
+  display: inline-block;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.05rem;
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  vertical-align: baseline;
+  line-height: 1.2;
+  /* Glassmorphism effect */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  color: var(--dh-color-gold) !important;
+  /* Icon styling */
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Focus state for accessibility */
+}
+.daggerheart a.inline-roll i,
+.daggerheart a.inline-roll.roll i,
+.daggerheart a.content-link i,
+.daggerheart .content-link i,
+.daggerheart .inline-roll i,
+.daggerheart .rollable i,
+.daggerheart .roll-link i,
+.daggerheart .document-link i,
+.daggerheart .entity-link i,
+.chat-message .daggerheart a.inline-roll i,
+.chat-message .daggerheart .inline-roll i,
+.chat-message .daggerheart .rollable i {
+  color: var(--dh-color-gold) !important;
   margin-right: 0.25em;
+}
+.daggerheart a.inline-roll:hover,
+.daggerheart a.inline-roll.roll:hover,
+.daggerheart a.content-link:hover,
+.daggerheart .content-link:hover,
+.daggerheart .inline-roll:hover,
+.daggerheart .rollable:hover,
+.daggerheart .roll-link:hover,
+.daggerheart .document-link:hover,
+.daggerheart .entity-link:hover,
+.chat-message .daggerheart a.inline-roll:hover,
+.chat-message .daggerheart .inline-roll:hover,
+.chat-message .daggerheart .rollable:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+  background: rgba(243, 194, 103, 0.18) !important;
+  border-color: rgba(243, 194, 103, 0.35) !important;
+  color: var(--dh-color-gold) !important;
+}
+.daggerheart a.inline-roll:active,
+.daggerheart a.inline-roll.roll:active,
+.daggerheart a.content-link:active,
+.daggerheart .content-link:active,
+.daggerheart .inline-roll:active,
+.daggerheart .rollable:active,
+.daggerheart .roll-link:active,
+.daggerheart .document-link:active,
+.daggerheart .entity-link:active,
+.chat-message .daggerheart a.inline-roll:active,
+.chat-message .daggerheart .inline-roll:active,
+.chat-message .daggerheart .rollable:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+.daggerheart a.inline-roll:focus,
+.daggerheart a.inline-roll.roll:focus,
+.daggerheart a.content-link:focus,
+.daggerheart .content-link:focus,
+.daggerheart .inline-roll:focus,
+.daggerheart .rollable:focus,
+.daggerheart .roll-link:focus,
+.daggerheart .document-link:focus,
+.daggerheart .entity-link:focus,
+.chat-message .daggerheart a.inline-roll:focus,
+.chat-message .daggerheart .inline-roll:focus,
+.chat-message .daggerheart .rollable:focus {
+  outline: 1px solid rgba(243, 194, 103, 0.4) !important;
+  outline-offset: 1px;
+}
+
+/* Macro Hotbar Button Styling - Remove global styling, only apply to Daggerheart-specific macros if needed */
+/* Note: Removed global macro styling to prevent affecting all FoundryVTT macros */
+/* Control Tool Buttons - Remove global styling, only apply to Daggerheart-specific controls if needed */
+/* Note: Removed global control tool styling to prevent affecting all FoundryVTT canvas controls */
+/* Dialog and Form Buttons - Only target Daggerheart-specific dialogs and forms */
+.daggerheart-dialog .dialog-buttons button,
+.daggerheart .dialog .dialog-buttons button,
+.daggerheart .form-group button,
+.daggerheart .form-footer button,
+.daggerheart button.default,
+.daggerheart button[type=submit],
+.daggerheart input[type=submit],
+.daggerheart .button,
+.daggerheart-dialog button,
+.daggerheart-dialog input[type=submit] {
+  /* Apply glassmorphism to form buttons */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  padding: 0.4rem 0.8rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  /* Hover effects */
+  /* Active/pressed state */
+  /* Focus state for accessibility */
+  /* Disabled state */
+}
+.daggerheart-dialog .dialog-buttons button:hover,
+.daggerheart .dialog .dialog-buttons button:hover,
+.daggerheart .form-group button:hover,
+.daggerheart .form-footer button:hover,
+.daggerheart button.default:hover,
+.daggerheart button[type=submit]:hover,
+.daggerheart input[type=submit]:hover,
+.daggerheart .button:hover,
+.daggerheart-dialog button:hover,
+.daggerheart-dialog input[type=submit]:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+  background: rgba(243, 194, 103, 0.18) !important;
+  border-color: rgba(243, 194, 103, 0.35) !important;
+}
+.daggerheart-dialog .dialog-buttons button:active,
+.daggerheart .dialog .dialog-buttons button:active,
+.daggerheart .form-group button:active,
+.daggerheart .form-footer button:active,
+.daggerheart button.default:active,
+.daggerheart button[type=submit]:active,
+.daggerheart input[type=submit]:active,
+.daggerheart .button:active,
+.daggerheart-dialog button:active,
+.daggerheart-dialog input[type=submit]:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+.daggerheart-dialog .dialog-buttons button:focus,
+.daggerheart .dialog .dialog-buttons button:focus,
+.daggerheart .form-group button:focus,
+.daggerheart .form-footer button:focus,
+.daggerheart button.default:focus,
+.daggerheart button[type=submit]:focus,
+.daggerheart input[type=submit]:focus,
+.daggerheart .button:focus,
+.daggerheart-dialog button:focus,
+.daggerheart-dialog input[type=submit]:focus {
+  outline: 1px solid rgba(243, 194, 103, 0.4) !important;
+  outline-offset: 1px;
+}
+.daggerheart-dialog .dialog-buttons button:disabled,
+.daggerheart .dialog .dialog-buttons button:disabled,
+.daggerheart .form-group button:disabled,
+.daggerheart .form-footer button:disabled,
+.daggerheart button.default:disabled,
+.daggerheart button[type=submit]:disabled,
+.daggerheart input[type=submit]:disabled,
+.daggerheart .button:disabled,
+.daggerheart-dialog button:disabled,
+.daggerheart-dialog input[type=submit]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Directory Item Controls - Only target Daggerheart-specific directories */
+.daggerheart .directory-item .item-controls .item-control,
+.daggerheart .directory-header .header-control,
+.daggerheart .folder-header .folder-control {
+  /* Apply glassmorphism to directory controls */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  padding: 0.2rem 0.3rem;
+  /* Hover effects */
+}
+.daggerheart .directory-item .item-controls .item-control:hover,
+.daggerheart .directory-header .header-control:hover,
+.daggerheart .folder-header .folder-control:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+  background: rgba(243, 194, 103, 0.18) !important;
+  border-color: rgba(243, 194, 103, 0.35) !important;
+}
+
+/* Chat Control Buttons - Only target Daggerheart-specific chat controls */
+.daggerheart #chat-controls .chat-control-icon,
+.daggerheart .chat-control-icon {
+  /* Apply glassmorphism to chat controls */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  /* Hover effects */
+}
+.daggerheart #chat-controls .chat-control-icon:hover,
+.daggerheart .chat-control-icon:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+  background: rgba(243, 194, 103, 0.18) !important;
+  border-color: rgba(243, 194, 103, 0.35) !important;
+}
+
+/* Legacy fear button styling for backward compatibility */
+.dh-fear-btn[data-action=spendFear] {
+  background: rgba(220, 38, 127, 0.15);
+  border: 1px solid rgba(220, 38, 127, 0.3);
+  color: #dc267f;
+}
+.dh-fear-btn[data-action=spendFear]:hover {
+  background: rgba(220, 38, 127, 0.2);
+  border-color: rgba(220, 38, 127, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(220, 38, 127, 0.3);
+}
+.dh-fear-btn[data-action=gainFear] {
+  background: rgba(255, 140, 0, 0.15);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  color: #ff8c00;
+}
+.dh-fear-btn[data-action=gainFear]:hover {
+  background: rgba(255, 140, 0, 0.2);
+  border-color: rgba(255, 140, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 140, 0, 0.3);
 }
 
 /* Death Move Messages */
@@ -5636,6 +6021,205 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   margin-top: 8px;
 }
 
+/* Stress Clear Message Styling */
+.stress-clear-message {
+  background: linear-gradient(135deg, rgba(38, 77, 38, 0.9) 0%, rgba(10, 19, 10, 0.9) 100%);
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.stress-clear-message h3 {
+  color: #81c784;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.stress-clear-message h3 i {
+  margin-right: 8px;
+  color: #81c784;
+}
+.stress-clear-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.stress-clear-message p:last-child {
+  margin-bottom: 0;
+  color: #a5d6a7;
+  font-weight: 500;
+}
+
+/* Armor Slot Message Styling */
+.armor-slot-message {
+  background: linear-gradient(135deg, rgba(96, 125, 139, 0.9) 0%, rgba(37, 47, 63, 0.9) 100%);
+  border: 1px solid #607d8b;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.armor-slot-message h3 {
+  color: #90a4ae;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.armor-slot-message h3 i {
+  margin-right: 8px;
+  color: #90a4ae;
+}
+.armor-slot-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.armor-slot-message p:last-child {
+  margin-bottom: 0;
+  color: #b0bec5;
+  font-weight: 500;
+}
+
+/* HP Adjust Message Styling */
+.hp-adjust-message {
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.9) 0%, rgba(62, 39, 35, 0.9) 100%);
+  border: 1px solid #8b4513;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.hp-adjust-message h3 {
+  color: #cd853f;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.hp-adjust-message h3 i {
+  margin-right: 8px;
+  color: #cd853f;
+}
+.hp-adjust-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.hp-adjust-message p:last-child {
+  margin-bottom: 0;
+  color: #deb887;
+  font-weight: 500;
+}
+
+/* Hope Message Styling */
+.hope-spend-message {
+  background: linear-gradient(135deg, rgba(57, 77, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
+  border: 1px solid var(--dh-color-teal);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.hope-spend-message h3 {
+  color: var(--dh-color-gold);
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.hope-spend-message h3 i {
+  margin-right: 8px;
+  color: var(--dh-color-gold);
+}
+.hope-spend-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.hope-spend-message p:last-child {
+  margin-bottom: 0;
+  color: var(--dh-color-teal);
+  font-weight: 600;
+}
+.hope-spend-message .hope-warning {
+  color: #ff9800 !important;
+  font-weight: bold !important;
+  font-style: italic;
+  background: rgba(255, 152, 0, 0.1);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 8px;
+}
+
+.hope-gain-message {
+  background: linear-gradient(135deg, rgba(77, 77, 38, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.hope-gain-message h3 {
+  color: var(--dh-color-gold);
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: none;
+}
+.hope-gain-message h3 i {
+  margin-right: 8px;
+  color: var(--dh-color-gold);
+}
+.hope-gain-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.hope-gain-message p:last-child {
+  margin-bottom: 0;
+  color: var(--dh-color-gold);
+  font-weight: 600;
+}
+.hope-gain-message .hope-max {
+  color: #ffeb3b !important;
+  font-weight: bold !important;
+  font-style: italic;
+  background: rgba(255, 235, 59, 0.1);
+  border: 1px solid rgba(255, 235, 59, 0.3);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 8px;
+}
+
 /* Undo Button Styling */
 .undo-damage-button,
 .undo-healing-button {
@@ -5925,6 +6509,43 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
     left: 150%;
   }
 }
+.chat-message:has(.item-card-chat) .message-content {
+  padding-bottom: 0;
+}
+
+.hp-healing-message {
+  background: linear-gradient(135deg, rgba(46, 64, 34, 0.9) 0%, rgba(19, 40, 29, 0.9) 100%);
+  border: 1px solid #5bb85c;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.hp-healing-message h3 {
+  color: #66cc66;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.hp-healing-message h3 i {
+  margin-right: 8px;
+  color: #66cc66;
+}
+.hp-healing-message p {
+  color: var(--dh-color-off-white);
+  font-size: 0.95em;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+.hp-healing-message p:last-child {
+  margin-bottom: 0;
+  color: #a5d6a7;
+  font-weight: 500;
+}
+
 .rest-button {
   display: flex;
   align-items: center;
@@ -5932,7 +6553,7 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   width: 32px;
   height: 32px;
   padding: 0;
-  background: rgb(0, 0, 0);
+  background: rgba(11, 10, 19, 0.8);
   border: 1px solid var(--dh-color-gold);
   border-radius: 25%;
   color: var(--dh-color-off-white);
@@ -5953,7 +6574,7 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
 }
 .rest-button i {
   font-size: 1em;
-  margin-right: 0.3em;
+  margin: 0;
 }
 
 /* All dialog styles moved to unified system in dialogs.scss */
@@ -6363,6 +6984,7 @@ body.game .app a.content-link i, .content-link i, .inline-roll i {
   cursor: pointer;
   user-select: none;
   transition: var(--dh-transition-fast);
+  z-index: 0;
 }
 .trait-value-display:hover {
   transform: scale(1.05);
@@ -7477,6 +8099,9 @@ button.weapon-locked:hover {
   transform: translateY(-50%);
   box-shadow: var(--dh-shadow-sm);
 }
+.tracker-manager-header .tracker-manager-close i {
+  margin: 0;
+}
 .tracker-manager-header .tracker-manager-close:hover {
   background: var(--dh-color-gold);
   color: var(--dh-color-off-black);
@@ -8336,16 +8961,6 @@ button.weapon-locked:hover {
     border-radius: 0;
   }
 }
-/* ============================================
-   DAGGERHEART SYSTEM STYLES
-   ============================================
-   Organized Architecture:
-   1. Foundation - Variables, resets, base styles
-   2. Layout - General sheet and window layouts  
-   3. Components - Reusable UI components
-   4. Features - Specific functionality modules
-   ============================================ */
-/* Foundation Layer */
 :root {
   --dh-color-dark-blue:#0a0f21;
   --dh-color-purple:#1e184d;
@@ -8397,10 +9012,6 @@ button.weapon-locked:hover {
   height: 5px !important;
 }
 
-/* Core Daggerheart System Styles */
-.daggerheart {
-  /* Base styles */
-}
 .daggerheart a {
   cursor: auto;
   text-shadow: none;
@@ -8480,10 +9091,6 @@ button.weapon-locked:hover {
   min-height: 400px;
 }
 
-/* Layout Layer */
-/* General Sheet and Window Layouts */
-/* Sheet Sizing */
-/* Window Content Styling */
 .actor .window-content, .item .window-content, .npc .window-content {
   background: transparent;
   background-color: transparent;
@@ -8498,7 +9105,6 @@ button.weapon-locked:hover {
   padding: 1em 2em;
 }
 
-/* Window Header Styling */
 .actor .window-header, .npc .window-header, .item .window-header {
   background: transparent;
   backdrop-filter: blur(5px);
@@ -8514,7 +9120,6 @@ button.weapon-locked:hover {
   position: relative;
 }
 
-/* Sheet Backgrounds */
 .actor, .npc {
   background: transparent;
 }
@@ -8524,7 +9129,6 @@ button.weapon-locked:hover {
   backdrop-filter: blur(5px);
 }
 
-/* Input Styling for Sheets */
 .daggerheart .actor input[type=text], .daggerheart .actor input[type=number], .daggerheart .actor input[type=password], .daggerheart .actor input[type=date], .daggerheart .actor input[type=time], .daggerheart .actor input[type=search] {
   color: #f0f0e0;
 }
@@ -8532,7 +9136,6 @@ button.weapon-locked:hover {
   color: #f0f0e0;
 }
 
-/* Item Sheet Specific Layouts */
 .item-bg {
   position: absolute;
   top: -2vh;
@@ -8568,7 +9171,6 @@ button.weapon-locked:hover {
   border: 2px solid var(--dh-color-gold);
   border-style: double;
   border-radius: 0px 10px;
-  /* z-index: -500; -- Removed: This was making the image unclickable */
 }
 .item .sheet-body .tab {
   height: 100%;
@@ -8583,18 +9185,7 @@ button.weapon-locked:hover {
 .item .flexcol {
   position: relative;
 }
-.item .sheet-header {
-  position: relative;
-  z-index: 1;
-}
 
-/* Components Layer */
-/* =================================== */
-/*  Component Layer
-/*  This file imports all individual
-/*  component style partials.
-/* =================================== */
-/* Counter UI Components */
 .counter-ui {
   display: flex;
   align-items: center;
@@ -8676,7 +9267,6 @@ button.weapon-locked:hover {
   transform: scale(0.95);
 }
 
-/* Counter positioning */
 #ui-bottom {
   flex-direction: column;
   gap: 0;
@@ -8723,7 +9313,6 @@ button.weapon-locked:hover {
   margin-bottom: 0.5em;
 }
 
-/* Tooltip Components */
 .daggerheart [data-trait-tooltip] {
   position: relative;
 }
@@ -8785,7 +9374,6 @@ button.weapon-locked:hover {
   display: none;
 }
 
-/* Treasure Tracker Component */
 .treasure-tracker {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -8857,7 +9445,6 @@ button.weapon-locked:hover {
   text-overflow: ellipsis;
 }
 
-/* Responsive design for treasure tracker */
 @media (max-width: 768px) {
   .treasure-tracker {
     grid-template-columns: repeat(2, 1fr);
@@ -8883,7 +9470,6 @@ button.weapon-locked:hover {
     font-size: 1em;
   }
 }
-/* Click and rollable elements */
 .daggerheart .click-rollable:hover, .daggerheart .basic-rollable:hover {
   cursor: pointer;
   filter: brightness(0.8);
@@ -8900,7 +9486,6 @@ button.weapon-locked:hover {
   border-radius: 0.5em;
   min-height: 3em;
   transition: all 0.2s ease-in-out;
-  /* General drag-over styles (fallback) */
 }
 .daggerheart .item-list.is-empty {
   display: none;
@@ -9010,9 +9595,8 @@ button.weapon-locked:hover {
   transition: opacity 0.2s ease-out 0.1s;
 }
 .daggerheart .item-list .item.expanded .item-description {
-  /* Limit the expanded height so huge descriptions don't blow out the sheet */
   max-height: 200px;
-  overflow-y: auto; /* Allow scrolling once the description exceeds the max height */
+  overflow-y: auto;
   opacity: 1;
   transform: scaleY(1);
   padding-top: 0.5em;
@@ -9054,25 +9638,6 @@ button.weapon-locked:hover {
 }
 .daggerheart .vault-content .item-control {
   display: flex;
-}
-
-/* Item list */
-/* Show empty item lists during drag operations */
-/* Visual feedback for populated item lists during drag */
-/* Make section headers droppable during drag operations */
-/* Vault animation styles */
-/* Feature Layer */
-/* Header */
-.sheet-header {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5em 1.5em 0.5em;
-  gap: 1em;
-  overflow: visible;
-  max-height: 26em;
 }
 
 .npc .sheet-header {
@@ -9270,7 +9835,6 @@ button.weapon-locked:hover {
   background: transparent;
 }
 
-/* Item sheet header specifics */
 .item .sheet-header {
   display: flex;
   flex-direction: column;
@@ -9356,7 +9920,6 @@ button.weapon-locked:hover {
   z-index: 10;
 }
 
-/* Character Tab */
 .character-main-section {
   display: flex;
   flex-direction: column;
@@ -9403,8 +9966,6 @@ button.weapon-locked:hover {
   width: 100%;
 }
 
-/* Defenses */
-/* Advancement Section */
 .advancement-section {
   display: flex;
   justify-content: center;
@@ -9482,7 +10043,6 @@ button.weapon-locked:hover {
   z-index: 1;
 }
 
-/* Advancement Group */
 .advancement-group {
   flex: 1;
   max-width: fit-content;
@@ -9519,7 +10079,6 @@ button.weapon-locked:hover {
   text-align: center;
 }
 
-/* Defense Group */
 .defense-group {
   display: flex;
   flex-direction: row;
@@ -9529,7 +10088,6 @@ button.weapon-locked:hover {
   flex: 0 1 auto;
 }
 
-/* Threshold Group */
 .threshold-group {
   flex: 1;
   max-width: fit-content;
@@ -9566,23 +10124,17 @@ button.weapon-locked:hover {
   text-align: center;
 }
 
-/* Traits */
-.traits {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7em;
-  align-items: center;
-  justify-content: center;
-}
-
 .trait {
+  display: flex;
   flex: 1;
   min-width: 80px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 5px;
+  padding: 1em 0.25em;
 }
 .trait input {
   width: 80px;
@@ -9692,7 +10244,6 @@ input.trait-effects.resize-ta {
   overflow: hidden;
 }
 
-/* Experience */
 .experience-group {
   display: flex;
   flex-direction: column;
@@ -9756,7 +10307,6 @@ input.trait-effects.resize-ta {
   width: 100%;
 }
 
-/* Weapons */
 .weapon-group {
   display: flex;
   flex-direction: row;
@@ -9870,7 +10420,6 @@ input.trait-effects.resize-ta {
   flex-shrink: 0;
 }
 
-/* Dying/Dead Character Styling */
 .daggerheart.sheet.character.dying .item-bg, .daggerheart.sheet.npc.dying .item-bg {
   filter: saturate(0.3) brightness(0.6) sepia(1) hue-rotate(-10deg);
   transition: filter 0.3s ease-in-out;
@@ -9921,7 +10470,6 @@ input.trait-effects.resize-ta {
   z-index: 10;
 }
 
-/* Resource Controls on Actor Sheet */
 .resource-content {
   display: flex;
   align-items: center;
@@ -9983,18 +10531,12 @@ input.trait-effects.resize-ta {
   color: #6c6a85;
 }
 
-/* ====================================
-   UNIFIED DAGGERHEART DIALOG SYSTEM
-   Used by all dialogs from dialog-helper.js
-   ==================================== */
-/* Base Dialog Content Container */
 .daggerheart-dialog-content {
   display: flex;
   flex-direction: column;
   gap: 1.5em;
 }
 
-/* Dialog Description Text */
 .daggerheart-dialog .dialog-description {
   text-align: center;
   color: var(--dh-color-gold);
@@ -10032,7 +10574,6 @@ input.trait-effects.resize-ta {
   transition: all 0.2s ease;
   position: relative;
   cursor: pointer;
-  /* Input positioning for inline layout */
 }
 .daggerheart-dialog .checkbox-item:hover {
   background: rgba(67, 63, 100, 0.5);
@@ -10472,21 +11013,6 @@ input.trait-effects.resize-ta {
   color: var(--dh-color-gold);
 }
 
-/* Dialog Reminders/Info Boxes */
-/* Checkbox/Radio Group Container */
-/* Individual Checkbox/Radio Items */
-/* Selection Counter for Multi-Option Dialogs */
-/* Dialog Window Styling */
-/* Dialog Button Styling */
-/* ====================================
-   RECOVERY ALLOCATION DIALOG STYLES
-   Used for Risk it All recovery allocation
-   ==================================== */
-/* ====================================
-   DUALITY ROLL DIALOG STYLES
-   Used for duality roll configuration
-   ==================================== */
-/* Chat Messages */
 .chat-message {
   margin: 7px 4px;
   padding: 0.75em 1em;
@@ -10496,7 +11022,6 @@ input.trait-effects.resize-ta {
   border: 1px solid #6d6795;
   backdrop-filter: blur(5px);
   border-radius: 10px;
-  /* Roll Outcome Styling */
 }
 .chat-message .message-header {
   line-height: 20px;
@@ -10570,8 +11095,6 @@ input.trait-effects.resize-ta {
   backdrop-filter: none;
 }
 
-/* Remove padding and default styling from chat messages that contain an item card */
-/* Daggerheart Chat Cards */
 .daggerheart.chat-card.item-card {
   display: flex;
   flex-direction: row-reverse;
@@ -10604,7 +11127,6 @@ input.trait-effects.resize-ta {
   width: 100%;
 }
 
-/* Item Card in Chat */
 .message-content .item-card-chat {
   width: 100%;
   box-sizing: border-box;
@@ -10665,7 +11187,6 @@ input.trait-effects.resize-ta {
 }
 .item-card-chat .card-description {
   font-size: 0.9em;
-  /* Override dark header colors in item-card-chat descriptions */
 }
 .item-card-chat .card-description p {
   margin: 0.5em 0;
@@ -10681,7 +11202,6 @@ input.trait-effects.resize-ta {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-/* Damage Roll Button in Chat */
 .damage-roll-button {
   background: rgba(11, 10, 19, 0.85);
   border: 1px solid #433f64;
@@ -10696,7 +11216,6 @@ input.trait-effects.resize-ta {
   align-items: center;
   justify-content: center;
   gap: 0.5em;
-  /* Critical Damage Button Styling */
 }
 .damage-roll-button:hover {
   background: rgba(35, 34, 43, 0.9);
@@ -10730,7 +11249,6 @@ input.trait-effects.resize-ta {
     box-shadow: 0 0 10px rgba(255, 107, 107, 0.8), 0 0 20px rgba(255, 107, 107, 0.4);
   }
 }
-/* Inline links and rolls */
 body.game .app a.inline-roll,
 a.inline-roll.roll {
   background: rgba(11, 10, 19, 0.85);
@@ -10763,7 +11281,6 @@ body.game .app a.content-link i,
   margin-right: 0.25em;
 }
 
-/* Death Move Messages */
 .death-move-blaze {
   padding: 1em;
   margin: 0.5em 0;
@@ -11179,39 +11696,6 @@ body.game .app a.content-link i,
     opacity: 0.6;
   }
 }
-.rest-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background: rgb(0, 0, 0);
-  border: 1px solid var(--dh-color-gold);
-  border-radius: 25%;
-  color: var(--dh-color-off-white);
-  font-size: 0.9em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  outline: none;
-}
-.rest-button:hover {
-  background: var(--dh-color-gold);
-  color: var(--dh-color-off-black);
-  transform: translateY(-1px) scale(1.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-.rest-button:active {
-  transform: translateY(0) scale(1.05);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-}
-.rest-button i {
-  font-size: 1em;
-  margin-right: 0.3em;
-}
-
-/* All dialog styles moved to unified system in dialogs.scss */
-/* Short Rest Chat Message Styles */
 .short-rest-start {
   padding: 1em;
   margin: 0.5em 0;
@@ -11268,7 +11752,6 @@ body.game .app a.content-link i,
   opacity: 0.9;
 }
 
-/* Long Rest Chat Message Styles */
 .long-rest-start {
   padding: 1.2em;
   margin: 0.5em 0;
@@ -11382,7 +11865,6 @@ body.game .app a.content-link i,
     opacity: 0.3;
   }
 }
-/* Tabs */
 .sheet-tabs {
   margin-top: 1em;
   border-top: none;
@@ -11424,7 +11906,8 @@ body.game .app a.content-link i,
 .nav-gem {
   width: 20px;
   height: 35px;
-  background: url("https://i.imgur.com/VSTKJWt.png") center/contain no-repeat;
+  background: url("icons/svg/d20-grey.svg") no-repeat center center;
+  background-size: contain;
   align-self: center;
   cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease;
@@ -11448,7 +11931,6 @@ body.game .app a.content-link i,
   margin-top: 0.1em;
 }
 
-/* Tab categories and titles */
 .tab-title {
   display: flex;
   align-items: center;
@@ -11470,7 +11952,6 @@ body.game .app a.content-link i,
   user-select: text;
 }
 
-/* Fix ProseMirror editor content styling - universal fix */
 .daggerheart .editor-content p, .daggerheart .ProseMirror p, .daggerheart .item-description p {
   margin: 0.5em 0 !important;
   padding-left: 0 !important;
@@ -11534,31 +12015,6 @@ body.game .app a.content-link i,
   color: #0b0a13;
 }
 
-/* Trait value display styles */
-.trait-value-display {
-  width: 80px;
-  height: 64px;
-  background: url("icons/Stats BG-2.png") no-repeat;
-  background-size: contain;
-  background-position: center center;
-  border: none;
-  color: black;
-  text-align: center;
-  font-size: 22px;
-  font-weight: 700;
-  padding-bottom: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.trait-value-display:hover {
-  transform: scale(1.05);
-}
-
-/* Popup overlay styles */
 .trait-edit-popup-overlay, .attribute-edit-popup-overlay {
   position: fixed;
   top: 0;
@@ -11664,7 +12120,6 @@ body.game .app a.content-link i,
   letter-spacing: 1px;
 }
 
-/* Base Value Controls for Modifier Popup */
 .base-value-controls {
   display: flex;
   align-items: center;
@@ -11801,7 +12256,6 @@ body.game .app a.content-link i,
   border: 1px solid transparent;
   position: relative;
   transition: all 0.2s ease;
-  /* Ensure all controls are interactive */
 }
 .modifier-row:nth-child(even) {
   background: rgba(141, 120, 151, 0.05);
@@ -11813,7 +12267,6 @@ body.game .app a.content-link i,
 .modifier-row.disabled {
   pointer-events: auto;
   opacity: 0.7;
-  /* Keep toggle and delete always interactive */
 }
 .modifier-row.disabled .modifier-name, .modifier-row.disabled .modifier-value {
   opacity: 0.6;
@@ -11957,7 +12410,6 @@ body.game .app a.content-link i,
   text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
 }
 
-/* Generic attribute value display */
 .attribute-value-display {
   cursor: pointer;
   transition: all 0.2s ease;
@@ -11970,7 +12422,6 @@ body.game .app a.content-link i,
   transform: scale(1.05);
 }
 
-/* Defense-specific value displays */
 .defense-value-display {
   width: 64px;
   height: 64px;
@@ -11989,7 +12440,6 @@ body.game .app a.content-link i,
   background-image: url("icons/Evade BG-2.png");
 }
 
-/* Simple attribute popup styles */
 .attribute-edit-simple .attribute-edit-content {
   min-width: 250px;
   padding: 1.25rem;
@@ -12024,7 +12474,6 @@ body.game .app a.content-link i,
   box-shadow: 0 0 0 3px rgba(243, 194, 103, 0.2);
 }
 
-/* Weapon modifier display styles */
 .weapon-modifier-display {
   width: 45px;
   height: 30px;
@@ -12046,8 +12495,6 @@ body.game .app a.content-link i,
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
 }
 
-/* Sheet Tracker Styles */
-/* Ensure the Daggerheart actor sheet has proper positioning and overflow handling */
 .daggerheart.sheet.actor {
   overflow: visible !important;
 }
@@ -12068,11 +12515,6 @@ body.game .app a.content-link i,
   z-index: 100;
   transition: all 0.3s ease-in-out;
 }
-.sheet-tracker-sidebar.expanded {
-  /* Keep the same left position but show the panel */
-}
-
-/* Main tracker button */
 .tracker-main-button {
   width: 45px;
   height: 36px;
@@ -12099,7 +12541,6 @@ body.game .app a.content-link i,
   font-size: 16px;
 }
 
-/* Container for individual tracker buttons */
 .tracker-buttons-container {
   display: flex;
   flex-direction: column;
@@ -12108,7 +12549,6 @@ body.game .app a.content-link i,
   margin-left: 0.5em;
 }
 
-/* Individual tracker buttons */
 .tracker-button {
   width: 32px;
   height: 32px;
@@ -12165,8 +12605,6 @@ body.game .app a.content-link i,
   margin-left: 12px;
 }
 
-/* Tracker button hover tooltip */
-/* Manager panel */
 .tracker-manager-panel {
   position: absolute;
   left: 120%;
@@ -12195,54 +12633,6 @@ body.game .app a.content-link i,
   pointer-events: all;
 }
 
-/* Manager header */
-.tracker-manager-header {
-  background: rgba(11, 10, 19, 0.5);
-  border-bottom: 1px solid var(--dh-color-gold);
-  padding: 0.75rem 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-.tracker-manager-header span {
-  color: var(--dh-color-gold);
-  font-weight: 600;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-align: center;
-  text-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
-}
-.tracker-manager-header .tracker-manager-close {
-  background: rgba(11, 10, 19, 0.85);
-  border: 2px solid rgba(243, 194, 103, 0.5);
-  color: var(--dh-color-gold);
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-.tracker-manager-header .tracker-manager-close:hover {
-  background: var(--dh-color-gold);
-  color: var(--dh-color-off-black);
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 15px rgba(243, 194, 103, 0.6);
-}
-
-/* Manager content */
 .tracker-manager-content {
   padding: 0.75rem 1rem;
   display: flex;
@@ -12258,7 +12648,6 @@ body.game .app a.content-link i,
   max-width: 40px;
 }
 
-/* Add tracker form */
 .tracker-add-form {
   background: rgba(67, 63, 100, 0.2);
   padding: 0.5em 1rem;
@@ -12400,7 +12789,6 @@ body.game .app a.content-link i,
   box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
 }
 
-/* Tracker list */
 .tracker-list {
   background: rgba(0, 0, 0, 0.2);
   padding: 0.5em 1rem;
@@ -12425,7 +12813,6 @@ body.game .app a.content-link i,
   border: 1px solid transparent;
 }
 
-/* Tracker list item */
 .tracker-list-item {
   display: flex;
   align-items: center;
@@ -12488,7 +12875,6 @@ body.game .app a.content-link i,
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;

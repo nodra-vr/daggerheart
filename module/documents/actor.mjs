@@ -95,19 +95,19 @@ export class ActorDocument extends Actor {
     if (isDying && !hasDeadEffect) {
       // Apply dead status effect
       await this.createEmbeddedDocuments("ActiveEffect", [{
-        name: deadEffect.name || "Dead",
-        icon: deadEffect.icon || "icons/svg/skull.svg",
+        name: game.i18n.localize(deadEffect.name) || "Dead",
+        img: deadEffect.img || "icons/svg/skull.svg",
         statuses: ["dead"],
         flags: {
           core: {
-            statusId: "dead"
+            statusId: "dead",
+            overlay: true
           }
         }
       }]);
     } else if (!isDying && hasDeadEffect) {
       // Remove dead status effect
       const deadEffectToRemove = this.effects.find(e => e.statuses.has("dead"));
-      console.log({ deadEffectToRemove });
       if (deadEffectToRemove) {
         await deadEffectToRemove.delete();
       }

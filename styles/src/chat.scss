@@ -350,137 +350,409 @@
 
 /* Damage Application Chat Messages */
 .damage-application-message {
-  padding: 1em;
-  margin: 0.5em 0;
-  border-radius: 10px;
-  background: rgba(11, 10, 19, 0.85);
-  border: 1px solid #433f64;
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
+  border: 1px solid #d32f2f;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
   h3 {
-    margin: 0 0 0.5em 0;
-    color: #f3c267;
+    color: #ff7043;
     font-size: 1.1em;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: none;
+
+    i {
+      margin-right: 8px;
+      color: #ff7043;
+    }
   }
 
-  .damage-details {
-    margin: 0.5em 0;
-    padding: 0.5em;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
-    border-left: 3px solid #6d6795;
+  p {
+    color: var(--dh-color-off-white);
+    font-size: 0.95em;
+    margin: 4px 0;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+      color: #ffab91;
+      font-weight: 600;
+    }
   }
 
   .damage-warning {
-    color: #ff6b6b;
-    font-weight: bold;
-    text-align: center;
-    margin-top: 0.5em;
-
-    i {
-      color: #ff6b6b;
-    }
-  }
-
-  &.damage-minor {
-    border-color: #f3c267;
-
-    h3 {
-      color: #f3c267;
-    }
-  }
-
-  &.damage-major {
-    border-color: #ff8c00;
-
-    h3 {
-      color: #ff8c00;
-    }
-
-    .damage-details {
-      border-left-color: #ff8c00;
-    }
-  }
-
-  &.damage-severe {
-    border-color: #ff6b6b;
-
-    h3 {
-      color: #ff6b6b;
-    }
-
-    .damage-details {
-      border-left-color: #ff6b6b;
-    }
+    color: #ff6b6b !important;
+    font-weight: bold !important;
+    font-style: italic;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-top: 8px;
   }
 }
 
 .healing-application-message {
-  padding: 1em;
-  margin: 0.5em 0;
-  border-radius: 10px;
-  background: rgba(11, 10, 19, 0.85);
+  background: linear-gradient(135deg, rgba(46, 64, 34, 0.9) 0%, rgba(19, 40, 29, 0.9) 100%);
   border: 1px solid #5bb85c;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
   h3 {
-    margin: 0 0 0.5em 0;
     color: #66cc66;
     font-size: 1.1em;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: none;
+
+    i {
+      margin-right: 8px;
+      color: #66cc66;
+    }
+  }
+
+  p {
+    color: var(--dh-color-off-white);
+    font-size: 0.95em;
+    margin: 4px 0;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+      color: #a5d6a7;
+      font-weight: 600;
+    }
+  }
+
+  .healing-success {
+    color: #66cc66 !important;
+    font-weight: bold !important;
+    font-style: italic;
+    background: rgba(102, 204, 102, 0.1);
+    border: 1px solid rgba(102, 204, 102, 0.3);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-top: 8px;
+  }
+}
+
+/* GM Info Messages */
+.damage-gm-info, .healing-gm-info {
+  padding: 0.5em;
+  margin: 0.25em 0;
+  border-radius: 5px;
+  background: rgba(11, 10, 19, 0.7);
+  border: 1px solid #6d6795;
+  font-size: 0.9em;
+
+  h4 {
+    margin: 0 0 0.25em 0;
+    color: #c4c4c4;
+    font-size: 1em;
     border: none;
     display: flex;
     align-items: center;
     gap: 0.5em;
-  }
-
-  .healing-details {
-    margin: 0.5em 0;
-    padding: 0.5em;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 5px;
-    border-left: 3px solid #5bb85c;
-  }
-
-  .healing-success {
-    color: #66cc66;
-    font-weight: bold;
-    text-align: center;
-    margin-top: 0.5em;
 
     i {
-      color: #ffd700;
+      color: #c4c4c4;
     }
   }
-}
 
-/* Inline links and rolls */
-body.game .app a.inline-roll, a.inline-roll.roll {
-  background: rgba(11, 10, 19, 0.85);
-  border: 1px solid #433f64;
-  border-radius: 0.5em;
-  color: #f3c267;
-  font-weight: 600;
-
-  i {
-    color: #f3c267;
+  p {
+    color: #b0b0b0;
+    margin: 0.25em 0;
+    font-size: 0.85em;
   }
 }
 
-body.game .app a.content-link, .content-link, .inline-roll {
-  background: rgba(12, 10, 19, 0.85);
-  border: 1px solid #433f64;
-  border-radius: 0.5em;
-  color: #f3c267;
-  font-weight: 600;
-  padding: 1px 4px;
-  white-space: nowrap;
-  word-break: break-all;
+/* Undo Buttons */
+.undo-damage-button, .undo-healing-button {
+  background: linear-gradient(135deg, rgba(108, 117, 125, 0.8) 0%, rgba(52, 58, 64, 0.8) 100%);
+  border: 1px solid #6c757d;
+  border-radius: 4px;
+  color: #f8f9fa;
+  padding: 6px 12px;
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(108, 117, 125, 1) 0%, rgba(52, 58, 64, 1) 100%);
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
 
   i {
+    margin-right: 4px;
+  }
+}
+
+/* Resource Button Styling - Global Design System */
+.dh-resource-btn {
+  /* Base button styling from global design system */
+  display: inline-block;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.05rem;
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  vertical-align: baseline;
+  line-height: 1.2;
+  
+  /* Glassmorphism effect */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  color: var(--dh-color-off-white);
+  
+  /* Primary button variant */
+  &.dh-btn--primary {
+    background: rgba(243, 194, 103, 0.12);
+    border: 1px solid rgba(243, 194, 103, 0.25);
     color: var(--dh-color-gold);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  }
+  
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2);
+    background: rgba(243, 194, 103, 0.18);
+    border-color: rgba(243, 194, 103, 0.35);
+  }
+  
+  /* Active/pressed state */
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Focus state for accessibility */
+  &:focus {
+    outline: 1px solid rgba(243, 194, 103, 0.4);
+    outline-offset: 1px;
+  }
+}
+
+/* Unified Button Styling - Apply glassmorphism only to Daggerheart-specific elements */
+/* Inline rolls, content links, and rollable buttons within Daggerheart contexts */
+.daggerheart a.inline-roll,
+.daggerheart a.inline-roll.roll,
+.daggerheart a.content-link,
+.daggerheart .content-link,
+.daggerheart .inline-roll,
+.daggerheart .rollable,
+.daggerheart .roll-link,
+.daggerheart .document-link,
+.daggerheart .entity-link,
+.chat-message .daggerheart a.inline-roll,
+.chat-message .daggerheart .inline-roll,
+.chat-message .daggerheart .rollable {
+  /* Apply same glassmorphism styling as resource buttons */
+  display: inline-block;
+  padding: 0.1rem 0.3rem;
+  margin: 0 0.05rem;
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  vertical-align: baseline;
+  line-height: 1.2;
+
+  /* Glassmorphism effect */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  color: var(--dh-color-gold) !important;
+
+  /* Icon styling */
+  i {
+    color: var(--dh-color-gold) !important;
     margin-right: 0.25em;
+  }
+
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+    background: rgba(243, 194, 103, 0.18) !important;
+    border-color: rgba(243, 194, 103, 0.35) !important;
+    color: var(--dh-color-gold) !important;
+  }
+
+  /* Active/pressed state */
+  &:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Focus state for accessibility */
+  &:focus {
+    outline: 1px solid rgba(243, 194, 103, 0.4) !important;
+    outline-offset: 1px;
+  }
+}
+
+/* Macro Hotbar Button Styling - Remove global styling, only apply to Daggerheart-specific macros if needed */
+/* Note: Removed global macro styling to prevent affecting all FoundryVTT macros */
+
+/* Control Tool Buttons - Remove global styling, only apply to Daggerheart-specific controls if needed */
+/* Note: Removed global control tool styling to prevent affecting all FoundryVTT canvas controls */
+
+/* Dialog and Form Buttons - Only target Daggerheart-specific dialogs and forms */
+.daggerheart-dialog .dialog-buttons button,
+.daggerheart .dialog .dialog-buttons button,
+.daggerheart .form-group button,
+.daggerheart .form-footer button,
+.daggerheart button.default,
+.daggerheart button[type="submit"],
+.daggerheart input[type="submit"],
+.daggerheart .button,
+.daggerheart-dialog button,
+.daggerheart-dialog input[type="submit"] {
+  /* Apply glassmorphism to form buttons */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  padding: 0.4rem 0.8rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+    background: rgba(243, 194, 103, 0.18) !important;
+    border-color: rgba(243, 194, 103, 0.35) !important;
+  }
+
+  /* Active/pressed state */
+  &:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Focus state for accessibility */
+  &:focus {
+    outline: 1px solid rgba(243, 194, 103, 0.4) !important;
+    outline-offset: 1px;
+  }
+
+  /* Disabled state */
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  }
+}
+
+/* Directory Item Controls - Only target Daggerheart-specific directories */
+.daggerheart .directory-item .item-controls .item-control,
+.daggerheart .directory-header .header-control,
+.daggerheart .folder-header .folder-control {
+  /* Apply glassmorphism to directory controls */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+  padding: 0.2rem 0.3rem;
+
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+    background: rgba(243, 194, 103, 0.18) !important;
+    border-color: rgba(243, 194, 103, 0.35) !important;
+  }
+}
+
+/* Chat Control Buttons - Only target Daggerheart-specific chat controls */
+.daggerheart #chat-controls .chat-control-icon,
+.daggerheart .chat-control-icon {
+  /* Apply glassmorphism to chat controls */
+  background: rgba(243, 194, 103, 0.12) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25) !important;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  transition: all 0.15s ease;
+  color: var(--dh-color-gold) !important;
+
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-0.5px) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 6px rgba(243, 194, 103, 0.2) !important;
+    background: rgba(243, 194, 103, 0.18) !important;
+    border-color: rgba(243, 194, 103, 0.35) !important;
+  }
+}
+
+/* Legacy fear button styling for backward compatibility */
+.dh-fear-btn {
+  @extend .dh-resource-btn;
+  
+  &[data-action="spendFear"] {
+    background: rgba(220, 38, 127, 0.15);
+    border: 1px solid rgba(220, 38, 127, 0.3);
+    color: #dc267f;
+    
+    &:hover {
+      background: rgba(220, 38, 127, 0.2);
+      border-color: rgba(220, 38, 127, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(220, 38, 127, 0.3);
+    }
+  }
+  
+  &[data-action="gainFear"] {
+    background: rgba(255, 140, 0, 0.15);
+    border: 1px solid rgba(255, 140, 0, 0.3);
+    color: #ff8c00;
+    
+    &:hover {
+      background: rgba(255, 140, 0, 0.2);
+      border-color: rgba(255, 140, 0, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 140, 0, 0.3);
+    }
   }
 }
 
@@ -1115,6 +1387,227 @@ body.game .app a.content-link, .content-link, .inline-roll {
   }
 }
 
+/* Stress Clear Message Styling */
+.stress-clear-message {
+  background: linear-gradient(135deg, rgba(38, 77, 38, 0.9) 0%, rgba(10, 19, 10, 0.9) 100%);
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    color: #81c784;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: none;
+
+    i {
+      margin-right: 8px;
+      color: #81c784;
+    }
+  }
+
+  p {
+    color: var(--dh-color-off-white);
+    font-size: 0.95em;
+    margin: 4px 0;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+      color: #a5d6a7;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Armor Slot Message Styling */
+.armor-slot-message {
+  background: linear-gradient(135deg, rgba(96, 125, 139, 0.9) 0%, rgba(37, 47, 63, 0.9) 100%);
+  border: 1px solid #607d8b;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    color: #90a4ae;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: none;
+
+    i {
+      margin-right: 8px;
+      color: #90a4ae;
+    }
+  }
+
+  p {
+    color: var(--dh-color-off-white);
+    font-size: 0.95em;
+    margin: 4px 0;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+      color: #b0bec5;
+      font-weight: 500;
+    }
+  }
+}
+
+/* HP Adjust Message Styling */
+.hp-adjust-message {
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.9) 0%, rgba(62, 39, 35, 0.9) 100%);
+  border: 1px solid #8b4513;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    color: #cd853f;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: none;
+
+    i {
+      margin-right: 8px;
+      color: #cd853f;
+    }
+  }
+
+  p {
+    color: var(--dh-color-off-white);
+    font-size: 0.95em;
+    margin: 4px 0;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+      color: #deb887;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Hope Message Styling */
+.hope-spend-message {
+  background: linear-gradient(135deg, rgba(57, 77, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
+  border: 1px solid var(--dh-color-teal);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    color: var(--dh-color-gold);
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: none;
+
+    i {
+      margin-right: 8px;
+      color: var(--dh-color-gold);
+    }
+  }
+
+  p {
+    color: var(--dh-color-off-white);
+    font-size: 0.95em;
+    margin: 4px 0;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+      color: var(--dh-color-teal);
+      font-weight: 600;
+    }
+  }
+
+  .hope-warning {
+    color: #ff9800 !important;
+    font-weight: bold !important;
+    font-style: italic;
+    background: rgba(255, 152, 0, 0.1);
+    border: 1px solid rgba(255, 152, 0, 0.3);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-top: 8px;
+  }
+}
+
+.hope-gain-message {
+  background: linear-gradient(135deg, rgba(77, 77, 38, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    color: var(--dh-color-gold);
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: none;
+
+    i {
+      margin-right: 8px;
+      color: var(--dh-color-gold);
+    }
+  }
+
+  p {
+    color: var(--dh-color-off-white);
+    font-size: 0.95em;
+    margin: 4px 0;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+      color: var(--dh-color-gold);
+      font-weight: 600;
+    }
+  }
+
+  .hope-max {
+    color: #ffeb3b !important;
+    font-weight: bold !important;
+    font-style: italic;
+    background: rgba(255, 235, 59, 0.1);
+    border: 1px solid rgba(255, 235, 59, 0.3);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-top: 8px;
+  }
+}
+
 /* Undo Button Styling */
 .undo-damage-button,
 .undo-healing-button {
@@ -1422,4 +1915,45 @@ body.game .app a.content-link, .content-link, .inline-roll {
 @keyframes shineMove {
   0% { left: -150%; }
   100% { left: 150%; }
+}
+
+.chat-message:has(.item-card-chat) .message-content {
+  padding-bottom: 0;
+}
+
+.hp-healing-message {
+  background: linear-gradient(135deg, rgba(46, 64, 34, 0.9) 0%, rgba(19, 40, 29, 0.9) 100%);
+  border: 1px solid #5bb85c;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 4px 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    color: #66cc66;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    i {
+      margin-right: 8px;
+      color: #66cc66;
+    }
+  }
+
+  p {
+    color: var(--dh-color-off-white);
+    font-size: 0.95em;
+    margin: 4px 0;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+      color: #a5d6a7;
+      font-weight: 500;
+    }
+  }
 }

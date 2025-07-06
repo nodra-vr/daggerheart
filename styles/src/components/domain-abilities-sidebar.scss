@@ -1,13 +1,13 @@
 /* =========================================
    Domain Abilities Sidebar (left of sheet)
    ========================================= */
+  
 
 .domain-abilities-sidebar {
   position: absolute;
-  top: 15%;
+  top: 0%;
   right: 100%; /* sit just to the left of the sheet */
   transform: translateX(-8px); /* little gutter spacing */
-  width: 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,15 +16,35 @@
   pointer-events: auto;
 }
 
+.domain-abilities-title {
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--dh-color-gray);
+	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+	width: fit-content;
+	padding: 0.25em 1em;
+	background: rgba(67, 63, 100, 0.3);
+	border: 1px solid #433f64;
+	border-radius: 5px;
+}
+
 .domain-ability-button {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 130px;
+  height: 65px;
   border-radius: var(--dh-radius-lg, 8px);
   overflow: hidden;
   cursor: pointer;
   box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
   transition: transform 0.2s ease;
+  border: 1px solid var(--dh-color-gold);
+
+  .ability-img {
+    border: none;
+  }
 }
 
 .domain-ability-button:hover {
@@ -47,6 +67,12 @@
   flex-direction: column;
   gap: 2px;
   pointer-events: none; /* icons inside will still receive events */
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.domain-ability-button:hover .ability-overlay {
+  opacity: 1;
 }
 
 .domain-ability-button .ability-overlay .item-control {
@@ -85,7 +111,8 @@
   pointer-events: none;
 }
 
-.domain-ability-button:hover .ability-name {
+.domain-ability-button:hover .ability-name,
+.domain-ability-button:focus .ability-name {
   opacity: 1;
 }
 
@@ -112,9 +139,10 @@
 /* Ensure preview card has a maximum width */
 .domain-preview-card {
   max-width: 260px;
+  max-height: 400px;
   border: 1px solid var(--dh-color-gold, #f3c267);
   border-radius: var(--dh-radius-lg, 8px);
-  overflow: hidden;
+  overflow: auto;
   box-shadow: var(--dh-shadow-lg, 0 6px 12px rgba(0,0,0,0.6));
   background: rgba(11, 10, 19, 0.95); /* opaque dark backdrop */
 }
@@ -125,8 +153,8 @@
 }
 
 .domain-ability-slot.empty {
-  width: 96px;
-  height: 96px;
+  width: 130px;
+  height: 65px;
   border: 2px dashed var(--dh-color-gold, #f3c267);
   border-radius: var(--dh-radius-lg, 8px);
   opacity: 0.2;
@@ -154,3 +182,21 @@
 .preview-hint i {
   font-size: 0.7rem;
 } 
+
+.sidebar-separator {
+  width: 120px;
+  height: 1px;
+  background: var(--dh-color-gold, #f3c267);
+  opacity: 0.3;
+  margin: var(--dh-space-xs, 0.25rem) 0;
+}
+
+.domain-ability-button, .domain-ability-slot.empty {
+  width: 130px;
+  height: 55px;
+  transition: height 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.domain-ability-button:hover, .domain-ability-button:focus {
+  height: 90px;
+}

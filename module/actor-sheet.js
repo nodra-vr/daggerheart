@@ -66,7 +66,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
           classes: ["daggerheart", "sheet", "actor"],
     template: "systems/daggerheart/templates/actor-sheet.html",
       width: 690,
-      height: 980,
+      height: 915,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
       scrollY: [".biography", ".items", ".attributes"],
       dragDrop: [
@@ -634,7 +634,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     // If the clicked element is an IMG with data-action="edit" (the item's image)
     if (item && action === "edit" && button.tagName === 'IMG' && button.classList.contains('item-control')) {
       const itemData = item.system;
-      const description = await TextEditor.enrichHTML(itemData.description, {secrets: this.actor.isOwner, async: true});
+      // Don't pre-enrich for chat cards - let Foundry enrich it when the chat message is created
+      // This prevents double-enrichment that causes duplicate buttons
       const chatCard = buildItemCardChat({
         itemId: item.id,
         actorId: this.actor.id,
@@ -642,7 +643,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         name: item.name,
         category: itemData.category || '',
         rarity: itemData.rarity || '',
-        description
+        description: itemData.description || ''
       });
 
       ChatMessage.create({
@@ -3008,7 +3009,7 @@ export class NPCActorSheet extends SimpleActorSheet {
     // If the clicked element is an IMG with data-action="edit" (the item's image)
     if (item && action === "edit" && button.tagName === 'IMG' && button.classList.contains('item-control')) {
       const itemData = item.system;
-      const description = await TextEditor.enrichHTML(itemData.description, {secrets: this.actor.isOwner, async: true});
+      // Don't pre-enrich for chat cards - let Foundry enrich it when the chat message is created
       const chatCard = buildItemCardChat({
         itemId: item.id,
         actorId: this.actor.id,
@@ -3016,7 +3017,7 @@ export class NPCActorSheet extends SimpleActorSheet {
         name: item.name,
         category: itemData.category || '',
         rarity: itemData.rarity || '',
-        description
+        description: itemData.description || ''
       });
 
       ChatMessage.create({
