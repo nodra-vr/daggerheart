@@ -211,8 +211,9 @@ export class SimpleActor extends Actor {
     data.evasion = Math.max(0, parseInt(data.defenses?.evasion?.value) || 10);
     data.armor = Math.max(0, parseInt(data.defenses?.armor?.value) || 0);
     data.armor_slots = Math.max(0, parseInt(data.defenses?.['armor-slots']?.value) || 0);
-    data.severe = Math.max(0, parseInt(data.threshold?.severe) || 0);
-    data.major = Math.max(0, parseInt(data.threshold?.major) || 0);
+    // Handle both structured (character) and simple (NPC) threshold formats
+    data.severe = Math.max(0, parseInt(data.threshold?.severe?.value ?? data.threshold?.severe) || 0);
+    data.major = Math.max(0, parseInt(data.threshold?.major?.value ?? data.threshold?.major) || 0);
 
     // Add tracker values for formula access
     if (data.resourceTrackers && Array.isArray(data.resourceTrackers)) {

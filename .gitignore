@@ -13,3 +13,6 @@ Daggerheart-Trait-Roll-Macro.js
 /private
 test-modifier-system.html
 test-migration-validation.html
+.kilocode/mcp.json
+.gitignore
+docs/private/glassmorphism-design-system.json

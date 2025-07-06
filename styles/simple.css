@@ -2619,6 +2619,26 @@ body.game .app button {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Armor slot tags */
+.daggerheart .item-list .item .item-name .armor-slot-tag {
+  display: inline-block;
+  font-size: 0.7em;
+  font-weight: 600;
+  padding: 0.2em 0.5em;
+  margin-left: 0.5em;
+  border-radius: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  vertical-align: middle;
+}
+.daggerheart .item-list .item .item-name .armor-slot-tag.equipped {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: white;
+  border: 1px solid #15803d;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .daggerheart .item-list .item img {
   flex: 0 0 24px;
   margin-right: 5px;
@@ -2673,6 +2693,34 @@ body.game .app button {
   margin-right: 2px;
 }
 
+/* Equipment button styling - equipped state colors */
+.item-control.weapon-equip-primary.equipped,
+.item-control.weapon-equip-secondary.equipped,
+.item-control.armor-equip.equipped {
+  color: var(--dh-color-gold);
+}
+
+.item-control.weapon-equip-primary.equipped:hover,
+.item-control.weapon-equip-secondary.equipped:hover,
+.item-control.armor-equip.equipped:hover {
+  color: var(--dh-color-gold);
+  scale: 1.1;
+}
+
+/* Unequipped state styling */
+.item-control.weapon-equip-primary:not(.equipped),
+.item-control.weapon-equip-secondary:not(.equipped),
+.item-control.armor-equip:not(.equipped) {
+  color: var(--dh-color-off-white);
+}
+
+.item-control.weapon-equip-primary:not(.equipped):hover,
+.item-control.weapon-equip-secondary:not(.equipped):hover,
+.item-control.armor-equip:not(.equipped):hover {
+  color: var(--dh-color-gold);
+  scale: 1.1;
+}
+
 /* Weapon slot tag styling for equipped weapons in item names */
 .weapon-slot-tag {
   display: inline-block;
@@ -2702,14 +2750,20 @@ body.game .app button {
 .domain-abilities-sidebar {
   position: absolute;
   top: 0%;
-  right: 100%; /* sit just to the left of the sheet */
-  transform: translateX(-8px); /* little gutter spacing */
+  right: 100%;
+  transform: translateX(0px);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--dh-space-sm, 0.5rem);
   z-index: 95;
   pointer-events: auto;
+  background: rgba(11, 10, 19, 0.75);
+  backdrop-filter: blur(5px);
+  padding: 1.25em 1em;
+  border: 1px solid var(--dh-color-gold);
+  border-right: none;
+  border-radius: 10px 0px 0px 10px;
 }
 
 .domain-abilities-title {
@@ -2721,10 +2775,6 @@ body.game .app button {
   letter-spacing: 0.5px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   width: fit-content;
-  padding: 0.25em 1em;
-  background: rgba(67, 63, 100, 0.3);
-  border: 1px solid #433f64;
-  border-radius: 5px;
 }
 
 .domain-ability-button {
@@ -2834,7 +2884,7 @@ body.game .app button {
 /* Ensure preview card has a maximum width */
 .domain-preview-card {
   max-width: 260px;
-  max-height: 400px;
+  max-height: 900px;
   border: 1px solid var(--dh-color-gold, #f3c267);
   border-radius: var(--dh-radius-lg, 8px);
   overflow: auto;
@@ -4126,6 +4176,37 @@ input.trait-effects.resize-ta {
   justify-content: center;
 }
 
+/* Threshold value displays - Updated to work with modifier system */
+.threshold-group .threshold-value-display,
+.threshold-values .threshold-value-display {
+  background: url("icons/DH-Arrow.png") no-repeat center center !important;
+  background-size: contain !important;
+  border: none !important;
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.threshold-group .threshold-value-display:hover,
+.threshold-values .threshold-value-display:hover {
+  transform: scale(1.05);
+}
+
+.threshold-group .threshold-value-display:active,
+.threshold-values .threshold-value-display:active {
+  transform: scale(0.98);
+}
+
+/* Legacy support for existing input-based thresholds */
 .threshold-group input[name="system.threshold.major"],
 .threshold-group input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
@@ -4147,6 +4228,34 @@ input.trait-effects.resize-ta {
   color: #6c6a85;
 }
 
+/* Legacy armorslots threshold displays - Updated to work with modifier system */
+.armorslots .threshold-value-display {
+  background: url("icons/DH-Arrow.png") no-repeat center center !important;
+  background-size: contain !important;
+  border: none !important;
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.armorslots .threshold-value-display:hover {
+  transform: scale(1.05);
+}
+
+.armorslots .threshold-value-display:active {
+  transform: scale(0.98);
+}
+
+/* Legacy support for existing input-based thresholds */
 .armorslots input[name="system.threshold.major"],
 .armorslots input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
@@ -8594,7 +8703,6 @@ button.weapon-locked:hover {
 
 /* Category and Rarity Section */
 .daggerheart.sheet.item .card-subtitle {
-  margin-bottom: 20px;
   border-bottom: 1px solid #433f64;
   padding-bottom: 10px;
 }
@@ -8748,21 +8856,25 @@ button.weapon-locked:hover {
 /* ============================================
    WEAPON SHEET SPECIFIC STYLES
    ============================================ */
-/* Extend existing item sheet styles to weapon sheets */
+/* Extend existing item sheet styles to weapon and armor sheets */
 .daggerheart.sheet.item,
-.daggerheart.sheet.weapon {
+.daggerheart.sheet.weapon,
+.daggerheart.sheet.armor {
   /* All existing item sheet styles automatically apply */
 }
 
-/* Weapon-specific field styling */
-.daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs {
+/* Weapon and armor-specific field styling */
+.daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs,
+.daggerheart.sheet.armor .armor-fields .card-subtitle .category-tier-inputs {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 0.9em;
 }
 .daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .category-input,
-.daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .tier-input {
+.daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .tier-input,
+.daggerheart.sheet.armor .armor-fields .card-subtitle .category-tier-inputs .category-input,
+.daggerheart.sheet.armor .armor-fields .card-subtitle .category-tier-inputs .tier-input {
   background: rgba(67, 63, 100, 0.3);
   border: 1px solid #433f64;
   border-radius: 4px;
@@ -8774,84 +8886,270 @@ button.weapon-locked:hover {
   transition: all 0.3s ease;
 }
 .daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .category-input::placeholder,
-.daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .tier-input::placeholder {
+.daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .tier-input::placeholder,
+.daggerheart.sheet.armor .armor-fields .card-subtitle .category-tier-inputs .category-input::placeholder,
+.daggerheart.sheet.armor .armor-fields .card-subtitle .category-tier-inputs .tier-input::placeholder {
   color: rgba(170, 170, 170, 0.6);
 }
 .daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .category-input:focus,
-.daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .tier-input:focus {
+.daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .tier-input:focus,
+.daggerheart.sheet.armor .armor-fields .card-subtitle .category-tier-inputs .category-input:focus,
+.daggerheart.sheet.armor .armor-fields .card-subtitle .category-tier-inputs .tier-input:focus {
   outline: none;
   border-color: var(--dh-color-gold);
   background: rgba(67, 63, 100, 0.5);
   color: var(--dh-color-off-white);
 }
-.daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .separator {
+.daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .separator,
+.daggerheart.sheet.armor .armor-fields .card-subtitle .category-tier-inputs .separator {
   color: var(--dh-color-gray);
   opacity: 0.8;
   font-weight: bold;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-fields-grid {
+.daggerheart.sheet.weapon .weapon-fields .weapon-fields-grid,
+.daggerheart.sheet.weapon .weapon-fields .armor-fields-grid,
+.daggerheart.sheet.armor .armor-fields .weapon-fields-grid,
+.daggerheart.sheet.armor .armor-fields .armor-fields-grid {
   margin-bottom: 20px;
   padding: 15px 0;
   border-bottom: 1px solid #433f64;
 }
 .daggerheart.sheet.weapon .weapon-fields .weapon-top-row,
-.daggerheart.sheet.weapon .weapon-fields .weapon-bottom-row {
+.daggerheart.sheet.weapon .weapon-fields .weapon-bottom-row,
+.daggerheart.sheet.weapon .weapon-fields .armor-top-row,
+.daggerheart.sheet.weapon .weapon-fields .armor-bottom-row,
+.daggerheart.sheet.weapon .weapon-fields .armor-single-row,
+.daggerheart.sheet.armor .armor-fields .weapon-top-row,
+.daggerheart.sheet.armor .armor-fields .weapon-bottom-row,
+.daggerheart.sheet.armor .armor-fields .armor-top-row,
+.daggerheart.sheet.armor .armor-fields .armor-bottom-row,
+.daggerheart.sheet.armor .armor-fields .armor-single-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;
   margin-bottom: 15px;
 }
 .daggerheart.sheet.weapon .weapon-fields .weapon-top-row:last-child,
-.daggerheart.sheet.weapon .weapon-fields .weapon-bottom-row:last-child {
+.daggerheart.sheet.weapon .weapon-fields .weapon-bottom-row:last-child,
+.daggerheart.sheet.weapon .weapon-fields .armor-top-row:last-child,
+.daggerheart.sheet.weapon .weapon-fields .armor-bottom-row:last-child,
+.daggerheart.sheet.weapon .weapon-fields .armor-single-row:last-child,
+.daggerheart.sheet.armor .armor-fields .weapon-top-row:last-child,
+.daggerheart.sheet.armor .armor-fields .weapon-bottom-row:last-child,
+.daggerheart.sheet.armor .armor-fields .armor-top-row:last-child,
+.daggerheart.sheet.armor .armor-fields .armor-bottom-row:last-child,
+.daggerheart.sheet.armor .armor-fields .armor-single-row:last-child {
   margin-bottom: 0;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group {
+.daggerheart.sheet.weapon .weapon-fields .armor-bottom-row,
+.daggerheart.sheet.armor .armor-fields .armor-bottom-row {
+  grid-template-columns: 1fr;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group,
+.daggerheart.sheet.armor .armor-fields .armor-input-group {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group label {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group label,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group label,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group label,
+.daggerheart.sheet.armor .armor-fields .armor-input-group label {
   font-size: 0.8em;
   color: var(--dh-color-gold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: bold;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select,
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group input[type=number],
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group select,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group input[type=number],
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group select,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group input[type=number],
+.daggerheart.sheet.armor .armor-fields .armor-input-group select,
+.daggerheart.sheet.armor .armor-fields .armor-input-group input[type=number] {
   background: rgba(67, 63, 100, 0.3);
   border: 1px solid #433f64;
   border-radius: 4px;
   color: var(--dh-color-off-white);
-  padding: 0em 0.5em;
+  padding: 8px 12px;
   font-size: 0.9em;
   transition: all 0.3s ease;
-  cursor: pointer;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select:focus {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select::placeholder,
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group input[type=number]::placeholder,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group select::placeholder,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group input[type=number]::placeholder,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group select::placeholder,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group input[type=number]::placeholder,
+.daggerheart.sheet.armor .armor-fields .armor-input-group select::placeholder,
+.daggerheart.sheet.armor .armor-fields .armor-input-group input[type=number]::placeholder {
+  color: rgba(170, 170, 170, 0.6);
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select:focus,
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group input[type=number]:focus,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group select:focus,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group input[type=number]:focus,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group select:focus,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group input[type=number]:focus,
+.daggerheart.sheet.armor .armor-fields .armor-input-group select:focus,
+.daggerheart.sheet.armor .armor-fields .armor-input-group input[type=number]:focus {
   outline: none;
   border-color: var(--dh-color-gold);
   background: rgba(67, 63, 100, 0.5);
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select:hover {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select:hover,
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group input[type=number]:hover,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group select:hover,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group input[type=number]:hover,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group select:hover,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group input[type=number]:hover,
+.daggerheart.sheet.armor .armor-fields .armor-input-group select:hover,
+.daggerheart.sheet.armor .armor-fields .armor-input-group input[type=number]:hover {
   background: rgba(67, 63, 100, 0.4);
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select option {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group select,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group select,
+.daggerheart.sheet.armor .armor-fields .armor-input-group select {
+  padding: 0em 0.5em;
+  cursor: pointer;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group select option,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group select option,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group select option,
+.daggerheart.sheet.armor .armor-fields .armor-input-group select option {
   background: rgba(11, 10, 19, 0.95);
   color: var(--dh-color-off-white);
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group {
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs .threshold-input,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs .threshold-input,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs .threshold-input,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs .threshold-input {
+  flex: 1;
+  min-width: 0;
+  border-radius: 0;
+  border-right: none;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs .threshold-input:first-child,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs .threshold-input:first-child,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs .threshold-input:first-child,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs .threshold-input:first-child {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs .threshold-input:last-child,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs .threshold-input:last-child,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs .threshold-input:last-child,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs .threshold-input:last-child {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-right: 1px solid #433f64;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs .threshold-input:focus,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs .threshold-input:focus,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs .threshold-input:focus,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs .threshold-input:focus {
+  z-index: 2;
+  position: relative;
+  border-right: 1px solid var(--dh-color-gold);
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs .threshold-separator,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs .threshold-separator,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs .threshold-separator,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs .threshold-separator {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--dh-color-gray);
+  font-weight: bold;
+  font-size: 1.1em;
+  opacity: 0.8;
+  user-select: none;
+  z-index: 1;
+  pointer-events: none;
+  background: rgba(67, 63, 100, 0.3);
+  padding: 0 4px;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs.unified,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs.unified,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs.unified,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs.unified {
+  background: rgba(67, 63, 100, 0.3);
+  border: 1px solid #433f64;
+  border-radius: 4px;
+  padding: 0;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs.unified .threshold-input,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs.unified .threshold-input,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs.unified .threshold-input,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs.unified .threshold-input {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs.unified .threshold-input:focus,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs.unified .threshold-input:focus,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs.unified .threshold-input:focus,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs.unified .threshold-input:focus {
+  background: rgba(67, 63, 100, 0.2);
+  border: none;
+  z-index: 2;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs.unified .threshold-input:hover,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs.unified .threshold-input:hover,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs.unified .threshold-input:hover,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs.unified .threshold-input:hover {
+  background: rgba(67, 63, 100, 0.1);
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs.unified .threshold-separator,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs.unified .threshold-separator,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs.unified .threshold-separator,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs.unified .threshold-separator {
+  background: transparent;
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs.unified:hover,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs.unified:hover,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs.unified:hover,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs.unified:hover {
+  background: rgba(67, 63, 100, 0.4);
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-dropdown-group .threshold-inputs.unified:focus-within,
+.daggerheart.sheet.weapon .weapon-fields .armor-input-group .threshold-inputs.unified:focus-within,
+.daggerheart.sheet.armor .armor-fields .weapon-dropdown-group .threshold-inputs.unified:focus-within,
+.daggerheart.sheet.armor .armor-fields .armor-input-group .threshold-inputs.unified:focus-within {
+  border-color: var(--dh-color-gold);
+  background: rgba(67, 63, 100, 0.5);
+}
+.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group,
+.daggerheart.sheet.armor .armor-fields .weapon-damage-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group label {
+.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group label,
+.daggerheart.sheet.armor .armor-fields .weapon-damage-group label {
   font-size: 0.8em;
   color: var(--dh-color-gold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: bold;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group .weapon-damage-display {
+.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group .weapon-damage-display,
+.daggerheart.sheet.armor .armor-fields .weapon-damage-group .weapon-damage-display {
   background: rgba(243, 194, 103, 0.15);
   border: 1px solid var(--dh-color-gold);
   border-radius: 4px;
@@ -8866,12 +9164,14 @@ button.weapon-locked:hover {
   display: flex;
   align-items: center;
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group .weapon-damage-display:hover {
+.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group .weapon-damage-display:hover,
+.daggerheart.sheet.armor .armor-fields .weapon-damage-group .weapon-damage-display:hover {
   background: rgba(243, 194, 103, 0.25);
   transform: translateY(-1px);
   box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
 }
-.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group .weapon-damage-display:empty::before {
+.daggerheart.sheet.weapon .weapon-fields .weapon-damage-group .weapon-damage-display:empty::before,
+.daggerheart.sheet.armor .armor-fields .weapon-damage-group .weapon-damage-display:empty::before {
   content: "1d8";
   opacity: 0.6;
 }
@@ -8909,20 +9209,30 @@ button.weapon-locked:hover {
   line-height: 1;
 }
 
-/* Responsive adjustments for weapons */
+/* Responsive adjustments for weapons and armor */
 @media (max-width: 768px) {
   .daggerheart.sheet.weapon .weapon-fields .weapon-top-row,
-  .daggerheart.sheet.weapon .weapon-fields .weapon-bottom-row {
+  .daggerheart.sheet.weapon .weapon-fields .weapon-bottom-row,
+  .daggerheart.sheet.weapon .weapon-fields .armor-top-row,
+  .daggerheart.sheet.weapon .weapon-fields .armor-bottom-row,
+  .daggerheart.sheet.weapon .weapon-fields .armor-single-row,
+  .daggerheart.sheet.armor .armor-fields .weapon-top-row,
+  .daggerheart.sheet.armor .armor-fields .weapon-bottom-row,
+  .daggerheart.sheet.armor .armor-fields .armor-top-row,
+  .daggerheart.sheet.armor .armor-fields .armor-bottom-row,
+  .daggerheart.sheet.armor .armor-fields .armor-single-row {
     grid-template-columns: 1fr;
     gap: 10px;
   }
 }
 @media (max-width: 480px) {
-  .daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs {
+  .daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs,
+  .daggerheart.sheet.armor .armor-fields .card-subtitle .category-tier-inputs {
     flex-direction: column;
     gap: 8px;
   }
-  .daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .separator {
+  .daggerheart.sheet.weapon .weapon-fields .card-subtitle .category-tier-inputs .separator,
+  .daggerheart.sheet.armor .armor-fields .card-subtitle .category-tier-inputs .separator {
     display: none;
   }
 }

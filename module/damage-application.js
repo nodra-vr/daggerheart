@@ -759,8 +759,9 @@ function _getTargetActors() {
  * @returns {number} The HP damage to apply (1, 2, or 3)
  */
 function _calculateDamageToHP(damageAmount, thresholds) {
-  const severeThreshold = parseInt(thresholds.severe) || 0;
-  const majorThreshold = parseInt(thresholds.major) || 0;
+  // Handle both structured (character) and simple (NPC) threshold formats
+  const severeThreshold = parseInt(thresholds.severe?.value ?? thresholds.severe) || 0;
+  const majorThreshold = parseInt(thresholds.major?.value ?? thresholds.major) || 0;
   
   // Check severe threshold first
   // If severe threshold is 0, it means always severe damage
@@ -787,8 +788,9 @@ function _calculateDamageToHP(damageAmount, thresholds) {
  * @returns {string} Description of the threshold result
  */
 function _getThresholdDescription(damageAmount, thresholds, hpDamage) {
-  const severeThreshold = parseInt(thresholds.severe) || 0;
-  const majorThreshold = parseInt(thresholds.major) || 0;
+  // Handle both structured (character) and simple (NPC) threshold formats
+  const severeThreshold = parseInt(thresholds.severe?.value ?? thresholds.severe) || 0;
+  const majorThreshold = parseInt(thresholds.major?.value ?? thresholds.major) || 0;
   
   if (hpDamage === 3) {
     if (severeThreshold === 0) {

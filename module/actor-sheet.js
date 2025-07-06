@@ -3,6 +3,7 @@ import {ATTRIBUTE_TYPES} from "./constants.js";
 import { DaggerheartDialogHelper } from "./dialog-helper.js";
 import { SheetTracker } from "./sheet-tracker.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
+import { EquipmentSystem } from "./equipmentSystem.js";
 import { DomainAbilitySidebar } from "./domain-ability-sidebar.js";
 import { HeaderLoadoutBar } from "./header-loadout-bar.js";
 import { buildItemCardChat } from "./helper.js";
@@ -246,6 +247,9 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       // New dual weapon equip buttons
       html.find('.weapon-equip-primary').click(this._onEquipPrimaryWeapon.bind(this));
       html.find('.weapon-equip-secondary').click(this._onEquipSecondaryWeapon.bind(this));
+      
+      // Armor equip button
+      html.find('.armor-equip').click(this._onEquipArmor.bind(this));
     }
     
     // Handle toggling item description visibility
@@ -530,6 +534,27 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     
     if (success) {
       // The equipment handler now automatically updates weapon slots
+      // Force immediate render to show the changes
+      this.render(true);
+    }
+  }
+
+  /* -------------------------------------------- */
+  
+  // Equip armor
+  async _onEquipArmor(event) {
+    event.preventDefault();
+    
+    const button = event.currentTarget;
+    const itemId = button.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    
+    if (!item || item.type !== "armor") return;
+    
+    // Use the new equipment system to handle armor equipping
+    const success = await EquipmentSystem.toggle(this.actor, item);
+    
+    if (success) {
       // Force immediate render to show the changes
       this.render(true);
     }
@@ -1049,9 +1074,20 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       }
     }
     
-    // Ensure modifiers is always an array
-    if (config.hasModifiers && !Array.isArray(attributeData.modifiers)) {
-      attributeData.modifiers = [];
+    // Ensure modifiers is always an array - but first check if attributeData is a primitive
+    if (config.hasModifiers) {
+      // If attributeData is a primitive value (like a number), convert it to proper structure
+      if (typeof attributeData !== 'object' || attributeData === null || Array.isArray(attributeData)) {
+        // Convert primitive to structured format
+        attributeData = {
+          baseValue: currentValue,
+          modifiers: [],
+          value: currentValue
+        };
+      } else if (!Array.isArray(attributeData.modifiers)) {
+        // attributeData is an object but modifiers is not an array
+        attributeData.modifiers = [];
+      }
     }
     
     // Check if this is from an equipped weapon (for attack modifiers)

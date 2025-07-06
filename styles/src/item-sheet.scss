@@ -138,7 +138,6 @@
 
 /* Category and Rarity Section */
 .daggerheart.sheet.item .card-subtitle {
-  margin-bottom: 20px;
   border-bottom: 1px solid #433f64;
   padding-bottom: 10px;
 
@@ -313,14 +312,16 @@
    WEAPON SHEET SPECIFIC STYLES
    ============================================ */
 
-/* Extend existing item sheet styles to weapon sheets */
+/* Extend existing item sheet styles to weapon and armor sheets */
 .daggerheart.sheet.item,
-.daggerheart.sheet.weapon {
+.daggerheart.sheet.weapon,
+.daggerheart.sheet.armor {
   /* All existing item sheet styles automatically apply */
 }
 
-/* Weapon-specific field styling */
-.daggerheart.sheet.weapon .weapon-fields {
+/* Weapon and armor-specific field styling */
+.daggerheart.sheet.weapon .weapon-fields,
+.daggerheart.sheet.armor .armor-fields {
   .card-subtitle {
     .category-tier-inputs {
       display: flex;
@@ -362,14 +363,18 @@
 
   }
 
-  .weapon-fields-grid {
+  .weapon-fields-grid,
+  .armor-fields-grid {
     margin-bottom: 20px;
     padding: 15px 0;
     border-bottom: 1px solid #433f64;
   }
 
   .weapon-top-row,
-  .weapon-bottom-row {
+  .weapon-bottom-row,
+  .armor-top-row,
+  .armor-bottom-row,
+  .armor-single-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
@@ -380,7 +385,12 @@
     }
   }
 
-  .weapon-dropdown-group {
+  .armor-bottom-row {
+    grid-template-columns: 1fr;
+  }
+
+  .weapon-dropdown-group,
+  .armor-input-group {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -393,15 +403,19 @@
       font-weight: bold;
     }
 
-    select {
+    select,
+    input[type="number"] {
       background: rgba(67, 63, 100, 0.3);
       border: 1px solid #433f64;
       border-radius: 4px;
       color: var(--dh-color-off-white);
-      padding: 0em 0.5em;
+      padding: 8px 12px;
       font-size: 0.9em;
       transition: all 0.3s ease;
-      cursor: pointer;
+
+      &::placeholder {
+        color: rgba(170, 170, 170, 0.6);
+      }
 
       &:focus {
         outline: none;
@@ -412,10 +426,98 @@
       &:hover {
         background: rgba(67, 63, 100, 0.4);
       }
+    }
+
+    select {
+      padding: 0em 0.5em;
+      cursor: pointer;
 
       option {
         background: rgba(11, 10, 19, 0.95);
         color: var(--dh-color-off-white);
+      }
+    }
+
+    .threshold-inputs {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      position: relative;
+
+      .threshold-input {
+        flex: 1;
+        min-width: 0;
+        border-radius: 0;
+        border-right: none;
+
+        &:first-child {
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+        }
+
+        &:last-child {
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+          border-right: 1px solid #433f64;
+        }
+
+        &:focus {
+          z-index: 2;
+          position: relative;
+          border-right: 1px solid var(--dh-color-gold);
+        }
+      }
+
+      .threshold-separator {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: var(--dh-color-gray);
+        font-weight: bold;
+        font-size: 1.1em;
+        opacity: 0.8;
+        user-select: none;
+        z-index: 1;
+        pointer-events: none;
+        background: rgba(67, 63, 100, 0.3);
+        padding: 0 4px;
+      }
+
+      &.unified {
+        background: rgba(67, 63, 100, 0.3);
+        border: 1px solid #433f64;
+        border-radius: 4px;
+        padding: 0;
+
+        .threshold-input {
+          background: transparent;
+          border: none;
+          border-radius: 0;
+
+          &:focus {
+            background: rgba(67, 63, 100, 0.2);
+            border: none;
+            z-index: 2;
+          }
+
+          &:hover {
+            background: rgba(67, 63, 100, 0.1);
+          }
+        }
+
+        .threshold-separator {
+          background: transparent;
+        }
+
+        &:hover {
+          background: rgba(67, 63, 100, 0.4);
+        }
+
+        &:focus-within {
+          border-color: var(--dh-color-gold);
+          background: rgba(67, 63, 100, 0.5);
+        }
       }
     }
   }
@@ -462,6 +564,7 @@
   }
 }
 
+
 /* Weapon toggle equip button styling */
 .daggerheart.sheet.actor .weapon-toggle-equip {
   display: inline-flex;
@@ -499,11 +602,15 @@
   }
 }
 
-/* Responsive adjustments for weapons */
+/* Responsive adjustments for weapons and armor */
 @media (max-width: 768px) {
-  .daggerheart.sheet.weapon .weapon-fields {
+  .daggerheart.sheet.weapon .weapon-fields,
+  .daggerheart.sheet.armor .armor-fields {
     .weapon-top-row,
-    .weapon-bottom-row {
+    .weapon-bottom-row,
+    .armor-top-row,
+    .armor-bottom-row,
+    .armor-single-row {
       grid-template-columns: 1fr;
       gap: 10px;
     }
@@ -511,11 +618,12 @@
 }
 
 @media (max-width: 480px) {
-  .daggerheart.sheet.weapon .weapon-fields {
+  .daggerheart.sheet.weapon .weapon-fields,
+  .daggerheart.sheet.armor .armor-fields {
     .card-subtitle .category-tier-inputs {
       flex-direction: column;
       gap: 8px;
-      
+
       .separator {
         display: none;
       }

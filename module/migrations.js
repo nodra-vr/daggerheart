@@ -1,7 +1,7 @@
 export class DaggerheartMigrations {
   
   // Current version
-  static CURRENT_VERSION = "1.2.0";
+  static CURRENT_VERSION = "1.2.1";
   
   // Run migrations
   static async migrateDocument(document) {
@@ -34,6 +34,28 @@ export class DaggerheartMigrations {
         const weaponItemMigration = this._migrateWeaponItemDataStructure(document);
         if (weaponItemMigration) {
           document.updateSource(weaponItemMigration);
+          needsUpdate = true;
+        }
+      }
+      
+      if (this.compareVersions(currentVersion, "1.2.1") < 0 && document.documentName === "Actor" && document.type === "character") {
+        try {
+          const thresholdMigration = this._migrateThresholdDataStructure(document);
+          if (thresholdMigration) {
+            document.updateSource(thresholdMigration);
+            needsUpdate = true;
+          }
+        } catch (error) {
+          console.error(`❌ Error migrating threshold data for "${document.name}":`, error);
+          ui.notifications.error(`Migration error for character "${document.name}". Please check the console for details.`);
+        }
+      }
+      
+      // Additional safety check: Fix any corrupted threshold data that might have been partially migrated
+      if (document.documentName === "Actor" && document.type === "character") {
+        const safetyScan = this._safetyCheckThresholdData(document);
+        if (safetyScan) {
+          document.updateSource(safetyScan);
           needsUpdate = true;
         }
       }
@@ -269,6 +291,106 @@ export class DaggerheartMigrations {
   }
 
   /**
+   * Migrate threshold data structures to new format
+   * @param {Actor} actor
+   */
+  static _migrateThresholdDataStructure(actor) {
+    const updateData = {};
+    let needsUpdate = false;
+
+    // Check if threshold structure needs migration
+    if (actor.system.threshold) {
+      const threshold = actor.system.threshold;
+      
+      // Migrate major threshold if it's NOT already structured
+      if (threshold.major !== undefined && threshold.major !== null) {
+        // Check if it's already properly structured
+        const isStructured = typeof threshold.major === 'object' &&
+                            threshold.major !== null &&
+                            'baseValue' in threshold.major &&
+                            'modifiers' in threshold.major &&
+                            'value' in threshold.major;
+        
+        if (!isStructured) {
+          // Convert to structured format, handling both numbers and strings
+          const originalValue = typeof threshold.major === 'string' ?
+                               parseInt(threshold.major) || 0 :
+                               (typeof threshold.major === 'number' ? threshold.major : 0);
+          
+          updateData["system.threshold.major"] = {
+            baseValue: originalValue,
+            modifiers: [],
+            value: originalValue
+          };
+          needsUpdate = true;
+          console.log(`🎯 Migrating major threshold for "${actor.name}" from ${threshold.major} to structured format (${originalValue})`);
+        }
+      } else {
+        // No major threshold defined, set default
+        updateData["system.threshold.major"] = {
+          baseValue: 0,
+          modifiers: [],
+          value: 0
+        };
+        needsUpdate = true;
+        console.log(`🎯 Adding default major threshold for "${actor.name}"`);
+      }
+      
+      // Migrate severe threshold if it's NOT already structured
+      if (threshold.severe !== undefined && threshold.severe !== null) {
+        // Check if it's already properly structured
+        const isStructured = typeof threshold.severe === 'object' &&
+                            threshold.severe !== null &&
+                            'baseValue' in threshold.severe &&
+                            'modifiers' in threshold.severe &&
+                            'value' in threshold.severe;
+        
+        if (!isStructured) {
+          // Convert to structured format, handling both numbers and strings
+          const originalValue = typeof threshold.severe === 'string' ?
+                               parseInt(threshold.severe) || 0 :
+                               (typeof threshold.severe === 'number' ? threshold.severe : 0);
+          
+          updateData["system.threshold.severe"] = {
+            baseValue: originalValue,
+            modifiers: [],
+            value: originalValue
+          };
+          needsUpdate = true;
+          console.log(`🎯 Migrating severe threshold for "${actor.name}" from ${threshold.severe} to structured format (${originalValue})`);
+        }
+      } else {
+        // No severe threshold defined, set default
+        updateData["system.threshold.severe"] = {
+          baseValue: 0,
+          modifiers: [],
+          value: 0
+        };
+        needsUpdate = true;
+        console.log(`🎯 Adding default severe threshold for "${actor.name}"`);
+      }
+    } else {
+      // No threshold structure at all, create default structure
+      updateData["system.threshold"] = {
+        major: {
+          baseValue: 0,
+          modifiers: [],
+          value: 0
+        },
+        severe: {
+          baseValue: 0,
+          modifiers: [],
+          value: 0
+        }
+      };
+      needsUpdate = true;
+      console.log(`🎯 Creating default threshold structure for "${actor.name}"`);
+    }
+
+    return needsUpdate ? updateData : null;
+  }
+
+  /**
    * Migrate to version 1.2.1 - Add weapon slot system
    * @param {Actor} actor
    * @private
@@ -328,6 +450,67 @@ export class DaggerheartMigrations {
       await actor.update(updateData);
       console.log(`Daggerheart | ${actor.name} migrated to v1.2.1`);
     }
+  }
+
+  /**
+   * Safety check for threshold data - catches corrupted or partially migrated data
+   * @param {Actor} actor
+   */
+  static _safetyCheckThresholdData(actor) {
+    const updateData = {};
+    let needsUpdate = false;
+
+    if (actor.system.threshold) {
+      const threshold = actor.system.threshold;
+      
+      // Check major threshold for corruption
+      if (threshold.major !== undefined && threshold.major !== null) {
+        if (typeof threshold.major === 'object') {
+          // Object exists but might be missing required properties
+          if (!('baseValue' in threshold.major) || !('modifiers' in threshold.major) || !('value' in threshold.major)) {
+            console.warn(`🔧 Fixing corrupted major threshold structure for "${actor.name}"`);
+            const fallbackValue = threshold.major.value || threshold.major.baseValue || 0;
+            updateData["system.threshold.major"] = {
+              baseValue: fallbackValue,
+              modifiers: Array.isArray(threshold.major.modifiers) ? threshold.major.modifiers : [],
+              value: fallbackValue
+            };
+            needsUpdate = true;
+          }
+          // Check if modifiers is not an array
+          else if (!Array.isArray(threshold.major.modifiers)) {
+            console.warn(`🔧 Fixing corrupted major threshold modifiers for "${actor.name}"`);
+            updateData["system.threshold.major.modifiers"] = [];
+            needsUpdate = true;
+          }
+        }
+      }
+      
+      // Check severe threshold for corruption
+      if (threshold.severe !== undefined && threshold.severe !== null) {
+        if (typeof threshold.severe === 'object') {
+          // Object exists but might be missing required properties
+          if (!('baseValue' in threshold.severe) || !('modifiers' in threshold.severe) || !('value' in threshold.severe)) {
+            console.warn(`🔧 Fixing corrupted severe threshold structure for "${actor.name}"`);
+            const fallbackValue = threshold.severe.value || threshold.severe.baseValue || 0;
+            updateData["system.threshold.severe"] = {
+              baseValue: fallbackValue,
+              modifiers: Array.isArray(threshold.severe.modifiers) ? threshold.severe.modifiers : [],
+              value: fallbackValue
+            };
+            needsUpdate = true;
+          }
+          // Check if modifiers is not an array
+          else if (!Array.isArray(threshold.severe.modifiers)) {
+            console.warn(`🔧 Fixing corrupted severe threshold modifiers for "${actor.name}"`);
+            updateData["system.threshold.severe.modifiers"] = [];
+            needsUpdate = true;
+          }
+        }
+      }
+    }
+
+    return needsUpdate ? updateData : null;
   }
 
   /**

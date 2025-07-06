@@ -782,6 +782,37 @@ input.trait-effects.resize-ta {
   justify-content: center;
 }
 
+/* Threshold value displays - Updated to work with modifier system */
+.threshold-group .threshold-value-display,
+.threshold-values .threshold-value-display {
+  background: url("icons/DH-Arrow.png") no-repeat center center !important;
+  background-size: contain !important;
+  border: none !important;
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.threshold-group .threshold-value-display:hover,
+.threshold-values .threshold-value-display:hover {
+  transform: scale(1.05);
+}
+
+.threshold-group .threshold-value-display:active,
+.threshold-values .threshold-value-display:active {
+  transform: scale(0.98);
+}
+
+/* Legacy support for existing input-based thresholds */
 .threshold-group input[name="system.threshold.major"],
 .threshold-group input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;
@@ -803,6 +834,34 @@ input.trait-effects.resize-ta {
   color: #6c6a85;
 }
 
+/* Legacy armorslots threshold displays - Updated to work with modifier system */
+.armorslots .threshold-value-display {
+  background: url("icons/DH-Arrow.png") no-repeat center center !important;
+  background-size: contain !important;
+  border: none !important;
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.armorslots .threshold-value-display:hover {
+  transform: scale(1.05);
+}
+
+.armorslots .threshold-value-display:active {
+  transform: scale(0.98);
+}
+
+/* Legacy support for existing input-based thresholds */
 .armorslots input[name="system.threshold.major"],
 .armorslots input[name="system.threshold.severe"] {
   background: url("icons/DH-Arrow.png") no-repeat center center;

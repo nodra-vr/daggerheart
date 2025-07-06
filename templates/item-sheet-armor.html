@@ -1,0 +1,53 @@
+<form class="flexcol {{cssClass}} item-sheet-card" autocomplete="off" style="position: relative; overflow: visible;">
+    <div class="image-title-container">
+        <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
+        <div class="card-header-text">
+            <h1 class="item-title">
+                <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
+            </h1>
+        </div>
+    </div>
+
+    {{!-- Card content area --}}
+    <div class="item-card-content">
+        {{!-- Armor-specific fields --}}
+        <div class="armor-fields">
+            {{!-- Category and Tier section --}}
+            <div class="card-subtitle">
+                <div class="category-tier-inputs">
+                    <input type="text" name="system.category" value="{{systemData.category}}" placeholder="{{localize "DH.Category"}}" class="category-input"/>
+                    <span class="separator">-</span>
+                    <input type="text" name="system.tier" value="{{systemData.tier}}" placeholder="{{localize "DH.Tier"}} X" class="tier-input"/>
+                </div>
+            </div>
+
+            {{!-- Armor fields arranged in single row --}}
+            <div class="armor-fields-grid">
+                <div class="armor-single-row">
+                    {{!-- Base Thresholds with unified styling --}}
+                    <div class="armor-input-group">
+                        <label>{{localize "DH.BaseThresholds"}}</label>
+                        <div class="threshold-inputs unified">
+                            <input type="number" name="system.baseThresholds.major" value="{{systemData.baseThresholds.major}}" placeholder="0" min="0" class="threshold-input" />
+                            <span class="threshold-separator">/</span>
+                            <input type="number" name="system.baseThresholds.severe" value="{{systemData.baseThresholds.severe}}" placeholder="0" min="0" class="threshold-input" />
+                        </div>
+                    </div>
+
+                    {{!-- Base Score --}}
+                    <div class="armor-input-group">
+                        <label>{{localize "DH.BaseScore"}}</label>
+                        <input type="number" name="system.baseScore" value="{{systemData.baseScore}}" placeholder="0" min="0" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{!-- Description section --}}
+        <div class="card-description">
+            <div class="description-editor">
+                {{editor descriptionHTML target="system.description" button=true editable=editable engine="prosemirror"}}
+            </div>
+        </div>
+    </div>
+</form>

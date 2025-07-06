@@ -3,6 +3,7 @@ import { SimpleActor } from "./actor.js";
 import { SimpleItem } from "./item.js";
 import { SimpleItemSheet } from "./item-sheet.js";
 import { SimpleWeaponSheet } from "./weapon-sheet.js";
+import { SimpleArmorSheet } from "./armor-sheet.js";
 import { SimpleActorSheet, NPCActorSheet } from "./actor-sheet.js";
 import { CompanionActorSheet } from "./actor-sheet-companion.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
@@ -15,6 +16,7 @@ import { SheetTracker } from "./sheet-tracker.js";
 import { DaggerheartMigrations } from "./migrations.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
 import { EntitySheetHelper } from "./helper.js";
+import { ModifierManager } from "./modifierManager.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
 import { applyDamage, applyHealing, applyDirectDamage, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
@@ -144,6 +146,7 @@ Hooks.once("init", async function() {
     gainHope,
     SheetTracker,
     EquipmentHandler,
+    ModifierManager,
     rollHandler: {
       rollHope: _rollHope,
       rollFear: _rollFear,
@@ -194,7 +197,8 @@ Hooks.once("init", async function() {
     community: "ITEM.TypeCommunity",
     class: "ITEM.TypeClass",
     subclass: "ITEM.TypeSubclass",
-    weapon: "ITEM.TypeWeapon"
+    weapon: "ITEM.TypeWeapon",
+    armor: "ITEM.TypeArmor"
   };
   CONFIG.Token.documentClass = SimpleTokenDocument;
   CONFIG.Token.objectClass = SimpleToken;
@@ -226,6 +230,11 @@ Hooks.once("init", async function() {
     types: ["weapon"],
     makeDefault: true,
     label: "SHEET.Item.weapon"
+  });
+  foundry.documents.collections.Items.registerSheet("daggerheart", SimpleArmorSheet, {
+    types: ["armor"],
+    makeDefault: true,
+    label: "SHEET.Item.armor"
   });
 
   // Register system settings
@@ -834,13 +843,100 @@ Hooks.once("ready", async function() {
   game.daggerheart.undoDamageHealing = window.undoDamageHealing;
   game.daggerheart.debugUndoData = window.debugUndoData;
   
+  // Add global ModifierManager convenience functions
+  window.addModifier = function(actorName, fieldPath, modifierName, modifierValue, options = {}) {
+    if (!game.daggerheart?.ModifierManager) {
+      console.error("ModifierManager not initialized");
+      ui.notifications.error("ModifierManager not available");
+      return false;
+    }
+    return game.daggerheart.ModifierManager.addModifierByName(actorName, fieldPath, modifierName, modifierValue, options);
+  };
+  
+  window.removeModifier = function(actorName, fieldPath, modifierName) {
+    if (!game.daggerheart?.ModifierManager) {
+      console.error("ModifierManager not initialized");
+      ui.notifications.error("ModifierManager not available");
+      return false;
+    }
+    return game.daggerheart.ModifierManager.removeModifierByName(actorName, fieldPath, modifierName);
+  };
+  
+  window.listModifiers = function(actorName) {
+    if (!game.daggerheart?.ModifierManager) {
+      console.error("ModifierManager not initialized");
+      ui.notifications.error("ModifierManager not available");
+      return {};
+    }
+    return game.daggerheart.ModifierManager.listAllModifiersByName(actorName);
+  };
+  
+  // Add to game.daggerheart object for consistency
+  game.daggerheart.addModifier = window.addModifier;
+  game.daggerheart.removeModifier = window.removeModifier;
+  game.daggerheart.listModifiers = window.listModifiers;
+  
   // Add cleanup function for users
   window.cleanupDuplicateMacros = _cleanupDuplicateMacros;
   game.daggerheart.cleanupDuplicateMacros = window.cleanupDuplicateMacros;
   
+  // Add test function for ModifierManager
+  window.testModifierSystem = function() {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+    
+    const actor = selectedTokens[0].actor;
+    console.log("=== ModifierManager Test ===");
+    console.log("Actor:", actor.name);
+    
+    // Test adding modifiers
+    console.log("\n--- Testing Add Modifiers ---");
+    
+    // Add a modifier to strength
+    console.log("Adding +2 blessing to strength...");
+    const result1 = addModifier(actor.name, "strength", "Blessing", 2, { color: "#00ff00" });
+    console.log("Result:", result1 ? "Success" : "Failed");
+    
+    // Add a modifier to a weapon trait
+    console.log("Adding +1 enhancement to weapon-main.to-hit...");
+    const result2 = addModifier(actor.name, "weapon-main.to-hit", "Enhancement", 1, { color: "#0080ff" });
+    console.log("Result:", result2 ? "Success" : "Failed");
+    
+    // Add a damage modifier to weapon damage
+    console.log("Adding +1d4 fire to weapon-main.damage...");
+    const result3 = addModifier(actor.name, "weapon-main.damage", "Fire Damage", "1d4", { color: "#ff4000" });
+    console.log("Result:", result3 ? "Success" : "Failed");
+    
+    // List all modifiers
+    console.log("\n--- Current Modifiers ---");
+    const modifiers = listModifiers(actor.name);
+    console.log("All modifiers:", JSON.stringify(modifiers, null, 2));
+    
+    // Test removal
+    console.log("\n--- Testing Remove Modifier ---");
+    console.log("Removing blessing from strength...");
+    const removeResult = removeModifier(actor.name, "strength", "Blessing");
+    console.log("Result:", removeResult ? "Success" : "Failed");
+    
+    // List modifiers after removal
+    console.log("\n--- Modifiers After Removal ---");
+    const modifiersAfter = listModifiers(actor.name);
+    console.log("Remaining modifiers:", JSON.stringify(modifiersAfter, null, 2));
+    
+    console.log("\n=== Test completed! Check the character sheet to see changes ===");
+    ui.notifications.info("ModifierManager test completed. Check console for detailed output.");
+  };
+  
+  // Add to game object
+  game.daggerheart.testModifierSystem = window.testModifierSystem;
+  
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), spendStress(), clearStress(), spendHope(), gainHope(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), and testFearAutomation() functions are now available globally.");
-  console.log("🎲 Global Hope/Fear automation is now active for ALL duality rolls!");
+  console.log("spendFear(), gainFear(), spendStress(), clearStress(), spendHope(), gainHope(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), testModifierSystem(), and testFearAutomation() functions are now available globally.");
+  console.log("🎯 Modifier System: addModifier(), removeModifier(), and listModifiers() functions are now available globally.");
+  console.log("� Global Hope/Fear automation is now active for ALL duality rolls!");
   
   // Add test function to game object
   game.daggerheart.testFearAutomation = window.testFearAutomation;
