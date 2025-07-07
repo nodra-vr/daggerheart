@@ -843,8 +843,9 @@ Hooks.once("ready", async function() {
   game.daggerheart.undoDamageHealing = window.undoDamageHealing;
   game.daggerheart.debugUndoData = window.debugUndoData;
   
-  // Add global ModifierManager convenience functions
+  // Add global ModifierManager convenience functions (DEPRECATED - use ID-based versions)
   window.addModifier = function(actorName, fieldPath, modifierName, modifierValue, options = {}) {
+    console.warn("Global addModifier() using actor names is DEPRECATED. Use addModifierById() or addModifierByRef() instead. Actor names are not unique and may cause issues.");
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
       ui.notifications.error("ModifierManager not available");
@@ -854,6 +855,7 @@ Hooks.once("ready", async function() {
   };
   
   window.removeModifier = function(actorName, fieldPath, modifierName) {
+    console.warn("Global removeModifier() using actor names is DEPRECATED. Use removeModifierById() or removeModifierByRef() instead. Actor names are not unique and may cause issues.");
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
       ui.notifications.error("ModifierManager not available");
@@ -863,6 +865,7 @@ Hooks.once("ready", async function() {
   };
   
   window.listModifiers = function(actorName) {
+    console.warn("Global listModifiers() using actor names is DEPRECATED. Use listModifiersById() or listModifiersByRef() instead. Actor names are not unique and may cause issues.");
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
       ui.notifications.error("ModifierManager not available");
@@ -870,11 +873,86 @@ Hooks.once("ready", async function() {
     }
     return game.daggerheart.ModifierManager.listAllModifiersByName(actorName);
   };
+
+  // Add new ID-based global convenience functions
+  window.addModifierById = function(actorId, fieldPath, modifierName, modifierValue, options = {}) {
+    if (!game.daggerheart?.ModifierManager) {
+      console.error("ModifierManager not initialized");
+      ui.notifications.error("ModifierManager not available");
+      return false;
+    }
+    return game.daggerheart.ModifierManager.addModifierById(actorId, fieldPath, modifierName, modifierValue, options);
+  };
   
-  // Add to game.daggerheart object for consistency
-  game.daggerheart.addModifier = window.addModifier;
-  game.daggerheart.removeModifier = window.removeModifier;
-  game.daggerheart.listModifiers = window.listModifiers;
+  window.removeModifierById = function(actorId, fieldPath, modifierName) {
+    if (!game.daggerheart?.ModifierManager) {
+      console.error("ModifierManager not initialized");
+      ui.notifications.error("ModifierManager not available");
+      return false;
+    }
+    return game.daggerheart.ModifierManager.removeModifierById(actorId, fieldPath, modifierName);
+  };
+  
+  window.listModifiersById = function(actorId) {
+    if (!game.daggerheart?.ModifierManager) {
+      console.error("ModifierManager not initialized");
+      ui.notifications.error("ModifierManager not available");
+      return {};
+    }
+    return game.daggerheart.ModifierManager.getModifiersById(actorId);
+  };
+
+  // Add reference-based global convenience functions (supports Actor objects, IDs, or names with fallback)
+  window.addModifierByRef = function(actorRef, fieldPath, modifierName, modifierValue, options = {}) {
+    if (!game.daggerheart?.ModifierManager) {
+      console.error("ModifierManager not initialized");
+      ui.notifications.error("ModifierManager not available");
+      return false;
+    }
+    return game.daggerheart.ModifierManager.addModifierByRef(actorRef, fieldPath, modifierName, modifierValue, options);
+  };
+  
+  window.removeModifierByRef = function(actorRef, fieldPath, modifierName) {
+    if (!game.daggerheart?.ModifierManager) {
+      console.error("ModifierManager not initialized");
+      ui.notifications.error("ModifierManager not available");
+      return false;
+    }
+    return game.daggerheart.ModifierManager.removeModifierByRef(actorRef, fieldPath, modifierName);
+  };
+  
+  window.listModifiersByRef = function(actorRef) {
+    if (!game.daggerheart?.ModifierManager) {
+      console.error("ModifierManager not initialized");
+      ui.notifications.error("ModifierManager not available");
+      return {};
+    }
+    return game.daggerheart.ModifierManager.getModifiersByRef(actorRef);
+  };
+  
+  window.listModifiersByRef = function(actorRef) {
+    if (!game.daggerheart?.ModifierManager) {
+      console.error("ModifierManager not initialized");
+      ui.notifications.error("ModifierManager not available");
+      return {};
+    }
+    return game.daggerheart.ModifierManager.getModifiersByRef(actorRef);
+  };
+  
+  // Add to game.daggerheart object for consistency (both old and new APIs)
+  game.daggerheart.addModifier = window.addModifier; // DEPRECATED
+  game.daggerheart.removeModifier = window.removeModifier; // DEPRECATED
+  game.daggerheart.listModifiers = window.listModifiers; // DEPRECATED
+  
+  // New ID-based API
+  game.daggerheart.addModifierById = window.addModifierById;
+  game.daggerheart.removeModifierById = window.removeModifierById;
+  game.daggerheart.listModifiersById = window.listModifiersById;
+  
+  // Reference-based API (recommended)
+  game.daggerheart.addModifierByRef = window.addModifierByRef;
+  game.daggerheart.removeModifierByRef = window.removeModifierByRef;
+  game.daggerheart.listModifiersByRef = window.listModifiersByRef;
   
   // Add cleanup function for users
   window.cleanupDuplicateMacros = _cleanupDuplicateMacros;

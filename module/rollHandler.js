@@ -44,13 +44,29 @@ async function _handleAutomaticFearGain(message) {
   
   // Handle hope/critical from duality rolls
   if (flags.isDuality && !flags.reaction && (flags.isHope || flags.isCrit)) {
-    // Find the character for hope automation
+    // Find the character for hope automation - prioritize the actor who made the roll
     let targetActor = null;
     
-    if (flags.actorId) targetActor = game.actors.get(flags.actorId);
-    if (!targetActor && message.speaker?.actor) targetActor = game.actors.get(message.speaker.actor);
-    if (!targetActor && canvas.tokens?.controlled?.length > 0) targetActor = canvas.tokens.controlled[0].actor;
-    if (!targetActor && game.user.character) targetActor = game.user.character;
+    // First priority: actor ID from flags (the actor who made the roll)
+    if (flags.actorId) {
+      targetActor = game.actors.get(flags.actorId);
+    }
+    
+    // Second priority: speaker actor (should be the same as actorId in most cases)
+    if (!targetActor && message.speaker?.actor) {
+      targetActor = game.actors.get(message.speaker.actor);
+    }
+    
+    // Only use controlled tokens or user character as fallback if no actor is identified from the roll
+    // This prevents hope from going to the wrong character when tokens are selected after rolling
+    if (!targetActor) {
+      console.warn("Daggerheart | No actor found from roll data, using fallback logic");
+      if (canvas.tokens?.controlled?.length === 1) {
+        targetActor = canvas.tokens.controlled[0].actor;
+      } else if (game.user.character) {
+        targetActor = game.user.character;
+      }
+    }
     
     if (targetActor && targetActor.type === "character") {
       const updateData = {};
@@ -485,8 +501,9 @@ export async function _rollDuality(options = {}) {
     }
     
     try {
+      const speaker = config.speaker || ChatMessage.getSpeaker();
       const chatMessage = await ChatMessage.create({
-        speaker: config.speaker || ChatMessage.getSpeaker(),
+        speaker: speaker,
         flavor: finalFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
         rolls: [roll],
@@ -501,7 +518,9 @@ export async function _rollDuality(options = {}) {
             isCrit,
             isHope,
             isFear,
-            reaction: config.reaction
+            reaction: config.reaction,
+            actorId: speaker.actor, // Ensure actorId is set for proper hope assignment
+            isDuality: true // Mark as duality roll for automation
           }
         }
       });
@@ -846,8 +865,9 @@ export async function _dualityWithDialog(config) {
       }
     }
     
+    const speaker = actor ? ChatMessage.getSpeaker({ actor }) : ChatMessage.getSpeaker();
     const chatMessage = await ChatMessage.create({
-      speaker: actor ? ChatMessage.getSpeaker({ actor }) : ChatMessage.getSpeaker(),
+      speaker: speaker,
       flavor: finalFlavor,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
       rolls: [result.roll],
@@ -856,7 +876,7 @@ export async function _dualityWithDialog(config) {
           rollType: pendingRollType || "duality", // Use pending roll type for attack rolls, fallback to duality
           isDuality: true, // Always true for duality rolls - needed for dice styling and automation
           weaponName: pendingWeaponName,
-          actorId: actor?.id,
+          actorId: actor?.id || speaker.actor, // Ensure actorId is set for proper hope assignment
           actorType: actor?.type,
           isCrit,
           isHope,

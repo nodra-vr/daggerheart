@@ -2,6 +2,21 @@
  * ModifierManager - Programmatic interface for managing actor modifiers
  * Provides API for adding, removing, and updating modifiers on actor attributes
  * Works with the existing modifier system architecture in Daggerheart
+ *
+ * BEST PRACTICES:
+ * - Use ID-based methods (addModifierById, removeModifierById, etc.) for reliability
+ * - Use generic methods (addModifierByRef, removeModifierByRef, etc.) for flexibility
+ * - Avoid name-based methods as actor names are not unique and can cause issues
+ *
+ * ACTOR REFERENCE RESOLUTION:
+ * - Actor objects are used directly
+ * - String IDs are resolved via game.actors.get()
+ * - String names are resolved via search (unreliable, deprecated)
+ *
+ * FOUNDRY COMPATIBILITY:
+ * - Follows Foundry VTT best practices using unique IDs
+ * - Compatible with Foundry's actor management system
+ * - Supports both world actors and token actors
  */
 export class ModifierManager {
   
@@ -113,9 +128,65 @@ export class ModifierManager {
   }
 
   /**
+   * Add a modifier by actor ID
+   * @param {string} actorId - ID of the actor to find
+   * @param {string} fieldPath - The field path
+   * @param {string} modifierName - Name of the modifier
+   * @param {number|string} modifierValue - Value of the modifier
+   * @param {Object} [options] - Additional options
+   * @param {boolean} [options.enabled=true] - Whether modifier is enabled
+   * @param {string} [options.color] - Color for the modifier
+   * @returns {Promise<boolean>} - True if successful, false otherwise
+   */
+  static async addModifierById(actorId, fieldPath, modifierName, modifierValue, options = {}) {
+    const actor = game.actors.get(actorId);
+    
+    if (!actor) {
+      console.error(`ModifierManager | Actor with ID "${actorId}" not found`);
+      return false;
+    }
+
+    return this.addModifier(actor, fieldPath, {
+      name: modifierName,
+      value: modifierValue,
+      enabled: options.enabled !== false,
+      color: options.color
+    });
+  }
+
+  /**
+   * Add a modifier by actor reference (Actor object, ID, or name)
+   * @param {Actor|string} actorRef - Actor object, ID, or name
+   * @param {string} fieldPath - The field path
+   * @param {string} modifierName - Name of the modifier
+   * @param {number|string} modifierValue - Value of the modifier
+   * @param {Object} [options] - Additional options
+   * @param {boolean} [options.enabled=true] - Whether modifier is enabled
+   * @param {string} [options.color] - Color for the modifier
+   * @param {string} [options.searchScope='all'] - Where to search when using name: 'all', 'scene', 'world'
+   * @returns {Promise<boolean>} - True if successful, false otherwise
+   */
+  static async addModifierByRef(actorRef, fieldPath, modifierName, modifierValue, options = {}) {
+    const actor = this._resolveActor(actorRef, options.searchScope);
+    
+    if (!actor) {
+      console.error(`ModifierManager | Actor "${actorRef}" not found`);
+      return false;
+    }
+
+    return this.addModifier(actor, fieldPath, {
+      name: modifierName,
+      value: modifierValue,
+      enabled: options.enabled !== false,
+      color: options.color
+    });
+  }
+
+  /**
    * Convenience method to add a modifier by actor name
+   * @deprecated Use addModifierById() or addModifierByRef() instead for better reliability
    * @param {string} actorName - Name of the actor to find
-   * @param {string} fieldPath - The field path 
+   * @param {string} fieldPath - The field path
    * @param {string} modifierName - Name of the modifier
    * @param {number|string} modifierValue - Value of the modifier
    * @param {Object} [options] - Additional options
@@ -125,6 +196,8 @@ export class ModifierManager {
    * @returns {Promise<boolean>} - True if successful, false otherwise
    */
   static async addModifierByName(actorName, fieldPath, modifierName, modifierValue, options = {}) {
+    console.warn("ModifierManager | addModifierByName() is deprecated. Use addModifierById() or addModifierByRef() for better reliability. Names are not unique and may cause issues with multiple actors having the same name.");
+    
     const actor = this._findActorByName(actorName, options.searchScope);
     
     if (!actor) {
@@ -208,6 +281,67 @@ export class ModifierManager {
   }
 
   /**
+   * Remove a modifier from an actor's attribute by actor ID
+   * @param {string} actorId - ID of the actor to modify
+   * @param {string} fieldPath - The field path
+   * @param {string} modifierName - Name of the modifier to remove
+   * @returns {Promise<boolean>} - True if successful, false otherwise
+   */
+  static async removeModifierById(actorId, fieldPath, modifierName) {
+    const actor = game.actors.get(actorId);
+    
+    if (!actor) {
+      console.error(`ModifierManager | Actor with ID "${actorId}" not found`);
+      return false;
+    }
+
+    return this.removeModifier(actor, fieldPath, modifierName);
+  }
+
+  /**
+   * Remove a modifier from an actor's attribute by actor reference
+   * @param {Actor|string} actorRef - Actor object, ID, or name
+   * @param {string} fieldPath - The field path
+   * @param {string} modifierName - Name of the modifier to remove
+   * @param {Object} [options] - Additional options
+   * @param {string} [options.searchScope='all'] - Where to search when using name: 'all', 'scene', 'world'
+   * @returns {Promise<boolean>} - True if successful, false otherwise
+   */
+  static async removeModifierByRef(actorRef, fieldPath, modifierName, options = {}) {
+    const actor = this._resolveActor(actorRef, options.searchScope);
+    
+    if (!actor) {
+      console.error(`ModifierManager | Actor "${actorRef}" not found`);
+      return false;
+    }
+
+    return this.removeModifier(actor, fieldPath, modifierName);
+  }
+
+  /**
+   * Convenience method to remove a modifier by actor name
+   * @deprecated Use removeModifierById() or removeModifierByRef() instead for better reliability
+   * @param {string} actorName - Name of the actor to find
+   * @param {string} fieldPath - The field path
+   * @param {string} modifierName - Name of the modifier to remove
+   * @param {Object} [options] - Additional options
+   * @param {string} [options.searchScope='all'] - Where to search: 'all', 'scene', 'world'
+   * @returns {Promise<boolean>} - True if successful, false otherwise
+   */
+  static async removeModifierByName(actorName, fieldPath, modifierName, options = {}) {
+    console.warn("ModifierManager | removeModifierByName() is deprecated. Use removeModifierById() or removeModifierByRef() for better reliability. Names are not unique and may cause issues with multiple actors having the same name.");
+    
+    const actor = this._findActorByName(actorName, options.searchScope);
+    
+    if (!actor) {
+      console.error(`ModifierManager | Actor "${actorName}" not found`);
+      return false;
+    }
+
+    return this.removeModifier(actor, fieldPath, modifierName);
+  }
+
+  /**
    * Get all modifiers for a specific field
    * @param {Actor} actor - The actor
    * @param {string} fieldPath - The field path
@@ -220,6 +354,34 @@ export class ModifierManager {
     if (!currentData || !currentData.modifiers) return [];
     
     return [...currentData.modifiers];
+  }
+
+  /**
+   * Get all modifiers for a specific field by actor ID
+   * @param {string} actorId - ID of the actor
+   * @param {string} fieldPath - The field path
+   * @returns {Array} - Array of modifiers
+   */
+  static getModifiersById(actorId, fieldPath) {
+    const actor = game.actors.get(actorId);
+    if (!actor) return [];
+    
+    return this.getModifiers(actor, fieldPath);
+  }
+
+  /**
+   * Get all modifiers for a specific field by actor reference
+   * @param {Actor|string} actorRef - Actor object, ID, or name
+   * @param {string} fieldPath - The field path
+   * @param {Object} [options] - Additional options
+   * @param {string} [options.searchScope='all'] - Where to search when using name: 'all', 'scene', 'world'
+   * @returns {Array} - Array of modifiers
+   */
+  static getModifiersByRef(actorRef, fieldPath, options = {}) {
+    const actor = this._resolveActor(actorRef, options.searchScope);
+    if (!actor) return [];
+    
+    return this.getModifiers(actor, fieldPath);
   }
 
   /**
@@ -278,6 +440,70 @@ export class ModifierManager {
       console.error("ModifierManager | Error toggling modifier:", error);
       return false;
     }
+  }
+
+  /**
+   * Enable or disable a modifier by actor ID
+   * @param {string} actorId - ID of the actor
+   * @param {string} fieldPath - The field path
+   * @param {string} modifierName - Name of the modifier
+   * @param {boolean} enabled - Whether to enable or disable
+   * @returns {Promise<boolean>} - True if successful
+   */
+  static async toggleModifierById(actorId, fieldPath, modifierName, enabled) {
+    const actor = game.actors.get(actorId);
+    if (!actor) return false;
+    
+    return this.toggleModifier(actor, fieldPath, modifierName, enabled);
+  }
+
+  /**
+   * Enable or disable a modifier by actor reference
+   * @param {Actor|string} actorRef - Actor object, ID, or name
+   * @param {string} fieldPath - The field path
+   * @param {string} modifierName - Name of the modifier
+   * @param {boolean} enabled - Whether to enable or disable
+   * @param {Object} [options] - Additional options
+   * @param {string} [options.searchScope='all'] - Where to search when using name: 'all', 'scene', 'world'
+   * @returns {Promise<boolean>} - True if successful
+   */
+  static async toggleModifierByRef(actorRef, fieldPath, modifierName, enabled, options = {}) {
+    const actor = this._resolveActor(actorRef, options.searchScope);
+    if (!actor) return false;
+    
+    return this.toggleModifier(actor, fieldPath, modifierName, enabled);
+  }
+
+  /**
+   * Resolve an actor reference to an Actor object
+   * @param {Actor|string} actorRef - Actor object, ID, or name
+   * @param {string} [scope='all'] - Search scope when using name: 'all', 'scene', 'world'
+   * @returns {Actor|null} - The resolved actor or null
+   * @private
+   */
+  static _resolveActor(actorRef, scope = 'all') {
+    // If it's already an Actor object, return it
+    if (actorRef && typeof actorRef === 'object' && actorRef.constructor.name === 'Actor') {
+      return actorRef;
+    }
+    
+    // If it's a string, try to resolve it
+    if (typeof actorRef === 'string') {
+      // First try as ID (most reliable)
+      const actorById = game.actors.get(actorRef);
+      if (actorById) {
+        return actorById;
+      }
+      
+      // Fall back to name search (less reliable) with deprecation warning
+      const actorByName = this._findActorByName(actorRef, scope);
+      if (actorByName) {
+        console.warn(`ModifierManager: Using actor name "${actorRef}" is DEPRECATED. Use actor ID "${actorByName.id}" instead. Actor names are not unique and may cause issues.`);
+      }
+      return actorByName;
+    }
+    
+    return null;
   }
 
   /**
@@ -369,7 +595,7 @@ export class ModifierManager {
     // Common modifier fields to check
     const commonFields = [
       'system.agility.value',
-      'system.finesse.value', 
+      'system.finesse.value',
       'system.instinct.value',
       'system.knowledge.value',
       'system.presence.value',
@@ -389,35 +615,94 @@ export class ModifierManager {
 
     return result;
   }
+
+  /**
+   * List all available modifiers for an actor by name (for debugging/inspection)
+   * @deprecated Use listAllModifiers() with actor object or listAllModifiersById() instead
+   * @param {string} actorName - Name of the actor to inspect
+   * @param {Object} [options] - Additional options
+   * @param {string} [options.searchScope='all'] - Where to search: 'all', 'scene', 'world'
+   * @returns {Object} - Object mapping field paths to their modifiers
+   */
+  static listAllModifiersByName(actorName, options = {}) {
+    console.warn("ModifierManager | listAllModifiersByName() is deprecated. Use listAllModifiersById() or listAllModifiers() with actor object for better reliability. Names are not unique and may cause issues with multiple actors having the same name.");
+    
+    const actor = this._findActorByName(actorName, options.searchScope);
+    
+    if (!actor) {
+      console.error(`ModifierManager | Actor "${actorName}" not found`);
+      return {};
+    }
+
+    return this.listAllModifiers(actor);
+  }
+
+  /**
+   * List all available modifiers for an actor by ID (for debugging/inspection)
+   * @param {string} actorId - ID of the actor to inspect
+   * @returns {Object} - Object mapping field paths to their modifiers
+   */
+  static listAllModifiersById(actorId) {
+    const actor = game.actors.get(actorId);
+    
+    if (!actor) {
+      console.error(`ModifierManager | Actor with ID "${actorId}" not found`);
+      return {};
+    }
+
+    return this.listAllModifiers(actor);
+  }
 }
 
 // Export for global access
 export default ModifierManager;
 
 // Global convenience functions for easy access
+// NOTE: These functions use actor names for backwards compatibility but are not recommended
+// Use ModifierManager.addModifierById() or ModifierManager.addModifierByRef() instead
 globalThis.addModifier = function(actorName, fieldPath, modifierName, modifierValue, options = {}) {
+  console.warn("Global addModifier() uses actor names which are not unique. Consider using ModifierManager.addModifierById() or ModifierManager.addModifierByRef() instead.");
   return ModifierManager.addModifierByName(actorName, fieldPath, modifierName, modifierValue, options);
 };
 
 globalThis.removeModifier = function(actorName, fieldPath, modifierName) {
-  const actor = ModifierManager._findActorByName(actorName);
-  if (!actor) {
-    console.error(`Actor "${actorName}" not found`);
-    return Promise.resolve(false);
-  }
-  return ModifierManager.removeModifier(actor, fieldPath, modifierName);
+  console.warn("Global removeModifier() uses actor names which are not unique. Consider using ModifierManager.removeModifierById() or ModifierManager.removeModifierByRef() instead.");
+  return ModifierManager.removeModifierByName(actorName, fieldPath, modifierName);
 };
 
 globalThis.listModifiers = function(actorName, fieldPath = null) {
-  const actor = ModifierManager._findActorByName(actorName);
-  if (!actor) {
-    console.error(`Actor "${actorName}" not found`);
-    return {};
-  }
+  console.warn("Global listModifiers() uses actor names which are not unique. Consider using ModifierManager.getModifiersById() or ModifierManager.getModifiersByRef() instead.");
   
   if (fieldPath) {
+    const actor = ModifierManager._resolveActor(actorName);
+    if (!actor) {
+      console.error(`Actor "${actorName}" not found`);
+      return [];
+    }
     return ModifierManager.getModifiers(actor, fieldPath);
   } else {
+    return ModifierManager.listAllModifiersByName(actorName);
+  }
+};
+
+// Add new global convenience functions that use IDs
+globalThis.addModifierById = function(actorId, fieldPath, modifierName, modifierValue, options = {}) {
+  return ModifierManager.addModifierById(actorId, fieldPath, modifierName, modifierValue, options);
+};
+
+globalThis.removeModifierById = function(actorId, fieldPath, modifierName) {
+  return ModifierManager.removeModifierById(actorId, fieldPath, modifierName);
+};
+
+globalThis.listModifiersById = function(actorId, fieldPath = null) {
+  if (fieldPath) {
+    return ModifierManager.getModifiersById(actorId, fieldPath);
+  } else {
+    const actor = game.actors.get(actorId);
+    if (!actor) {
+      console.error(`Actor with ID "${actorId}" not found`);
+      return {};
+    }
     return ModifierManager.listAllModifiers(actor);
   }
 };

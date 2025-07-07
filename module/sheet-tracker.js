@@ -221,9 +221,12 @@ export class SheetTracker {
     // Try to find by ID first
     let actor = game.actors.get(actorRef);
     
-    // If not found by ID, try by name
+    // If not found by ID, try by name (with deprecation warning)
     if (!actor) {
       actor = game.actors.find(a => a.name === actorRef);
+      if (actor) {
+        console.warn(`SheetTracker: Using actor name "${actorRef}" is DEPRECATED. Use actor ID "${actor.id}" instead. Actor names are not unique and may cause issues.`);
+      }
     }
     
     return actor;
