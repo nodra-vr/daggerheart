@@ -280,9 +280,9 @@
         "name": "",
         "description": "Input your weapon abilities, description, passive and other relevant notes here.",
         "damage": {
-          "baseValue": "d6",
+          "baseValue": "1d6",
           "modifiers": [],
-          "value": "d6"
+          "value": "1d6"
         },
         "to-hit": {
           "baseValue": 0,
