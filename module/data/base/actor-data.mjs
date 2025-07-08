@@ -1,4 +1,6 @@
-const { HTMLField } = foundry.data.fields;
+import { ResourceDataModel } from './tracker-data.mjs';
+
+const { ArrayField, HTMLField } = foundry.data.fields;
 
 export class ActorDataModel extends foundry.abstract.TypeDataModel {
     static defineSchema() {
@@ -10,6 +12,11 @@ export class ActorDataModel extends foundry.abstract.TypeDataModel {
         schema.biography = new HTMLField({
             required: true, blank: true
         });
+
+
+        schema.resources = new ArrayField(
+            ResourceDataModel.defineShemaField()
+        );
 
         return schema;
     }
