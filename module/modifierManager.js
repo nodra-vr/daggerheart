@@ -56,6 +56,11 @@ export class ModifierManager {
         modifier.color = modifierData.color;
       }
 
+      // If permanent flag is provided, store it
+      if (modifierData.permanent) {
+        modifier.permanent = modifierData.permanent;
+      }
+
       let structuredData;
       
       // Handle different current data states
@@ -241,6 +246,13 @@ export class ModifierManager {
         return false;
       }
 
+      // Check if modifier is permanent
+      const modifier = currentData.modifiers[modifierIndex];
+      if (modifier.permanent) {
+        console.warn(`ModifierManager | Cannot remove permanent modifier "${modifierName}" at ${fieldPath} for ${actor.name}`);
+        return false;
+      }
+
       const updatedModifiers = [...currentData.modifiers];
       updatedModifiers.splice(modifierIndex, 1);
 
@@ -401,6 +413,13 @@ export class ModifierManager {
 
       const modifierIndex = currentData.modifiers.findIndex(mod => mod.name === modifierName);
       if (modifierIndex === -1) return false;
+
+      // Check if modifier is permanent
+      const modifier = currentData.modifiers[modifierIndex];
+      if (modifier.permanent) {
+        console.warn(`ModifierManager | Cannot disable permanent modifier "${modifierName}" at ${fieldPath} for ${actor.name}`);
+        return false;
+      }
 
       const updatedModifiers = [...currentData.modifiers];
       updatedModifiers[modifierIndex] = {
@@ -652,6 +671,108 @@ export class ModifierManager {
 
     return this.listAllModifiers(actor);
   }
+
+  /**
+   * Manage the permanent "Character Level" modifier for thresholds
+   * This automatically adds or updates the character level modifier for major and severe thresholds
+   * @param {Actor} actor - The actor to manage
+   * @returns {Promise<boolean>} - True if successful, false otherwise
+   */
+  static async manageCharacterLevelModifier(actor) {
+    if (!actor || actor.type !== 'character') {
+      return false;
+    }
+
+    try {
+      const level = parseInt(actor.system.level?.value) || 1;
+      const modifierName = "Character Level";
+
+      // Handle major threshold
+      await this._updateCharacterLevelModifier(actor, 'system.threshold.major', modifierName, level);
+      
+      // Handle severe threshold
+      await this._updateCharacterLevelModifier(actor, 'system.threshold.severe', modifierName, level);
+
+      return true;
+    } catch (error) {
+      console.error("ModifierManager | Error managing character level modifier:", error);
+      return false;
+    }
+  }
+
+  /**
+   * Update or add character level modifier for a specific threshold
+   * @param {Actor} actor - The actor to modify
+   * @param {string} fieldPath - The field path (e.g., 'system.threshold.major')
+   * @param {string} modifierName - Name of the modifier
+   * @param {number} level - Character level
+   * @returns {Promise<boolean>} - True if successful
+   * @private
+   */
+  static async _updateCharacterLevelModifier(actor, fieldPath, modifierName, level) {
+    const currentData = foundry.utils.getProperty(actor, fieldPath);
+    
+    if (!currentData) {
+      console.warn(`ModifierManager | Field ${fieldPath} not found on actor ${actor.name}`);
+      return false;
+    }
+
+    // Ensure the field has the proper structure
+    let structuredData;
+    if (typeof currentData === 'object' && currentData !== null && 'baseValue' in currentData) {
+      structuredData = {
+        baseValue: currentData.baseValue,
+        modifiers: [...(currentData.modifiers || [])],
+        value: currentData.value
+      };
+    } else {
+      // Create structure if it doesn't exist
+      const simpleValue = currentData || 0;
+      structuredData = {
+        baseValue: simpleValue,
+        modifiers: [],
+        value: simpleValue
+      };
+    }
+
+    // Find existing character level modifier
+    const existingModifierIndex = structuredData.modifiers.findIndex(mod => mod.name === modifierName);
+    
+    if (existingModifierIndex !== -1) {
+      // Update existing modifier
+      structuredData.modifiers[existingModifierIndex] = {
+        ...structuredData.modifiers[existingModifierIndex],
+        value: level,
+        enabled: true,
+        permanent: true
+      };
+    } else {
+      // Add new modifier
+      structuredData.modifiers.push({
+        name: modifierName,
+        value: level,
+        enabled: true,
+        permanent: true
+      });
+    }
+
+    // Recalculate total value
+    const newTotalValue = this._calculateNumericTotal(structuredData);
+
+    // Build update data
+    const updateData = {};
+    const basePath = fieldPath.endsWith('.value') ?
+      fieldPath.substring(0, fieldPath.lastIndexOf('.')) : fieldPath;
+
+    updateData[`${basePath}.baseValue`] = structuredData.baseValue;
+    updateData[`${basePath}.modifiers`] = structuredData.modifiers;
+    updateData[`${basePath}.value`] = newTotalValue;
+
+    // Update the actor
+    await actor.update(updateData);
+    
+    return true;
+  }
 }
 
 // Export for global access
@@ -705,6 +826,16 @@ globalThis.listModifiersById = function(actorId, fieldPath = null) {
     }
     return ModifierManager.listAllModifiers(actor);
   }
+};
+
+// Add global convenience function for character level modifier management
+globalThis.manageCharacterLevelModifier = function(actorId) {
+  const actor = game.actors.get(actorId);
+  if (!actor) {
+    console.error(`Actor with ID "${actorId}" not found`);
+    return false;
+  }
+  return ModifierManager.manageCharacterLevelModifier(actor);
 };
 
 // Register ModifierManager globally

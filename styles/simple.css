@@ -4261,7 +4261,7 @@ input.trait-effects.resize-ta {
   border: none;
 }
 
-.actor input[type=text] {
+.actor .charname input[type=text] {
   padding: 1px 0px;
 }
 
@@ -7656,6 +7656,91 @@ input.trait-effects.resize-ta {
   color: white;
   transform: scale(1.1) rotate(90deg);
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+}
+
+/* ============================================
+   PERMANENT MODIFIER STYLES
+   ============================================ */
+/* Permanent modifier row styling */
+.permanent-modifier {
+  background: rgba(243, 194, 103, 0.08) !important;
+  border: 1px solid rgba(243, 194, 103, 0.3) !important;
+  position: relative;
+}
+.permanent-modifier::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--dh-color-gold), var(--dh-color-gold-light));
+  border-radius: var(--dh-radius-sm);
+}
+.permanent-modifier:hover {
+  background: rgba(243, 194, 103, 0.12) !important;
+  border-color: rgba(243, 194, 103, 0.4) !important;
+}
+.permanent-modifier .modifier-name,
+.permanent-modifier .modifier-value,
+.permanent-modifier .damage-modifier-name,
+.permanent-modifier .damage-modifier-value {
+  background: rgba(243, 194, 103, 0.1) !important;
+  border-color: rgba(243, 194, 103, 0.4) !important;
+  color: var(--dh-color-gold-light) !important;
+  cursor: default !important;
+}
+.permanent-modifier .modifier-name:focus,
+.permanent-modifier .modifier-value:focus,
+.permanent-modifier .damage-modifier-name:focus,
+.permanent-modifier .damage-modifier-value:focus {
+  outline: none !important;
+  border-color: rgba(243, 194, 103, 0.4) !important;
+  background: rgba(243, 194, 103, 0.1) !important;
+  box-shadow: none !important;
+}
+.permanent-modifier .modifier-name::placeholder,
+.permanent-modifier .modifier-value::placeholder,
+.permanent-modifier .damage-modifier-name::placeholder,
+.permanent-modifier .damage-modifier-value::placeholder {
+  color: rgba(243, 194, 103, 0.5) !important;
+}
+
+/* Permanent modifier indicator */
+.permanent-indicator {
+  color: var(--dh-color-gold);
+  font-size: 12px;
+  opacity: 0.8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: rgba(243, 194, 103, 0.15);
+  border-radius: var(--dh-radius-full);
+  border: 1px solid rgba(243, 194, 103, 0.3);
+  cursor: help;
+  transition: var(--dh-transition-fast);
+}
+.permanent-indicator:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  background: rgba(243, 194, 103, 0.25);
+  border-color: rgba(243, 194, 103, 0.5);
+  text-shadow: 0 0 4px rgba(243, 194, 103, 0.6);
+}
+.permanent-indicator:before {
+  font-weight: 900;
+}
+
+/* Damage modifier permanent styling */
+.damage-modifier-row.permanent-modifier {
+  background: rgba(243, 194, 103, 0.08) !important;
+  border-color: rgba(243, 194, 103, 0.3) !important;
+}
+.damage-modifier-row.permanent-modifier:hover {
+  background: rgba(243, 194, 103, 0.12) !important;
+  border-color: rgba(243, 194, 103, 0.4) !important;
 }
 
 /* Total section */

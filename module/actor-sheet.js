@@ -1250,30 +1250,39 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
   _createModifierRow(overlay, modifier, index) {
     const modifiersList = overlay.find('.modifiers-list');
+    const isPermanent = modifier.permanent === true;
+    const toggleStyle = isPermanent ? 'style="display: none;"' : '';
+    const deleteStyle = isPermanent ? 'style="display: none;"' : '';
+    const permanentClass = isPermanent ? 'permanent-modifier' : '';
+    const permanentIndicator = isPermanent ? '<i class="fas fa-lock permanent-indicator" title="Permanent modifier"></i>' : '';
+    
     const row = $(`
-      <div class="modifier-row ${modifier.enabled === false ? 'disabled' : ''}" data-index="${index}">
-        <input type="text" class="modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" />
-        <input type="text" class="modifier-value" placeholder="±0 or @prof" value="${modifier.value || (modifier.value === 0 ? '0' : '')}" />
-        <input type="checkbox" class="modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} />
-        <button type="button" class="modifier-delete">×</button>
+      <div class="modifier-row ${modifier.enabled === false ? 'disabled' : ''} ${permanentClass}" data-index="${index}">
+        <input type="text" class="modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" ${isPermanent ? 'readonly' : ''} />
+        <input type="text" class="modifier-value" placeholder="±0 or @prof" value="${modifier.value || (modifier.value === 0 ? '0' : '')}" ${isPermanent ? 'readonly' : ''} />
+        <input type="checkbox" class="modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} ${toggleStyle} />
+        <button type="button" class="modifier-delete" ${deleteStyle}>×</button>
+        ${permanentIndicator}
       </div>
     `);
 
-    row.find('.modifier-name, .modifier-value').on('input', () => this._updateTotal(overlay));
+    if (!isPermanent) {
+      row.find('.modifier-name, .modifier-value').on('input', () => this._updateTotal(overlay));
 
-    row.find('.modifier-toggle').on('click change', (e) => {
-      e.stopPropagation();
-      const checkbox = $(e.currentTarget);
-      const isEnabled = checkbox.prop('checked');
-      row.toggleClass('disabled', !isEnabled);
-      this._updateTotal(overlay);
-    });
+      row.find('.modifier-toggle').on('click change', (e) => {
+        e.stopPropagation();
+        const checkbox = $(e.currentTarget);
+        const isEnabled = checkbox.prop('checked');
+        row.toggleClass('disabled', !isEnabled);
+        this._updateTotal(overlay);
+      });
 
-    row.find('.modifier-delete').on('click', (e) => {
-      e.stopPropagation();
-      row.remove();
-      this._updateTotal(overlay);
-    });
+      row.find('.modifier-delete').on('click', (e) => {
+        e.stopPropagation();
+        row.remove();
+        this._updateTotal(overlay);
+      });
+    }
 
     modifiersList.append(row);
   }
@@ -1322,30 +1331,39 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
   _createDamageModifierRow(overlay, modifier, index) {
     const modifiersList = overlay.find('.damage-modifiers-list');
+    const isPermanent = modifier.permanent === true;
+    const toggleStyle = isPermanent ? 'style="display: none;"' : '';
+    const deleteStyle = isPermanent ? 'style="display: none;"' : '';
+    const permanentClass = isPermanent ? 'permanent-modifier' : '';
+    const permanentIndicator = isPermanent ? '<i class="fas fa-lock permanent-indicator" title="Permanent modifier"></i>' : '';
+    
     const row = $(`
-      <div class="damage-modifier-row modifier-row ${modifier.enabled === false ? 'disabled' : ''}" data-index="${index}">
-        <input type="text" class="damage-modifier-name modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" />
-        <input type="text" class="damage-modifier-value modifier-value" placeholder="±1 or ±1d4" value="${modifier.value || ''}" />
-        <input type="checkbox" class="damage-modifier-toggle modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} />
-        <button type="button" class="damage-modifier-delete modifier-delete">×</button>
+      <div class="damage-modifier-row modifier-row ${modifier.enabled === false ? 'disabled' : ''} ${permanentClass}" data-index="${index}">
+        <input type="text" class="damage-modifier-name modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" ${isPermanent ? 'readonly' : ''} />
+        <input type="text" class="damage-modifier-value modifier-value" placeholder="±1 or ±1d4" value="${modifier.value || ''}" ${isPermanent ? 'readonly' : ''} />
+        <input type="checkbox" class="damage-modifier-toggle modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} ${toggleStyle} />
+        <button type="button" class="damage-modifier-delete modifier-delete" ${deleteStyle}>×</button>
+        ${permanentIndicator}
       </div>
     `);
 
-    row.find('.damage-modifier-name, .damage-modifier-value').on('input', () => this._updateDamageTotal(overlay));
+    if (!isPermanent) {
+      row.find('.damage-modifier-name, .damage-modifier-value').on('input', () => this._updateDamageTotal(overlay));
 
-    row.find('.damage-modifier-toggle').on('click change', (e) => {
-      e.stopPropagation();
-      const checkbox = $(e.currentTarget);
-      const isEnabled = checkbox.prop('checked');
-      row.toggleClass('disabled', !isEnabled);
-      this._updateDamageTotal(overlay);
-    });
+      row.find('.damage-modifier-toggle').on('click change', (e) => {
+        e.stopPropagation();
+        const checkbox = $(e.currentTarget);
+        const isEnabled = checkbox.prop('checked');
+        row.toggleClass('disabled', !isEnabled);
+        this._updateDamageTotal(overlay);
+      });
 
-    row.find('.damage-modifier-delete').on('click', (e) => {
-      e.stopPropagation();
-      row.remove();
-      this._updateDamageTotal(overlay);
-    });
+      row.find('.damage-modifier-delete').on('click', (e) => {
+        e.stopPropagation();
+        row.remove();
+        this._updateDamageTotal(overlay);
+      });
+    }
 
     modifiersList.append(row);
   }

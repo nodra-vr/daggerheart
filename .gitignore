@@ -16,3 +16,6 @@ test-migration-validation.html
 .kilocode/mcp.json
 .gitignore
 docs/private/glassmorphism-design-system.json
+docs/test-character-level-modifier.js
+.gitignore
+docs/test-armor-permanent-modifiers.js

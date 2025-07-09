@@ -1,6 +1,8 @@
+import { ModifierManager } from "./modifierManager.js";
+
 export class DaggerheartMigrations {
 
-  static CURRENT_VERSION = "1.2.2";
+  static CURRENT_VERSION = "1.2.3";
 
   static async migrateDocument(document) {
     let needsUpdate = false;
@@ -58,6 +60,18 @@ export class DaggerheartMigrations {
           }
         } catch (error) {
           console.error(`❌ Error fixing zero threshold defaults for "${document.name}":`, error);
+        }
+      }
+
+      if (this.compareVersions(currentVersion, "1.2.3") < 0 && document.documentName === "Actor" && document.type === "character") {
+        try {
+          const characterLevelModifier = this._addCharacterLevelModifier(document);
+          if (characterLevelModifier) {
+            Object.assign(updateData, characterLevelModifier);
+            needsUpdate = true;
+          }
+        } catch (error) {
+          console.error(`❌ Error adding character level modifier for "${document.name}":`, error);
         }
       }
 
@@ -510,5 +524,82 @@ export class DaggerheartMigrations {
     }
 
     console.log(`Daggerheart | Migration complete for ${actor.name}`);
+  }
+
+  static _addCharacterLevelModifier(actor) {
+    const updateData = {};
+    let needsUpdate = false;
+
+    if (actor.system.threshold) {
+      const level = parseInt(actor.system.level?.value) || 1;
+      const modifierName = "Character Level";
+
+      // Check major threshold
+      if (actor.system.threshold.major && typeof actor.system.threshold.major === 'object') {
+        const majorModifiers = actor.system.threshold.major.modifiers || [];
+        const hasCharacterLevelModifier = majorModifiers.some(mod => mod.name === modifierName);
+        
+        if (!hasCharacterLevelModifier) {
+          const newModifiers = [...majorModifiers, {
+            name: modifierName,
+            value: level,
+            enabled: true,
+            permanent: true
+          }];
+          
+          const newValue = this._calculateNumericTotal({
+            baseValue: actor.system.threshold.major.baseValue,
+            modifiers: newModifiers
+          });
+
+          updateData["system.threshold.major.modifiers"] = newModifiers;
+          updateData["system.threshold.major.value"] = newValue;
+          needsUpdate = true;
+          console.log(`🔧 Adding Character Level modifier (+${level}) to major threshold for "${actor.name}"`);
+        }
+      }
+
+      // Check severe threshold
+      if (actor.system.threshold.severe && typeof actor.system.threshold.severe === 'object') {
+        const severeModifiers = actor.system.threshold.severe.modifiers || [];
+        const hasCharacterLevelModifier = severeModifiers.some(mod => mod.name === modifierName);
+        
+        if (!hasCharacterLevelModifier) {
+          const newModifiers = [...severeModifiers, {
+            name: modifierName,
+            value: level,
+            enabled: true,
+            permanent: true
+          }];
+          
+          const newValue = this._calculateNumericTotal({
+            baseValue: actor.system.threshold.severe.baseValue,
+            modifiers: newModifiers
+          });
+
+          updateData["system.threshold.severe.modifiers"] = newModifiers;
+          updateData["system.threshold.severe.value"] = newValue;
+          needsUpdate = true;
+          console.log(`🔧 Adding Character Level modifier (+${level}) to severe threshold for "${actor.name}"`);
+        }
+      }
+    }
+
+    return needsUpdate ? updateData : null;
+  }
+
+  static _calculateNumericTotal(data) {
+    const baseValue = parseInt(data.baseValue) || 0;
+    let modifierTotal = 0;
+
+    if (Array.isArray(data.modifiers)) {
+      data.modifiers.forEach(modifier => {
+        if (modifier.enabled !== false) {
+          modifierTotal += parseInt(modifier.value) || 0;
+        }
+      });
+    }
+
+    return baseValue + modifierTotal;
   }
 }

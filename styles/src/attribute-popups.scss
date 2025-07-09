@@ -499,6 +499,94 @@
   }
 }
 
+/* ============================================
+   PERMANENT MODIFIER STYLES
+   ============================================ */
+
+/* Permanent modifier row styling */
+.permanent-modifier {
+  background: rgba(243, 194, 103, 0.08) !important;
+  border: 1px solid rgba(243, 194, 103, 0.3) !important;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--dh-color-gold), var(--dh-color-gold-light));
+    border-radius: var(--dh-radius-sm);
+  }
+  
+  &:hover {
+    background: rgba(243, 194, 103, 0.12) !important;
+    border-color: rgba(243, 194, 103, 0.4) !important;
+  }
+  
+  .modifier-name,
+  .modifier-value,
+  .damage-modifier-name,
+  .damage-modifier-value {
+    background: rgba(243, 194, 103, 0.1) !important;
+    border-color: rgba(243, 194, 103, 0.4) !important;
+    color: var(--dh-color-gold-light) !important;
+    cursor: default !important;
+    
+    &:focus {
+      outline: none !important;
+      border-color: rgba(243, 194, 103, 0.4) !important;
+      background: rgba(243, 194, 103, 0.1) !important;
+      box-shadow: none !important;
+    }
+    
+    &::placeholder {
+      color: rgba(243, 194, 103, 0.5) !important;
+    }
+  }
+}
+
+/* Permanent modifier indicator */
+.permanent-indicator {
+  color: var(--dh-color-gold);
+  font-size: 12px;
+  opacity: 0.8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: rgba(243, 194, 103, 0.15);
+  border-radius: var(--dh-radius-full);
+  border: 1px solid rgba(243, 194, 103, 0.3);
+  cursor: help;
+  transition: var(--dh-transition-fast);
+  
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: rgba(243, 194, 103, 0.25);
+    border-color: rgba(243, 194, 103, 0.5);
+    text-shadow: 0 0 4px rgba(243, 194, 103, 0.6);
+  }
+  
+  &:before {
+    font-weight: 900;
+  }
+}
+
+/* Damage modifier permanent styling */
+.damage-modifier-row.permanent-modifier {
+  background: rgba(243, 194, 103, 0.08) !important;
+  border-color: rgba(243, 194, 103, 0.3) !important;
+  
+  &:hover {
+    background: rgba(243, 194, 103, 0.12) !important;
+    border-color: rgba(243, 194, 103, 0.4) !important;
+  }
+}
+
 /* Total section */
 .trait-total,
 .attribute-total {

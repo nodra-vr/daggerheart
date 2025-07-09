@@ -1,4 +1,5 @@
 import { EntitySheetHelper } from "./helper.js";
+import { ModifierManager } from "./modifierManager.js";
 
 export class SimpleActor extends Actor {
 
@@ -44,6 +45,21 @@ export class SimpleActor extends Actor {
     }
 
     EntitySheetHelper.clampResourceValues(this.system.attributes);
+
+    // Ensure character level modifier is applied for characters
+    if (this.type === 'character') {
+      this._ensureCharacterLevelModifier();
+    }
+  }
+
+  _ensureCharacterLevelModifier() {
+    // Only run this for GMs or owners to avoid permission issues
+    if (!game.user.isGM && !this.isOwner) {
+      return;
+    }
+
+    // Schedule the character level modifier update
+    this._scheduleCharacterLevelModifierUpdate();
   }
 
   _scheduleDeadStateUpdate() {
@@ -53,7 +69,17 @@ export class SimpleActor extends Actor {
     this._deadStateTimeout = setTimeout(() => {
       this._deadStateTimeout = null;
       this._handleDeadState();
-    }, 250); 
+    }, 250);
+  }
+
+  _scheduleCharacterLevelModifierUpdate() {
+    if (this._characterLevelModifierTimeout) {
+      return;
+    }
+    this._characterLevelModifierTimeout = setTimeout(() => {
+      this._characterLevelModifierTimeout = null;
+      this._handleCharacterLevelModifier();
+    }, 250);
   }
 
   async _handleDeadState() {
@@ -102,11 +128,28 @@ export class SimpleActor extends Actor {
     }
   }
 
+  async _handleCharacterLevelModifier() {
+    if (!game.user.isGM && !this.isOwner) {
+      return;
+    }
+
+    try {
+      await ModifierManager.manageCharacterLevelModifier(this);
+    } catch (error) {
+      console.error("Actor | Error managing character level modifier:", error);
+    }
+  }
+
   _onUpdate(changed, options, userId) {
     super._onUpdate(changed, options, userId);
 
     if (changed.system?.health) {
       this._scheduleDeadStateUpdate();
+    }
+
+    // Manage character level modifier when level changes
+    if (changed.system?.level && this.type === 'character') {
+      this._scheduleCharacterLevelModifierUpdate();
     }
   }
 
