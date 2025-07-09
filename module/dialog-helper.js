@@ -1,20 +1,16 @@
-/**
- * Dialog Helper Module
- * Provides reusable dialog functionality for the Daggerheart system
- */
+import {
+  createEmptyAdvantageSet,
+  normalizeAdvantageData,
+  calculateFinalDice,
+  generateAdvantageFormula,
+  addDice,
+  removeDice,
+  getAdvantageDescription,
+  calculateNetResult
+} from './advantage-manager.js';
 
 export class DaggerheartDialogHelper {
-  /**
-   * Show a styled dialog with custom content
-   * @param {Object} config - Dialog configuration
-   * @param {string} config.title - Dialog title
-   * @param {string} config.content - HTML content for the dialog
-   * @param {Object} config.buttons - Button configuration object
-   * @param {string} config.dialogClass - Additional CSS class for styling
-   * @param {Function} config.render - Optional render callback
-   * @param {string} config.default - Default button key
-   * @returns {Promise} - Resolves with the dialog result
-   */
+
   static async showDialog(config) {
     const dialogClass = `daggerheart-dialog ${config.dialogClass || ''}`;
     return new Promise(resolve => {
@@ -63,15 +59,6 @@ export class DaggerheartDialogHelper {
     });
   }
 
-  /**
-   * Show a checkbox selection dialog
-   * @param {Object} config - Dialog configuration
-   * @param {string} config.title - Dialog title
-   * @param {string} config.description - Optional description text
-   * @param {Array} config.options - Array of {id, label, value} objects for checkboxes
-   * @param {boolean} config.singleSelect - If true, only one option can be selected
-   * @returns {Promise} - Resolves with selected options or null
-   */
   static async showCheckboxDialog(config) {
     const content = `
       <form>
@@ -128,12 +115,6 @@ export class DaggerheartDialogHelper {
     return result;
   }
 
-  /**
-   * Show the Death Move dialog
-   * @param {string} characterName - The name of the character
-   * @param {Actor} actor - The actor performing the death move
-   * @returns {Promise} - Resolves with the selected death move or null
-   */
   static async showDeathMoveDialog(characterName, actor) {
     const options = [
       { id: 'blaze-of-glory', label: 'Blaze of Glory', value: 'Blaze of Glory' },
@@ -150,7 +131,7 @@ export class DaggerheartDialogHelper {
     });
 
     if (result && result.selected) {
-      // Initial announcement message
+
       await ChatMessage.create({
         content: `<p><em>${characterName} has chosen ${result.selected} as their Death Move.</em></p>`,
         speaker: ChatMessage.getSpeaker({ actor }),
@@ -160,7 +141,7 @@ export class DaggerheartDialogHelper {
       if (result.selected === 'Blaze of Glory') {
         if (game.daggerheart?.rollHandler?.enableForcedCritical) {
           game.daggerheart.rollHandler.enableForcedCritical();
-          
+
           await ChatMessage.create({
             content: `
               <div class="death-move-blaze">
@@ -177,7 +158,7 @@ export class DaggerheartDialogHelper {
               }
             }
           });
-          
+
           Hooks.once('daggerheart.dualityRollComplete', async (rollData) => {
             if (rollData.isCrit && rollData.forcedCritical) {
               await ChatMessage.create({
@@ -207,8 +188,7 @@ export class DaggerheartDialogHelper {
           ui.notifications.error("No actor provided for Avoid Death roll.");
           return null;
         }
-        
-        // Initial message about falling unconscious
+
         await ChatMessage.create({
           content: `
             <div class="death-move-avoid">
@@ -225,24 +205,24 @@ export class DaggerheartDialogHelper {
             }
           }
         });
-        
+
         const characterLevel = actor.system.level?.value || 1;
-        
+
         if (game.daggerheart?.rollHandler?.rollHope) {
           const hopeResult = await game.daggerheart.rollHandler.rollHope({
             sendToChat: false,
             returnRoll: false
           });
-          
+
           const hopeValue = hopeResult.dieValue;
           const gainsScar = hopeValue <= characterLevel;
-          
+
           let flavorText = `
             <div class="death-move-avoid-result">
               <p><strong>Avoid Death Roll</strong></p>
               <p>Hope Die: <strong>${hopeValue}</strong> vs Level: <strong>${characterLevel}</strong></p>
           `;
-          
+
           if (gainsScar) {
             flavorText += `
               <p class="scar-gained"><em>${characterName} gains a scar from their near-death experience.</em></p>
@@ -256,7 +236,7 @@ export class DaggerheartDialogHelper {
             </div>
             `;
           }
-          
+
           try {
             const avoidMessage = await ChatMessage.create({
               content: `
@@ -281,8 +261,7 @@ export class DaggerheartDialogHelper {
                 }
               }
             });
-            
-            // Wait for Dice So Nice! animation to complete
+
             if (avoidMessage?.id && game.daggerheart?.rollHandler?._waitFor3dDice) {
               await game.daggerheart.rollHandler._waitFor3dDice(avoidMessage.id);
             }
@@ -290,7 +269,7 @@ export class DaggerheartDialogHelper {
             console.error("Error creating death move avoid roll chat message:", error);
             ui.notifications.warn("Chat message failed to send, but roll was completed.");
           }
-          
+
           if (gainsScar) {
             ui.notifications.info(`${characterName} gains a scar. Scar functionality will be implemented in the future.`);
           }
@@ -303,8 +282,7 @@ export class DaggerheartDialogHelper {
           ui.notifications.error("No actor provided for Risk it All roll.");
           return null;
         }
-        
-        // Initial message about taking the ultimate risk
+
         await ChatMessage.create({
           content: `
             <div class="death-move-risk">
@@ -321,27 +299,27 @@ export class DaggerheartDialogHelper {
             }
           }
         });
-        
+
         if (game.daggerheart?.rollHandler?.rollDuality) {
           const dualityResult = await game.daggerheart.rollHandler.rollDuality({
             sendToChat: false,
             returnRoll: false
           });
           console.log(game.daggerheart.rollHandler);
-          
+
           const { hopeDieValue, fearDieValue, isCrit } = dualityResult;
           const hopeWins = hopeDieValue > fearDieValue;
           const fearWins = hopeDieValue < fearDieValue;
-          
+
           if (isCrit) {
-            // Critical Success: Full restoration
+
             const updateData = {
               'system.health.value': 0,
               'system.stress.value': 0
             };
-            
+
             await actor.update(updateData);
-            
+
             try {
               const criticalMessage = await ChatMessage.create({
                 content: `
@@ -372,8 +350,7 @@ export class DaggerheartDialogHelper {
                   }
                 }
               });
-              
-              // Wait for Dice So Nice! animation to complete
+
               if (criticalMessage?.id && game.daggerheart?.rollHandler?._waitFor3dDice) {
                 await game.daggerheart.rollHandler._waitFor3dDice(criticalMessage.id);
               }
@@ -381,11 +358,11 @@ export class DaggerheartDialogHelper {
               console.error("Error creating death move critical chat message:", error);
               ui.notifications.warn("Chat message failed to send, but roll was completed.");
             }
-            
+
             ui.notifications.info(`${characterName} achieves miraculous recovery!`);
-            
+
           } else if (hopeWins) {
-            // Hope Wins: Show recovery allocation dialog
+
             try {
               const hopeMessage = await ChatMessage.create({
                 content: `
@@ -415,8 +392,7 @@ export class DaggerheartDialogHelper {
                   }
                 }
               });
-              
-              // Wait for Dice So Nice! animation to complete
+
               if (hopeMessage?.id && game.daggerheart?.rollHandler?._waitFor3dDice) {
                 await game.daggerheart.rollHandler._waitFor3dDice(hopeMessage.id);
               }
@@ -424,8 +400,6 @@ export class DaggerheartDialogHelper {
               console.error("Error creating death move hope chat message:", error);
               ui.notifications.warn("Chat message failed to send, but roll was completed.");
             }
-            
-            // Show recovery allocation dialog
 
             const recoveryChoice = await this.showRecoveryAllocationDialog({
               characterName: characterName,
@@ -435,21 +409,21 @@ export class DaggerheartDialogHelper {
               maxHP: actor.system.health?.max || 10,
               maxStress: actor.system.stress?.max || 10
             });
-            
+
             if (recoveryChoice && recoveryChoice.button === 'confirm') {
               const hpHealing = recoveryChoice.hpHealing || 0;
               const stressHealing = recoveryChoice.stressHealing || 0;
-              
+
               const newHP = Math.max(0, (actor.system.health?.value || 0) - hpHealing);
               const newStress = Math.max(0, (actor.system.stress?.value || 0) - stressHealing);
-              
+
               const updateData = {
                 'system.health.value': newHP,
                 'system.stress.value': newStress
               };
-              
+
               await actor.update(updateData);
-              
+
               await ChatMessage.create({
                 content: `
                   <div class="death-move-risk-recovery">
@@ -470,9 +444,9 @@ export class DaggerheartDialogHelper {
                 }
               });
             }
-            
+
           } else if (fearWins) {
-            // Fear Wins: Character dies
+
             try {
               const deathMessage = await ChatMessage.create({
                 content: `
@@ -503,8 +477,7 @@ export class DaggerheartDialogHelper {
                   }
                 }
               });
-              
-              // Wait for Dice So Nice! animation to complete
+
               if (deathMessage?.id && game.daggerheart?.rollHandler?._waitFor3dDice) {
                 await game.daggerheart.rollHandler._waitFor3dDice(deathMessage.id);
               }
@@ -512,51 +485,48 @@ export class DaggerheartDialogHelper {
               console.error("Error creating death move death chat message:", error);
               ui.notifications.warn("Chat message failed to send, but roll was completed.");
             }
-            
+
             ui.notifications.warn(`${characterName} has paid the ultimate price.`);
           }
-          
+
         } else {
           ui.notifications.error("Roll handler not available for Risk it All roll.");
           return null;
         }
       } else {
-        // Show notification about future functionality
+
         ui.notifications.info(`Death Move selected: ${result.selected}. Functionality will come in the future.`)
       }
-      
+
       return result.selected;
     }
 
     return null;
   }
 
-  /**
-   * Show the Duality Roll dialog
-   * @param {Object} config - Dialog configuration
-   * @param {string} config.title - Dialog title (defaults to "Roll")
-   * @param {Object} config.rollDetails - Initial roll details
-   * @returns {Promise} - Resolves with roll configuration or null
-   */
   static async showDualityRollDialog(config = {}) {
     const { title = "Roll", rollDetails = {}, actor = null } = config;
-    
-    // Set defaults
+
     const defaults = {
       hopeDieSize: 'd12',
       fearDieSize: 'd12',
-      advantage: 0,
-      disadvantage: 0,
+      advantage: createEmptyAdvantageSet(),
+      disadvantage: createEmptyAdvantageSet(),
       modifier: 0
     };
-    
-    const initialValues = { ...defaults, ...rollDetails };
-    
-    // Build experience list HTML if we have a character actor with experience data
+
+    const normalizedRollDetails = {
+      ...rollDetails,
+      advantage: normalizeAdvantageData(rollDetails.advantage),
+      disadvantage: normalizeAdvantageData(rollDetails.disadvantage)
+    };
+
+    const initialValues = { ...defaults, ...normalizedRollDetails };
+
     let experienceSection = "";
     if (actor && actor.type === "character" && actor.system?.experience) {
       const expData = actor.system.experience;
-      // Gather all keys ending with "Mod" (or "Mod#") that are numeric
+
       const expEntries = Object.keys(expData)
         .filter(k => /Mod\d*$/.test(k))
         .map(k => {
@@ -565,7 +535,7 @@ export class DaggerheartDialogHelper {
           const nameValue = (expData[nameKey] || `Experience`).trim();
           return { key: k, label: nameValue, mod: modValue };
         })
-        // Filter out entries with no meaningful label or zero modifier
+
         .filter(entry => entry.mod !== 0);
 
       if (expEntries.length > 0) {
@@ -587,7 +557,7 @@ export class DaggerheartDialogHelper {
         experienceSection += `</div></div>`;
       }
     }
-    
+
     const content = `
     <form>
     <div class="flex-col" style="align-items: stretch; gap: 2rem">
@@ -595,33 +565,64 @@ export class DaggerheartDialogHelper {
             <div class="flex-col">
                 <span class="label-bar">Hope Die</span>
                 <select name="hopeDieSize" id="hopeDieSize">
-                    <option value="d12" ${ initialValues.hopeDieSize !== 'd20' ? 'selected' : ''}>d12</option>
+                    <option value="d4" ${ initialValues.hopeDieSize === 'd4' ? 'selected' : ''}>d4</option>
+                    <option value="d6" ${ initialValues.hopeDieSize === 'd6' ? 'selected' : ''}>d6</option>
+                    <option value="d8" ${ initialValues.hopeDieSize === 'd8' ? 'selected' : ''}>d8</option>
+                    <option value="d10" ${ initialValues.hopeDieSize === 'd10' ? 'selected' : ''}>d10</option>
+                    <option value="d12" ${ initialValues.hopeDieSize === 'd12' || !initialValues.hopeDieSize ? 'selected' : ''}>d12</option>
                     <option value="d20" ${ initialValues.hopeDieSize === 'd20' ? 'selected' : ''}>d20</option>
                 </select>
             </div>
             <div class="flex-col">
                 <span class="label-bar">Fear Die</span>
                 <select name="fearDieSize" id="fearDieSize">
-                    <option value="d12" ${ initialValues.fearDieSize !== 'd20' ? 'selected' : ''}>d12</option>
+                    <option value="d4" ${ initialValues.fearDieSize === 'd4' ? 'selected' : ''}>d4</option>
+                    <option value="d6" ${ initialValues.fearDieSize === 'd6' ? 'selected' : ''}>d6</option>
+                    <option value="d8" ${ initialValues.fearDieSize === 'd8' ? 'selected' : ''}>d8</option>
+                    <option value="d10" ${ initialValues.fearDieSize === 'd10' ? 'selected' : ''}>d10</option>
+                    <option value="d12" ${ initialValues.fearDieSize === 'd12' || !initialValues.fearDieSize ? 'selected' : ''}>d12</option>
                     <option value="d20" ${ initialValues.fearDieSize === 'd20' ? 'selected' : ''}>d20</option>
                 </select>
             </div>
         </div>
-      <div class="flex-row">
-        <div class="flex-col stepper-group">
-          <span class="label-bar">Advantage</span>
-          <div class="flex-row">
-            <button id="adv-minus" class="clicker-button clicker-minus-button" type="button"></button>
-            <input id="dualityDiceAdvantageInput" min="0" name="advantage" step="1" type="number" value="${ initialValues.advantage }"/>
-            <button id="adv-plus" class="clicker-button clicker-plus-button" type="button"></button>
+      <div class="flex-col">
+        <span class="label-bar">Advantage / Disadvantage</span>
+        <div class="dice-grid advantage-disadvantage-grid">
+          <div class="dice-control" data-die="d4">
+            <button type="button" class="dice-btn increase" data-type="advantage" data-die="d4"><i class="fas fa-plus"></i></button>
+            <div class="dice-icon d4-icon">
+              <i class="fad fa-dice-d4"></i>
+              <span class="dice-count">${initialValues.advantage.d4 - initialValues.disadvantage.d4}</span>
+            </div>
+            <button type="button" class="dice-btn decrease" data-type="advantage" data-die="d4"><i class="fas fa-minus"></i></button>
+            <input type="hidden" name="advantage-d4" value="${initialValues.advantage.d4 - initialValues.disadvantage.d4}">
           </div>
-        </div>
-        <div class="flex-col stepper-group">
-          <span class="label-bar">Disadvantage</span>
-          <div class="flex-row">
-            <button id="dis-minus" class="clicker-button clicker-minus-button" type="button"></button>
-            <input id="dualityDiceDisadvantageInput" min="0" name="disadvantage" step="1" type="number" value="${ initialValues.disadvantage }"/>
-            <button id="dis-plus" class="clicker-button clicker-plus-button" type="button"></button>
+          <div class="dice-control" data-die="d6">
+            <button type="button" class="dice-btn increase" data-type="advantage" data-die="d6"><i class="fas fa-plus"></i></button>
+            <div class="dice-icon d6-icon">
+              <i class="fad fa-dice-d6"></i>
+              <span class="dice-count">${initialValues.advantage.d6 - initialValues.disadvantage.d6}</span>
+            </div>
+            <button type="button" class="dice-btn decrease" data-type="advantage" data-die="d6"><i class="fas fa-minus"></i></button>
+            <input type="hidden" name="advantage-d6" value="${initialValues.advantage.d6 - initialValues.disadvantage.d6}">
+          </div>
+          <div class="dice-control" data-die="d8">
+            <button type="button" class="dice-btn increase" data-type="advantage" data-die="d8"><i class="fas fa-plus"></i></button>
+            <div class="dice-icon d8-icon">
+              <i class="fad fa-dice-d8"></i>
+              <span class="dice-count">${initialValues.advantage.d8 - initialValues.disadvantage.d8}</span>
+            </div>
+            <button type="button" class="dice-btn decrease" data-type="advantage" data-die="d8"><i class="fas fa-minus"></i></button>
+            <input type="hidden" name="advantage-d8" value="${initialValues.advantage.d8 - initialValues.disadvantage.d8}">
+          </div>
+          <div class="dice-control" data-die="d10">
+            <button type="button" class="dice-btn increase" data-type="advantage" data-die="d10"><i class="fas fa-plus"></i></button>
+            <div class="dice-icon d10-icon">
+              <i class="fad fa-dice-d10"></i>
+              <span class="dice-count">${initialValues.advantage.d10 - initialValues.disadvantage.d10}</span>
+            </div>
+            <button type="button" class="dice-btn decrease" data-type="advantage" data-die="d10"><i class="fas fa-minus"></i></button>
+            <input type="hidden" name="advantage-d10" value="${initialValues.advantage.d10 - initialValues.disadvantage.d10}">
           </div>
         </div>
       </div>
@@ -639,7 +640,7 @@ export class DaggerheartDialogHelper {
     </div>
     </form>
     `;
-    
+
     const result = await this.showDialog({
       title,
       content,
@@ -649,30 +650,74 @@ export class DaggerheartDialogHelper {
           label: "Roll",
           icon: "<i class='fas fa-dice-d12'></i>",
           callback: (html) => {
-            const advantage = parseInt(html.find('#dualityDiceAdvantageInput').val()) || 0;
-            const disadvantage = parseInt(html.find('#dualityDiceDisadvantageInput').val()) || 0;
+
+            const netValues = {
+              d4: parseInt(html.find('input[name="advantage-d4"]').val()) || 0,
+              d6: parseInt(html.find('input[name="advantage-d6"]').val()) || 0,
+              d8: parseInt(html.find('input[name="advantage-d8"]').val()) || 0,
+              d10: parseInt(html.find('input[name="advantage-d10"]').val()) || 0
+            };
+
+            const rawAdvantage = {
+              d4: Math.max(0, netValues.d4),
+              d6: Math.max(0, netValues.d6),
+              d8: Math.max(0, netValues.d8),
+              d10: Math.max(0, netValues.d10)
+            };
+
+            const rawDisadvantage = {
+              d4: Math.max(0, -netValues.d4),
+              d6: Math.max(0, -netValues.d6),
+              d8: Math.max(0, -netValues.d8),
+              d10: Math.max(0, -netValues.d10)
+            };
+
+            const netResult = calculateNetResult(rawAdvantage, rawDisadvantage);
+
             let modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
             html.find('.exp-checkbox:checked').each((i, el) => {
               modifier += parseInt(el.dataset.mod) || 0;
             });
             const hopeDieSize = html.find('#hopeDieSize').val();
             const fearDieSize = html.find('#fearDieSize').val();
-            return { advantage, disadvantage, modifier, hopeDieSize, fearDieSize };
+            return { advantage: netResult.advantage, disadvantage: netResult.disadvantage, modifier, hopeDieSize, fearDieSize };
           }
         },
         rollReaction: {
           label: "Reaction",
           icon: "<i class='fas fa-dice-d12'></i>",
           callback: (html) => {
-            const advantage = parseInt(html.find('#dualityDiceAdvantageInput').val()) || 0;
-            const disadvantage = parseInt(html.find('#dualityDiceDisadvantageInput').val()) || 0;
+
+            const netValues = {
+              d4: parseInt(html.find('input[name="advantage-d4"]').val()) || 0,
+              d6: parseInt(html.find('input[name="advantage-d6"]').val()) || 0,
+              d8: parseInt(html.find('input[name="advantage-d8"]').val()) || 0,
+              d10: parseInt(html.find('input[name="advantage-d10"]').val()) || 0
+            };
+
+            const rawAdvantage = {
+              d4: Math.max(0, netValues.d4),
+              d6: Math.max(0, netValues.d6),
+              d8: Math.max(0, netValues.d8),
+              d10: Math.max(0, netValues.d10)
+            };
+
+            const rawDisadvantage = {
+              d4: Math.max(0, -netValues.d4),
+              d6: Math.max(0, -netValues.d6),
+              d8: Math.max(0, -netValues.d8),
+              d10: Math.max(0, -netValues.d10)
+            };
+
+            const netResult = calculateNetResult(rawAdvantage, rawDisadvantage);
+
             let modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
             html.find('.exp-checkbox:checked').each((i, el) => {
               modifier += parseInt(el.dataset.mod) || 0;
             });
             const hopeDieSize = html.find('#hopeDieSize').val();
             const fearDieSize = html.find('#fearDieSize').val();
-            return { advantage, disadvantage, modifier, hopeDieSize, fearDieSize, reaction: true };
+            return { advantage: netResult.advantage, disadvantage: netResult.disadvantage, modifier, hopeDieSize, fearDieSize, reaction: true };
           }
         },
         cancel: {
@@ -682,6 +727,36 @@ export class DaggerheartDialogHelper {
       },
       default: 'roll',
       render: (html) => {
+
+        html.find('.dice-btn').on('click', (e) => {
+          const button = $(e.currentTarget);
+          const die = button.data('die'); 
+          const isIncrease = button.hasClass('increase');
+
+          const hiddenInput = html.find(`input[name="advantage-${die}"]`);
+          const countSpan = button.siblings('.dice-icon').find('.dice-count');
+
+          let currentValue = parseInt(hiddenInput.val()) || 0;
+
+          if (isIncrease) {
+            currentValue = Math.min(currentValue + 1, 10); 
+          } else {
+            currentValue = Math.max(currentValue - 1, -10); 
+          }
+
+          hiddenInput.val(currentValue);
+          countSpan.text(currentValue);
+
+          const diceIcon = button.siblings('.dice-icon');
+          if (currentValue === 0) {
+            diceIcon.addClass('empty').removeClass('advantage disadvantage');
+          } else if (currentValue > 0) {
+            diceIcon.removeClass('empty disadvantage').addClass('advantage');
+          } else {
+            diceIcon.removeClass('empty advantage').addClass('disadvantage');
+          }
+        });
+
         function incrementInput(selector, by, clampLo = null) {
           let input = html.find(selector);
           if (input.length === 0) return;
@@ -690,10 +765,6 @@ export class DaggerheartDialogHelper {
           input.val(newValue);
         }
 
-        html.find('#adv-plus').click(() => incrementInput('#dualityDiceAdvantageInput', 1, 0));
-        html.find('#adv-minus').click(() => incrementInput('#dualityDiceAdvantageInput', -1, 0));
-        html.find('#dis-plus').click(() => incrementInput('#dualityDiceDisadvantageInput', 1, 0));
-        html.find('#dis-minus').click(() => incrementInput('#dualityDiceDisadvantageInput', -1, 0));
         html.find('#mod-plus').click(() => incrementInput('#dualityDiceModifierInput', 1));
         html.find('#mod-minus').click(() => incrementInput('#dualityDiceModifierInput', -1));
 
@@ -708,32 +779,39 @@ export class DaggerheartDialogHelper {
             }
           });
         }
+
+        html.find('.dice-control').each((i, control) => {
+          const $control = $(control);
+          const hiddenInput = $control.find('input[type="hidden"]');
+          const diceIcon = $control.find('.dice-icon');
+          const currentValue = parseInt(hiddenInput.val()) || 0;
+
+          if (currentValue === 0) {
+            diceIcon.addClass('empty').removeClass('advantage disadvantage');
+          } else if (currentValue > 0) {
+            diceIcon.removeClass('empty disadvantage').addClass('advantage');
+          } else {
+            diceIcon.removeClass('empty advantage').addClass('disadvantage');
+          }
+        });
       }
     });
-    
+
     return result;
   }
 
-  /**
-   * Show the NPC Roll dialog
-   * @param {Object} config - Dialog configuration
-   * @param {string} config.title - Dialog title (defaults to "Roll")
-   * @param {Object} config.rollDetails - Initial roll details
-   * @returns {Promise} - Resolves with roll configuration or null
-   */
   static async showNPCRollDialog(config = {}) {
     const { title = "Roll", rollDetails = {} } = config;
-    
-    // Set defaults
+
     const defaults = {
       dieSize: 'd20',
       advantage: 0,
       disadvantage: 0,
       modifier: 0
     };
-    
+
     const initialValues = { ...defaults, ...rollDetails };
-    
+
     const content = `
     <form>
     <div class="flex-col" style="align-items: stretch; gap: 2rem">
@@ -768,7 +846,7 @@ export class DaggerheartDialogHelper {
     </div>
     </form>
     `;
-    
+
     const result = await this.showDialog({
       title,
       content,
@@ -831,27 +909,16 @@ export class DaggerheartDialogHelper {
         }
       }
     });
-    
+
     return result;
   }
 
-  /**
-   * Show the Recovery Allocation dialog for Risk it All
-   * @param {Object} config - Dialog configuration
-   * @param {string} config.characterName - Character name
-   * @param {number} config.availablePoints - Points available for healing
-   * @param {number} config.currentHP - Current HP value
-   * @param {number} config.currentStress - Current Stress value
-   * @param {number} config.maxHP - Maximum HP
-   * @param {number} config.maxStress - Maximum Stress
-   * @returns {Promise} - Resolves with allocation choices or null
-   */
   static async showRecoveryAllocationDialog(config) {
     const { characterName, availablePoints, currentHP, currentStress, maxHP, maxStress } = config;
-    
-    const maxHPHealing = currentHP; // Can't heal more than current damage
-    const maxStressHealing = currentStress; // Can't heal more than current stress
-    
+
+    const maxHPHealing = currentHP; 
+    const maxStressHealing = currentStress; 
+
     const content = `
       <form>
         <div class="recovery-dialog-content">
@@ -859,7 +926,7 @@ export class DaggerheartDialogHelper {
             <p class="recovery-title">${characterName} can recover <strong>${availablePoints}</strong> points!</p>
             <p class="recovery-subtitle">Allocate healing between HP and Stress</p>
           </div>
-          
+
           <div class="current-status">
             <div class="status-item">
               <span class="status-label">Current HP:</span>
@@ -870,7 +937,7 @@ export class DaggerheartDialogHelper {
               <span class="status-value">${currentStress}/${maxStress}</span>
             </div>
           </div>
-          
+
           <div class="allocation-controls">
             <div class="allocation-group">
               <label for="hpHealing">HP Healing:</label>
@@ -881,7 +948,7 @@ export class DaggerheartDialogHelper {
               </div>
               <span class="max-available">(max: ${maxHPHealing})</span>
             </div>
-            
+
             <div class="allocation-group">
               <label for="stressHealing">Stress Healing:</label>
               <div class="stepper-group">
@@ -892,12 +959,12 @@ export class DaggerheartDialogHelper {
               <span class="max-available">(max: ${maxStressHealing})</span>
             </div>
           </div>
-          
+
           <div class="allocation-status">
             <p>Points Used: <span id="pointsUsed">0</span> / <span id="pointsAvailable">${availablePoints}</span></p>
             <p id="remainingPoints">Remaining: ${availablePoints}</p>
           </div>
-          
+
           <div class="quick-buttons">
             <button type="button" class="quick-btn" data-action="maxHP">Max HP</button>
             <button type="button" class="quick-btn" data-action="maxStress">Max Stress</button>
@@ -907,7 +974,7 @@ export class DaggerheartDialogHelper {
         </div>
       </form>
     `;
-    
+
     const result = await this.showDialog({
       title: `Recovery Allocation - ${characterName}`,
       content,
@@ -933,17 +1000,16 @@ export class DaggerheartDialogHelper {
         const stressInput = html.find('#stressHealing');
         const pointsUsedSpan = html.find('#pointsUsed');
         const remainingSpan = html.find('#remainingPoints');
-        
+
         function updateDisplay() {
           const hpVal = parseInt(hpInput.val()) || 0;
           const stressVal = parseInt(stressInput.val()) || 0;
           const total = hpVal + stressVal;
           const remaining = availablePoints - total;
-          
+
           pointsUsedSpan.text(total);
           remainingSpan.text(`Remaining: ${remaining}`);
-          
-          // Color coding
+
           if (total > availablePoints) {
             remainingSpan.css('color', '#e38c3e').text(`Over by: ${total - availablePoints}`);
           } else if (total === availablePoints) {
@@ -951,47 +1017,43 @@ export class DaggerheartDialogHelper {
           } else {
             remainingSpan.css('color', '#f0f0e0').text(`Remaining: ${remaining}`);
           }
-          
-          // Update max values based on remaining points
+
           const remainingForHP = Math.min(maxHPHealing, hpVal + remaining);
           const remainingForStress = Math.min(maxStressHealing, stressVal + remaining);
-          
+
           hpInput.attr('max', remainingForHP);
           stressInput.attr('max', remainingForStress);
         }
-        
-        // Input change handlers
+
         hpInput.on('input change', updateDisplay);
         stressInput.on('input change', updateDisplay);
-        
-        // Stepper buttons
+
         html.find('.recovery-plus').on('click', (e) => {
           const target = $(e.currentTarget).data('target');
           const input = html.find(`#${target}`);
           const currentVal = parseInt(input.val()) || 0;
           const maxVal = parseInt(input.attr('max')) || 0;
-          
+
           if (currentVal < maxVal) {
             input.val(currentVal + 1);
             updateDisplay();
           }
         });
-        
+
         html.find('.recovery-minus').on('click', (e) => {
           const target = $(e.currentTarget).data('target');
           const input = html.find(`#${target}`);
           const currentVal = parseInt(input.val()) || 0;
-          
+
           if (currentVal > 0) {
             input.val(currentVal - 1);
             updateDisplay();
           }
         });
-        
-        // Quick action buttons
+
         html.find('.quick-btn').on('click', (e) => {
           const action = $(e.currentTarget).data('action');
-          
+
           switch (action) {
             case 'maxHP':
               hpInput.val(Math.min(maxHPHealing, availablePoints));
@@ -1013,24 +1075,17 @@ export class DaggerheartDialogHelper {
               stressInput.val(0);
               break;
           }
-          
+
           updateDisplay();
         });
-        
-        // Initial display update
+
         updateDisplay();
       }
     });
-    
+
     return result;
   }
 
-  /**
-   * Show the Short Rest dialog
-   * @param {string} characterName - The name of the character
-   * @param {Actor} actor - The actor performing the short rest
-   * @returns {Promise} - Resolves with the selected options or null
-   */
   static async showShortRestDialog(characterName, actor) {
     const options = [
       { 
@@ -1103,12 +1158,12 @@ export class DaggerheartDialogHelper {
         }
       },
       render: (html) => {
-        // No validation needed - players can select any number of options
+
       }
     });
 
     if (result && result.selected) {
-      // Process the short rest with selected options
+
       await this._processShortRest(characterName, actor, result.selected);
       return result.selected;
     }
@@ -1116,18 +1171,10 @@ export class DaggerheartDialogHelper {
     return null;
   }
 
-  /**
-   * Process the short rest options
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor taking the rest
-   * @param {Array} selectedOptions - Array of selected option values
-   * @private
-   */
   static async _processShortRest(characterName, actor, selectedOptions) {
-    // Get character tier for calculations
+
     const tier = game.daggerheart?.getTierOfPlay ? game.daggerheart.getTierOfPlay(actor) : 1;
-    
-    // Send initial short rest message
+
     try {
       await ChatMessage.create({
         content: `
@@ -1150,7 +1197,6 @@ export class DaggerheartDialogHelper {
       ui.notifications.warn("Chat message failed to send, but rest continues.");
     }
 
-    // Process each selected option with small delays to prevent race conditions
     for (const option of selectedOptions) {
       try {
         switch (option) {
@@ -1167,7 +1213,7 @@ export class DaggerheartDialogHelper {
             await this._processPrepare(characterName, actor);
             break;
         }
-        // Small delay to prevent ChatMessage race conditions
+
         await new Promise(resolve => setTimeout(resolve, 100));
       } catch (error) {
         console.error(`Error processing short rest option '${option}':`, error);
@@ -1176,23 +1222,16 @@ export class DaggerheartDialogHelper {
     }
   }
 
-  /**
-   * Process Tend to Wounds option
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor
-   * @param {number} tier - The character's tier
-   * @private
-   */
   static async _processTendWounds(characterName, actor, tier) {
     const roll = new Roll(`1d4 + ${tier}`);
     await roll.evaluate();
-    
+
     const healingAmount = roll.total;
     const currentHP = actor.system.health?.value || 0;
     const newHP = Math.max(0, currentHP - healingAmount);
-    
+
     await actor.update({ "system.health.value": newHP });
-    
+
     try {
       await ChatMessage.create({
         content: `
@@ -1224,23 +1263,16 @@ export class DaggerheartDialogHelper {
     }
   }
 
-  /**
-   * Process Clear Stress option
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor
-   * @param {number} tier - The character's tier
-   * @private
-   */
   static async _processClearStress(characterName, actor, tier) {
     const roll = new Roll(`1d4 + ${tier}`);
     await roll.evaluate();
-    
+
     const stressCleared = roll.total;
     const currentStress = actor.system.stress?.value || 0;
     const newStress = Math.max(0, currentStress - stressCleared);
-    
+
     await actor.update({ "system.stress.value": newStress });
-    
+
     try {
       await ChatMessage.create({
         content: `
@@ -1272,24 +1304,17 @@ export class DaggerheartDialogHelper {
     }
   }
 
-  /**
-   * Process Repair Armor option
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor
-   * @param {number} tier - The character's tier
-   * @private
-   */
   static async _processRepairArmor(characterName, actor, tier) {
     const roll = new Roll(`1d4 + ${tier}`);
     await roll.evaluate();
-    
+
     const armorRepaired = roll.total;
     const currentArmorSlots = actor.system.defenses?.['armor-slots']?.value || 0;
     const maxArmor = actor.system.defenses?.armor?.value || 0;
     const newArmorSlots = Math.max(0, currentArmorSlots - armorRepaired);
-    
+
     await actor.update({ "system.defenses.armor-slots.value": newArmorSlots });
-    
+
     try {
       await ChatMessage.create({
         content: `
@@ -1321,19 +1346,13 @@ export class DaggerheartDialogHelper {
     }
   }
 
-  /**
-   * Process Prepare option
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor
-   * @private
-   */
   static async _processPrepare(characterName, actor) {
     const currentHope = actor.system.hope?.value || 0;
     const maxHope = actor.system.hope?.max || 0;
     const newHope = Math.min(maxHope, currentHope + 1);
-    
+
     await actor.update({ "system.hope.value": newHope });
-    
+
     try {
       await ChatMessage.create({
         content: `
@@ -1359,12 +1378,6 @@ export class DaggerheartDialogHelper {
     }
   }
 
-  /**
-   * Show the Long Rest dialog
-   * @param {string} characterName - The name of the character
-   * @param {Actor} actor - The actor performing the long rest
-   * @returns {Promise} - Resolves with the selected options or null
-   */
   static async showLongRestDialog(characterName, actor) {
     const options = [
       { 
@@ -1446,12 +1459,12 @@ export class DaggerheartDialogHelper {
         }
       },
       render: (html) => {
-        // No validation needed - players can select any number of options
+
       }
     });
 
     if (result && result.selected) {
-      // Process the long rest with selected options
+
       await this._processLongRest(characterName, actor, result.selected);
       return result.selected;
     }
@@ -1459,15 +1472,8 @@ export class DaggerheartDialogHelper {
     return null;
   }
 
-  /**
-   * Process the long rest options
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor taking the rest
-   * @param {Array} selectedOptions - Array of selected option values
-   * @private
-   */
   static async _processLongRest(characterName, actor, selectedOptions) {
-    // Send initial long rest message
+
     try {
       await ChatMessage.create({
         content: `
@@ -1490,13 +1496,11 @@ export class DaggerheartDialogHelper {
       ui.notifications.warn("Chat message failed to send, but rest continues.");
     }
 
-    // Count how many times each option was selected
     const optionCounts = {};
     selectedOptions.forEach(option => {
       optionCounts[option] = (optionCounts[option] || 0) + 1;
     });
 
-    // Process each selected option with small delays to prevent race conditions
     for (const [option, count] of Object.entries(optionCounts)) {
       for (let i = 0; i < count; i++) {
         try {
@@ -1517,7 +1521,7 @@ export class DaggerheartDialogHelper {
               await this._processLongRestWorkProject(characterName, actor);
               break;
           }
-          // Small delay to prevent ChatMessage race conditions
+
           await new Promise(resolve => setTimeout(resolve, 100));
         } catch (error) {
           console.error(`Error processing long rest option '${option}':`, error);
@@ -1527,18 +1531,12 @@ export class DaggerheartDialogHelper {
     }
   }
 
-  /**
-   * Process Tend to All Wounds option (Long Rest)
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor
-   * @private
-   */
   static async _processLongRestTendWounds(characterName, actor) {
     const currentHP = actor.system.health?.value || 0;
-    const newHP = 0; // Clear all hit points
-    
+    const newHP = 0; 
+
     await actor.update({ "system.health.value": newHP });
-    
+
     try {
       await ChatMessage.create({
         content: `
@@ -1564,18 +1562,12 @@ export class DaggerheartDialogHelper {
     }
   }
 
-  /**
-   * Process Clear All Stress option (Long Rest)
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor
-   * @private
-   */
   static async _processLongRestClearStress(characterName, actor) {
     const currentStress = actor.system.stress?.value || 0;
-    const newStress = 0; // Clear all stress
-    
+    const newStress = 0; 
+
     await actor.update({ "system.stress.value": newStress });
-    
+
     try {
       await ChatMessage.create({
         content: `
@@ -1601,18 +1593,12 @@ export class DaggerheartDialogHelper {
     }
   }
 
-  /**
-   * Process Repair All Armor option (Long Rest)
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor
-   * @private
-   */
   static async _processLongRestRepairArmor(characterName, actor) {
     const currentArmorSlots = actor.system.defenses?.['armor-slots']?.value || 0;
-    const newArmorSlots = 0; // Clear all armor slots
-    
+    const newArmorSlots = 0; 
+
     await actor.update({ "system.defenses.armor-slots.value": newArmorSlots });
-    
+
     try {
       await ChatMessage.create({
         content: `
@@ -1638,21 +1624,15 @@ export class DaggerheartDialogHelper {
     }
   }
 
-  /**
-   * Process Prepare option (Long Rest)
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor
-   * @private
-   */
   static async _processLongRestPrepare(characterName, actor) {
-    // For now, just give 1 Hope - could be enhanced to detect party coordination
+
     const currentHope = actor.system.hope?.value || 0;
     const maxHope = actor.system.hope?.max || 0;
-    const hopeGained = 1; // Could be 2 if coordinated with party
+    const hopeGained = 1; 
     const newHope = Math.min(maxHope, currentHope + hopeGained);
-    
+
     await actor.update({ "system.hope.value": newHope });
-    
+
     try {
       await ChatMessage.create({
         content: `
@@ -1681,12 +1661,6 @@ export class DaggerheartDialogHelper {
     }
   }
 
-  /**
-   * Process Work on a Project option (Long Rest)
-   * @param {string} characterName - The character's name
-   * @param {Actor} actor - The actor
-   * @private
-   */
   static async _processLongRestWorkProject(characterName, actor) {
     try {
       await ChatMessage.create({
@@ -1714,4 +1688,4 @@ export class DaggerheartDialogHelper {
       ui.notifications.warn("Chat message failed to send, but work continues.");
     }
   }
-} 
+}

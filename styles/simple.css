@@ -4703,6 +4703,14 @@ input.trait-effects.resize-ta {
   padding-bottom: 0;
 }
 
+.daggerheart-dialog.daggerheart-roll-dialog {
+  /* ====================================
+     DICE GRID SYSTEM STYLES
+     New advantage/disadvantage dice system
+     ==================================== */
+  /* Font Awesome dice icon styling */
+  /* Advantage/Disadvantage single grid system */
+}
 .daggerheart-dialog.daggerheart-roll-dialog .flex-row {
   align-content: center;
   align-items: center;
@@ -4810,6 +4818,101 @@ input.trait-effects.resize-ta {
   background: #433f64;
   color: var(--dh-color-gold);
 }
+.daggerheart-dialog.daggerheart-roll-dialog .dice-grid {
+  display: flex;
+  justify-content: center;
+  gap: var(--dh-space-lg);
+  margin: var(--dh-space-md) 0;
+  flex-wrap: wrap;
+}
+.daggerheart-dialog.daggerheart-roll-dialog .dice-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--dh-space-xs);
+  min-width: 60px;
+}
+.daggerheart-dialog.daggerheart-roll-dialog .dice-btn {
+  background: rgba(67, 63, 100, 0.5);
+  border: 1px solid #6d6795;
+  border-radius: var(--dh-radius-sm);
+  color: var(--dh-color-off-white);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  cursor: pointer;
+  transition: var(--dh-transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9em;
+  font-weight: bold;
+  line-height: 1;
+}
+.daggerheart-dialog.daggerheart-roll-dialog .dice-btn:hover {
+  background: rgba(67, 63, 100, 0.8);
+  border-color: var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  transform: scale(1.1);
+}
+.daggerheart-dialog.daggerheart-roll-dialog .dice-icon {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--dh-color-gold);
+}
+.daggerheart-dialog.daggerheart-roll-dialog .dice-icon.empty {
+  color: #6d6795;
+}
+.daggerheart-dialog.daggerheart-roll-dialog .dice-icon:hover {
+  transform: scale(1.05);
+}
+.daggerheart-dialog.daggerheart-roll-dialog .dice-icon i {
+  font-size: 32px;
+  color: inherit;
+  line-height: 1;
+}
+.daggerheart-dialog.daggerheart-roll-dialog .dice-icon .dice-count {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--dh-color-off-white);
+  font-weight: var(--dh-font-weight-bold);
+  font-size: var(--dh-font-size-sm);
+  padding: 2px 6px;
+  min-width: 20px;
+  text-align: center;
+  line-height: 1.2;
+  pointer-events: none;
+  z-index: 2;
+  font-size: 1.5em;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8), -1px -1px 0 rgba(0, 0, 0, 0.8), 1px -1px 0 rgba(0, 0, 0, 0.8), -1px 1px 0 rgba(0, 0, 0, 0.8), 0 0 4px rgba(0, 0, 0, 0.9);
+}
+.daggerheart-dialog.daggerheart-roll-dialog .advantage-disadvantage-grid .dice-icon {
+  color: #391f73;
+}
+.daggerheart-dialog.daggerheart-roll-dialog .advantage-disadvantage-grid .dice-icon.empty {
+  color: #2d2540;
+}
+.daggerheart-dialog.daggerheart-roll-dialog .advantage-disadvantage-grid .dice-icon.advantage {
+  color: var(--dh-color-gold);
+}
+.daggerheart-dialog.daggerheart-roll-dialog .advantage-disadvantage-grid .dice-icon.advantage .dice-count {
+  color: #fadd9f;
+}
+.daggerheart-dialog.daggerheart-roll-dialog .advantage-disadvantage-grid .dice-icon.disadvantage {
+  color: #3b75c2;
+}
+.daggerheart-dialog.daggerheart-roll-dialog .advantage-disadvantage-grid .dice-icon.disadvantage .dice-count {
+  color: #b5d5ff;
+}
 
 /* Chat Messages */
 .chat-message {
@@ -4884,9 +4987,42 @@ input.trait-effects.resize-ta {
   font-weight: lighter;
   margin-top: 0;
   margin-bottom: 0.25em;
+  /* Hope roll effect styling */
+  /* Fear roll effect styling */
+}
+.chat-message .roll-effect.hope-effect {
+  color: var(--dh-color-gold);
+  font-weight: 600;
+  text-shadow: 0 0 5px rgba(243, 194, 103, 0.6);
+}
+.chat-message .roll-effect.fear-effect {
+  color: #3b75c2;
+  font-weight: 600;
+  text-shadow: 0 0 5px rgba(59, 117, 194, 0.6);
 }
 .chat-message .roll-flavor-line {
   margin: 0;
+}
+
+/* Hope and Fear Roll Background Styling */
+.chat-message.dh-hope-roll {
+  background: linear-gradient(135deg, rgba(243, 194, 103, 0.25) 0%, rgba(255, 235, 59, 0.15) 100%);
+  border: 1px solid rgba(243, 194, 103, 0.6);
+  box-shadow: 0 2px 8px rgba(243, 194, 103, 0.2);
+}
+.chat-message.dh-hope-roll.whisper {
+  background: linear-gradient(135deg, rgba(243, 194, 103, 0.2) 0%, rgba(255, 235, 59, 0.1) 100%);
+  border: 1px solid rgba(243, 194, 103, 0.5);
+}
+
+.chat-message.dh-fear-roll {
+  background: linear-gradient(135deg, rgba(30, 24, 77, 0.8) 0%, rgba(63, 81, 181, 0.6) 100%);
+  border: 1px solid rgba(63, 81, 181, 0.8);
+  box-shadow: 0 2px 8px rgba(63, 81, 181, 0.3);
+}
+.chat-message.dh-fear-roll.whisper {
+  background: linear-gradient(135deg, rgba(30, 24, 77, 0.7) 0%, rgba(63, 81, 181, 0.5) 100%);
+  border: 1px solid rgba(63, 81, 181, 0.7);
 }
 
 /* Remove padding and default styling from chat messages that contain an item card */
@@ -5448,7 +5584,6 @@ input.trait-effects.resize-ta {
   cursor: pointer;
   /* Hover effects */
   /* Active/pressed state */
-  /* Focus state for accessibility */
   /* Disabled state */
 }
 .daggerheart-dialog .dialog-buttons button:hover,
@@ -5478,19 +5613,6 @@ input.trait-effects.resize-ta {
 .daggerheart-dialog input[type=submit]:active {
   transform: translateY(0) !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
-}
-.daggerheart-dialog .dialog-buttons button:focus,
-.daggerheart .dialog .dialog-buttons button:focus,
-.daggerheart .form-group button:focus,
-.daggerheart .form-footer button:focus,
-.daggerheart button.default:focus,
-.daggerheart button[type=submit]:focus,
-.daggerheart input[type=submit]:focus,
-.daggerheart .button:focus,
-.daggerheart-dialog button:focus,
-.daggerheart-dialog input[type=submit]:focus {
-  outline: 1px solid rgba(243, 194, 103, 0.4) !important;
-  outline-offset: 1px;
 }
 .daggerheart-dialog .dialog-buttons button:disabled,
 .daggerheart .dialog .dialog-buttons button:disabled,
