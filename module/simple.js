@@ -63,30 +63,34 @@ Hooks.once("init", async function() {
   if (game.dice3d) {
     // Hope Die
     game.dice3d.addColorset({
-      name: "Hope",
-      category: "Hope Die",
-      description: "Hope",
-      texture: "ice",
-      foreground: "#ffbb00",
-      background: "#ffffff",
-      outline: "#000000",
-      edge: "#ffbb00",
-      material: "glass",
-      font: "Modesto Condensed",
+    name: "Hope",
+    category: "Hope Die", 
+    description: "Hope",
+    texture: "ice",
+    foreground: "#ffffff",
+    background: "#ffa200",
+    outline: "#000000",
+    edge: "#ff8000",
+    material: "glass",
+    font: "Modesto Condensed",
+    colorset: "custom",
+    system: "standard"
     });
     
     // Fear Die
     game.dice3d.addColorset({
-      name: "Fear",
-      category: "Fear Die", 
-      description: "Fear",
-      texture: "fire",
-      foreground: "#FFFFFF",
-      background: "#523333",
-      outline: "#b30012",
-      edge: "#800013",
-      material: "metal",
-      font: "Modesto Condensed",
+    name: "Fear",
+    category: "Fear Die",
+    description: "Fear", 
+    texture: "ice",
+    foreground: "#b5d5ff",
+    background: "#021280",
+    outline: "#000000",
+    edge: "#210e6b",
+    material: "metal",
+    font: "Modesto Condensed",
+    colorset: "custom",
+    system: "standard"
     });
     
     // Modifier Die

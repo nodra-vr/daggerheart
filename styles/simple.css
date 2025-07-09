@@ -6992,7 +6992,7 @@ input.trait-effects.resize-ta {
 .daggerheart.sheet.actor:not(.npc) .sheet-tabs,
 .daggerheart.sheet.actor.npc .sheet-tabs,
 .daggerheart.sheet.companion .sheet-tabs,
-.item-sheet-card .sheet-tabs {
+.daggerheart.item-sheet-card .sheet-tabs {
   margin-top: 1em;
   border-top: none;
   border-bottom: 1px solid var(--dh-color-gold);
@@ -7008,7 +7008,7 @@ input.trait-effects.resize-ta {
 .daggerheart.sheet.actor:not(.npc) .sheet-tabs .item,
 .daggerheart.sheet.actor.npc .sheet-tabs .item,
 .daggerheart.sheet.companion .sheet-tabs .item,
-.item-sheet-card .sheet-tabs .item {
+.daggerheart.item-sheet-card .sheet-tabs .item {
   border: none;
   padding: 0px 10px;
   letter-spacing: 1px;
@@ -7032,8 +7032,8 @@ input.trait-effects.resize-ta {
 .daggerheart.sheet.actor.npc .sheet-tabs .item:hover,
 .daggerheart.sheet.companion .sheet-tabs .item.active,
 .daggerheart.sheet.companion .sheet-tabs .item:hover,
-.item-sheet-card .sheet-tabs .item.active,
-.item-sheet-card .sheet-tabs .item:hover {
+.daggerheart.item-sheet-card .sheet-tabs .item.active,
+.daggerheart.item-sheet-card .sheet-tabs .item:hover {
   color: var(--dh-color-gold);
   text-shadow: none;
 }
@@ -12361,68 +12361,6 @@ body.game .app a.content-link i,
     opacity: 0.3;
   }
 }
-.sheet-tabs {
-  margin-top: 1em;
-  border-top: none;
-  border-bottom: 1px solid var(--dh-color-gold);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: nowrap;
-  position: relative;
-  width: 100%;
-  max-height: 35px;
-  gap: 2em;
-}
-.sheet-tabs .item {
-  border: none;
-  padding: 0px 10px;
-  letter-spacing: 1px;
-  font-size: 14px;
-  box-shadow: none;
-  color: white;
-  background: none !important;
-  filter: none;
-  text-transform: uppercase;
-  font-weight: 500;
-  height: auto;
-  display: flex;
-  align-items: center;
-  transition: opacity 0.5s ease-in-out;
-  cursor: pointer;
-  line-height: 35px;
-  text-shadow: none;
-}
-.sheet-tabs .item.active, .sheet-tabs .item:hover {
-  color: var(--dh-color-gold);
-  border-bottom: 4px solid var(--dh-color-gold);
-  text-shadow: none;
-}
-
-.nav-gem {
-  width: 20px;
-  height: 35px;
-  background: url("icons/svg/d20-grey.svg") no-repeat center center;
-  background-size: contain;
-  align-self: center;
-  cursor: pointer;
-  transition: transform 0.2s ease, filter 0.2s ease;
-}
-.nav-gem:hover {
-  transform: scale(1.2);
-  filter: brightness(1.3) drop-shadow(0 0 5px var(--dh-color-gold));
-}
-.nav-gem:active {
-  transform: scale(1.1);
-}
-.nav-gem[draggable=true] {
-  cursor: grab;
-}
-.nav-gem[draggable=true]:active {
-  cursor: grabbing;
-  opacity: 0.8;
-}
-
 .item nav.sheet-tabs.tabs {
   margin-top: 0.1em;
 }

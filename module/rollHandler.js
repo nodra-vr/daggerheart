@@ -250,12 +250,14 @@ function _getDefaultHopeColorset() {
     category: "Hope Die", 
     description: "Hope",
     texture: "ice",
-    foreground: "#ffbb00",
-    background: "#ffffff",
+    foreground: "#ffffff",
+    background: "#ffa200",
     outline: "#000000",
-    edge: "#ffbb00",
+    edge: "#ff8000",
     material: "glass",
     font: "Modesto Condensed",
+    colorset: "custom",
+    system: "standard"
   };
 }
 
@@ -264,13 +266,15 @@ function _getDefaultFearColorset() {
     name: "Fear",
     category: "Fear Die",
     description: "Fear", 
-    texture: "fire",
-    foreground: "#FFFFFF",
-    background: "#523333",
-    outline: "#b30012",
-    edge: "#800013",
+    texture: "ice",
+    foreground: "#b5d5ff",
+    background: "#021280",
+    outline: "#000000",
+    edge: "#210e6b",
     material: "metal",
     font: "Modesto Condensed",
+    colorset: "custom",
+    system: "standard"
   };
 }
 
