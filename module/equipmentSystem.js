@@ -336,7 +336,8 @@ export class EquipmentSystem {
         await ModifierManager.addModifier(actor, "system.threshold.major", {
           name: armorName,
           value: armorSystem.baseThresholds.major,
-          enabled: true
+          enabled: true,
+          permanent: true
         });
       }
       
@@ -345,7 +346,8 @@ export class EquipmentSystem {
         await ModifierManager.addModifier(actor, "system.threshold.severe", {
           name: armorName,
           value: armorSystem.baseThresholds.severe,
-          enabled: true
+          enabled: true,
+          permanent: true
         });
       }
       
@@ -354,7 +356,8 @@ export class EquipmentSystem {
         await ModifierManager.addModifier(actor, "system.defenses.armor", {
           name: armorName,
           value: armorSystem.baseScore,
-          enabled: true
+          enabled: true,
+          permanent: true
         });
       }
       
@@ -376,10 +379,10 @@ export class EquipmentSystem {
     const armorName = armor.name;
     
     try {
-      // Remove modifiers with the armor's name from all relevant fields
-      await ModifierManager.removeModifier(actor, "system.threshold.major", armorName);
-      await ModifierManager.removeModifier(actor, "system.threshold.severe", armorName);
-      await ModifierManager.removeModifier(actor, "system.defenses.armor", armorName);
+      // Remove modifiers with the armor's name from all relevant fields (force removal of permanent modifiers)
+      await ModifierManager.removeModifier(actor, "system.threshold.major", armorName, true);
+      await ModifierManager.removeModifier(actor, "system.threshold.severe", armorName, true);
+      await ModifierManager.removeModifier(actor, "system.defenses.armor", armorName, true);
       
       console.log(`EquipmentSystem | Removed armor modifiers for ${armorName} from ${actor.name}`);
     } catch (error) {

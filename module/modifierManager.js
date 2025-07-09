@@ -223,9 +223,10 @@ export class ModifierManager {
    * @param {Actor} actor - The actor to modify
    * @param {string} fieldPath - The field path
    * @param {string} modifierName - Name of the modifier to remove
+   * @param {boolean} [force=false] - Whether to force removal of permanent modifiers
    * @returns {Promise<boolean>} - True if successful, false otherwise
    */
-  static async removeModifier(actor, fieldPath, modifierName) {
+  static async removeModifier(actor, fieldPath, modifierName, force = false) {
     if (!actor || !fieldPath || !modifierName) {
       console.error("ModifierManager | Invalid parameters for removeModifier");
       return false;
@@ -248,7 +249,7 @@ export class ModifierManager {
 
       // Check if modifier is permanent
       const modifier = currentData.modifiers[modifierIndex];
-      if (modifier.permanent) {
+      if (modifier.permanent && !force) {
         console.warn(`ModifierManager | Cannot remove permanent modifier "${modifierName}" at ${fieldPath} for ${actor.name}`);
         return false;
       }
@@ -297,9 +298,10 @@ export class ModifierManager {
    * @param {string} actorId - ID of the actor to modify
    * @param {string} fieldPath - The field path
    * @param {string} modifierName - Name of the modifier to remove
+   * @param {boolean} [force=false] - Whether to force removal of permanent modifiers
    * @returns {Promise<boolean>} - True if successful, false otherwise
    */
-  static async removeModifierById(actorId, fieldPath, modifierName) {
+  static async removeModifierById(actorId, fieldPath, modifierName, force = false) {
     const actor = game.actors.get(actorId);
     
     if (!actor) {
@@ -307,7 +309,7 @@ export class ModifierManager {
       return false;
     }
 
-    return this.removeModifier(actor, fieldPath, modifierName);
+    return this.removeModifier(actor, fieldPath, modifierName, force);
   }
 
   /**
@@ -317,6 +319,7 @@ export class ModifierManager {
    * @param {string} modifierName - Name of the modifier to remove
    * @param {Object} [options] - Additional options
    * @param {string} [options.searchScope='all'] - Where to search when using name: 'all', 'scene', 'world'
+   * @param {boolean} [options.force=false] - Whether to force removal of permanent modifiers
    * @returns {Promise<boolean>} - True if successful, false otherwise
    */
   static async removeModifierByRef(actorRef, fieldPath, modifierName, options = {}) {
@@ -327,7 +330,7 @@ export class ModifierManager {
       return false;
     }
 
-    return this.removeModifier(actor, fieldPath, modifierName);
+    return this.removeModifier(actor, fieldPath, modifierName, options.force);
   }
 
   /**
@@ -338,6 +341,7 @@ export class ModifierManager {
    * @param {string} modifierName - Name of the modifier to remove
    * @param {Object} [options] - Additional options
    * @param {string} [options.searchScope='all'] - Where to search: 'all', 'scene', 'world'
+   * @param {boolean} [options.force=false] - Whether to force removal of permanent modifiers
    * @returns {Promise<boolean>} - True if successful, false otherwise
    */
   static async removeModifierByName(actorName, fieldPath, modifierName, options = {}) {
@@ -350,7 +354,7 @@ export class ModifierManager {
       return false;
     }
 
-    return this.removeModifier(actor, fieldPath, modifierName);
+    return this.removeModifier(actor, fieldPath, modifierName, options.force);
   }
 
   /**
@@ -786,9 +790,9 @@ globalThis.addModifier = function(actorName, fieldPath, modifierName, modifierVa
   return ModifierManager.addModifierByName(actorName, fieldPath, modifierName, modifierValue, options);
 };
 
-globalThis.removeModifier = function(actorName, fieldPath, modifierName) {
+globalThis.removeModifier = function(actorName, fieldPath, modifierName, force = false) {
   console.warn("Global removeModifier() uses actor names which are not unique. Consider using ModifierManager.removeModifierById() or ModifierManager.removeModifierByRef() instead.");
-  return ModifierManager.removeModifierByName(actorName, fieldPath, modifierName);
+  return ModifierManager.removeModifierByName(actorName, fieldPath, modifierName, { force });
 };
 
 globalThis.listModifiers = function(actorName, fieldPath = null) {
@@ -811,8 +815,8 @@ globalThis.addModifierById = function(actorId, fieldPath, modifierName, modifier
   return ModifierManager.addModifierById(actorId, fieldPath, modifierName, modifierValue, options);
 };
 
-globalThis.removeModifierById = function(actorId, fieldPath, modifierName) {
-  return ModifierManager.removeModifierById(actorId, fieldPath, modifierName);
+globalThis.removeModifierById = function(actorId, fieldPath, modifierName, force = false) {
+  return ModifierManager.removeModifierById(actorId, fieldPath, modifierName, force);
 };
 
 globalThis.listModifiersById = function(actorId, fieldPath = null) {
