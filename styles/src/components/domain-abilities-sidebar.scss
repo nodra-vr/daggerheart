@@ -97,7 +97,7 @@
   transform: scale(1.1);
 }
 
-/* Name label (appears on hover) */
+/* Name label (always visible) */
 .domain-ability-button .ability-name {
   position: absolute;
   left: 0;
@@ -108,14 +108,8 @@
   color: var(--dh-color-gold, #f3c267);
   font-size: 0.65rem;
   text-align: center;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-.domain-ability-button:hover .ability-name,
-.domain-ability-button:focus .ability-name {
   opacity: 1;
+  pointer-events: none;
 }
 
 .domain-ability-preview {

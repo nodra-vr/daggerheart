@@ -1253,7 +1253,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const row = $(`
       <div class="modifier-row ${modifier.enabled === false ? 'disabled' : ''}" data-index="${index}">
         <input type="text" class="modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" />
-        <input type="number" class="modifier-value" placeholder="±0" value="${modifier.value || 0}" />
+        <input type="text" class="modifier-value" placeholder="±0 or @prof" value="${modifier.value || (modifier.value === 0 ? '0' : '')}" />
         <input type="checkbox" class="modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} />
         <button type="button" class="modifier-delete">×</button>
       </div>
@@ -1481,7 +1481,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   _addModifier(overlay) {
     const newModifier = {
       name: 'Modifier',
-      value: 0,
+      value: '0',
       enabled: true
     };
 
@@ -1504,8 +1504,20 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       const isEnabled = $row.find('.modifier-toggle').is(':checked');
 
       if (isEnabled) {
-        const value = parseInt($row.find('.modifier-value').val()) || 0;
-        modifierTotal += value;
+        let value = $row.find('.modifier-value').val().trim() || '0';
+        
+        // Process @ variables if present
+        if (value.includes('@') && globalThis.daggerheart?.EntitySheetHelper) {
+          try {
+            value = globalThis.daggerheart.EntitySheetHelper.processInlineReferences(value, this.actor);
+          } catch (error) {
+            console.warn("Daggerheart | Error processing inline references in modifier:", error);
+          }
+        }
+        
+        // Convert to number for calculation
+        const numericValue = parseInt(value) || 0;
+        modifierTotal += numericValue;
       }
     });
 
@@ -1535,10 +1547,10 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     overlay.find('.modifier-row').each((index, row) => {
       const $row = $(row);
       let name = $row.find('.modifier-name').val().trim();
-      const value = parseInt($row.find('.modifier-value').val()) || 0;
+      const value = $row.find('.modifier-value').val().trim() || '0';
       const enabled = $row.find('.modifier-toggle').is(':checked');
 
-      if (value !== 0) {
+      if (value !== '0' && value !== 0 && value !== '') {
 
         if (!name) {
           name = 'Modifier';
@@ -1554,7 +1566,20 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     let totalValue = baseValue;
     modifiers.forEach(modifier => {
       if (modifier.enabled !== false) {
-        totalValue += modifier.value;
+        let modValue = modifier.value;
+        
+        // Process @ variables if present
+        if (typeof modValue === 'string' && modValue.includes('@') && globalThis.daggerheart?.EntitySheetHelper) {
+          try {
+            modValue = globalThis.daggerheart.EntitySheetHelper.processInlineReferences(modValue, this.actor);
+          } catch (error) {
+            console.warn("Daggerheart | Error processing inline references in modifier:", error);
+          }
+        }
+        
+        // Convert to number for calculation
+        const numericValue = parseInt(modValue) || 0;
+        totalValue += numericValue;
       }
     });
 

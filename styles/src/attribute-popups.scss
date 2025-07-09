@@ -635,11 +635,11 @@
   cursor: pointer;
   user-select: none;
   transition: var(--dh-transition-fast);
-  width: 45px;
+  width: 2.5em;
   height: 30px;
   background: rgba(243, 194, 103, 0.15);
   border: 1px solid var(--dh-color-gold);
-  border-radius: 15px;
+  border-radius: 8px;
   color: var(--dh-color-off-white);
   text-align: center;
   font-size: 14px;
@@ -664,7 +664,7 @@
 /* Weapon damage display */
 .weapon-damage-display {
   transition: var(--dh-transition-fast);
-  width: 4.5em;
+  width: fit-content;
   height: 30px;
   background: rgba(243, 194, 103, 0.15);
   border: 1px solid var(--dh-color-gold);
@@ -677,7 +677,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 0.25em;
+  padding: 0.5em;
 
   &:hover {
     background: rgba(243, 194, 103, 0.25);
