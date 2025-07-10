@@ -565,23 +565,23 @@ export class DaggerheartDialogHelper {
             <div class="flex-col">
                 <span class="label-bar">Hope Die</span>
                 <select name="hopeDieSize" id="hopeDieSize">
-                    <option value="d4" ${ initialValues.hopeDieSize === 'd4' ? 'selected' : ''}>d4</option>
-                    <option value="d6" ${ initialValues.hopeDieSize === 'd6' ? 'selected' : ''}>d6</option>
-                    <option value="d8" ${ initialValues.hopeDieSize === 'd8' ? 'selected' : ''}>d8</option>
-                    <option value="d10" ${ initialValues.hopeDieSize === 'd10' ? 'selected' : ''}>d10</option>
-                    <option value="d12" ${ initialValues.hopeDieSize === 'd12' || !initialValues.hopeDieSize ? 'selected' : ''}>d12</option>
-                    <option value="d20" ${ initialValues.hopeDieSize === 'd20' ? 'selected' : ''}>d20</option>
+                    <option value="d4" ${initialValues.hopeDieSize === 'd4' ? 'selected' : ''}>d4</option>
+                    <option value="d6" ${initialValues.hopeDieSize === 'd6' ? 'selected' : ''}>d6</option>
+                    <option value="d8" ${initialValues.hopeDieSize === 'd8' ? 'selected' : ''}>d8</option>
+                    <option value="d10" ${initialValues.hopeDieSize === 'd10' ? 'selected' : ''}>d10</option>
+                    <option value="d12" ${initialValues.hopeDieSize === 'd12' || !initialValues.hopeDieSize ? 'selected' : ''}>d12</option>
+                    <option value="d20" ${initialValues.hopeDieSize === 'd20' ? 'selected' : ''}>d20</option>
                 </select>
             </div>
             <div class="flex-col">
                 <span class="label-bar">Fear Die</span>
                 <select name="fearDieSize" id="fearDieSize">
-                    <option value="d4" ${ initialValues.fearDieSize === 'd4' ? 'selected' : ''}>d4</option>
-                    <option value="d6" ${ initialValues.fearDieSize === 'd6' ? 'selected' : ''}>d6</option>
-                    <option value="d8" ${ initialValues.fearDieSize === 'd8' ? 'selected' : ''}>d8</option>
-                    <option value="d10" ${ initialValues.fearDieSize === 'd10' ? 'selected' : ''}>d10</option>
-                    <option value="d12" ${ initialValues.fearDieSize === 'd12' || !initialValues.fearDieSize ? 'selected' : ''}>d12</option>
-                    <option value="d20" ${ initialValues.fearDieSize === 'd20' ? 'selected' : ''}>d20</option>
+                    <option value="d4" ${initialValues.fearDieSize === 'd4' ? 'selected' : ''}>d4</option>
+                    <option value="d6" ${initialValues.fearDieSize === 'd6' ? 'selected' : ''}>d6</option>
+                    <option value="d8" ${initialValues.fearDieSize === 'd8' ? 'selected' : ''}>d8</option>
+                    <option value="d10" ${initialValues.fearDieSize === 'd10' ? 'selected' : ''}>d10</option>
+                    <option value="d12" ${initialValues.fearDieSize === 'd12' || !initialValues.fearDieSize ? 'selected' : ''}>d12</option>
+                    <option value="d20" ${initialValues.fearDieSize === 'd20' ? 'selected' : ''}>d20</option>
                 </select>
             </div>
         </div>
@@ -631,7 +631,7 @@ export class DaggerheartDialogHelper {
           <span class="label-bar">Flat Modifier</span>
           <div class="flex-row">
             <button id="mod-minus" class="clicker-button clicker-minus-button" type="button"></button>
-            <input id="dualityDiceModifierInput" autofocus name="modifier" step="1" type="number" value="${ initialValues.modifier }"/>
+            <input id="dualityDiceModifierInput" autofocus name="modifier" step="1" type="number" value="${initialValues.modifier}"/>
             <button id="mod-plus" class="clicker-button clicker-plus-button" type="button"></button>
           </div>
         </div>
@@ -674,10 +674,24 @@ export class DaggerheartDialogHelper {
 
             const netResult = calculateNetResult(rawAdvantage, rawDisadvantage);
 
-            let modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
+            let spend = 0;
+            let experice = 0;
             html.find('.exp-checkbox:checked').each((i, el) => {
-              modifier += parseInt(el.dataset.mod) || 0;
+              const val = parseInt(el.dataset.mod) || 0;
+              if (val > 0) { experice += val; spend += 1; }
             });
+
+            let modifier = parseInt(html.find('#dualityDiceModifierInput').val()) || 0;
+            if (spend > 0 && actor && actor.type === "character") {
+              if (actor.system.hope.value >= spend) {
+                modifier += experice;
+                const value = actor.system.hope.value - spend;
+                actor.update({ "system.hope.value": Math.max(value, 0) });
+              } else {
+                ui.notifications.warn("Experience not applied, not enough hope.");
+              }
+            }
+
             const hopeDieSize = html.find('#hopeDieSize').val();
             const fearDieSize = html.find('#fearDieSize').val();
             return { advantage: netResult.advantage, disadvantage: netResult.disadvantage, modifier, hopeDieSize, fearDieSize };
@@ -730,7 +744,7 @@ export class DaggerheartDialogHelper {
 
         html.find('.dice-btn').on('click', (e) => {
           const button = $(e.currentTarget);
-          const die = button.data('die'); 
+          const die = button.data('die');
           const isIncrease = button.hasClass('increase');
 
           const hiddenInput = html.find(`input[name="advantage-${die}"]`);
@@ -739,9 +753,9 @@ export class DaggerheartDialogHelper {
           let currentValue = parseInt(hiddenInput.val()) || 0;
 
           if (isIncrease) {
-            currentValue = Math.min(currentValue + 1, 10); 
+            currentValue = Math.min(currentValue + 1, 10);
           } else {
-            currentValue = Math.max(currentValue - 1, -10); 
+            currentValue = Math.max(currentValue - 1, -10);
           }
 
           hiddenInput.val(currentValue);
@@ -820,7 +834,7 @@ export class DaggerheartDialogHelper {
           <span class="label-bar">Advantage</span>
           <div class="flex-row">
             <button id="adv-minus" class="clicker-button clicker-minus-button" type="button"></button>
-            <input id="npcDiceAdvantageInput" min="0" name="advantage" step="1" type="number" value="${ initialValues.advantage }"/>
+            <input id="npcDiceAdvantageInput" min="0" name="advantage" step="1" type="number" value="${initialValues.advantage}"/>
             <button id="adv-plus" class="clicker-button clicker-plus-button" type="button"></button>
           </div>
         </div>
@@ -828,7 +842,7 @@ export class DaggerheartDialogHelper {
           <span class="label-bar">Disadvantage</span>
           <div class="flex-row">
             <button id="dis-minus" class="clicker-button clicker-minus-button" type="button"></button>
-            <input id="npcDiceDisadvantageInput" min="0" name="disadvantage" step="1" type="number" value="${ initialValues.disadvantage }"/>
+            <input id="npcDiceDisadvantageInput" min="0" name="disadvantage" step="1" type="number" value="${initialValues.disadvantage}"/>
             <button id="dis-plus" class="clicker-button clicker-plus-button" type="button"></button>
           </div>
         </div>
@@ -838,7 +852,7 @@ export class DaggerheartDialogHelper {
           <span class="label-bar">Flat Modifier</span>
           <div class="flex-row">
             <button id="mod-minus" class="clicker-button clicker-minus-button" type="button"></button>
-            <input id="npcDiceModifierInput" autofocus name="modifier" step="1" type="number" value="${ initialValues.modifier }"/>
+            <input id="npcDiceModifierInput" autofocus name="modifier" step="1" type="number" value="${initialValues.modifier}"/>
             <button id="mod-plus" class="clicker-button clicker-plus-button" type="button"></button>
           </div>
         </div>
@@ -916,8 +930,8 @@ export class DaggerheartDialogHelper {
   static async showRecoveryAllocationDialog(config) {
     const { characterName, availablePoints, currentHP, currentStress, maxHP, maxStress } = config;
 
-    const maxHPHealing = currentHP; 
-    const maxStressHealing = currentStress; 
+    const maxHPHealing = currentHP;
+    const maxStressHealing = currentStress;
 
     const content = `
       <form>
@@ -1088,27 +1102,27 @@ export class DaggerheartDialogHelper {
 
   static async showShortRestDialog(characterName, actor) {
     const options = [
-      { 
-        id: 'tend-wounds', 
-        label: 'Tend to Wounds', 
+      {
+        id: 'tend-wounds',
+        label: 'Tend to Wounds',
         value: 'tend-wounds',
         description: 'Clear 1d4 + character tier hit points'
       },
-      { 
-        id: 'clear-stress', 
-        label: 'Clear Stress', 
+      {
+        id: 'clear-stress',
+        label: 'Clear Stress',
         value: 'clear-stress',
         description: 'Clear 1d4 + character tier stress'
       },
-      { 
-        id: 'repair-armor', 
-        label: 'Repair Armor', 
+      {
+        id: 'repair-armor',
+        label: 'Repair Armor',
         value: 'repair-armor',
         description: 'Clear 1d4 + character tier armor slots'
       },
-      { 
-        id: 'prepare', 
-        label: 'Prepare', 
+      {
+        id: 'prepare',
+        label: 'Prepare',
         value: 'prepare',
         description: 'Gain a hope'
       }
@@ -1380,33 +1394,33 @@ export class DaggerheartDialogHelper {
 
   static async showLongRestDialog(characterName, actor) {
     const options = [
-      { 
-        id: 'tend-all-wounds', 
-        label: 'Tend to All Wounds', 
+      {
+        id: 'tend-all-wounds',
+        label: 'Tend to All Wounds',
         value: 'tend-all-wounds',
         description: 'Clear all Hit Points (can do to an ally instead)'
       },
-      { 
-        id: 'clear-all-stress', 
-        label: 'Clear All Stress', 
+      {
+        id: 'clear-all-stress',
+        label: 'Clear All Stress',
         value: 'clear-all-stress',
         description: 'Clear all Stress'
       },
-      { 
-        id: 'repair-all-armor', 
-        label: 'Repair All Armor', 
+      {
+        id: 'repair-all-armor',
+        label: 'Repair All Armor',
         value: 'repair-all-armor',
         description: 'Clear all Armor Slots (can do to an ally instead)'
       },
-      { 
-        id: 'prepare', 
-        label: 'Prepare', 
+      {
+        id: 'prepare',
+        label: 'Prepare',
         value: 'prepare',
         description: 'Gain 1 Hope (2 Hope if done with party members)'
       },
-      { 
-        id: 'work-project', 
-        label: 'Work on a Project', 
+      {
+        id: 'work-project',
+        label: 'Work on a Project',
         value: 'work-project',
         description: 'Establish or continue work on a project'
       }
@@ -1533,7 +1547,7 @@ export class DaggerheartDialogHelper {
 
   static async _processLongRestTendWounds(characterName, actor) {
     const currentHP = actor.system.health?.value || 0;
-    const newHP = 0; 
+    const newHP = 0;
 
     await actor.update({ "system.health.value": newHP });
 
@@ -1564,7 +1578,7 @@ export class DaggerheartDialogHelper {
 
   static async _processLongRestClearStress(characterName, actor) {
     const currentStress = actor.system.stress?.value || 0;
-    const newStress = 0; 
+    const newStress = 0;
 
     await actor.update({ "system.stress.value": newStress });
 
@@ -1595,7 +1609,7 @@ export class DaggerheartDialogHelper {
 
   static async _processLongRestRepairArmor(characterName, actor) {
     const currentArmorSlots = actor.system.defenses?.['armor-slots']?.value || 0;
-    const newArmorSlots = 0; 
+    const newArmorSlots = 0;
 
     await actor.update({ "system.defenses.armor-slots.value": newArmorSlots });
 
@@ -1628,7 +1642,7 @@ export class DaggerheartDialogHelper {
 
     const currentHope = actor.system.hope?.value || 0;
     const maxHope = actor.system.hope?.max || 0;
-    const hopeGained = 1; 
+    const hopeGained = 1;
     const newHope = Math.min(maxHope, currentHope + hopeGained);
 
     await actor.update({ "system.hope.value": newHope });
