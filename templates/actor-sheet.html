@@ -278,14 +278,20 @@
                         <div class="threshold-values">
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">{{localize "DH.Mark1HP"}}</span>
                             <div class="resource-group">
-                                <input type="number" name="system.threshold.major"
-                                    value="{{systemData.threshold.major}}" />
+                                <div class="attribute-value-display threshold-value-display"
+                                     data-field="system.threshold.major.value"
+                                     data-label="Major Threshold"
+                                     data-has-modifiers="true"
+                                     data-min="0">{{systemData.threshold.major.value}}</div>
                                 <a class="trait-effects">{{localize "DH.Major"}}</a>
                             </div>
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">{{localize "DH.Mark2HP"}}</span>
                             <div class="resource-group">
-                                <input type="number" name="system.threshold.severe"
-                                    value="{{systemData.threshold.severe}}" />
+                                <div class="attribute-value-display threshold-value-display"
+                                     data-field="system.threshold.severe.value"
+                                     data-label="Severe Threshold"
+                                     data-has-modifiers="true"
+                                     data-min="0">{{systemData.threshold.severe.value}}</div>
                                 <a class="trait-effects">{{localize "DH.Severe"}}</a>
                             </div>
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">{{localize "DH.Mark3HP"}}</span>
@@ -536,6 +542,9 @@
                                         {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
                                     </span>
                                     {{/if}}
+                                    {{#if (and (eq item.type "armor") item.system.equipped)}}
+                                    <span class="armor-slot-tag equipped">Equipped Armor</span>
+                                    {{/if}}
                                 </h4>
                             </div>
                             <div class="item-controls">
@@ -544,6 +553,10 @@
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
                                 <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                {{/if}}
+                                {{#if (eq item.type "armor")}}
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
+                                        class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
@@ -583,6 +596,9 @@
                                         {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
                                     </span>
                                     {{/if}}
+                                    {{#if (and (eq item.type "armor") item.system.equipped)}}
+                                    <span class="armor-slot-tag equipped">Equipped Armor</span>
+                                    {{/if}}
                                 </h4>
                             </div>
                             <div class="item-controls">
@@ -591,6 +607,10 @@
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
                                 <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                {{/if}}
+                                {{#if (eq item.type "armor")}}
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
+                                        class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
@@ -636,6 +656,9 @@
                                         {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
                                     </span>
                                     {{/if}}
+                                    {{#if (and (eq item.type "armor") item.system.equipped)}}
+                                    <span class="armor-slot-tag equipped">Equipped Armor</span>
+                                    {{/if}}
                                 </h4>
                             </div>
                             <div class="item-controls">
@@ -644,6 +667,10 @@
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
                                 <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                {{/if}}
+                                {{#if (eq item.type "armor")}}
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
+                                        class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
@@ -681,6 +708,9 @@
                                         {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
                                     </span>
                                     {{/if}}
+                                    {{#if (and (eq item.type "armor") item.system.equipped)}}
+                                    <span class="armor-slot-tag equipped">Equipped Armor</span>
+                                    {{/if}}
                                 </h4>
                             </div>
                             <div class="item-controls">
@@ -689,6 +719,10 @@
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
                                 <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                {{/if}}
+                                {{#if (eq item.type "armor")}}
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
+                                        class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
@@ -727,6 +761,9 @@
                                         {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
                                     </span>
                                     {{/if}}
+                                    {{#if (and (eq item.type "armor") item.system.equipped)}}
+                                    <span class="armor-slot-tag equipped">Equipped Armor</span>
+                                    {{/if}}
                                 </h4>
                             </div>
                             <div class="item-controls">
@@ -735,6 +772,10 @@
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
                                 <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                {{/if}}
+                                {{#if (eq item.type "armor")}}
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
+                                        class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
@@ -773,6 +814,9 @@
                                         {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
                                     </span>
                                     {{/if}}
+                                    {{#if (and (eq item.type "armor") item.system.equipped)}}
+                                    <span class="armor-slot-tag equipped">Equipped Armor</span>
+                                    {{/if}}
                                 </h4>
                             </div>
                             <div class="item-controls">
@@ -781,6 +825,10 @@
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
                                 <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                {{/if}}
+                                {{#if (eq item.type "armor")}}
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
+                                        class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
@@ -819,6 +867,9 @@
                                         {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
                                     </span>
                                     {{/if}}
+                                    {{#if (and (eq item.type "armor") item.system.equipped)}}
+                                    <span class="armor-slot-tag equipped">Equipped Armor</span>
+                                    {{/if}}
                                 </h4>
                             </div>
                             <div class="item-controls">
@@ -827,6 +878,10 @@
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
                                 <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                {{/if}}
+                                {{#if (eq item.type "armor")}}
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
+                                        class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 {{#if (eq item.system.location "vault")}}
                                 <a class="item-control" title="Send to Domain" data-action="send-to-domain"><i class="fas fa-arrow-left"></i></a>
@@ -870,6 +925,9 @@
                                         {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
                                     </span>
                                     {{/if}}
+                                    {{#if (and (eq item.type "armor") item.system.equipped)}}
+                                    <span class="armor-slot-tag equipped">Equipped Armor</span>
+                                    {{/if}}
                                 </h4>
                             </div>
                             <div class="item-controls">
@@ -878,6 +936,10 @@
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
                                 <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                {{/if}}
+                                {{#if (eq item.type "armor")}}
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
+                                        class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 {{#if (eq item.system.location "vault")}}
                                 <a class="item-control" title="Send to Domain" data-action="send-to-domain"><i class="fas fa-arrow-left"></i></a>

@@ -3,7 +3,7 @@
 .daggerheart.sheet.actor:not(.npc),  // Character sheets
 .daggerheart.sheet.actor.npc,        // NPC/Adversary sheets  
 .daggerheart.sheet.companion,        // Companion sheets
-.item-sheet-card {                   // Item sheets
+.daggerheart.item-sheet-card {                   // Item sheets
   .sheet-tabs {
     margin-top: 1em;
     border-top: none;

@@ -122,6 +122,10 @@
   .defense[data-trait="evasion"] {
     color: var(--dh-color-off-black) !important;
   }
+    .defense[data-trait="evasion"] label,
+  .defense[data-trait="evasion"] {
+    color: var(--dh-color-off-white) !important;
+  }
 }
 
 /* NPC Sheet Specific Styling */

@@ -109,8 +109,12 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
       let targetArmorSlots = 0;
       if (isArmorSlotsObject) {
         // Use per-target armor slots from object mapping
-        const targetKey = target.id || target.name;
-        targetArmorSlots = armorSlotsUsed[targetKey] || armorSlotsUsed[target.name] || 0;
+        // Try ID first, then name as fallback with deprecation warning
+        targetArmorSlots = armorSlotsUsed[target.id] || 0;
+        if (targetArmorSlots === 0 && armorSlotsUsed[target.name]) {
+          console.warn(`Damage Application: Using actor name "${target.name}" in armor slots mapping is DEPRECATED. Use actor ID "${target.id}" instead. Actor names are not unique and may cause issues.`);
+          targetArmorSlots = armorSlotsUsed[target.name];
+        }
       } else {
         // Use single armor slots value for all targets (backward compatibility)
         targetArmorSlots = armorSlotsUsed;
@@ -537,13 +541,31 @@ export async function undoDamageHealing(undoId) {
     
     // For token-based actors, try to find them in current scene
     if (actorData.isFromToken) {
-      // Search current scene tokens by name (most reliable for unlinked tokens)
-      const tokens = canvas.tokens?.placeables || [];
-      const token = tokens.find(t => 
-        t.actor && 
-        t.actor.name === actorData.actorName && 
-        t.actor.type === actorData.actorType
-      );
+      // First try to find by token ID and scene ID if available
+      let token = null;
+      if (actorData.tokenId && actorData.sceneId) {
+        const scene = game.scenes.get(actorData.sceneId);
+        if (scene && scene.id === canvas.scene?.id) {
+          token = canvas.tokens?.placeables.find(t => t.id === actorData.tokenId);
+        }
+      }
+      
+      // If not found by token ID, search by actor ID (for linked tokens)
+      if (!token && actorData.actorId) {
+        const tokens = canvas.tokens?.placeables || [];
+        token = tokens.find(t => t.actor && t.actor.id === actorData.actorId);
+      }
+      
+      // Finally, fall back to name search with deprecation warning
+      if (!token) {
+        console.warn(`Damage Application Undo: Searching for token by name "${actorData.actorName}" is DEPRECATED. Actor names are not unique and may cause issues.`);
+        const tokens = canvas.tokens?.placeables || [];
+        token = tokens.find(t =>
+          t.actor &&
+          t.actor.name === actorData.actorName &&
+          t.actor.type === actorData.actorType
+        );
+      }
       
       if (token && token.actor) {
         targetActor = token.actor;
@@ -553,12 +575,12 @@ export async function undoDamageHealing(undoId) {
         continue;
       }
     } else {
-      // For world actors
+      // For world actors, use actor ID
       targetActor = game.actors.get(actorData.actorId);
       if (targetActor) {
         console.log("Daggerheart | Found world actor:", targetActor.name);
       } else {
-        console.warn(`World actor ${actorData.actorName} not found`);
+        console.warn(`World actor with ID ${actorData.actorId} not found`);
         continue;
       }
     }
@@ -759,8 +781,9 @@ function _getTargetActors() {
  * @returns {number} The HP damage to apply (1, 2, or 3)
  */
 function _calculateDamageToHP(damageAmount, thresholds) {
-  const severeThreshold = parseInt(thresholds.severe) || 0;
-  const majorThreshold = parseInt(thresholds.major) || 0;
+  // Handle both structured (character) and simple (NPC) threshold formats
+  const severeThreshold = parseInt(thresholds.severe?.value ?? thresholds.severe) || 0;
+  const majorThreshold = parseInt(thresholds.major?.value ?? thresholds.major) || 0;
   
   // Check severe threshold first
   // If severe threshold is 0, it means always severe damage
@@ -787,8 +810,9 @@ function _calculateDamageToHP(damageAmount, thresholds) {
  * @returns {string} Description of the threshold result
  */
 function _getThresholdDescription(damageAmount, thresholds, hpDamage) {
-  const severeThreshold = parseInt(thresholds.severe) || 0;
-  const majorThreshold = parseInt(thresholds.major) || 0;
+  // Handle both structured (character) and simple (NPC) threshold formats
+  const severeThreshold = parseInt(thresholds.severe?.value ?? thresholds.severe) || 0;
+  const majorThreshold = parseInt(thresholds.major?.value ?? thresholds.major) || 0;
   
   if (hpDamage === 3) {
     if (severeThreshold === 0) {

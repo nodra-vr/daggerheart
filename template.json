@@ -33,8 +33,16 @@
         "tooltip": "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic."
       },
       "threshold": {
-        "major": 8,
-        "severe": 12
+        "major": {
+          "baseValue": 8,
+          "modifiers": [],
+          "value": 8
+        },
+        "severe": {
+          "baseValue": 12,
+          "modifiers": [],
+          "value": 12
+        }
       },
       "hope": {
         "value": 2,
@@ -145,6 +153,8 @@
           "tooltip": "Your character's Evasion reflects how hard it is for adversaries to hit them."
         },
         "armor": {
+          "baseValue": 0,
+          "modifiers": [],
           "value": 0,
           "tooltip": "When your character takes damage, you can mark one Armor Slot, then reduce the severity of the damage by one threshold."
         },
@@ -203,6 +213,8 @@
           "tooltip": "Your character's Evasion reflects how hard it is for adversaries to hit them."
         },
         "armor": {
+          "baseValue": 0,
+          "modifiers": [],
           "value": 0,
           "tooltip": "When your character takes damage, you can mark one Armor Slot, then reduce the severity of the damage by one threshold."
         },
@@ -268,9 +280,9 @@
         "name": "",
         "description": "Input your weapon abilities, description, passive and other relevant notes here.",
         "damage": {
-          "baseValue": "d6",
+          "baseValue": "1d6",
           "modifiers": [],
-          "value": "d6"
+          "value": "1d6"
         },
         "to-hit": {
           "baseValue": 0,
@@ -285,7 +297,7 @@
     }
   },
   "Item": {
-    "types": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass", "weapon"],
+    "types": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass", "weapon", "armor"],
     "htmlFields": ["description"],
     "item": {
       "description": "",
@@ -401,6 +413,23 @@
         "modifiers": [],
         "value": "1d8"
       },
+      "quantity": 1,
+      "weight": 0,
+      "attributes": {},
+      "groups": {},
+      "resourceTrackers": []
+    },
+    "armor": {
+      "description": "",
+      "category": "",
+      "tier": "",
+      "location": "backpack",
+      "equipped": false,
+      "baseThresholds": {
+        "major": 0,
+        "severe": 0
+      },
+      "baseScore": 0,
       "quantity": 1,
       "weight": 0,
       "attributes": {},

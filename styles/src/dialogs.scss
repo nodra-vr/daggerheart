@@ -587,4 +587,131 @@
       }
     }
   }
+
+  /* ====================================
+     DICE GRID SYSTEM STYLES
+     New advantage/disadvantage dice system
+     ==================================== */
+  
+  .dice-grid {
+    display: flex;
+    justify-content: center;
+    gap: var(--dh-space-lg);
+    margin: var(--dh-space-md) 0;
+    flex-wrap: wrap;
+  }
+  
+  .dice-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--dh-space-xs);
+    min-width: 60px;
+  }
+  
+  .dice-btn {
+    background: rgba(67, 63, 100, 0.5);
+    border: 1px solid #6d6795;
+    border-radius: var(--dh-radius-sm);
+    color: var(--dh-color-off-white);
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    cursor: pointer;
+    transition: var(--dh-transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9em;
+    font-weight: bold;
+    line-height: 1;
+    
+    &:hover {
+      background: rgba(67, 63, 100, 0.8);
+      border-color: var(--dh-color-gold);
+      color: var(--dh-color-gold);
+      transform: scale(1.1);
+    }
+    
+  }
+  
+  .dice-icon {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--dh-color-gold);
+    
+    &.empty {
+      color: #6d6795;
+    }
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+  
+  /* Font Awesome dice icon styling */
+  .dice-icon {
+    i {
+      font-size: 32px;
+      color: inherit;
+      line-height: 1;
+    }
+    
+    .dice-count {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--dh-color-off-white);
+      font-weight: var(--dh-font-weight-bold);
+      font-size: var(--dh-font-size-sm);
+      padding: 2px 6px;
+      min-width: 20px;
+      text-align: center;
+      line-height: 1.2;
+      pointer-events: none;
+      z-index: 2;
+      font-size: 1.5em;
+      text-shadow:
+        1px 1px 0 rgba(0, 0, 0, 0.8),
+        -1px -1px 0 rgba(0, 0, 0, 0.8),
+        1px -1px 0 rgba(0, 0, 0, 0.8),
+        -1px 1px 0 rgba(0, 0, 0, 0.8),
+        0 0 4px rgba(0, 0, 0, 0.9);
+    }
+  }
+  
+  /* Advantage/Disadvantage single grid system */
+  .advantage-disadvantage-grid {
+    .dice-icon {
+      color: #391f73;
+      
+      &.empty {
+        color: #2d2540;
+      }
+      
+      &.advantage {
+        color: var(--dh-color-gold);
+        
+        .dice-count {
+          color: #fadd9f;
+        }
+      }
+      
+      &.disadvantage {
+        color: #3b75c2;
+        
+        .dice-count {
+          color: #b5d5ff ;
+        }
+      }
+    }
+  }
 }

@@ -88,12 +88,13 @@ export class EquipmentHandler {
     // Enforce the two-weapon limit (ignoring the weapon we might be re-assigning)
     const otherEquipped = this.getEquippedWeapons(actor).filter(w => w.id !== weapon.id);
     const isCurrentlyEquipped = weapon.system?.equipped === true;
-    if (!isCurrentlyEquipped && otherEquipped.length >= 2) {
+    const currentSlotWeapon = slot === "primary" ? this.getPrimaryWeapon(actor) : this.getSecondaryWeapon(actor);
+    
+    // Only enforce the limit if we're not replacing a weapon in the target slot
+    if (!isCurrentlyEquipped && !currentSlotWeapon && otherEquipped.length >= 2) {
       ui.notifications.warn(game.i18n?.localize?.("DH.MaxTwoWeapons") ?? "You can only equip two weapons at a time.");
       return false;
     }
-
-    const currentSlotWeapon = slot === "primary" ? this.getPrimaryWeapon(actor) : this.getSecondaryWeapon(actor);
 
     try {
       // Toggle off if the weapon is already in that slot

@@ -282,6 +282,27 @@
   }
 }
 
+/* Armor slot tags */
+.daggerheart .item-list .item .item-name .armor-slot-tag {
+  display: inline-block;
+  font-size: 0.7em;
+  font-weight: 600;
+  padding: 0.2em 0.5em;
+  margin-left: 0.5em;
+  border-radius: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  vertical-align: middle;
+  
+  &.equipped {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: white;
+    border: 1px solid #15803d;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
 .daggerheart .item-list .item img {
   flex: 0 0 24px;
   margin-right: 5px;
@@ -334,6 +355,34 @@
 .weapon-equip-secondary {
   position: relative;
   margin-right: 2px;
+}
+
+/* Equipment button styling - equipped state colors */
+.item-control.weapon-equip-primary.equipped,
+.item-control.weapon-equip-secondary.equipped,
+.item-control.armor-equip.equipped {
+  color: var(--dh-color-gold)
+}
+
+.item-control.weapon-equip-primary.equipped:hover,
+.item-control.weapon-equip-secondary.equipped:hover,
+.item-control.armor-equip.equipped:hover {
+  color: var(--dh-color-gold);
+  scale: 1.1;
+}
+
+/* Unequipped state styling */
+.item-control.weapon-equip-primary:not(.equipped),
+.item-control.weapon-equip-secondary:not(.equipped),
+.item-control.armor-equip:not(.equipped) {
+  color: var(--dh-color-off-white);
+}
+
+.item-control.weapon-equip-primary:not(.equipped):hover,
+.item-control.weapon-equip-secondary:not(.equipped):hover,
+.item-control.armor-equip:not(.equipped):hover {
+  color: var(--dh-color-gold);
+  scale: 1.1;
 }
 
 /* Weapon slot tag styling for equipped weapons in item names */
