@@ -100,14 +100,13 @@ export class AdversaryDataModel extends ActorDataModel {
      * this bonus or penalty to your roll.
      */
     schema.attack = new SchemaField({
-      base: new NumberField({
-        required: true, integer: true,
-        positive: false, initial: 0,
-        min: -20, max: +20
+      base: new StringField({
+        trim: true, blank: false, initial: "1",
+        required: true, textSearch: false
       }),
-      value: new NumberField({
-        required: true, integer: true,
-        positive: false, initial: 0
+      total: new StringField({
+        trim: true, blank: false, initial: "1",
+        required: true, textSearch: false
       }),
       modifiers: new ArrayField(new SchemaField({
         name: new StringField({
@@ -115,8 +114,8 @@ export class AdversaryDataModel extends ActorDataModel {
           trim: true, textSearch: false
         }),
         value: new StringField({
-          required: true, blank: true,
-          trim: true, textSearch: false
+          trim: true, blank: false, initial: "+1",
+          required: true, textSearch: false,
         }),
         enabled: new BooleanField({
           required: true, initial: false,
@@ -150,12 +149,12 @@ export class AdversaryDataModel extends ActorDataModel {
             initial: "bludgeoning",
           }),
           base: new StringField({
-            required: true, blank: false,
-            trim: true, initial: "1d6",
+            trim: true, blank: false, initial: "1d6",
+            required: true, textSearch: false,
           }),
-          value: new StringField({
-            required: true, blank: false,
-            trim: true, initial: "1d6",
+          total: new StringField({
+            trim: true, blank: false, initial: "1d6",
+            required: true, textSearch: false,
           }),
           modifiers: new ArrayField(new SchemaField({
             name: new StringField({
@@ -163,8 +162,8 @@ export class AdversaryDataModel extends ActorDataModel {
               trim: true, textSearch: false
             }),
             value: new StringField({
-              required: true, blank: true,
-              trim: true, textSearch: false
+              trim: true, blank: false, initial: "+1",
+              required: true, textSearch: false,
             }),
             enabled: new BooleanField({
               required: true, initial: false,
