@@ -685,10 +685,14 @@ export class DaggerheartDialogHelper {
             if (spend > 0 && actor && actor.type === "character") {
               if (actor.system.hope.value >= spend) {
                 modifier += experice;
-                const value = actor.system.hope.value - spend;
-                actor.update({ "system.hope.value": Math.max(value, 0) });
+                if (game.paused) {
+                  console.log("Daggerheart | Hope spend skipped - game is paused");
+                } else {
+                  const value = actor.system.hope.value - spend;
+                  actor.update({ "system.hope.value": Math.max(value, 0) });
+                }
               } else {
-                ui.notifications.warn("Experience not applied, not enough hope.");
+                ui.notifications.warn(game.i18n.localize("DH.Notify.NoHopeForExperience"));
               }
             }
 

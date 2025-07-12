@@ -59,6 +59,8 @@
   "SIMPLE.Create": "Create",
   "SIMPLE.New": "New",
 
+  "DH.Notify.NoHopeForExperience": "Not enough hope to use your experience; the modifier was not applied.",
+
   "DH.Level": "Level",
   "DH.Prof": "Prof.",
   "DH.HitPoints": "Hit Points",
