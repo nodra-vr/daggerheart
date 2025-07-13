@@ -1,16 +1,7 @@
-/**
- * Armor Modifier Cleanup Utility
- * Fixes actors that have corrupted data with duplicate armor modifiers
- */
 import { ModifierManager } from './modifierManager.js';
 
 export class ArmorCleanup {
-  
-  /**
-   * Clean up duplicate armor modifiers for a single actor
-   * @param {foundry.documents.Actor} actor - The actor to clean up
-   * @returns {Promise<Object>} - Cleanup results
-   */
+
   static async cleanupActor(actor) {
     if (!actor) {
       return { success: false, error: "Invalid actor" };
@@ -36,14 +27,14 @@ export class ArmorCleanup {
         const fieldResult = await this._cleanupField(actor, fieldPath);
         results.fieldsProcessed++;
         results.modifiersRemoved += fieldResult.removed;
-        
+
         if (fieldResult.errors.length > 0) {
           results.errors.push(...fieldResult.errors);
         }
       }
 
       console.log(`ArmorCleanup | Cleaned up ${results.modifiersRemoved} duplicate modifiers from ${actor.name}`);
-      
+
     } catch (error) {
       results.success = false;
       results.errors.push(`Cleanup failed: ${error.message}`);
@@ -53,10 +44,6 @@ export class ArmorCleanup {
     return results;
   }
 
-  /**
-   * Clean up duplicate armor modifiers for all actors in the world
-   * @returns {Promise<Object>} - Cleanup results for all actors
-   */
   static async cleanupAllActors() {
     const results = {
       success: true,
@@ -75,7 +62,7 @@ export class ArmorCleanup {
         const actorResult = await this.cleanupActor(actor);
         results.actorResults.push(actorResult);
         results.processedActors++;
-        
+
         if (actorResult.success) {
           results.totalModifiersRemoved += actorResult.modifiersRemoved;
         } else {
@@ -84,7 +71,7 @@ export class ArmorCleanup {
       }
 
       console.log(`ArmorCleanup | Processed ${results.processedActors} actors, removed ${results.totalModifiersRemoved} duplicate modifiers`);
-      
+
     } catch (error) {
       results.success = false;
       results.errors.push(`Global cleanup failed: ${error.message}`);
@@ -94,13 +81,6 @@ export class ArmorCleanup {
     return results;
   }
 
-  /**
-   * Clean up duplicates in a specific field
-   * @param {foundry.documents.Actor} actor - The actor
-   * @param {string} fieldPath - The field path to clean
-   * @returns {Promise<Object>} - Field cleanup results
-   * @private
-   */
   static async _cleanupField(actor, fieldPath) {
     const result = {
       fieldPath,
@@ -110,7 +90,7 @@ export class ArmorCleanup {
 
     try {
       const currentData = foundry.utils.getProperty(actor, fieldPath);
-      
+
       if (!currentData || !currentData.modifiers || !Array.isArray(currentData.modifiers)) {
         return result;
       }
@@ -131,11 +111,11 @@ export class ArmorCleanup {
       }
 
       const duplicateGroups = this._groupByName(armorModifiers);
-      
+
       for (const [name, duplicates] of Object.entries(duplicateGroups)) {
         if (duplicates.length > 1) {
           const toRemove = duplicates.slice(1);
-          
+
           for (const duplicate of toRemove) {
             try {
               if (duplicate.id) {
@@ -158,15 +138,9 @@ export class ArmorCleanup {
     return result;
   }
 
-  /**
-   * Group modifiers by name to identify duplicates
-   * @param {Array} modifiers - Array of modifiers
-   * @returns {Object} - Grouped modifiers by name
-   * @private
-   */
   static _groupByName(modifiers) {
     const groups = {};
-    
+
     for (const modifier of modifiers) {
       const name = modifier.name || 'Unknown';
       if (!groups[name]) {
@@ -174,15 +148,10 @@ export class ArmorCleanup {
       }
       groups[name].push(modifier);
     }
-    
+
     return groups;
   }
 
-  /**
-   * Get a report of duplicate armor modifiers without cleaning them
-   * @param {foundry.documents.Actor} actor - The actor to analyze
-   * @returns {Object} - Analysis results
-   */
   static analyzeActor(actor) {
     if (!actor) {
       return { success: false, error: "Invalid actor" };
@@ -203,7 +172,7 @@ export class ArmorCleanup {
 
     for (const fieldPath of fields) {
       const currentData = foundry.utils.getProperty(actor, fieldPath);
-      
+
       if (!currentData || !currentData.modifiers || !Array.isArray(currentData.modifiers)) {
         analysis.fields[fieldPath] = { modifiers: 0, duplicates: 0, names: [] };
         continue;

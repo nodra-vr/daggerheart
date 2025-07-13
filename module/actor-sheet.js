@@ -386,10 +386,20 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     textarea.on("keyup", () => {
       textarea.css("height", calcHeight(textarea.val()) + "px");
     });
-
-  }
-
-  async _onToggleWeaponEquip(event) {
+    
+    }
+    
+    close(options) {
+        // Check if the tooltip element exists and remove it from the DOM
+        let tooltipElement = document.querySelector('.daggerheart-tooltip');
+        if (tooltipElement) {
+            tooltipElement.remove();
+        }
+        
+        return super.close(options);
+    }
+    
+    async _onToggleWeaponEquip(event) {
     event.preventDefault();
 
     const button = event.currentTarget;

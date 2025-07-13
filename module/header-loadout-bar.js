@@ -1,5 +1,3 @@
-// HeaderLoadoutBar: displays Class / Subclass / Ancestry / Community cards inside the sheet header
-
 import { buildItemCardChat } from "./helper.js";
 import { DaggerheartDialogHelper } from "./dialog-helper.js";
 
@@ -34,7 +32,6 @@ export class HeaderLoadoutBar {
     this.container = this._findContainer();
     if (!this.container) return;
 
-    // Build HTML for 4 slots
     const html = this.slotTypes.map(t => this._buildSlotHTML(t)).join('');
     this.container.html(html);
 
@@ -66,7 +63,6 @@ export class HeaderLoadoutBar {
   _activateListeners() {
     if (!this.container) return;
 
-    // Overlay click
     this.container.on('click', '.slot-control', async ev => {
       ev.preventDefault();
       ev.stopPropagation();
@@ -102,7 +98,6 @@ export class HeaderLoadoutBar {
       }
     });
 
-    // Drag events
     this.container.on('dragover', '.loadout-card-slot', ev => { ev.preventDefault(); $(ev.currentTarget).addClass('drag-over'); });
     this.container.on('dragleave', '.loadout-card-slot', ev => { $(ev.currentTarget).removeClass('drag-over'); });
     this.container.on('drop', '.loadout-card-slot', async ev => {
@@ -115,17 +110,10 @@ export class HeaderLoadoutBar {
       const item = await Item.implementation.fromDropData(data);
       if (!item) return;
 
-      // Validate matching type/location
-      //if (item.type !== typeKey && (item.system?.location ?? '') !== typeKey) {
-      //  ui.notifications?.warn(`That item is not a ${typeKey} card.`);
-      //  return;
-      //}
-
-      // If already embedded, just move to correct location
       if (this.actor.items.has(item.id)) {
         await this.actor.items.get(item.id).update({ 'system.location': typeKey });
       } else {
-        // create new embedded
+
         const toCreate = duplicate(item.toObject());
         toCreate.system = toCreate.system || {};
         toCreate.system.location = typeKey;
@@ -134,7 +122,6 @@ export class HeaderLoadoutBar {
       this.render();
     });
 
-    // Hover preview
     this.container.on('mouseenter', '.loadout-card-slot:not(.empty)', (ev) => {
       const el = ev.currentTarget;
       const hoveredItemId = $(el).data('item-id');
@@ -149,16 +136,14 @@ export class HeaderLoadoutBar {
       if (!this.previewPinned) this._hidePreview();
     });
 
-    // Click-to-chat (ignore overlay)
     this.container.on('click', '.loadout-card-slot:not(.empty)', async (ev) => {
-      if ($(ev.target).closest('.slot-control').length) return; // overlay click handled elsewhere
+      if ($(ev.target).closest('.slot-control').length) return; 
       const itemId = $(ev.currentTarget).data('item-id');
       const item = this.actor.items.get(itemId);
       if (!item) return;
       await this._postToChat(item);
     });
 
-    // Middle-click pin/unpin
     this.container.on('mousedown', '.loadout-card-slot:not(.empty)', (ev) => {
       if (ev.which !== 2) return;
       ev.preventDefault();
@@ -180,7 +165,7 @@ export class HeaderLoadoutBar {
 
   async _postToChat(item) {
     const itemData = item.system;
-    // Don't pre-enrich for chat cards - let Foundry enrich it when the chat message is created
+
     const chatCard = buildItemCardChat({
       itemId: item.id,
       actorId: this.actor.id,
@@ -198,7 +183,7 @@ export class HeaderLoadoutBar {
     const item = this.actor.items.get(itemId);
     if (!item) return;
     const itemData = item.system;
-    // For preview cards, we DO want enrichment since they're not going through chat
+
     const description = await TextEditor.enrichHTML(itemData.description, { secrets: this.actor.isOwner, async: true });
     const cardHtml = buildItemCardChat({
       itemId: item.id,
@@ -241,7 +226,6 @@ export class HeaderLoadoutBar {
 
     this.previewElement.find('.preview-hint').html('<i class="fas fa-mouse"></i> Middle-click to unpin');
 
-    // Adjust position to compensate new size and avoid jump
     const old = this.previewElement[0].getBoundingClientRect();
     const updated = this.previewElement[0].getBoundingClientRect();
     const dx = (updated.width - old.width) / 2;
@@ -263,4 +247,4 @@ export class HeaderLoadoutBar {
     $(document).off('mousedown.loadoutPreview');
     this._hidePreview();
   }
-} 
+}
