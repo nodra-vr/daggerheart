@@ -16,6 +16,7 @@ import { DaggerheartMigrations } from "./migrations.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
 import { EntitySheetHelper } from "./helper.js";
 import { ModifierManager } from "./modifierManager.js";
+import { ArmorCleanup } from "./armorCleanup.js";
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
 import { applyDamage, applyHealing, applyDirectDamage, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
@@ -128,6 +129,7 @@ Hooks.once("init", async function() {
     SheetTracker,
     EquipmentHandler,
     ModifierManager,
+    ArmorCleanup,
     rollHandler: {
       rollHope: _rollHope,
       rollFear: _rollFear,
@@ -896,6 +898,56 @@ Hooks.once("ready", async function() {
 
     console.log("\n=== Test completed! Check the character sheet to see changes ===");
     ui.notifications.info("ModifierManager test completed. Check console for detailed output.");
+  };
+
+  window.analyzeArmorDuplicates = function() {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+
+    const actor = selectedTokens[0].actor;
+    const analysis = ArmorCleanup.analyzeActor(actor);
+    console.log("=== Armor Duplicate Analysis ===");
+    console.log(JSON.stringify(analysis, null, 2));
+    ui.notifications.info(`Found ${analysis.totalDuplicates} duplicate armor modifiers on ${actor.name}`);
+  };
+
+  window.cleanupArmorDuplicates = async function() {
+    const selectedTokens = canvas.tokens.controlled;
+    if (selectedTokens.length === 0) {
+      ui.notifications.warn("Please select a token first");
+      return;
+    }
+
+    const actor = selectedTokens[0].actor;
+    const result = await ArmorCleanup.cleanupActor(actor);
+    console.log("=== Armor Cleanup Results ===");
+    console.log(JSON.stringify(result, null, 2));
+    
+    if (result.success) {
+      ui.notifications.info(`Cleaned up ${result.modifiersRemoved} duplicate modifiers from ${actor.name}`);
+    } else {
+      ui.notifications.error(`Cleanup failed: ${result.errors.join(', ')}`);
+    }
+  };
+
+  window.cleanupAllArmorDuplicates = async function() {
+    if (!game.user.isGM) {
+      ui.notifications.error("Only GMs can run global cleanup");
+      return;
+    }
+
+    const result = await ArmorCleanup.cleanupAllActors();
+    console.log("=== Global Armor Cleanup Results ===");
+    console.log(JSON.stringify(result, null, 2));
+    
+    if (result.success) {
+      ui.notifications.info(`Processed ${result.processedActors} actors, removed ${result.totalModifiersRemoved} duplicate modifiers`);
+    } else {
+      ui.notifications.error(`Global cleanup had errors: ${result.errors.join(', ')}`);
+    }
   };
 
   game.daggerheart.testModifierSystem = window.testModifierSystem;

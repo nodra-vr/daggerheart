@@ -318,22 +318,17 @@ export class EquipmentSystem {
   /* Armor Modifier Management */
   /* -------------------------------------------- */
   
-  /**
-   * Apply armor modifiers to character thresholds and armor score
-   * @param {foundry.documents.Actor} actor - The actor
-   * @param {foundry.documents.Item} armor - The armor item
-   * @returns {Promise<void>}
-   * @private
-   * @static
-   */
   static async _applyArmorModifiers(actor, armor) {
     const armorSystem = armor.system;
     const armorName = armor.name;
+    const armorId = armor.id;
     
     try {
-      // Add major threshold modifier if armor has baseThresholds.major
+      await this._removeArmorModifiers(actor, armor);
+      
       if (armorSystem?.baseThresholds?.major && armorSystem.baseThresholds.major > 0) {
         await ModifierManager.addModifier(actor, "system.threshold.major", {
+          id: `armor_${armorId}_threshold_major`,
           name: armorName,
           value: armorSystem.baseThresholds.major,
           enabled: true,
@@ -341,9 +336,9 @@ export class EquipmentSystem {
         });
       }
       
-      // Add severe threshold modifier if armor has baseThresholds.severe
       if (armorSystem?.baseThresholds?.severe && armorSystem.baseThresholds.severe > 0) {
         await ModifierManager.addModifier(actor, "system.threshold.severe", {
+          id: `armor_${armorId}_threshold_severe`,
           name: armorName,
           value: armorSystem.baseThresholds.severe,
           enabled: true,
@@ -351,9 +346,9 @@ export class EquipmentSystem {
         });
       }
       
-      // Add armor score modifier if armor has baseScore
       if (armorSystem?.baseScore && armorSystem.baseScore > 0) {
         await ModifierManager.addModifier(actor, "system.defenses.armor", {
+          id: `armor_${armorId}_defense_armor`,
           name: armorName,
           value: armorSystem.baseScore,
           enabled: true,
@@ -367,19 +362,15 @@ export class EquipmentSystem {
     }
   }
   
-  /**
-   * Remove armor modifiers from character thresholds and armor score
-   * @param {foundry.documents.Actor} actor - The actor
-   * @param {foundry.documents.Item} armor - The armor item
-   * @returns {Promise<void>}
-   * @private
-   * @static
-   */
   static async _removeArmorModifiers(actor, armor) {
     const armorName = armor.name;
+    const armorId = armor.id;
     
     try {
-      // Remove modifiers with the armor's name from all relevant fields (force removal of permanent modifiers)
+      await ModifierManager.removeModifierByIdDirect(actor, `armor_${armorId}_threshold_major`, true);
+      await ModifierManager.removeModifierByIdDirect(actor, `armor_${armorId}_threshold_severe`, true);
+      await ModifierManager.removeModifierByIdDirect(actor, `armor_${armorId}_defense_armor`, true);
+      
       await ModifierManager.removeModifier(actor, "system.threshold.major", armorName, true);
       await ModifierManager.removeModifier(actor, "system.threshold.severe", armorName, true);
       await ModifierManager.removeModifier(actor, "system.defenses.armor", armorName, true);

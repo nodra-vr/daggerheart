@@ -1257,7 +1257,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const permanentIndicator = isPermanent ? '<i class="fas fa-lock permanent-indicator" title="Permanent modifier"></i>' : '';
 
     const row = $(`
-      <div class="modifier-row ${modifier.enabled === false ? 'disabled' : ''} ${permanentClass}" data-index="${index}">
+      <div class="modifier-row ${modifier.enabled === false ? 'disabled' : ''} ${permanentClass}" data-index="${index}" data-modifier-id="${modifier.id || ''}">
         <input type="text" class="modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" ${isPermanent ? 'readonly' : ''} />
         <input type="text" class="modifier-value" placeholder="±0 or @prof" value="${modifier.value || (modifier.value === 0 ? '0' : '')}" ${isPermanent ? 'readonly' : ''} />
         <input type="checkbox" class="modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} ${toggleStyle} />
@@ -1338,7 +1338,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const permanentIndicator = isPermanent ? '<i class="fas fa-lock permanent-indicator" title="Permanent modifier"></i>' : '';
 
     const row = $(`
-      <div class="damage-modifier-row modifier-row ${modifier.enabled === false ? 'disabled' : ''} ${permanentClass}" data-index="${index}">
+      <div class="damage-modifier-row modifier-row ${modifier.enabled === false ? 'disabled' : ''} ${permanentClass}" data-index="${index}" data-modifier-id="${modifier.id || ''}">
         <input type="text" class="damage-modifier-name modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" ${isPermanent ? 'readonly' : ''} />
         <input type="text" class="damage-modifier-value modifier-value" placeholder="±1 or ±1d4" value="${modifier.value || ''}" ${isPermanent ? 'readonly' : ''} />
         <input type="checkbox" class="damage-modifier-toggle modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} ${toggleStyle} />
@@ -1438,17 +1438,29 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       let name = $row.find('.damage-modifier-name').val().trim();
       const value = $row.find('.damage-modifier-value').val().trim();
       const enabled = $row.find('.damage-modifier-toggle').is(':checked');
+      const isPermanent = $row.hasClass('permanent-modifier');
+      const modifierId = $row.attr('data-modifier-id');
 
       if (value) {
 
         if (!name) {
           name = 'Modifier';
         }
-        modifiers.push({
+        const modifier = {
           name: name,
           value: value,
           enabled: enabled
-        });
+        };
+        
+        if (isPermanent) {
+          modifier.permanent = true;
+        }
+        
+        if (modifierId) {
+          modifier.id = modifierId;
+        }
+        
+        modifiers.push(modifier);
       }
     });
 
@@ -1565,17 +1577,29 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       let name = $row.find('.modifier-name').val().trim();
       const value = $row.find('.modifier-value').val().trim() || '0';
       const enabled = $row.find('.modifier-toggle').is(':checked');
+      const isPermanent = $row.hasClass('permanent-modifier');
+      const modifierId = $row.attr('data-modifier-id');
 
       if (value !== '0' && value !== 0 && value !== '') {
 
         if (!name) {
           name = 'Modifier';
         }
-        modifiers.push({
+        const modifier = {
           name: name,
           value: value,
           enabled: enabled
-        });
+        };
+        
+        if (isPermanent) {
+          modifier.permanent = true;
+        }
+        
+        if (modifierId) {
+          modifier.id = modifierId;
+        }
+        
+        modifiers.push(modifier);
       }
     });
 

@@ -28,7 +28,9 @@ export class ModifierManager {
    * @param {string} modifierData.name - Name of the modifier
    * @param {number|string} modifierData.value - Value of the modifier (number for traits, string for damage)
    * @param {boolean} [modifierData.enabled=true] - Whether the modifier is enabled
+   * @param {boolean} [modifierData.permanent=false] - Whether the modifier is permanent
    * @param {string} [modifierData.color] - Future: Color for the modifier (not yet implemented)
+   * @param {string} [modifierData.id] - Custom ID for the modifier (auto-generated if not provided)
    * @returns {Promise<boolean>} - True if successful, false otherwise
    */
   static async addModifier(actor, fieldPath, modifierData) {
@@ -44,21 +46,21 @@ export class ModifierManager {
       // Determine if this is a damage modifier or numeric modifier
       const isDamageModifier = fieldPath.includes('.damage');
       
+      // Generate unique ID for the modifier
+      const modifierId = modifierData.id || this._generateModifierId();
+      
       // Prepare the modifier
       const modifier = {
+        id: modifierId,
         name: modifierData.name || 'Modifier',
         value: modifierData.value || (isDamageModifier ? '+1' : 0),
-        enabled: modifierData.enabled !== false
+        enabled: modifierData.enabled !== false,
+        permanent: modifierData.permanent || false
       };
 
       // If color is provided, store it (future enhancement)
       if (modifierData.color) {
         modifier.color = modifierData.color;
-      }
-
-      // If permanent flag is provided, store it
-      if (modifierData.permanent) {
-        modifier.permanent = modifierData.permanent;
       }
 
       let structuredData;
@@ -92,6 +94,11 @@ export class ModifierManager {
       // Add the new modifier
       structuredData.modifiers.push(modifier);
 
+      // If permanent, track it in the actor's permanent modifiers list
+      if (modifier.permanent) {
+        await this._addPermanentModifierTracking(actor, modifierId, fieldPath, modifier);
+      }
+
       // Calculate new total value
       let newTotalValue;
       if (isDamageModifier) {
@@ -112,7 +119,7 @@ export class ModifierManager {
         basePath = fieldPath;
       } else {
         // For other attributes, remove .value from the path if present
-        basePath = fieldPath.endsWith('.value') ? 
+        basePath = fieldPath.endsWith('.value') ?
           fieldPath.substring(0, fieldPath.lastIndexOf('.')) : fieldPath;
       }
 
@@ -123,7 +130,7 @@ export class ModifierManager {
       // Update the actor
       await actor.update(updateData);
       
-      console.log(`ModifierManager | Added modifier "${modifier.name}" to ${actor.name} at ${fieldPath}`);
+      console.log(`ModifierManager | Added modifier "${modifier.name}" (ID: ${modifierId}) to ${actor.name} at ${fieldPath}`);
       return true;
 
     } catch (error) {
@@ -140,7 +147,9 @@ export class ModifierManager {
    * @param {number|string} modifierValue - Value of the modifier
    * @param {Object} [options] - Additional options
    * @param {boolean} [options.enabled=true] - Whether modifier is enabled
+   * @param {boolean} [options.permanent=false] - Whether modifier is permanent
    * @param {string} [options.color] - Color for the modifier
+   * @param {string} [options.id] - Custom ID for the modifier
    * @returns {Promise<boolean>} - True if successful, false otherwise
    */
   static async addModifierById(actorId, fieldPath, modifierName, modifierValue, options = {}) {
@@ -155,7 +164,9 @@ export class ModifierManager {
       name: modifierName,
       value: modifierValue,
       enabled: options.enabled !== false,
-      color: options.color
+      permanent: options.permanent || false,
+      color: options.color,
+      id: options.id
     });
   }
 
@@ -167,7 +178,9 @@ export class ModifierManager {
    * @param {number|string} modifierValue - Value of the modifier
    * @param {Object} [options] - Additional options
    * @param {boolean} [options.enabled=true] - Whether modifier is enabled
+   * @param {boolean} [options.permanent=false] - Whether modifier is permanent
    * @param {string} [options.color] - Color for the modifier
+   * @param {string} [options.id] - Custom ID for the modifier
    * @param {string} [options.searchScope='all'] - Where to search when using name: 'all', 'scene', 'world'
    * @returns {Promise<boolean>} - True if successful, false otherwise
    */
@@ -183,7 +196,9 @@ export class ModifierManager {
       name: modifierName,
       value: modifierValue,
       enabled: options.enabled !== false,
-      color: options.color
+      permanent: options.permanent || false,
+      color: options.color,
+      id: options.id
     });
   }
 
@@ -214,7 +229,9 @@ export class ModifierManager {
       name: modifierName,
       value: modifierValue,
       enabled: options.enabled !== false,
-      color: options.color
+      permanent: options.permanent || false,
+      color: options.color,
+      id: options.id
     });
   }
 
@@ -739,25 +756,37 @@ export class ModifierManager {
       };
     }
 
+    // Use a consistent ID for character level modifiers
+    const characterLevelModifierId = `character_level_${fieldPath.replace(/\./g, '_')}`;
+    
     // Find existing character level modifier
-    const existingModifierIndex = structuredData.modifiers.findIndex(mod => mod.name === modifierName);
+    const existingModifierIndex = structuredData.modifiers.findIndex(mod =>
+      mod.name === modifierName || mod.id === characterLevelModifierId
+    );
     
     if (existingModifierIndex !== -1) {
       // Update existing modifier
       structuredData.modifiers[existingModifierIndex] = {
         ...structuredData.modifiers[existingModifierIndex],
+        id: characterLevelModifierId,
         value: level,
         enabled: true,
         permanent: true
       };
     } else {
       // Add new modifier
-      structuredData.modifiers.push({
+      const newModifier = {
+        id: characterLevelModifierId,
         name: modifierName,
         value: level,
         enabled: true,
         permanent: true
-      });
+      };
+      
+      structuredData.modifiers.push(newModifier);
+      
+      // Add to permanent tracking
+      await this._addPermanentModifierTracking(actor, characterLevelModifierId, fieldPath, newModifier);
     }
 
     // Recalculate total value
@@ -776,6 +805,272 @@ export class ModifierManager {
     await actor.update(updateData);
     
     return true;
+  }
+
+  /**
+   * Generate a unique modifier ID
+   * @returns {string} - Unique ID for the modifier
+   * @private
+   */
+  static _generateModifierId() {
+    return `mod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  /**
+   * Add permanent modifier tracking to the specific field's permanentModifiers array
+   * @param {Actor} actor - The actor
+   * @param {string} modifierId - The modifier ID
+   * @param {string} fieldPath - The field path
+   * @param {Object} modifier - The modifier data
+   * @returns {Promise<void>}
+   * @private
+   */
+  static async _addPermanentModifierTracking(actor, modifierId, fieldPath, modifier) {
+    const currentData = foundry.utils.getProperty(actor, fieldPath);
+    if (!currentData) {
+      console.warn(`⚠️ Field ${fieldPath} not found on actor ${actor.name}`);
+      return;
+    }
+    
+    const currentPermanentModifiers = currentData.permanentModifiers || [];
+    
+    const permanentModifierEntry = {
+      id: modifierId,
+      name: modifier.name,
+      value: modifier.value,
+      enabled: modifier.enabled,
+      color: modifier.color
+    };
+
+    const updatedPermanentModifiers = [...currentPermanentModifiers, permanentModifierEntry];
+    
+    const updatePath = `${fieldPath}.permanentModifiers`;
+    await actor.update({
+      [updatePath]: updatedPermanentModifiers
+    });
+  }
+
+  /**
+   * Remove permanent modifier tracking from the specific field's permanentModifiers array
+   * @param {Actor} actor - The actor
+   * @param {string} fieldPath - The field path where the modifier was applied
+   * @param {string} modifierId - The modifier ID
+   * @returns {Promise<void>}
+   * @private
+   */
+  static async _removePermanentModifierTracking(actor, fieldPath, modifierId) {
+    const currentData = foundry.utils.getProperty(actor, fieldPath);
+    if (!currentData || !currentData.permanentModifiers) {
+      return;
+    }
+    
+    const currentPermanentModifiers = currentData.permanentModifiers || [];
+    const updatedPermanentModifiers = currentPermanentModifiers.filter(pm => pm.id !== modifierId);
+    
+    const updatePath = `${fieldPath}.permanentModifiers`;
+    await actor.update({
+      [updatePath]: updatedPermanentModifiers
+    });
+  }
+
+  /**
+   * Remove a modifier by its ID
+   * @param {Actor} actor - The actor to modify
+   * @param {string} modifierId - ID of the modifier to remove
+   * @param {boolean} [force=false] - Whether to force removal of permanent modifiers
+   * @returns {Promise<boolean>} - True if successful, false otherwise
+   */
+  static async removeModifierByIdDirect(actor, modifierId, force = false) {
+    if (!actor || !modifierId) {
+      console.error("ModifierManager | Invalid parameters for removeModifierByIdDirect");
+      return false;
+    }
+
+    try {
+      // Find the modifier across all fields
+      const commonFields = [
+        'system.agility.value',
+        'system.finesse.value',
+        'system.instinct.value',
+        'system.knowledge.value',
+        'system.presence.value',
+        'system.strength.value',
+        'system.weapon-main.to-hit',
+        'system.weapon-off.to-hit',
+        'system.weapon-main.damage',
+        'system.weapon-off.damage',
+        'system.threshold.major',
+        'system.threshold.severe'
+      ];
+
+      for (const fieldPath of commonFields) {
+        const currentData = foundry.utils.getProperty(actor, fieldPath);
+        
+        if (!currentData || !currentData.modifiers || !Array.isArray(currentData.modifiers)) {
+          continue;
+        }
+
+        const modifierIndex = currentData.modifiers.findIndex(mod => mod.id === modifierId);
+        if (modifierIndex === -1) {
+          continue;
+        }
+
+        const modifier = currentData.modifiers[modifierIndex];
+        
+        if (modifier.permanent && !force) {
+          console.warn(`ModifierManager | Cannot remove permanent modifier "${modifier.name}" (ID: ${modifierId}) at ${fieldPath} for ${actor.name}`);
+          return false;
+        }
+
+        const updatedModifiers = [...currentData.modifiers];
+        updatedModifiers.splice(modifierIndex, 1);
+
+        // If permanent, remove from tracking
+        if (modifier.permanent) {
+          await this._removePermanentModifierTracking(actor, fieldPath, modifierId);
+        }
+
+        // Recalculate total
+        const isDamageModifier = fieldPath.includes('.damage');
+        let newTotalValue;
+        
+        if (isDamageModifier) {
+          newTotalValue = this._calculateDamageTotal({
+            baseValue: currentData.baseValue,
+            modifiers: updatedModifiers
+          });
+        } else {
+          newTotalValue = this._calculateNumericTotal({
+            baseValue: currentData.baseValue,
+            modifiers: updatedModifiers
+          });
+        }
+
+        // Build update data
+        const updateData = {};
+        const isWeaponModifier = fieldPath.includes('weapon-main.') || fieldPath.includes('weapon-off.');
+        const basePath = isWeaponModifier ? fieldPath :
+          (fieldPath.endsWith('.value') ? fieldPath.substring(0, fieldPath.lastIndexOf('.')) : fieldPath);
+
+        updateData[`${basePath}.modifiers`] = updatedModifiers;
+        updateData[`${basePath}.value`] = newTotalValue;
+
+        await actor.update(updateData);
+        
+        console.log(`ModifierManager | Removed modifier "${modifier.name}" (ID: ${modifierId}) from ${actor.name} at ${fieldPath}`);
+        return true;
+      }
+
+      console.warn(`ModifierManager | Modifier with ID "${modifierId}" not found on ${actor.name}`);
+      return false;
+
+    } catch (error) {
+      console.error("ModifierManager | Error removing modifier by ID:", error);
+      return false;
+    }
+  }
+
+  /**
+   * Restore permanent modifiers from actor data
+   * This should be called when loading/refreshing actors to ensure permanent modifiers persist
+   * @param {Actor} actor - The actor to restore modifiers for
+   * @returns {Promise<boolean>} - True if successful, false otherwise
+   */
+  static async restorePermanentModifiers(actor) {
+    if (!actor) {
+      return true;
+    }
+
+    try {
+      // Fields that can have permanent modifiers
+      const modifierFields = [
+        'system.agility.value',
+        'system.finesse.value',
+        'system.instinct.value',
+        'system.knowledge.value',
+        'system.presence.value',
+        'system.strength.value',
+        'system.weapon-main.to-hit',
+        'system.weapon-off.to-hit',
+        'system.weapon-main.damage',
+        'system.weapon-off.damage',
+        'system.threshold.major',
+        'system.threshold.severe',
+        'system.defenses.armor'
+      ];
+
+      for (const fieldPath of modifierFields) {
+        const currentData = foundry.utils.getProperty(actor, fieldPath);
+        
+        if (!currentData || !currentData.permanentModifiers || !Array.isArray(currentData.permanentModifiers)) {
+          continue;
+        }
+
+        for (const permanentMod of currentData.permanentModifiers) {
+          // Check if modifier already exists in the modifiers array (by ID)
+          const existingModifier = currentData.modifiers?.find(mod => mod.id === permanentMod.id);
+          if (existingModifier) {
+            continue;
+          }
+
+          // Additional safety check: don't restore if a modifier with the same name already exists
+          // This prevents duplicates when IDs don't match but names do
+          const duplicateByName = currentData.modifiers?.find(mod => mod.name === permanentMod.name && mod.permanent);
+          if (duplicateByName) {
+            console.log(`⚠️ Skipping restoration of "${permanentMod.name}" - duplicate name found with different ID at ${fieldPath} for "${actor.name}"`);
+            continue;
+          }
+
+          // Use direct modifier addition instead of going through addModifier to avoid recursion
+          const structuredData = {
+            baseValue: currentData.baseValue,
+            modifiers: [...(currentData.modifiers || [])],
+            value: currentData.value
+          };
+
+          // Add the permanent modifier directly
+          const restoredModifier = {
+            id: permanentMod.id,
+            name: permanentMod.name,
+            value: permanentMod.value,
+            enabled: permanentMod.enabled !== false,
+            permanent: true,
+            color: permanentMod.color
+          };
+
+          structuredData.modifiers.push(restoredModifier);
+
+          // Recalculate total value
+          const isDamageModifier = fieldPath.includes('.damage');
+          let newTotalValue;
+          if (isDamageModifier) {
+            newTotalValue = this._calculateDamageTotal(structuredData);
+          } else {
+            newTotalValue = this._calculateNumericTotal(structuredData);
+          }
+
+          // Build update data
+          const updateData = {};
+          const isWeaponModifier = fieldPath.includes('weapon-main.') || fieldPath.includes('weapon-off.');
+          const basePath = isWeaponModifier ? fieldPath :
+            (fieldPath.endsWith('.value') ? fieldPath.substring(0, fieldPath.lastIndexOf('.')) : fieldPath);
+
+          updateData[`${basePath}.baseValue`] = structuredData.baseValue;
+          updateData[`${basePath}.modifiers`] = structuredData.modifiers;
+          updateData[`${basePath}.value`] = newTotalValue;
+
+          // Update the actor directly
+          await actor.update(updateData);
+
+          console.log(`🔄 Restored permanent modifier "${permanentMod.name}" (ID: ${permanentMod.id}) at ${fieldPath} for "${actor.name}"`);
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error("ModifierManager | Error restoring permanent modifiers:", error);
+      return false;
+    }
   }
 }
 
