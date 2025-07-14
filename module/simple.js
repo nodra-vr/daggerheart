@@ -14,7 +14,7 @@ import { CountdownTracker } from "./countdown-tracker.js";
 import { SheetTracker } from "./sheet-tracker.js";
 import { DaggerheartMigrations } from "./migrations.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
-import { EntitySheetHelper } from "./helper.js";
+import { EntitySheetHelper, buildItemCardChat } from "./helper.js";
 import { ModifierManager } from "./modifierManager.js";
 import { ArmorCleanup } from "./armorCleanup.js";
 
@@ -43,39 +43,39 @@ function _getTierOfPlay(actor = null, level = null) {
   return 1;
 }
 
-Hooks.once("init", async function() {
+Hooks.once("init", async function () {
   console.log(`Initializing Simple Daggerheart System`);
 
   if (game.dice3d) {
 
     game.dice3d.addColorset({
-    name: "Hope",
-    category: "Hope Die", 
-    description: "Hope",
-    texture: "ice",
-    foreground: "#ffffff",
-    background: "#ffa200",
-    outline: "#000000",
-    edge: "#ff8000",
-    material: "glass",
-    font: "Modesto Condensed",
-    colorset: "custom",
-    system: "standard"
+      name: "Hope",
+      category: "Hope Die",
+      description: "Hope",
+      texture: "ice",
+      foreground: "#ffffff",
+      background: "#ffa200",
+      outline: "#000000",
+      edge: "#ff8000",
+      material: "glass",
+      font: "Modesto Condensed",
+      colorset: "custom",
+      system: "standard"
     });
 
     game.dice3d.addColorset({
-    name: "Fear",
-    category: "Fear Die",
-    description: "Fear", 
-    texture: "ice",
-    foreground: "#b5d5ff",
-    background: "#021280",
-    outline: "#000000",
-    edge: "#210e6b",
-    material: "metal",
-    font: "Modesto Condensed",
-    colorset: "custom",
-    system: "standard"
+      name: "Fear",
+      category: "Fear Die",
+      description: "Fear",
+      texture: "ice",
+      foreground: "#b5d5ff",
+      background: "#021280",
+      outline: "#000000",
+      edge: "#210e6b",
+      material: "metal",
+      font: "Modesto Condensed",
+      colorset: "custom",
+      system: "standard"
     });
 
     game.dice3d.addColorset({
@@ -232,7 +232,7 @@ Hooks.once("init", async function() {
     scope: "world",
     type: Number,
     default: 0,
-    config: false 
+    config: false
   });
 
   game.settings.register("daggerheart", "countdownTrackers", {
@@ -241,7 +241,7 @@ Hooks.once("init", async function() {
     scope: "world",
     type: Array,
     default: [],
-    config: false 
+    config: false
   });
 
   game.settings.register("daggerheart", "initFormula", {
@@ -259,15 +259,15 @@ Hooks.once("init", async function() {
 
   function _simpleUpdateInit(formula, notify = false) {
     const isValid = Roll.validate(formula);
-    if ( !isValid ) {
-      if ( notify ) ui.notifications.error(`${game.i18n.localize("SIMPLE.NotifyInitFormulaInvalid")}: ${formula}`);
+    if (!isValid) {
+      if (notify) ui.notifications.error(`${game.i18n.localize("SIMPLE.NotifyInitFormulaInvalid")}: ${formula}`);
       return;
     }
     CONFIG.Combat.initiative.formula = formula;
   }
 
-  Handlebars.registerHelper('slugify', function(value) {
-    return value.slugify({strict: true});
+  Handlebars.registerHelper('slugify', function (value) {
+    return value.slugify({ strict: true });
   });
 
   await preloadHandlebarsTemplates();
@@ -276,7 +276,7 @@ Hooks.once("init", async function() {
 Hooks.on("updateActor", (actor, data, options, userId) => {
 
   if (data.system && (
-    data.system["weapon-main"] || 
+    data.system["weapon-main"] ||
     data.system["weapon-off"]
   )) {
 
@@ -325,7 +325,7 @@ Hooks.on("updateItem", async (item, data, options, userId) => {
 
       try {
         await EquipmentHandler.syncEquippedWeapons(actor, actorSheet);
-        actorSheet.render(true); 
+        actorSheet.render(true);
 
       } catch (error) {
 
@@ -338,12 +338,12 @@ Hooks.on("hotbarDrop", (bar, data, slot) => {
 
   if (data.type === "Item") {
     createDaggerheartMacro(data, slot);
-    return false; 
+    return false;
   }
   return createDaggerheartMacro(data, slot);
 });
 
-Hooks.once("ready", async function() {
+Hooks.once("ready", async function () {
 
   if (game.user.isGM) {
     await DaggerheartMigrations.migrateWorld();
@@ -358,7 +358,7 @@ Hooks.once("ready", async function() {
   game.daggerheart.countdownTracker = new CountdownTracker();
   await game.daggerheart.countdownTracker.initialize();
 
-  window.spendFear = async function(amount) {
+  window.spendFear = async function (amount) {
     if (!game.daggerheart?.counter) {
       console.error("Fear counter not initialized");
       ui.notifications.error("Fear counter not available");
@@ -367,7 +367,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.counter.spendFear(amount);
   };
 
-  window.gainFear = async function(amount) {
+  window.gainFear = async function (amount) {
     if (!game.daggerheart?.counter) {
       console.error("Fear counter not initialized");
       ui.notifications.error("Fear counter not available");
@@ -376,7 +376,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.counter.gainFear(amount);
   };
 
-  window.spendStress = async function(actor, amount) {
+  window.spendStress = async function (actor, amount) {
     if (!game.daggerheart?.spendStress) {
       console.error("spendStress function not initialized");
       ui.notifications.error("spendStress function not available");
@@ -385,7 +385,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.spendStress(actor, amount);
   };
 
-  window.clearStress = async function(actor, amount) {
+  window.clearStress = async function (actor, amount) {
     if (!game.daggerheart?.clearStress) {
       console.error("clearStress function not initialized");
       ui.notifications.error("clearStress function not available");
@@ -394,7 +394,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.clearStress(actor, amount);
   };
 
-  window.spendHope = async function(actor, amount) {
+  window.spendHope = async function (actor, amount) {
     if (!game.daggerheart?.spendHope) {
       console.error("spendHope function not initialized");
       ui.notifications.error("spendHope function not available");
@@ -403,7 +403,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.spendHope(actor, amount);
   };
 
-  window.gainHope = async function(actor, amount) {
+  window.gainHope = async function (actor, amount) {
     if (!game.daggerheart?.gainHope) {
       console.error("gainHope function not initialized");
       ui.notifications.error("gainHope function not available");
@@ -412,7 +412,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.gainHope(actor, amount);
   };
 
-  window.testFearAutomation = async function() {
+  window.testFearAutomation = async function () {
     console.log("=== Daggerheart | Starting Global Automation Test ===");
 
     console.log("\n--- Test 1: Standalone Fear Roll ---");
@@ -442,7 +442,7 @@ Hooks.once("ready", async function() {
     ui.notifications.info("Global automation test completed. Check console for detailed output.");
   };
 
-  window.testWeaponEquip = async function() {
+  window.testWeaponEquip = async function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
@@ -497,7 +497,7 @@ Hooks.once("ready", async function() {
     }
   };
 
-  window.testSecondaryWeapon = async function() {
+  window.testSecondaryWeapon = async function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
@@ -512,7 +512,7 @@ Hooks.once("ready", async function() {
       return;
     }
 
-    const weapon = weapons[1]; 
+    const weapon = weapons[1];
     console.log("=== Testing Secondary Weapon Equip ===");
     console.log("Testing with weapon:", weapon.name);
 
@@ -538,7 +538,7 @@ Hooks.once("ready", async function() {
     }
   };
 
-  window.debugWeaponData = function() {
+  window.debugWeaponData = function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
@@ -555,7 +555,7 @@ Hooks.once("ready", async function() {
     console.log("Base value restrictions:", JSON.stringify(actor.flags?.daggerheart?.baseValueRestrictions, null, 2));
   };
 
-  window.testWeaponSystem = function() {
+  window.testWeaponSystem = function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
@@ -570,7 +570,7 @@ Hooks.once("ready", async function() {
     console.log("Weapon display data:", EquipmentHandler.getWeaponDisplayData(actor));
   };
 
-  window.testWeaponScenario = function() {
+  window.testWeaponScenario = function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
@@ -619,7 +619,7 @@ Hooks.once("ready", async function() {
     }
   };
 
-  window.debugWeaponDamage = function() {
+  window.debugWeaponDamage = function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
@@ -680,7 +680,7 @@ Hooks.once("ready", async function() {
   game.daggerheart.spendFear = window.spendFear;
   game.daggerheart.gainFear = window.gainFear;
 
-  window.applyDamage = async function(targetActor, damageAmount, sourceActor, createUndo = true, armorSlotsUsed = 0) {
+  window.applyDamage = async function (targetActor, damageAmount, sourceActor, createUndo = true, armorSlotsUsed = 0) {
     if (!game.daggerheart?.damageApplication?.applyDamage) {
       console.error("Damage application not initialized");
       ui.notifications.error("Damage application not available");
@@ -689,7 +689,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.damageApplication.applyDamage(targetActor, damageAmount, sourceActor, createUndo, armorSlotsUsed);
   };
 
-  window.applyHealing = async function(targetActor, healAmount, sourceActor) {
+  window.applyHealing = async function (targetActor, healAmount, sourceActor) {
     if (!game.daggerheart?.damageApplication?.applyHealing) {
       console.error("Healing application not initialized");
       ui.notifications.error("Healing application not available");
@@ -698,7 +698,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.damageApplication.applyHealing(targetActor, healAmount, sourceActor);
   };
 
-  window.applyDirectDamage = async function(targetActor, hpDamage, sourceActor, createUndo = true) {
+  window.applyDirectDamage = async function (targetActor, hpDamage, sourceActor, createUndo = true) {
     if (!game.daggerheart?.damageApplication?.applyDirectDamage) {
       console.error("Direct damage application not initialized");
       ui.notifications.error("Direct damage application not available");
@@ -707,7 +707,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.damageApplication.applyDirectDamage(targetActor, hpDamage, sourceActor, createUndo);
   };
 
-  window.rollDamage = async function(formula, options) {
+  window.rollDamage = async function (formula, options) {
     if (!game.daggerheart?.damageApplication?.rollDamage) {
       console.error("Damage rolling not initialized");
       ui.notifications.error("Damage rolling not available");
@@ -716,7 +716,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.damageApplication.rollDamage(formula, options);
   };
 
-  window.rollHealing = async function(formula, options) {
+  window.rollHealing = async function (formula, options) {
     if (!game.daggerheart?.damageApplication?.rollHealing) {
       console.error("Healing rolling not initialized");
       ui.notifications.error("Healing rolling not available");
@@ -725,7 +725,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.damageApplication.rollHealing(formula, options);
   };
 
-  window.undoDamageHealing = async function(undoId) {
+  window.undoDamageHealing = async function (undoId) {
     if (!game.daggerheart?.damageApplication?.undoDamageHealing) {
       console.error("Undo functionality not initialized");
       ui.notifications.error("Undo functionality not available");
@@ -734,7 +734,7 @@ Hooks.once("ready", async function() {
     return await game.daggerheart.damageApplication.undoDamageHealing(undoId);
   };
 
-  window.debugUndoData = function(undoId) {
+  window.debugUndoData = function (undoId) {
     if (!game.daggerheart?.damageApplication?.debugUndoData) {
       console.error("Debug functionality not initialized");
       return;
@@ -750,7 +750,7 @@ Hooks.once("ready", async function() {
   game.daggerheart.undoDamageHealing = window.undoDamageHealing;
   game.daggerheart.debugUndoData = window.debugUndoData;
 
-  window.addModifier = function(actorName, fieldPath, modifierName, modifierValue, options = {}) {
+  window.addModifier = function (actorName, fieldPath, modifierName, modifierValue, options = {}) {
     console.warn("Global addModifier() using actor names is DEPRECATED. Use addModifierById() or addModifierByRef() instead. Actor names are not unique and may cause issues.");
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
@@ -760,7 +760,7 @@ Hooks.once("ready", async function() {
     return game.daggerheart.ModifierManager.addModifierByName(actorName, fieldPath, modifierName, modifierValue, options);
   };
 
-  window.removeModifier = function(actorName, fieldPath, modifierName) {
+  window.removeModifier = function (actorName, fieldPath, modifierName) {
     console.warn("Global removeModifier() using actor names is DEPRECATED. Use removeModifierById() or removeModifierByRef() instead. Actor names are not unique and may cause issues.");
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
@@ -770,7 +770,7 @@ Hooks.once("ready", async function() {
     return game.daggerheart.ModifierManager.removeModifierByName(actorName, fieldPath, modifierName);
   };
 
-  window.listModifiers = function(actorName) {
+  window.listModifiers = function (actorName) {
     console.warn("Global listModifiers() using actor names is DEPRECATED. Use listModifiersById() or listModifiersByRef() instead. Actor names are not unique and may cause issues.");
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
@@ -780,7 +780,7 @@ Hooks.once("ready", async function() {
     return game.daggerheart.ModifierManager.listAllModifiersByName(actorName);
   };
 
-  window.addModifierById = function(actorId, fieldPath, modifierName, modifierValue, options = {}) {
+  window.addModifierById = function (actorId, fieldPath, modifierName, modifierValue, options = {}) {
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
       ui.notifications.error("ModifierManager not available");
@@ -789,7 +789,7 @@ Hooks.once("ready", async function() {
     return game.daggerheart.ModifierManager.addModifierById(actorId, fieldPath, modifierName, modifierValue, options);
   };
 
-  window.removeModifierById = function(actorId, fieldPath, modifierName) {
+  window.removeModifierById = function (actorId, fieldPath, modifierName) {
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
       ui.notifications.error("ModifierManager not available");
@@ -798,7 +798,7 @@ Hooks.once("ready", async function() {
     return game.daggerheart.ModifierManager.removeModifierById(actorId, fieldPath, modifierName);
   };
 
-  window.listModifiersById = function(actorId) {
+  window.listModifiersById = function (actorId) {
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
       ui.notifications.error("ModifierManager not available");
@@ -807,7 +807,7 @@ Hooks.once("ready", async function() {
     return game.daggerheart.ModifierManager.getModifiersById(actorId);
   };
 
-  window.addModifierByRef = function(actorRef, fieldPath, modifierName, modifierValue, options = {}) {
+  window.addModifierByRef = function (actorRef, fieldPath, modifierName, modifierValue, options = {}) {
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
       ui.notifications.error("ModifierManager not available");
@@ -816,7 +816,7 @@ Hooks.once("ready", async function() {
     return game.daggerheart.ModifierManager.addModifierByRef(actorRef, fieldPath, modifierName, modifierValue, options);
   };
 
-  window.removeModifierByRef = function(actorRef, fieldPath, modifierName) {
+  window.removeModifierByRef = function (actorRef, fieldPath, modifierName) {
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
       ui.notifications.error("ModifierManager not available");
@@ -825,7 +825,7 @@ Hooks.once("ready", async function() {
     return game.daggerheart.ModifierManager.removeModifierByRef(actorRef, fieldPath, modifierName);
   };
 
-  window.listModifiersByRef = function(actorRef) {
+  window.listModifiersByRef = function (actorRef) {
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
       ui.notifications.error("ModifierManager not available");
@@ -834,7 +834,7 @@ Hooks.once("ready", async function() {
     return game.daggerheart.ModifierManager.getModifiersByRef(actorRef);
   };
 
-  window.listModifiersByRef = function(actorRef) {
+  window.listModifiersByRef = function (actorRef) {
     if (!game.daggerheart?.ModifierManager) {
       console.error("ModifierManager not initialized");
       ui.notifications.error("ModifierManager not available");
@@ -843,9 +843,9 @@ Hooks.once("ready", async function() {
     return game.daggerheart.ModifierManager.getModifiersByRef(actorRef);
   };
 
-  game.daggerheart.addModifier = window.addModifier; 
-  game.daggerheart.removeModifier = window.removeModifier; 
-  game.daggerheart.listModifiers = window.listModifiers; 
+  game.daggerheart.addModifier = window.addModifier;
+  game.daggerheart.removeModifier = window.removeModifier;
+  game.daggerheart.listModifiers = window.listModifiers;
 
   game.daggerheart.addModifierById = window.addModifierById;
   game.daggerheart.removeModifierById = window.removeModifierById;
@@ -858,7 +858,7 @@ Hooks.once("ready", async function() {
   window.cleanupDuplicateMacros = _cleanupDuplicateMacros;
   game.daggerheart.cleanupDuplicateMacros = window.cleanupDuplicateMacros;
 
-  window.testModifierSystem = function() {
+  window.testModifierSystem = function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
@@ -900,7 +900,7 @@ Hooks.once("ready", async function() {
     ui.notifications.info("ModifierManager test completed. Check console for detailed output.");
   };
 
-  window.analyzeArmorDuplicates = function() {
+  window.analyzeArmorDuplicates = function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
@@ -914,7 +914,7 @@ Hooks.once("ready", async function() {
     ui.notifications.info(`Found ${analysis.totalDuplicates} duplicate armor modifiers on ${actor.name}`);
   };
 
-  window.cleanupArmorDuplicates = async function() {
+  window.cleanupArmorDuplicates = async function () {
     const selectedTokens = canvas.tokens.controlled;
     if (selectedTokens.length === 0) {
       ui.notifications.warn("Please select a token first");
@@ -925,7 +925,7 @@ Hooks.once("ready", async function() {
     const result = await ArmorCleanup.cleanupActor(actor);
     console.log("=== Armor Cleanup Results ===");
     console.log(JSON.stringify(result, null, 2));
-    
+
     if (result.success) {
       ui.notifications.info(`Cleaned up ${result.modifiersRemoved} duplicate modifiers from ${actor.name}`);
     } else {
@@ -933,7 +933,7 @@ Hooks.once("ready", async function() {
     }
   };
 
-  window.cleanupAllArmorDuplicates = async function() {
+  window.cleanupAllArmorDuplicates = async function () {
     if (!game.user.isGM) {
       ui.notifications.error("Only GMs can run global cleanup");
       return;
@@ -942,7 +942,7 @@ Hooks.once("ready", async function() {
     const result = await ArmorCleanup.cleanupAllActors();
     console.log("=== Global Armor Cleanup Results ===");
     console.log(JSON.stringify(result, null, 2));
-    
+
     if (result.success) {
       ui.notifications.info(`Processed ${result.processedActors} actors, removed ${result.totalModifiersRemoved} duplicate modifiers`);
     } else {
@@ -1135,7 +1135,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
   }
 });
 
-Hooks.on("preCreateActor", function(document, data, options, userId) {
+Hooks.on("preCreateActor", function (document, data, options, userId) {
 
   const prototypeToken = {
     actorLink: true
@@ -1391,11 +1391,11 @@ function _handleCharacterDamageButton(message, html, actor, flavor) {
 
   if (weaponData && weaponData.damage && !existingButton) {
 
-    const isDamageRoll = flavor.includes("Damage") || 
-                        flavor.includes("damage") || 
-                        flavor.toLowerCase().includes("- damage") ||
-                        flavor.includes("Critical Damage") ||
-                        flavor.includes("critical damage");
+    const isDamageRoll = flavor.includes("Damage") ||
+      flavor.includes("damage") ||
+      flavor.toLowerCase().includes("- damage") ||
+      flavor.includes("Critical Damage") ||
+      flavor.includes("critical damage");
 
     const hasHopeFear = flavor.includes("Hope") || flavor.includes("Fear");
 
@@ -1452,11 +1452,11 @@ function _handleAdversaryDamageButton(message, html, actor, flavor) {
 
   if (weaponData && weaponData.damage && !existingButton) {
 
-    const isDamageRoll = flavor.includes("Damage") || 
-                        flavor.includes("damage") || 
-                        flavor.toLowerCase().includes("- damage") ||
-                        flavor.includes("Critical Damage") ||
-                        flavor.includes("critical damage");
+    const isDamageRoll = flavor.includes("Damage") ||
+      flavor.includes("damage") ||
+      flavor.toLowerCase().includes("- damage") ||
+      flavor.includes("Critical Damage") ||
+      flavor.includes("critical damage");
 
     const isAttackRoll = flavor.includes(weaponData.name) && !isDamageRoll;
 
@@ -1545,7 +1545,7 @@ async function _rollConsolidatedDamage(event) {
 
   try {
     await game.daggerheart.damageApplication.rollDamage(
-      null, 
+      null,
       {
         sourceActor: actor,
         weaponName: weaponName,
@@ -1841,6 +1841,68 @@ Hooks.on("getItemDirectoryEntryContext", (html, options) => {
   });
 });
 
+Hooks.on('getItemContextOptions', (application, buttons) => {
+  const CompatibleTypes = ['Item'];
+  const documentName = application.documentName;
+  if (!CompatibleTypes.includes(documentName)) return;
+
+  buttons.push({
+    name: "To Chat",
+    icon: '<i class="fa-solid fa-comment-alt"></i>',
+    callback: async li => {
+      const entryId = li.dataset['entryId'];
+      const entryPack = application.collection?.applicationClass?.name === 'Compendium' ? application.collection : undefined;
+
+      if (entryPack) {
+        const item = await entryPack.getDocument(entryId);
+        await _sendItemToChat(item);
+      } else {
+        const item = application.collection.get(entryId);
+        await _sendItemToChat(item);
+      }
+
+      return false;
+    },
+  })
+});
+
+Hooks.on('getItemSheetHeaderButtons', (sheet, buttons) => {
+  buttons.unshift({
+    label: "To Chat",
+    class: "to-chat",
+    icon: "fas fa-comment-alt",
+    onclick: async () => {
+      if (!sheet.object) return;
+      const item = sheet.object;
+      await _sendItemToChat(item);
+    },
+  });
+});
+
+async function _sendItemToChat(item) {
+  const actor = canvas.tokens.controlled[0]?.actor ??
+    game.user?.character ?? new Actor({
+      name: game.user.name,
+      type: "character",
+    });
+
+  const chatCard = buildItemCardChat({
+    itemId: item.id,
+    actorId: actor.id,
+    image: item.img,
+    name: item.name,
+    category: item.system.category || '',
+    rarity: item.system.rarity || '',
+    description: item.system.description || ''
+  });
+
+  ChatMessage.create({
+    user: game.user.id,
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: chatCard
+  });
+}
+
 function _addUndoButtonHandlers(html, flags) {
   html.find(".undo-damage-button, .undo-healing-button").click(async (event) => {
     event.preventDefault();
@@ -1973,14 +2035,14 @@ function _initializeMultiTargetArmorSlotsHandlers(html) {
   const armorContainers = html.find(".armor-slots-ui");
   if (!armorContainers.length) return;
 
-  armorContainers.each(function() {
+  armorContainers.each(function () {
     const container = $(this);
     const actorId = container.data("actor-id");
     const maxElement = container.find(".armor-slots-max");
-    const maxValue = parseInt(maxElement.text()) || 3; 
+    const maxValue = parseInt(maxElement.text()) || 3;
 
     container.data("current", 0);
-    container.data("max", maxValue); 
+    container.data("max", maxValue);
     container.data("actor-id", actorId);
   });
 
@@ -2027,7 +2089,7 @@ function _collectMultiTargetArmorSlots(html) {
   const armorSlots = {};
   const armorContainers = html.find(".armor-slots-ui");
 
-  armorContainers.each(function() {
+  armorContainers.each(function () {
     const container = $(this);
     const actorId = container.data("actor-id");
     const current = parseInt(container.data("current")) || 0;
