@@ -49,9 +49,9 @@
                         </div>
                         <div class="weapon-roller-box">
                             <div class="weapon-infobox">
-                                <div class="weapon-to-hit click-rollable-modifier" data-action="openModifiers"
-                                    data-type="attack">
-                                    {{system.attack.value}}
+                                <div class="weapon-to-hit click-rollable-modifier" data-action="openOverlay"
+                                    data-target="modifier" data-type="attack">
+                                    {{system.attack.total}}
                                 </div>
                                 <a class="trait-effects click-rollable" data-action="rollAction"
                                     data-roll-type="primary">
@@ -59,23 +59,12 @@
                                 </a>
                             </div>
                             <div class="weapon-infobox">
-                                <div class="weapon-damage-display damage-value-display" data-action="openModifiers"
-                                    data-type="damage">
-                                    {{#if system.primary.damage.value}}
-                                    {{system.primary.damage.value}}
-                                    {{#if system.primary.damage.modifiers}}
-                                    {{#each system.primary.damage.modifiers}}
-                                    {{#if this.enabled}}
-                                    + {{this.value}}
-                                    {{/if}}
-                                    {{/each}}
-                                    {{/if}}
-                                    {{else}}
-                                    {{#if system.primary.damage}}
-                                    {{system.primary.damage}}
+                                <div class="weapon-damage-display damage-value-display" data-action="openOverlay"
+                                    data-target="modifier" data-type="damage">
+                                    {{#if system.primary.damage.total}}
+                                    {{system.primary.damage.total}}
                                     {{else}}
                                     Missing
-                                    {{/if}}
                                     {{/if}}
                                 </div>
                                 <a class="trait-effects basic-rollable" data-action="rollDamage"

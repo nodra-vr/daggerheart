@@ -25,7 +25,7 @@ export class ModifiersEditor {
 
 
   constructor(options = {}) {
-    // Required and can not null
+    // Required, can not be null
     this._id = options.id;
     this._sheet = options.sheet;
 
@@ -128,8 +128,12 @@ export class ModifiersEditor {
 
     this._state.modifiers.splice(index, 1);
     await this._sheet.render();
-    this._updateDamageTotal();
+
+    // Refocus the main formula input
+    const overlay = this._updateDamageTotal();
+    overlay.querySelector('.damage-base-input').focus();
   }
+
 
   async update(data) {
     switch (data.name) {
@@ -156,10 +160,10 @@ export class ModifiersEditor {
           data.checked,
         );
         return true;
+      default:
+        return false;
     }
-    return false;
   }
-
 
   async _updateBaseFormula(value) {
     this._state.total = value;
@@ -214,5 +218,6 @@ export class ModifiersEditor {
     const overlay = document.getElementById(`modifier-${this._id}`);
     overlay.querySelector('.damage-total-value').innerHTML = total;
     this._state.total = total;
+    return overlay;
   }
 }
