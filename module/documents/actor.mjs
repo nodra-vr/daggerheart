@@ -140,6 +140,7 @@ export class ActorDocument extends Actor {
     }
   }
 
+
   _onUpdate(changed, options, userId) {
     super._onUpdate(changed, options, userId);
 

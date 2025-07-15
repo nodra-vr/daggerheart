@@ -386,10 +386,20 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     textarea.on("keyup", () => {
       textarea.css("height", calcHeight(textarea.val()) + "px");
     });
-
-  }
-
-  async _onToggleWeaponEquip(event) {
+    
+    }
+    
+    close(options) {
+        // Check if the tooltip element exists and remove it from the DOM
+        let tooltipElement = document.querySelector('.daggerheart-tooltip');
+        if (tooltipElement) {
+            tooltipElement.remove();
+        }
+        
+        return super.close(options);
+    }
+    
+    async _onToggleWeaponEquip(event) {
     event.preventDefault();
 
     const button = event.currentTarget;
@@ -1255,9 +1265,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const deleteStyle = isPermanent ? 'style="display: none;"' : '';
     const permanentClass = isPermanent ? 'permanent-modifier' : '';
     const permanentIndicator = isPermanent ? '<i class="fas fa-lock permanent-indicator" title="Permanent modifier"></i>' : '';
-    
+
     const row = $(`
-      <div class="modifier-row ${modifier.enabled === false ? 'disabled' : ''} ${permanentClass}" data-index="${index}">
+      <div class="modifier-row ${modifier.enabled === false ? 'disabled' : ''} ${permanentClass}" data-index="${index}" data-modifier-id="${modifier.id || ''}">
         <input type="text" class="modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" ${isPermanent ? 'readonly' : ''} />
         <input type="text" class="modifier-value" placeholder="±0 or @prof" value="${modifier.value || (modifier.value === 0 ? '0' : '')}" ${isPermanent ? 'readonly' : ''} />
         <input type="checkbox" class="modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} ${toggleStyle} />
@@ -1336,9 +1346,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const deleteStyle = isPermanent ? 'style="display: none;"' : '';
     const permanentClass = isPermanent ? 'permanent-modifier' : '';
     const permanentIndicator = isPermanent ? '<i class="fas fa-lock permanent-indicator" title="Permanent modifier"></i>' : '';
-    
+
     const row = $(`
-      <div class="damage-modifier-row modifier-row ${modifier.enabled === false ? 'disabled' : ''} ${permanentClass}" data-index="${index}">
+      <div class="damage-modifier-row modifier-row ${modifier.enabled === false ? 'disabled' : ''} ${permanentClass}" data-index="${index}" data-modifier-id="${modifier.id || ''}">
         <input type="text" class="damage-modifier-name modifier-name" placeholder="Modifier name" value="${modifier.name || ''}" ${isPermanent ? 'readonly' : ''} />
         <input type="text" class="damage-modifier-value modifier-value" placeholder="±1 or ±1d4" value="${modifier.value || ''}" ${isPermanent ? 'readonly' : ''} />
         <input type="checkbox" class="damage-modifier-toggle modifier-toggle" ${modifier.enabled !== false ? 'checked' : ''} ${toggleStyle} />
@@ -1438,17 +1448,29 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       let name = $row.find('.damage-modifier-name').val().trim();
       const value = $row.find('.damage-modifier-value').val().trim();
       const enabled = $row.find('.damage-modifier-toggle').is(':checked');
+      const isPermanent = $row.hasClass('permanent-modifier');
+      const modifierId = $row.attr('data-modifier-id');
 
       if (value) {
 
         if (!name) {
           name = 'Modifier';
         }
-        modifiers.push({
+        const modifier = {
           name: name,
           value: value,
           enabled: enabled
-        });
+        };
+        
+        if (isPermanent) {
+          modifier.permanent = true;
+        }
+        
+        if (modifierId) {
+          modifier.id = modifierId;
+        }
+        
+        modifiers.push(modifier);
       }
     });
 
@@ -1523,8 +1545,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
       if (isEnabled) {
         let value = $row.find('.modifier-value').val().trim() || '0';
-        
-        // Process @ variables if present
+
         if (value.includes('@') && globalThis.daggerheart?.EntitySheetHelper) {
           try {
             value = globalThis.daggerheart.EntitySheetHelper.processInlineReferences(value, this.actor);
@@ -1532,8 +1553,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
             console.warn("Daggerheart | Error processing inline references in modifier:", error);
           }
         }
-        
-        // Convert to number for calculation
+
         const numericValue = parseInt(value) || 0;
         modifierTotal += numericValue;
       }
@@ -1567,17 +1587,29 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       let name = $row.find('.modifier-name').val().trim();
       const value = $row.find('.modifier-value').val().trim() || '0';
       const enabled = $row.find('.modifier-toggle').is(':checked');
+      const isPermanent = $row.hasClass('permanent-modifier');
+      const modifierId = $row.attr('data-modifier-id');
 
       if (value !== '0' && value !== 0 && value !== '') {
 
         if (!name) {
           name = 'Modifier';
         }
-        modifiers.push({
+        const modifier = {
           name: name,
           value: value,
           enabled: enabled
-        });
+        };
+        
+        if (isPermanent) {
+          modifier.permanent = true;
+        }
+        
+        if (modifierId) {
+          modifier.id = modifierId;
+        }
+        
+        modifiers.push(modifier);
       }
     });
 
@@ -1585,8 +1617,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     modifiers.forEach(modifier => {
       if (modifier.enabled !== false) {
         let modValue = modifier.value;
-        
-        // Process @ variables if present
+
         if (typeof modValue === 'string' && modValue.includes('@') && globalThis.daggerheart?.EntitySheetHelper) {
           try {
             modValue = globalThis.daggerheart.EntitySheetHelper.processInlineReferences(modValue, this.actor);
@@ -1594,8 +1625,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
             console.warn("Daggerheart | Error processing inline references in modifier:", error);
           }
         }
-        
-        // Convert to number for calculation
+
         const numericValue = parseInt(modValue) || 0;
         totalValue += numericValue;
       }
@@ -1744,75 +1774,40 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   async _onBasicRollableClick(event) {
     event.preventDefault();
 
-    const rollableElement = event.currentTarget;
-    const rollableGroup = rollableElement.closest(".basic-rollable-group");
-    const rollNameInput = rollableGroup.querySelector(".basic-rollable-name");
+    const rollableElement = event.currentTarget; 
+    const rollableGroup = rollableElement.closest(".basic-rollable-group"); 
+    const rollName = rollableGroup.querySelector(".basic-rollable-name")?.value || "Basic Roll";
+    const rollType = rollableElement.dataset.rollType || "damage"; 
 
+    event.currentTarget.dataset.actorId = this.actor.id;
+    event.currentTarget.dataset.weaponName = rollName;
+    event.currentTarget.dataset.weaponType = "basic"; 
+    event.currentTarget.dataset.isCritical = "false"; 
+
+    let damageData = null;
     const damageValueDisplay = rollableGroup.querySelector(".damage-value-display");
     const rollValueInput = rollableGroup.querySelector(".basic-rollable-value");
 
-    const proficiencyValue = this.actor.system.proficiency?.value || 1;
-    const rollName = rollNameInput.value;
-    const rollType = rollableElement.dataset.rollType || "unknown";
-
-    this._pendingRollType = rollType;
-    this._pendingWeaponName = rollName;
-
-    let rollValue;
-
     if (damageValueDisplay && rollType === "damage") {
-        const fieldPath = damageValueDisplay.dataset.field;
-
-        if (fieldPath) {
-          const damageData = foundry.utils.getProperty(this.actor, fieldPath);
-
-          if (typeof damageData === 'object' && damageData !== null && 'baseValue' in damageData) {
-
-            rollValue = this._buildDamageFormulaFromStructure(damageData, this.actor.type === "character" ? parseInt(proficiencyValue) || 1 : null);
-          } else {
-
-            const simpleFormula = damageData || '1d8';
-            if (this.actor.type === "character") {
-              const proficiency = Math.max(1, parseInt(proficiencyValue) || 1);
-              rollValue = this._applyProficiencyToDamageFormula(simpleFormula, proficiency);
-            } else {
-              rollValue = simpleFormula;
-            }
-          }
-        } else {
-
-          const displayFormula = damageValueDisplay.textContent.trim() || '1d8';
-          if (this.actor.type === "character") {
-            const proficiency = Math.max(1, parseInt(proficiencyValue) || 1);
-            rollValue = this._applyProficiencyToDamageFormula(displayFormula, proficiency);
-          } else {
-            rollValue = displayFormula;
-          }
-        }
-    } else if (rollValueInput && rollValueInput.classList.contains("weapon-damage")) {
-
-        const proficiency = Math.max(1, parseInt(proficiencyValue) || 1);
-        const diceInput = rollValueInput.value.trim();
-
-        const diceMatch = diceInput.match(/^(\d*)d(\d+)(.*)$/i);
-        if (diceMatch) {
-            const diceCount = diceMatch[1] || proficiency; 
-            const dieType = diceMatch[2]; 
-            const modifier = diceMatch[3] || ""; 
-            rollValue = `${diceCount}d${dieType}${modifier}`;
-        } else {
-
-            rollValue = diceInput;
-        }
-    } else if (rollValueInput) {
-
-        rollValue = rollValueInput.value;
+      const fieldPath = damageValueDisplay.dataset.field;
+      damageData = foundry.utils.getProperty(this.actor, fieldPath) || damageValueDisplay.textContent.trim() || '1d8';
+    } else if (rollValueInput && (rollType === "damage" || rollType === "healing")) {
+      damageData = rollValueInput.value.trim() || '1d8';
     } else {
 
-        rollValue = '1d8';
+      const rollValue = rollValueInput?.value || '1d8';
+      this._pendingRollType = rollType;
+      this._pendingWeaponName = rollName;
+      await this._rollBasic(rollName, rollValue);
+      return;
     }
 
-    await this._rollBasic(rollName, rollValue);
+    if (typeof damageData !== 'object' || damageData === null || !('baseValue' in damageData)) {
+        damageData = { baseValue: damageData, modifiers: [], value: damageData };
+    }
+    event.currentTarget.dataset.weaponDamageStructure = JSON.stringify(damageData);
+
+    await game.daggerheart.damageApplication.rollConsolidatedDamage(event);
   }
 
   _buildDamageFormulaFromStructure(damageData, proficiency = null) {

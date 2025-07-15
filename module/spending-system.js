@@ -871,7 +871,7 @@ Hooks.once("init", () => {
     }
   };
 
-  const VERB_PATTERN = "spend|use|gain|add|lose|remove|clear|mark|recover|heal";
+  const VERB_PATTERN = "spend|spending|use|gain|add|lose|remove|clear|mark|recover|heal";
   const NUM_PATTERN = "\\d+|a|one|two|three|four|five|six|seven|eight|nine|ten";
   const RES_PATTERN = "fear(?:s)?|hope(?:s)?|stress|armor\\s+slots?|hit\\s+points?";
   const masterPattern = new RegExp(`(?:^|[^>a-zA-Z])(?:(${VERB_PATTERN})\\s+)?([+\\-]?\\s*(?:${NUM_PATTERN}))\\s+(${RES_PATTERN})(?![^<]*</a>)`, "gi");
@@ -950,7 +950,7 @@ Hooks.once("init", () => {
         else if (["recover", "heal", "remove", "clear"].includes(verb)) sign = -1;
       } else {
         // For fear/hope/stress: spend/use/lose = negative, gain = positive
-        if (["spend", "use", "lose", "remove", "clear"].includes(verb)) sign = -1;
+        if (["spend", "spending", "use", "lose", "remove", "clear"].includes(verb)) sign = -1;
         else sign = 1;
       }
     }

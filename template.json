@@ -36,11 +36,13 @@
         "major": {
           "baseValue": 8,
           "modifiers": [],
+          "permanentModifiers": [],
           "value": 8
         },
         "severe": {
           "baseValue": 12,
           "modifiers": [],
+          "permanentModifiers": [],
           "value": 12
         }
       },
@@ -77,11 +79,13 @@
         "damage": {
           "baseValue": "1d8",
           "modifiers": [],
+          "permanentModifiers": [],
           "value": "1d8"
         },
         "to-hit": {
           "baseValue": 0,
           "modifiers": [],
+          "permanentModifiers": [],
           "value": 0
         },
         "range": "",
@@ -94,11 +98,13 @@
         "damage": {
           "baseValue": "1d8",
           "modifiers": [],
+          "permanentModifiers": [],
           "value": "1d8"
         },
         "to-hit": {
           "baseValue": 0,
           "modifiers": [],
+          "permanentModifiers": [],
           "value": 0
         },
         "range": "",
@@ -155,6 +161,7 @@
         "armor": {
           "baseValue": 0,
           "modifiers": [],
+          "permanentModifiers": [],
           "value": 0,
           "tooltip": "When your character takes damage, you can mark one Armor Slot, then reduce the severity of the damage by one threshold."
         },
@@ -215,6 +222,7 @@
         "armor": {
           "baseValue": 0,
           "modifiers": [],
+          "permanentModifiers": [],
           "value": 0,
           "tooltip": "When your character takes damage, you can mark one Armor Slot, then reduce the severity of the damage by one threshold."
         },
@@ -232,11 +240,13 @@
         "damage": {
           "baseValue": "1d8",
           "modifiers": [],
+          "permanentModifiers": [],
           "value": "1d8"
         },
         "to-hit": {
           "baseValue": 0,
           "modifiers": [],
+          "permanentModifiers": [],
           "value": 0
         },
         "range": "",
@@ -282,11 +292,13 @@
         "damage": {
           "baseValue": "1d6",
           "modifiers": [],
+          "permanentModifiers": [],
           "value": "1d6"
         },
         "to-hit": {
           "baseValue": 0,
           "modifiers": [],
+          "permanentModifiers": [],
           "value": 0
         },
         "range": "melee",
@@ -411,6 +423,7 @@
       "damage": {
         "baseValue": "1d8",
         "modifiers": [],
+        "permanentModifiers": [],
         "value": "1d8"
       },
       "quantity": 1,

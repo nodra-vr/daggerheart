@@ -2,7 +2,7 @@ import { ModifierManager } from "./modifierManager.js";
 
 export class DaggerheartMigrations {
 
-  static CURRENT_VERSION = "1.2.3";
+  static CURRENT_VERSION = "1.2.4";
 
   static async migrateDocument(document) {
     let needsUpdate = false;
@@ -72,6 +72,18 @@ export class DaggerheartMigrations {
           }
         } catch (error) {
           console.error(`❌ Error adding character level modifier for "${document.name}":`, error);
+        }
+      }
+
+      if (this.compareVersions(currentVersion, "1.2.4") < 0 && document.documentName === "Actor") {
+        try {
+          const modifierIdMigration = this._addModifierIds(document);
+          if (modifierIdMigration) {
+            Object.assign(updateData, modifierIdMigration);
+            needsUpdate = true;
+          }
+        } catch (error) {
+          console.error(`❌ Error adding modifier IDs for "${document.name}":`, error);
         }
       }
 
@@ -601,5 +613,99 @@ export class DaggerheartMigrations {
     }
 
     return baseValue + modifierTotal;
+  }
+
+  /**
+   * Add IDs to existing modifiers and set up permanent modifier tracking
+   * @param {Document} document - The document to migrate
+   * @returns {Object|null} - Update data or null if no changes needed
+   * @private
+   */
+  static _addModifierIds(document) {
+    if (document.documentName !== "Actor") {
+      return null;
+    }
+
+    const updateData = {};
+    let needsUpdate = false;
+
+    // Fields that can have modifiers
+    const modifierFields = [
+      'system.agility.value',
+      'system.finesse.value',
+      'system.instinct.value',
+      'system.knowledge.value',
+      'system.presence.value',
+      'system.strength.value',
+      'system.weapon-main.to-hit',
+      'system.weapon-off.to-hit',
+      'system.weapon-main.damage',
+      'system.weapon-off.damage',
+      'system.threshold.major',
+      'system.threshold.severe',
+      'system.defenses.armor'
+    ];
+
+    for (const fieldPath of modifierFields) {
+      const currentData = foundry.utils.getProperty(document, fieldPath);
+      
+      if (!currentData || !currentData.modifiers || !Array.isArray(currentData.modifiers)) {
+        continue;
+      }
+
+      let hasModifierChanges = false;
+      let hasPermanentChanges = false;
+      const existingPermanentModifiers = currentData.permanentModifiers || [];
+      const newPermanentModifiers = [];
+
+      const updatedModifiers = currentData.modifiers.map(modifier => {
+        if (!modifier.id) {
+          hasModifierChanges = true;
+          const newId = this._generateModifierId();
+          const updatedModifier = {
+            ...modifier,
+            id: newId
+          };
+
+          // If it's permanent, add to local tracking
+          if (modifier.permanent) {
+            newPermanentModifiers.push({
+              id: newId,
+              name: modifier.name,
+              value: modifier.value,
+              enabled: modifier.enabled,
+              color: modifier.color
+            });
+            hasPermanentChanges = true;
+          }
+
+          console.log(`🆔 Adding ID "${newId}" to modifier "${modifier.name}" at ${fieldPath} for "${document.name}"`);
+          return updatedModifier;
+        }
+        return modifier;
+      });
+
+      if (hasModifierChanges) {
+        updateData[`${fieldPath}.modifiers`] = updatedModifiers;
+        needsUpdate = true;
+      }
+
+      if (hasPermanentChanges) {
+        updateData[`${fieldPath}.permanentModifiers`] = [...existingPermanentModifiers, ...newPermanentModifiers];
+        needsUpdate = true;
+        console.log(`📋 Adding ${newPermanentModifiers.length} permanent modifiers to tracking at ${fieldPath} for "${document.name}"`);
+      }
+    }
+
+    return needsUpdate ? updateData : null;
+  }
+
+  /**
+   * Generate a unique modifier ID
+   * @returns {string} - Unique ID for the modifier
+   * @private
+   */
+  static _generateModifierId() {
+    return `mod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 }
