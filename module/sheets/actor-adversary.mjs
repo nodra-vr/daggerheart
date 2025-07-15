@@ -1,34 +1,15 @@
 import { DaggerheartDialogHelper } from "../dialog-helper.js";
+import { ActorSheet } from "./base/actor-sheet.mjs";
 
 const {
-  ux, api, apps, sheets
+  ux, apps
 } = foundry.applications;
 
 /**
  * Extend the basic ActorSheet with modifications for daggerheart
  * @extends {ActorSheetV2}
  */
-export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
-  sheets.ActorSheetV2
-) {
-  OverlayType = Object.freeze({
-    Attack: "attack",
-    Damage: "damage",
-  });
-  _overlayState = {
-    path: "",
-    title: "",
-    scale: 0.8,
-    opacity: 0,
-    hide: true,
-    weapon: false,
-    base: "",
-    total: "",
-    modifiers: [],
-  }
-  _activeOverlayType = null;
-
-
+export class AdversaryActorSheet extends ActorSheet {
   // TODO Depricate fully or add to a base actor class.
   // Pending Info is used to manage rolls and chat info.
   _pendingRollName = null;
@@ -56,68 +37,124 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
   }
 
 
-  /** @override */
-  static DEFAULT_OPTIONS = {
-    classes: ["daggerheart", "adversary", "sheet", "transitions-enabled"],
-    document: null,
-    editPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER,
-    viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.LIMITED,
-    dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
-    window: {
-      resizable: true,
-      //title: 'DCC.ActorSheetTitle' // Just the localization key
-    },
-    form: {
-      submitOnChange: true
-    },
-    position: {
-      width: 650,
-      height: 840
-    },
-    actions: {
-      editImage: this.#editImage,
-      takeDamage: this.#takeDamage,
-      rollAction: this.#rollAction,
-      rollDamage: this.#rollDamage,
-      openDeathMove: this.#openDeathMove,
-      decrementValue: this.#decrementValue,
-      incrementValue: this.#incrementValue,
+  static get DEFAULT_OPTIONS() {
+    const parentOptions = super.DEFAULT_OPTIONS;
+    return foundry.utils.mergeObject(parentOptions, {
+      classes: [
+        ...parentOptions.classes, "adversary"
+      ],
+      dragDrop: [{
+        dragSelector: "[data-drag]",
+        dropSelector: null
+      }],
+      actions: {
+        editImage: this.#editImage,
+        takeDamage: this.#takeDamage,
 
-      createModifier: this.#createModifier,
-      deleteModifier: this.#deleteModifier,
+        rollAction: this.#rollAction,
+        rollDamage: this.#rollDamage,
 
-      openModifiers: this.#openModifiers,
-      saveModifiers: this.#saveModifiers,
-      closeModifiers: this.#closeModifiers,
-    },
-  };
+        openDeathMove: this.#openDeathMove,
+        decrementValue: this.#decrementValue,
+        incrementValue: this.#incrementValue,
+      }
+    }, {
+      // Merge nested objects
+      recursive: true,
+      insertKeys: true,
+      insertValues: true
+    });
+  }
 
-  /** @override */
-  static PARTS = {
-    mods: {
-      template: "./systems/daggerheart/templates/partials/actor-overlay-modifiers.hbs",
-    },
-    base: {
-      template: "./systems/daggerheart/templates/actor-adversary.hbs"
-    },
-    tabs: {
-      template: "./systems/daggerheart/templates/partials/actor-general-tabs.hbs"
-    },
-    details: {
-      template: "./systems/daggerheart/templates/partials/actor-adversary-tabs-details.hbs",
-      scrollable: [''],
-    },
-    biography: {
-      template: "./systems/daggerheart/templates/partials/actor-adversary-tabs-biography.hbs",
-      scrollable: [''],
-    },
+  static get PARTS() {
+    const parentOptions = super.PARTS;
+    return foundry.utils.mergeObject(parentOptions, {
+      app: {
+        template: "./systems/daggerheart/templates/actor-adversary.hbs"
+      },
+      tabs: {
+        template: "./systems/daggerheart/templates/partials/actor-general-tabs.hbs"
+      },
+      // Below are sheet tabs, they need to be defined in _getTabs.
+      details: {
+        template: "./systems/daggerheart/templates/partials/actor-adversary-tabs-details.hbs",
+        scrollable: [''],
+      },
+      biography: {
+        template: "./systems/daggerheart/templates/partials/actor-adversary-tabs-biography.hbs",
+        scrollable: [''],
+      },
+    });
+  }
+
+
+  constructor(options = {}) {
+    super(options);
+
+    this._modifiers.register('attack', {
+      load: this.loadAttack.bind(this),
+      save: this.saveAttack.bind(this)
+    });
+
+    this._modifiers.register('damage', {
+      load: this.loadDamage.bind(this),
+      save: this.saveDamage.bind(this)
+    });
+  }
+
+  async loadAttack() {
+    const data = this.actor.system.attack;
+    return {
+      path: "actor.system.attack",
+      title: `${this.actor.system.primary.name} - Attack`,
+      base: data.base,
+      total: data.total,
+      modifiers: data.modifiers,
+    };
+  }
+
+  async saveAttack(data) {
+    this.actor.update({
+      system: {
+        attack: {
+          base: data.base,
+          total: data.total,
+          modifiers: data.modifiers,
+        }
+      }
+    });
+  }
+
+  async loadDamage() {
+    const data = this.actor.system.primary.damage;
+    return {
+      path: "actor.system.primary.damage",
+      title: `${this.actor.system.primary.name} - Damage`,
+      base: data.base,
+      total: data.total,
+      modifiers: data.modifiers,
+    };
+  }
+
+  async saveDamage(data) {
+    this.actor.update({
+      system: {
+        primary: {
+          damage: {
+            base: data.base,
+            total: data.total,
+            modifiers: data.modifiers,
+          }
+        }
+      }
+    });
   }
 
 
   _getTabs(parts) {
-    // Set the default tab
     const tabGroup = 'primary';
 
+    // Set the default tab
     if (!this.tabGroups[tabGroup])
       this.tabGroups[tabGroup] = 'details';
 
@@ -131,10 +168,6 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
       };
 
       switch (partId) {
-        case 'mods':
-        case 'base':
-        case 'tabs':
-          return tabs;
         case 'details':
           tab.id = 'details';
           tab.label = game.i18n.localize('DH.Tabs.Details');
@@ -144,9 +177,10 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
           tab.label = game.i18n.localize('DH.Tabs.Biography');
           break;
         default:
+          return tabs;
       }
 
-      // This is what turns on a single tab
+      // This activates the current tab for a group
       if (this.tabGroups[tabGroup] === tab.id)
         tab.css = 'active';
 
@@ -163,11 +197,12 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
     // console.log('ActorAdversary: Prepare context options:');
     // console.log(options);
 
-    // Base Context
-    const context = {
-      actor: this.actor,
-      system: this.actor.system
-    };
+    const context = await super._prepareContext(options);
+    console.log(context);
+
+    // Base context
+    context.actor = this.actor;
+    context.system = this.actor.system;
 
     // Create the tabs context object
     context.tabs = this._getTabs(options.parts);
@@ -182,8 +217,6 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
       relativeTo: this.document
     })
 
-    context.overlay = this._overlayState;
-
     // console.log('ActorAdversary: Context ready:');
     // console.log(context);
     return context;
@@ -191,51 +224,17 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
 
   /** @override */
   async _processSubmitData(event, form, formData) {
-    console.log("ActorAdversary: process submit event");
-
-    if (event.type !== 'change' || !event.target) {
-      console.warn(`Actor._processSubmitData: ignored`);
-      // TODO Handle others?
-      console.log(event);
-      // Ignore it
-      return;
-    }
+    if (!super._processSubmitData(
+      event, form, formData
+    )) return;
 
     const target = event.target;
-
-    // console.log(target);
-    // console.log(target.name);
-    // console.log(target.dataset.index);
-
     switch (target.name) {
       case 'name':
         this._updateActorName(target.value);
         // This may be a bit too optimized but it works,
         // prevents a full document update and related saves
         // For simple use cases the default will do the job fine.
-        break;
-      case 'modifier-base':
-        this._updateBaseFormula(
-          target.value,
-        );
-        break;
-      case 'modifier-name':
-        this._updateModifierName(
-          target.dataset.index,
-          target.value,
-        );
-        break;
-      case 'modifier-value':
-        this._updateModifierValue(
-          target.dataset.index,
-          target.value,
-        );
-        break;
-      case 'modifier-state':
-        this._updateModifierState(
-          target.dataset.index,
-          target.value,
-        );
         break;
       default:
         await this.document.update(formData);
@@ -249,42 +248,6 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
         name: name
       })
     }
-  }
-
-  async _updateBaseFormula(value) {
-    this._overlayState.total = value;
-    this._overlayState.base = value;
-    // TODO _updateDamageTotal
-    // TODO validate value
-  }
-
-  async _updateModifierName(index, name) {
-    if (index < 0 || index >= this._overlayState.modifiers.length) {
-      console.warn(`Actor._updateModifierName: invalid index: ${index}`);
-      ui.notifications.error("Failed to update the modifier name.");
-      return;
-    }
-    this._overlayState.modifiers[index].name = name;
-  }
-
-  async _updateModifierValue(index, value) {
-    if (index < 0 || index >= this._overlayState.modifiers.length) {
-      console.warn(`Actor._updateModifierValue: invalid index: ${index}`);
-      ui.notifications.error("Failed to update the modifier value.");
-      return;
-    }
-    this._overlayState.modifiers[index].value = value;
-    // TODO _updateDamageTotal
-    // TODO validate value
-  }
-
-  async _updateModifierState(index, enabled) {
-    if (index < 0 || index >= this._overlayState.modifiers.length) {
-      console.warn(`Actor._updateModifierValue: invalid index: ${index}`);
-      ui.notifications.error("Failed to update the modifier value.");
-      return;
-    }
-    this._overlayState.modifiers[index].enabled = enabled;
   }
 
 
@@ -343,15 +306,11 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
     const data = this.actor.system;
 
     const name = data.primary.name;
-    const traitValue = data.attack.value;
+    const traitValue = data.attack.total;
 
     // Store data for chat message
     this._pendingRollType = "attack";
     this._pendingRollName = name;
-
-    // TODO: To get the damage to work we need to look at:
-    // daggerheart.js > Hooks.on("renderChatMessage" > actorType
-    // daggerheart.js > Hooks.on("renderChatMessage" > weaponData
 
     // Note: This replaces _rollTrait from the original actor sheet
     const namePrint = name.charAt(0).toUpperCase() + name.slice(1);
@@ -363,18 +322,14 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
   }
 
   async _rollPrimaryDamage() {
-    const data = this.actor.system;
+    const data = this.actor.system.primary;
 
     // Store data for chat message
     this._pendingRollType = "damage";
-    this._pendingRollName = data.primary.name;
+    this._pendingRollName = data.name;
 
-    const damageData = data.primary.damage;
-    const damageValue = damageData?.value || '1d8';
-
-    // TODO Add posible modifiers to the damage, trough value should have those?
-
-    await this._rollBasic(damageValue);
+    const value = data.damage.total;
+    await this._rollBasic(value);
   }
 
 
@@ -429,6 +384,7 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
     }
   }
 
+
   static async #openDeathMove(event, target) {
     event.preventDefault();
 
@@ -471,296 +427,5 @@ export class AdversaryActorSheet extends api.HandlebarsApplicationMixin(
     this.actor.update({
       [`system.${field}`]: max !== undefined ? Math.min(value, max) : value,
     });
-  }
-
-
-  static async #createModifier(event, target) {
-    console.log(this._overlayState.modifiers);
-    console.log(this._overlayState.modifiers.length);
-
-    const mods = this._overlayState.modifiers;
-    if (mods.length > 0 && mods[mods.length - 1].name === 'unknown') {
-      ui.notifications.error("Define the unknown modifier first.");
-      return;
-    }
-    this._overlayState.modifiers.push({
-      name: 'unknown',
-      value: '+1',
-      enabled: true,
-    })
-    await this.render();
-
-    // Grab the focus of the newly created element for a good user experience
-    const overlay = document.getElementById('overlay-' + this.actor.id);
-    const list = overlay.querySelectorAll('.modifier-name');
-    if (list.length > 0) list[list.length - 1].focus();
-  }
-
-  static async #deleteModifier(event, target) {
-    const index = target.dataset.index;
-
-    if (index < 0 || index >= this._overlayState.modifiers.length) {
-      console.warn(`Actor.#deleteModifier: invalid index: ${index}`);
-      ui.notifications.error("Failed to delete the modifier.");
-      return;
-    }
-
-    this._overlayState.modifiers.splice(index, 1);
-    this.render();
-  }
-
-
-  async _openModifiers(config) {
-    this._overlayState.path = config.path;
-    this._overlayState.title = config.title;
-    this._overlayState.base = config.base;
-    this._overlayState.total = config.total;
-    this._overlayState.modifiers = config.modifiers;
-    await this.render();
-
-    const overlay = document.getElementById('overlay-' + this.actor.id);
-    const popup = overlay.querySelector('.damage-edit-popup');
-    const input = overlay.querySelector('.damage-base-input');
-
-    const damageLabel = overlay.querySelector('.damage-edit-label');
-
-    // Setup the modifier title 
-    damageLabel.innerHTML = config.title;
-
-    // Animate in with JavaScript for smooth backdrop-filter
-    overlay.style.removeProperty("display");
-    this._animatePopupIn(popup, () => {
-      input.focus();
-    });
-  }
-
-  async _closeModifiers() {
-    const overlay = document.getElementById('overlay-' + this.actor.id);
-    const popup = overlay.querySelector('.damage-edit-popup');
-
-    this._animatePopupOut(popup, () => {
-      overlay.style.setProperty("display", "none");
-      this._activeOverlayType = null;
-      this._overlayState = {
-        path: "",
-        title: "",
-        scale: 0.8,
-        opacity: 0,
-        hide: true,
-        weapon: false,
-        base: "",
-        total: "",
-        modifiers: [],
-      };
-      this.render();
-    });
-  }
-
-  static async #closeModifiers(event, target) {
-    event.preventDefault();
-    this._closeModifiers();
-  }
-
-  async _saveAttackModifiers() {
-    const data = this._overlayState;
-    this.actor.update({
-      system: {
-        attack: {
-          base: data.base,
-          value: data.total,
-          modifiers: data.modifiers,
-        }
-      }
-    })
-  }
-
-  async _saveDamageModifiers() {
-    const data = this._overlayState;
-    this.actor.update({
-      system: {
-        primary: {
-          damage: {
-            base: data.base,
-            value: data.total,
-            modifiers: data.modifiers,
-          }
-        }
-      }
-    })
-  }
-
-  static async #saveModifiers(event, target) {
-    event.preventDefault();
-    switch (this._activeOverlayType) {
-      case this.OverlayType.Attack:
-        await this._saveAttackModifiers();
-        this._closeModifiers();
-        break;
-      case this.OverlayType.Damage:
-        await this._saveDamageModifiers();
-        this._closeModifiers();
-        break;
-      default:
-        const type = this._activeOverlayType;
-        console.warn(`Actor._saveModifiers: invalid type: ${type}`);
-    }
-  }
-
-  async _openAttackModifiers() {
-    if (this._activeOverlayType !== null) return;
-
-    this._activeOverlayType = this.OverlayType.Attack;
-    const data = this.actor.system.attack;
-
-    // TODO Reimplement restrictions for equiped items
-    // See the original _showDamageModifierEditPopup
-
-    this._openModifiers({
-      path: "attack",
-      title: `${this.actor.system.primary.name} - Attack`,
-      base: data.base,
-      total: data.value,
-      modifiers: data.modifiers,
-    });
-  }
-
-  async _openDamageModifiers() {
-    if (this._activeOverlayType !== null) return;
-
-    this._activeOverlayType = this.OverlayType.Damage;
-    const data = this.actor.system.primary.damage;
-
-    // TODO Reimplement restrictions for equiped items
-    // See the original _showDamageModifierEditPopup
-
-    this._openModifiers({
-      path: "primary.damage",
-      title: `${this.actor.system.primary.name} - Damage`,
-      base: data.base,
-      total: data.value,
-      modifiers: data.modifiers,
-    });
-  }
-
-  static async #openModifiers(event, target) {
-    event.preventDefault();
-    switch (target.dataset.type) {
-      case this.OverlayType.Attack:
-        this._openAttackModifiers();
-        break;
-      case this.OverlayType.Damage:
-        this._openDamageModifiers();
-        break;
-      default:
-        const type = target.dataset.type;
-        console.warn(`Actor.#openModifiers: unknown type: ${type}`);
-    }
-  }
-
-
-  _animatePopupIn(popup, callback) {
-    let start = null;
-    const duration = 120;
-
-    const animate = (timestamp) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-
-      // Easing function (ease-out)
-      const eased = 1 - Math.pow(1 - progress, 3);
-
-      const scale = 0.8 + (0.2 * eased); // From 0.8 to 1.0
-      const opacity = eased; // From 0 to 1
-
-      popup.style.setProperty("--dh-popup-scale", scale);
-      popup.style.setProperty("--dh-popup-opacity", opacity);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        callback && callback();
-        this._overlayState.hide = false;
-        this._overlayState.scale = 1.0;
-        this._overlayState.opacity = 1.0;
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }
-
-  _animatePopupOut(popup, callback) {
-    let start = null;
-    const duration = 180;
-
-    const animate = (timestamp) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-
-      // Easing function (ease-in)
-      const eased = Math.pow(progress, 2);
-
-      const scale = 1.0 - (0.2 * eased); // From 1.0 to 0.8
-      const opacity = 1 - eased; // From 1 to 0
-
-      popup.style.setProperty("--dh-popup-scale", scale);
-      popup.style.setProperty("--dh-popup-opacity", opacity);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        callback && callback();
-        this._overlayState.hide = true;
-        this._overlayState.scale = 0.8;
-        this._overlayState.opacity = 0.0;
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }
-
-
-  ////////////////////////////////////////////////////////////////////////////
-  // TODO The Stuff below is broken, damage and attack editor overlay
-  //
-  // Below should be an application of it's own or be part of the base class?
-  // * This seems overly complicated and depends on data sets within HTML
-  // elements for computation. Are we mixing presentation with logic?
-  // * Second problem are the jquery lookups, these are depricated!
-  ////////////////////////////////////////////////////////////////////////////
-
-  _updateDamageTotal(overlay) {
-    const baseValue = overlay.find('.damage-base-input').val().trim() || '1d8';
-    let modifierParts = [];
-
-    overlay.find('.damage-modifier-row').each((index, row) => {
-      const $row = $(row);
-      const isEnabled = $row.find('.damage-modifier-toggle').is(':checked');
-
-      if (isEnabled) {
-        const value = $row.find('.damage-modifier-value').val().trim();
-        if (value) {
-          // Ensure proper formatting - add + if it doesn't start with + or -
-          let formattedValue = value;
-          if (value && !value.startsWith('+') && !value.startsWith('-')) {
-            formattedValue = '+' + value;
-          }
-          modifierParts.push(formattedValue);
-        }
-      }
-    });
-
-    // Build the total formula
-    let totalFormula = baseValue;
-    if (modifierParts.length > 0) {
-      totalFormula += ' ' + modifierParts.join(' ');
-    }
-
-    // Update the popup preview total
-    overlay.find('.damage-total-value').text(totalFormula);
-
-    // DO NOT update the display element during editing - only for preview
-    // This preserves the structured data for future editing
-
-    return totalFormula;
   }
 }

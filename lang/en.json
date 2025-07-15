@@ -51,6 +51,7 @@
   "SIMPLE.DeleteGroupContent": "Do you wish to delete this group? This will delete the following group and all attributes included in it: ",
   "SIMPLE.Create": "Create",
   "SIMPLE.New": "New",
+
   "DH.Level": "Level",
   "DH.Prof": "Prof.",
   "DH.HitPoints": "Hit Points",

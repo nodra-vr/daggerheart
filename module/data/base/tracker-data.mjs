@@ -23,12 +23,12 @@ export class ResourceDataModel extends foundry.abstract.TypeDataModel {
         });
         schema.value = new NumberField({
             required: true, integer: true,
-            positive: true, initial: 0
+            positive: false, initial: 0, min: 0
         });
 
         schema.order = new NumberField({
             required: true, integer: true,
-            positive: true, initial: 0
+            positive: false, initial: 0, min: 0
         });
 
         return schema;

@@ -1,0 +1,58 @@
+<div id="tracker-{{actor.id}}" data-type="tracker" class="popup-overlay" style="display: {{resources.display}};">
+  <div class="popup-container" style="--dh-popup-scale: {{overlay.scale}}; --dh-popup-opacity: {{overlay.opacity}};">
+    <div class="tracker-manager-header">
+      <span>Resource Tracker</span>
+      <button class="tracker-manager-close" title="Close" data-action="closeOverlay" data-target="tracker">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="tracker-manager-content">
+      <div class="tracker-add-form">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" class="tracker-name-input" placeholder="Resource name" name="tracker-next-name"
+            value="{{resources.next.name}}">
+        </div>
+        <div class="form-group-horizontal">
+          <div class="form-group-half">
+            <label>Value</label>
+            <div class="value-inputs">
+              <input type="number" class="tracker-value-input" placeholder="0" min="0" name="tracker-next-value"
+                value="{{resources.next.value}}">
+              <span class="value-separator">/</span>
+              <input type="number" class="tracker-max-input" placeholder="Max" min="0" name="tracker-next-max"
+                value="{{resources.next.max}}">
+            </div>
+          </div>
+          <div class="form-group-half">
+            <label>Color</label>
+            <div class="color-input-wrapper">
+              <input type="color" class="tracker-color-input" name="tracker-next-color"
+                value="{{resources.next.color}}">
+            </div>
+          </div>
+        </div>
+        <button class="tracker-add-button" data-action="createResource">
+          <i class="fas fa-plus"></i> Add Resource
+        </button>
+      </div>
+
+      <div class="tracker-list">
+        <div class="tracker-list-header">Existing Resources</div>
+        <div class="tracker-list-items">
+          {{#each resources.list}}
+          <div class="tracker-list-item" data-tracker-id="${tracker.id}">
+            <span class="tracker-item-color" style="background-color: {{this.color}}"></span>
+            <span class="tracker-item-name">{{this.name}}</span>
+            <span class="tracker-item-value">{{this.value}} / {{this.max}}</span>
+            <button class="tracker-item-delete" title="Delete resource" data-index="{{@index}}"
+              data-action="deleteResource">
+              <i class="fas fa-times no-click"></i>
+            </button>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

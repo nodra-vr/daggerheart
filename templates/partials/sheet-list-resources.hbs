@@ -1,0 +1,13 @@
+<div class="sheet-tracker-sidebar">
+  <div class="tracker-main-button" title="Resource Tracker" data-action="openOverlay" data-target="tracker">
+    <i class="fas fa-stopwatch"></i>
+  </div>
+  <div class="tracker-buttons-container">
+    {{#each resources.list}}
+    <div class="tracker-button" data-index="{{@index}}" data-tracker-name="{{this.name}}"
+      title="{{this.name}}: {{this.value}} / {{this.max}}" style="background-color: {{this.color}};">
+      <span class="tracker-button-value no-click">{{this.value}}</span>
+    </div>
+    {{/each}}
+  </div>
+</div>
