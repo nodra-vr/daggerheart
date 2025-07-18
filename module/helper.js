@@ -590,6 +590,11 @@ export class EntitySheetHelper {
       content: html,
       label: title,
       callback: html => {
+        let pack = null;
+        // Check if there's an active pack
+        const dialog = Object.values(ui.windows);
+        if (dialog.length > 0) pack = dialog[0].options?.pack;
+
         // Get the form data
         const form = html[0].querySelector("form");
         const fd = new foundry.applications.ux.FormDataExtended(form);
@@ -607,7 +612,10 @@ export class EntitySheetHelper {
 
         // Merge provided override data
         createData = foundry.utils.mergeObject(createData, data, { inplace: false });
-        return this.create(createData, {renderSheet: true});
+        return this.create(createData, {
+          pack: pack,
+          renderSheet: true
+        });
       },
       rejectClose: false,
       options: options
