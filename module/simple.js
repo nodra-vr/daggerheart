@@ -157,9 +157,7 @@ Hooks.once("init", async function () {
     EntitySheetHelper: EntitySheetHelper
   };
 
-  globalThis.daggerheart = {
-    EntitySheetHelper
-  };
+  globalThis.daggerheart.EntitySheetHelper = EntitySheetHelper;
 
   CONFIG.Actor.documentClass = SimpleActor;
   CONFIG.Actor.typeLabels = {
