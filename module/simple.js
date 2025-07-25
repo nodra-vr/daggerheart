@@ -12,6 +12,7 @@ import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
 import { CountdownTracker } from "./countdown-tracker.js";
 import { SheetTracker } from "./sheet-tracker.js";
+import { TrackerNotificationBubbles } from "./tracker-notification-bubbles.js";
 import { DaggerheartMigrations } from "./migrations.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
 import { EntitySheetHelper, buildItemCardChat } from "./helper.js";
@@ -355,6 +356,10 @@ Hooks.once("ready", async function () {
 
   game.daggerheart.countdownTracker = new CountdownTracker();
   await game.daggerheart.countdownTracker.initialize();
+
+  // Initialize tracker notification bubbles
+  game.daggerheart.trackerNotificationBubbles = new TrackerNotificationBubbles();
+  game.daggerheart.trackerNotificationBubbles.initialize();
 
   window.spendFear = async function (amount) {
     if (!game.daggerheart?.counter) {
@@ -1943,19 +1948,22 @@ function _getMultiTargetArmorInfo() {
   const targets = Array.from(game.user.targets);
   targets.forEach(token => {
     if (token.actor?.type === "character") {
-      const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
-      const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
-      const availableSlots = maxSlots - currentSlots;
-      const usableSlots = Math.min(availableSlots, 3);
-      characterTargets.push({
-        actor: token.actor,
-        name: token.actor.name,
-        id: token.actor.id,
-        maxSlots,
-        currentSlots,
-        availableSlots,
-        usableSlots
-      });
+      // Only include if user is GM or owner
+      if (game.user.isGM || token.actor.isOwner) {
+        const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
+        const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
+        const availableSlots = maxSlots - currentSlots;
+        const usableSlots = Math.min(availableSlots, 3);
+        characterTargets.push({
+          actor: token.actor,
+          name: token.actor.name,
+          id: token.actor.id,
+          maxSlots,
+          currentSlots,
+          availableSlots,
+          usableSlots
+        });
+      }
     }
   });
   return characterTargets;

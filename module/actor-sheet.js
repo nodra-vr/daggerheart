@@ -138,11 +138,12 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   async activateListeners(html) {
     super.activateListeners(html);
 
-    if (!this.sheetTracker) {
-      this.sheetTracker = new SheetTracker(this);
+    // Initialize or reinitialize sheet tracker
+    if (this.sheetTracker) {
+      this.sheetTracker.destroy();
     }
-
-    this.sheetTracker.initialize();
+    this.sheetTracker = new SheetTracker(this);
+    await this.sheetTracker.initialize();
 
     if (this.actor.type === "character") {
       if (!this.domainAbilitySidebar) {
@@ -390,6 +391,24 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     }
     
     close(options) {
+        // Clean up sheet tracker
+        if (this.sheetTracker) {
+            this.sheetTracker.destroy();
+            this.sheetTracker = null;
+        }
+        
+        // Clean up domain ability sidebar
+        if (this.domainAbilitySidebar) {
+            this.domainAbilitySidebar.destroy?.();
+            this.domainAbilitySidebar = null;
+        }
+        
+        // Clean up header loadout bar
+        if (this.headerLoadoutBar) {
+            this.headerLoadoutBar.destroy?.();
+            this.headerLoadoutBar = null;
+        }
+        
         // Check if the tooltip element exists and remove it from the DOM
         let tooltipElement = document.querySelector('.daggerheart-tooltip');
         if (tooltipElement) {
@@ -411,8 +430,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const success = await EquipmentHandler.toggleWeaponEquip(this.actor, item);
 
     if (success) {
-
-      this.render(true);
+      // Use immediate render to prevent debouncing issues with tracker
+      this.render(true, { immediate: true });
     }
   }
 
@@ -428,8 +447,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const success = await EquipmentHandler.equipPrimaryWeapon(this.actor, item);
 
     if (success) {
-
-      this.render(true);
+      this.render(true, { immediate: true });
     }
   }
 
@@ -445,8 +463,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const success = await EquipmentHandler.equipSecondaryWeapon(this.actor, item);
 
     if (success) {
-
-      this.render(true);
+      this.render(true, { immediate: true });
     }
   }
 
@@ -462,8 +479,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const success = await EquipmentSystem.toggle(this.actor, item);
 
     if (success) {
-
-      this.render(true);
+      this.render(true, { immediate: true });
     }
   }
 

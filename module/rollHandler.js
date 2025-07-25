@@ -25,6 +25,8 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   _styleChatMessageBackground(html, message);
 
   _handleAutomaticFearGain(message);
+
+  _addClickableRerollHandlers(html, message);
 });
 
 async function _handleAutomaticFearGain(message) {
@@ -165,6 +167,64 @@ function _styleDiceTooltips(html) {
         $bold.addClass('hope-result');
       } else if (text === 'Fear') {
         $bold.addClass('fear-result');
+      }
+    });
+  });
+}
+
+function _addClickableRerollHandlers(html, message) {
+  // Only add handlers for duality rolls that have both Hope and Fear dice
+  const flags = message.flags?.daggerheart;
+  if (!flags || !flags.isDuality) return;
+
+  // Only allow rerolls for the message author or GM
+  const canReroll = game.user.isGM || message.user?.id === game.user.id;
+  if (!canReroll) return;
+
+  // Find Hope and Fear dice in the tooltip
+  const hopeDice = html.find('.dice-rolls .roll.die.hope-die[data-flavor="Hope"]');
+  const fearDice = html.find('.dice-rolls .roll.die.fear-die[data-flavor="Fear"]');
+
+  // Make Hope dice clickable
+  hopeDice.each((index, die) => {
+    const $die = $(die);
+    $die.addClass('clickable-die');
+    $die.attr('title', 'Click to reroll Hope die');
+    
+    $die.off('click.reroll').on('click.reroll', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      // Prevent multiple rapid clicks
+      if ($die.hasClass('rerolling')) return;
+      $die.addClass('rerolling');
+      
+      try {
+        await _rerollHopeDie(message, $die);
+      } finally {
+        $die.removeClass('rerolling');
+      }
+    });
+  });
+
+  // Make Fear dice clickable
+  fearDice.each((index, die) => {
+    const $die = $(die);
+    $die.addClass('clickable-die');
+    $die.attr('title', 'Click to reroll Fear die');
+    
+    $die.off('click.reroll').on('click.reroll', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      // Prevent multiple rapid clicks
+      if ($die.hasClass('rerolling')) return;
+      $die.addClass('rerolling');
+      
+      try {
+        await _rerollFearDie(message, $die);
+      } finally {
+        $die.removeClass('rerolling');
       }
     });
   });
@@ -796,6 +856,329 @@ export async function _waitFor3dDice(msgId) {
     return game.dice3d.waitFor3DAnimationByMessageID(msgId);
   }
   return Promise.resolve(true);
+}
+
+async function _rerollHopeDie(message, dieElement) {
+  try {
+    const flags = message.flags.daggerheart;
+    if (!flags || !flags.isDuality) return;
+
+    // Show confirmation dialog
+    const confirmResult = await DaggerheartDialogHelper.showDialog({
+      title: 'Reroll Hope Die',
+      content: `<p>Are you sure you want to reroll the Hope die? This action cannot be undone.</p>`,
+      dialogClass: 'confirm-dialog',
+      buttons: {
+        confirm: {
+          label: 'Reroll',
+          icon: '<i class="fas fa-dice"></i>',
+          callback: () => ({ confirmed: true })
+        },
+        cancel: {
+          label: 'Cancel',
+          callback: () => ({ confirmed: false })
+        }
+      }
+    });
+
+    if (!confirmResult || !confirmResult.confirmed) return;
+
+    // Extract die size from the original roll
+    const hopeDieSize = flags.hopeDieSize || 'd12';
+    
+    // Roll new Hope die
+    const newRoll = await _rollHope({
+      dieSize: hopeDieSize,
+      modifier: 0,
+      sendToChat: false,
+      returnRoll: true
+    });
+
+    const newHopeValue = newRoll.dice[0].total;
+    
+    // Show 3D dice animation if available
+    if (game.dice3d) {
+      try {
+        await game.dice3d.showForRoll(newRoll, game.user, true, null, false);
+      } catch (diceError) {
+        console.warn("Daggerheart | 3D dice animation failed:", diceError);
+      }
+    }
+    
+    // Update the existing message's roll data
+    await _updateDualityRollInMessage(message, newHopeValue, null, dieElement);
+    
+  } catch (error) {
+    console.error("Daggerheart | Error rerolling Hope die:", error);
+    ui.notifications.error("Failed to reroll Hope die");
+  }
+}
+
+async function _rerollFearDie(message, dieElement) {
+  try {
+    const flags = message.flags.daggerheart;
+    if (!flags || !flags.isDuality) return;
+
+    // Show confirmation dialog
+    const confirmResult = await DaggerheartDialogHelper.showDialog({
+      title: 'Reroll Fear Die',
+      content: `<p>Are you sure you want to reroll the Fear die? This action cannot be undone.</p>`,
+      dialogClass: 'confirm-dialog',
+      buttons: {
+        confirm: {
+          label: 'Reroll',
+          icon: '<i class="fas fa-dice"></i>',
+          callback: () => ({ confirmed: true })
+        },
+        cancel: {
+          label: 'Cancel',
+          callback: () => ({ confirmed: false })
+        }
+      }
+    });
+
+    if (!confirmResult || !confirmResult.confirmed) return;
+
+    // Extract die size from the original roll
+    const fearDieSize = flags.fearDieSize || 'd12';
+    
+    // Roll new Fear die
+    const newRoll = await _rollFear({
+      dieSize: fearDieSize,
+      modifier: 0,
+      sendToChat: false,
+      returnRoll: true
+    });
+
+    const newFearValue = newRoll.dice[0].total;
+    
+    // Show 3D dice animation if available
+    if (game.dice3d) {
+      try {
+        await game.dice3d.showForRoll(newRoll, game.user, true, null, false);
+      } catch (diceError) {
+        console.warn("Daggerheart | 3D dice animation failed:", diceError);
+      }
+    }
+    
+    // Update the existing message's roll data
+    await _updateDualityRollInMessage(message, null, newFearValue, dieElement);
+    
+  } catch (error) {
+    console.error("Daggerheart | Error rerolling Fear die:", error);
+    ui.notifications.error("Failed to reroll Fear die");
+  }
+}
+
+async function _updateDualityRollInMessage(message, newHopeValue, newFearValue, clickedDieElement) {
+  try {
+    const flags = message.flags.daggerheart;
+    const originalRoll = message.rolls[0];
+    
+    if (!originalRoll || originalRoll.dice.length < 2) {
+      console.error("Daggerheart | Invalid roll structure for reroll");
+      return;
+    }
+
+    // Get current values
+    let currentHopeValue = originalRoll.dice[0].total;
+    let currentFearValue = originalRoll.dice[1].total;
+    
+    // Update the appropriate die value
+    if (newHopeValue !== null) {
+      currentHopeValue = newHopeValue;
+      // Update the roll object
+      originalRoll.dice[0].results[0].result = newHopeValue;
+      originalRoll.dice[0]._total = newHopeValue;
+    }
+    
+    if (newFearValue !== null) {
+      currentFearValue = newFearValue;
+      // Update the roll object
+      originalRoll.dice[1].results[0].result = newFearValue;
+      originalRoll.dice[1]._total = newFearValue;
+    }
+
+    // Recalculate total (Hope + Fear + any modifiers)
+    const modifier = flags.modifier || 0;
+    const newTotal = currentHopeValue + currentFearValue + modifier;
+    originalRoll._total = newTotal;
+
+    // Determine new roll outcomes
+    const isCrit = currentHopeValue === currentFearValue;
+    const isHope = !flags.reaction && currentHopeValue > currentFearValue;
+    const isFear = !flags.reaction && currentHopeValue < currentFearValue;
+
+    // Update flags with new outcomes
+    const updatedFlags = {
+      ...flags,
+      isCrit,
+      isHope,
+      isFear
+    };
+
+    // Generate new flavor text
+    const newFlavor = _generateUpdatedDualityFlavor(flags, isCrit, isHope, isFear, modifier);
+
+    // Update the message
+    await message.update({
+      rolls: [originalRoll],
+      flavor: newFlavor,
+      flags: {
+        daggerheart: updatedFlags
+      }
+    });
+
+    // Update the visual display immediately
+    _updateDieVisualDisplay(clickedDieElement, newHopeValue || newFearValue);
+    
+    // Update the total display
+    const messageElement = $(`[data-message-id="${message.id}"]`);
+    const totalElement = messageElement.find('.dice-total');
+    if (totalElement.length) {
+      totalElement.text(newTotal);
+    }
+
+    // Update part totals in tooltip
+    if (newHopeValue !== null) {
+      const hopePartTotal = messageElement.find('.tooltip-part:first .part-total');
+      if (hopePartTotal.length) {
+        hopePartTotal.text(newHopeValue);
+      }
+    }
+    
+    if (newFearValue !== null) {
+      const fearPartTotal = messageElement.find('.tooltip-part:last .part-total');
+      if (fearPartTotal.length) {
+        fearPartTotal.text(newFearValue);
+      }
+    }
+
+    // 3D dice animation is handled in the reroll functions
+
+    // Handle automatic resource changes for the new outcome
+    if (!flags.reaction) {
+      await _handleRerollResourceChanges(message, flags, isCrit, isHope, isFear);
+    }
+
+    console.log(`Daggerheart | Rerolled ${newHopeValue !== null ? 'Hope' : 'Fear'} die: ${newHopeValue || newFearValue} (New outcome: ${isCrit ? 'Critical' : isHope ? 'Hope' : isFear ? 'Fear' : 'Neutral'})`);
+    
+  } catch (error) {
+    console.error("Daggerheart | Error updating duality roll in message:", error);
+    ui.notifications.error("Failed to update roll result");
+  }
+}
+
+async function _handleRerollResourceChanges(message, flags, isCrit, isHope, isFear) {
+  try {
+    // Handle Fear gain for Fear outcomes
+    if (isFear) {
+      await _requestFearGain(1, "rerolled with Fear");
+    }
+
+    // Handle Hope/Stress changes for Hope and Critical outcomes
+    if (isCrit || isHope) {
+      let targetActor = null;
+
+      if (flags.actorId) {
+        targetActor = game.actors.get(flags.actorId);
+      }
+
+      if (!targetActor && message.speaker?.actor) {
+        targetActor = game.actors.get(message.speaker.actor);
+      }
+
+      if (!targetActor) {
+        // Fallback logic
+        if (canvas.tokens?.controlled?.length === 1) {
+          targetActor = canvas.tokens.controlled[0].actor;
+        } else if (game.user.character) {
+          targetActor = game.user.character;
+        }
+      }
+
+      if (targetActor && targetActor.type === "character") {
+        const updateData = {};
+
+        if (isCrit) {
+          const currentHope = parseInt(targetActor.system.hope?.value) || 0;
+          const maxHope = parseInt(targetActor.system.hope?.max) || 0;
+          updateData["system.hope.value"] = Math.min(maxHope, currentHope + 1);
+
+          const currentStress = parseInt(targetActor.system.stress?.value) || 0;
+          updateData["system.stress.value"] = Math.max(0, currentStress - 1);
+
+          console.log(`Daggerheart | +1 Hope, -1 Stress for ${targetActor.name} (Reroll Critical)`);
+        } else if (isHope) {
+          const currentHope = parseInt(targetActor.system.hope?.value) || 0;
+          const maxHope = parseInt(targetActor.system.hope?.max) || 0;
+          updateData["system.hope.value"] = Math.min(maxHope, currentHope + 1);
+
+          console.log(`Daggerheart | +1 Hope for ${targetActor.name} (Reroll Hope)`);
+        }
+
+        const canModify = game.user?.isGM || game.user?.hasRole?.("ASSISTANT") || targetActor.isOwner;
+
+        if (Object.keys(updateData).length > 0 && canModify) {
+          await targetActor.update(updateData);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn("Daggerheart | Error handling reroll resource changes:", error);
+  }
+}
+
+function _updateDieVisualDisplay(dieElement, newValue) {
+  // Update the die face value
+  dieElement.text(newValue);
+  
+  // Add a brief animation to indicate the change
+  dieElement.addClass('rerolled');
+  setTimeout(() => {
+    dieElement.removeClass('rerolled');
+  }, 1000);
+}
+
+function _generateUpdatedDualityFlavor(flags, isCrit, isHope, isFear, modifier) {
+  // Reconstruct the flavor text based on the original roll parameters
+  let flavorSuffix = '';
+  
+  // Add advantage/disadvantage info if present
+  const normalizedAdvantage = flags.advantage || {};
+  const normalizedDisadvantage = flags.disadvantage || {};
+  
+  const advCount = Object.values(normalizedAdvantage).reduce((sum, count) => sum + count, 0);
+  const disCount = Object.values(normalizedDisadvantage).reduce((sum, count) => sum + count, 0);
+
+  if (advCount > 0 && disCount === 0) {
+    flavorSuffix = ` with ${advCount} Advantage`;
+  } else if (disCount > 0 && advCount === 0) {
+    flavorSuffix = ` with ${disCount} Disadvantage`;
+  } else if (advCount > 0 && disCount > 0) {
+    flavorSuffix = ` with ${advCount} Advantage, ${disCount} Disadvantage`;
+  }
+
+  let finalFlavor = `<p class="roll-flavor-line"><b>Duality Dice</b>${flavorSuffix}`;
+  
+  if (modifier !== 0) {
+    finalFlavor += modifier > 0 ? ` +${modifier}` : ` ${modifier}`;
+  }
+
+  if (isCrit) {
+    finalFlavor += ` <b>Critical</b> Success!</p>`;
+    if (!flags.reaction) {
+      finalFlavor += `<p class="roll-effect">You gain 1 Hope and clear 1 Stress</p>`;
+    }
+  } else if (isHope) {
+    finalFlavor += ` Rolled with <b>Hope</b>!</p><p class="roll-effect">You gain 1 Hope</p>`;
+  } else if (isFear) {
+    finalFlavor += ` Rolled with <b>Fear</b>!</p><p class="roll-effect">The GM gains 1 Fear</p>`;
+  } else {
+    finalFlavor += `</p>`;
+  }
+
+  return finalFlavor;
 }
 
 export async function _dualityWithDialog(config) {

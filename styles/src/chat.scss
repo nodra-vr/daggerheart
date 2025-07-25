@@ -34,7 +34,7 @@
     flex: 0 0 100%;
     position: relative;
     margin: 0;
-    line-height: 24px;
+    line-height: 1.25;
     text-align: center;
     background: rgba(11, 10, 19, 0.8392156863);
     border: 1px solid #6d6795;
@@ -1274,6 +1274,99 @@
   50% {
     transform: scale(1.05);
     opacity: 0.6;
+  }
+}
+
+/* Clickable Dice Reroll Styling */
+.dice-rolls .roll.die.clickable-die {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  border-radius: 4px;
+  padding: 2px 4px;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  /* Hope die specific styling */
+  &.hope-die:hover {
+    color: var(--dh-color-gold);
+  }
+  
+  /* Rerolling state */
+  &.rerolling {
+    cursor: wait;
+    opacity: 0.7;
+    animation: rerollingPulse 0.5s ease-in-out infinite;
+  }
+  
+  /* Reroll animation */
+  &.rerolled {
+    animation: diceReroll 1s ease-out;
+  }
+}
+
+@keyframes rerollingPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+@keyframes diceReroll {
+  0% {
+    transform: scale(1) rotateY(0deg);
+    background: rgba(255, 255, 255, 0.8);
+  }
+  25% {
+    transform: scale(1.2) rotateY(90deg);
+    background: rgba(243, 194, 103, 0.6);
+  }
+  50% {
+    transform: scale(1.3) rotateY(180deg);
+    background: rgba(243, 194, 103, 0.8);
+  }
+  75% {
+    transform: scale(1.2) rotateY(270deg);
+    background: rgba(243, 194, 103, 0.6);
+  }
+  100% {
+    transform: scale(1) rotateY(360deg);
+    background: transparent;
+  }
+}
+
+/* Tooltip styling for clickable dice */
+.dice-tooltip .tooltip-part .dice-rolls .roll.die.clickable-die {
+  &::after {
+    content: "Click to reroll";
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 1000;
+  }
+  
+  &:hover::after {
+    opacity: 1;
   }
 }
 

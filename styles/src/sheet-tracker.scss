@@ -23,7 +23,7 @@
   gap: .5em;
   z-index: 100;
   transition: all 0.3s ease-in-out;
-  
+
   &.expanded {
     /* Keep the same left position but show the panel */
   }
@@ -45,14 +45,14 @@
   position: relative;
   z-index: 100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  
+
   &:hover {
     background: var(--dh-color-gold);
     color: var(--dh-color-off-black);
     transform: scale(1.1);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
   }
-  
+
   i {
     font-size: 16px;
   }
@@ -83,22 +83,22 @@
   position: relative;
   user-select: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  
+
   &:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
-  
+
   .tracker-button-value {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     text-stroke: 1px rgba(0, 0, 0, 0.8);
     font-size: 2.15em;
   }
-  
+
   &::after {
     content: attr(data-tracker-name);
     position: absolute;
@@ -121,7 +121,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     z-index: 1000;
   }
-  
+
   &:hover::after {
     opacity: 1;
     visibility: visible;
@@ -302,7 +302,7 @@
     align-items: center;
     gap: 5px;
     box-shadow: var(--dh-shadow-sm);
-    
+
     input[type="number"] {
       background: transparent;
       border: none;
@@ -312,7 +312,7 @@
       width: 2.5em;
       font-weight: 700;
       min-width: 0;
-      
+
       &:focus {
         box-shadow: none;
         background: rgba(255, 255, 255, 0.1);
@@ -320,14 +320,14 @@
         outline: none;
       }
     }
-    
+
     .value-separator {
       color: var(--dh-color-gold);
       font-weight: bold;
       font-size: 1.2em;
     }
   }
-  
+
   .color-input-wrapper {
     display: flex;
     align-items: center;
@@ -384,7 +384,7 @@
       transform: scale(1.02);
       box-shadow: 0 0 10px rgba(243, 194, 103, 0.5);
     }
-    
+
     &:active {
       transform: scale(0.98);
       box-shadow: 0 0 5px rgba(243, 194, 103, 0.8);
@@ -398,7 +398,7 @@
   padding: 0.5em 1rem;
   border-radius: 10px;
   border: 1px solid #433f64;
-  
+
   .tracker-list-header {
     color: var(--dh-color-gold);
     font-weight: 600;
@@ -407,7 +407,7 @@
     letter-spacing: 1px;
     margin-bottom: 0.5rem;
   }
-  
+
   .tracker-list-items {
     .no-trackers {
       color: rgba(242, 243, 244, 0.6);
@@ -433,16 +433,16 @@
   position: relative;
   transition: all 0.2s ease;
   margin-bottom: 0.5rem;
-  
+
   &:nth-child(even) {
     background: rgba(141, 120, 151, 0.05);
   }
-  
+
   &:hover {
     background: rgba(67, 63, 100, 0.3);
     border-color: rgba(243, 194, 103, 0.3);
   }
-  
+
   .tracker-item-color {
     width: 18px;
     height: 18px;
@@ -450,20 +450,20 @@
     flex-shrink: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
-  
+
   .tracker-item-name {
     flex: 1;
     color: var(--dh-color-off-white);
     font-weight: 500;
     font-size: 0.85rem;
   }
-  
+
   .tracker-item-value {
     color: var(--dh-color-off-white);
     font-weight: bold;
     font-size: 0.85rem;
   }
-  
+
   .tracker-item-delete {
     background: rgba(255, 68, 68, 0.2);
     color: #ff6b6b;
@@ -481,7 +481,7 @@
     line-height: 1;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     padding: 0;
-    
+
     &:hover {
       background: #ff4444;
       color: white;
@@ -497,6 +497,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -622,4 +623,197 @@
   opacity: 1;
   visibility: visible;
   margin-left: 12px;
-} 
+}
+
+/* ----------------------------------------- */
+/* Simple Tracker Bubbles                   */
+/* ----------------------------------------- */
+
+.tracker-bubbles {
+  position: absolute;
+  top: -90px; // Move up to cover the button above
+  right: 5px;
+  display: flex;
+  gap: 2px;
+  z-index: 100;
+  pointer-events: none;
+
+  .tracker-bubble {
+    pointer-events: all;
+  }
+}
+
+// Special positioning for domain ability buttons
+.domain-ability-button .tracker-bubbles {
+  top: -10px;
+  right: -10px;
+  flex-direction: row;
+  gap: 3px;
+}
+
+.tracker-bubble {
+  min-width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 10px;
+  cursor: pointer;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+
+  &:hover {
+    transform: scale(1.1);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* ----------------------------------------- */
+/* Tracker Notification Bubbles             */
+/* ----------------------------------------- */
+
+.tracker-notification-bubbles {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.tracker-notification-bubble {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 11px;
+  cursor: pointer;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+  pointer-events: all;
+  user-select: none;
+
+  .bubble-value {
+    line-height: 1;
+  }
+
+  &:hover {
+    transform: scale(1.15);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* ----------------------------------------- */
+/* Domain Ability Sidebar                   */
+/* ----------------------------------------- */
+
+.domain-abilities-sidebar {
+  .domain-ability-button {
+    position: relative;
+    display: inline-block;
+    overflow: visible;
+  }
+}
+
+/* ----------------------------------------- */
+/* Tracker Notification Bubbles             */
+/* ----------------------------------------- */
+
+.tracker-notification-bubbles {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.tracker-notification-bubble {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 11px;
+  cursor: pointer;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+  pointer-events: all;
+  user-select: none;
+
+  .bubble-value {
+    line-height: 1;
+  }
+
+  &:hover {
+    transform: scale(1.15);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* ------
+----------------------------------- */
+/* Tracker Notification Bubble Tooltips     */
+/* ----------------------------------------- */
+
+.tracker-notification-bubble {
+
+  // Custom tooltip similar to sheet tracker
+  &::after {
+    content: attr(title);
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    transform: translateX(-50%);
+    background: rgba(11, 10, 19, 0.95);
+    color: var(--dh-color-gold);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-bottom: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    border: 1px solid var(--dh-color-gold);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+  }
+
+  &:hover::after {
+    opacity: 1;
+    visibility: visible;
+    margin-bottom: 12px;
+  }
+}

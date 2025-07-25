@@ -196,3 +196,48 @@
 .domain-ability-button:hover, .domain-ability-button:focus {
   height: 90px;
 }
+
+/* =========================================
+   Tracker Notification Bubbles
+   ========================================= */
+
+.tracker-notification-bubbles {
+  position: absolute;
+  top: -12px;
+  right: 4px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.tracker-notification-bubble {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.tracker-notification-bubble:hover {
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.tracker-notification-bubble:active {
+  transform: scale(0.95);
+}
+
+.bubble-value {
+  line-height: 1;
+}

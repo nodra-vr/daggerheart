@@ -2944,6 +2944,50 @@ body.game .app button {
   height: 90px;
 }
 
+/* =========================================
+   Tracker Notification Bubbles
+   ========================================= */
+.tracker-notification-bubbles {
+  position: absolute;
+  top: -12px;
+  right: 4px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.tracker-notification-bubble {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.tracker-notification-bubble:hover {
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.tracker-notification-bubble:active {
+  transform: scale(0.95);
+}
+
+.bubble-value {
+  line-height: 1;
+}
+
 /* Header Loadout Bar */
 .header-loadout-bar {
   display: flex;
@@ -4946,7 +4990,7 @@ input.trait-effects.resize-ta {
   flex: 0 0 100%;
   position: relative;
   margin: 0;
-  line-height: 24px;
+  line-height: 1.25;
   text-align: center;
   background: rgba(11, 10, 19, 0.8392156863);
   border: 1px solid #6d6795;
@@ -6111,6 +6155,89 @@ input.trait-effects.resize-ta {
     opacity: 0.6;
   }
 }
+/* Clickable Dice Reroll Styling */
+.dice-rolls .roll.die.clickable-die {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  border-radius: 4px;
+  padding: 2px 4px;
+  /* Hope die specific styling */
+  /* Rerolling state */
+  /* Reroll animation */
+}
+.dice-rolls .roll.die.clickable-die:hover {
+  transform: scale(1.1);
+}
+.dice-rolls .roll.die.clickable-die:active {
+  transform: scale(0.95);
+}
+.dice-rolls .roll.die.clickable-die.hope-die:hover {
+  color: var(--dh-color-gold);
+}
+.dice-rolls .roll.die.clickable-die.rerolling {
+  cursor: wait;
+  opacity: 0.7;
+  animation: rerollingPulse 0.5s ease-in-out infinite;
+}
+.dice-rolls .roll.die.clickable-die.rerolled {
+  animation: diceReroll 1s ease-out;
+}
+
+@keyframes rerollingPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+@keyframes diceReroll {
+  0% {
+    transform: scale(1) rotateY(0deg);
+    background: rgba(255, 255, 255, 0.8);
+  }
+  25% {
+    transform: scale(1.2) rotateY(90deg);
+    background: rgba(243, 194, 103, 0.6);
+  }
+  50% {
+    transform: scale(1.3) rotateY(180deg);
+    background: rgba(243, 194, 103, 0.8);
+  }
+  75% {
+    transform: scale(1.2) rotateY(270deg);
+    background: rgba(243, 194, 103, 0.6);
+  }
+  100% {
+    transform: scale(1) rotateY(360deg);
+    background: transparent;
+  }
+}
+/* Tooltip styling for clickable dice */
+.dice-tooltip .tooltip-part .dice-rolls .roll.die.clickable-die::after {
+  content: "Click to reroll";
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+.dice-tooltip .tooltip-part .dice-rolls .roll.die.clickable-die:hover::after {
+  opacity: 1;
+}
+
 /* Fear Spend Message Styling */
 .fear-spend-message {
   background: linear-gradient(135deg, rgba(30, 24, 77, 0.9) 0%, rgba(11, 10, 19, 0.9) 100%);
@@ -8780,6 +8907,178 @@ button.weapon-locked:hover {
   opacity: 1;
   visibility: visible;
   margin-left: 12px;
+}
+
+/* ----------------------------------------- */
+/* Simple Tracker Bubbles                   */
+/* ----------------------------------------- */
+.tracker-bubbles {
+  position: absolute;
+  top: -90px;
+  right: 5px;
+  display: flex;
+  gap: 2px;
+  z-index: 100;
+  pointer-events: none;
+}
+.tracker-bubbles .tracker-bubble {
+  pointer-events: all;
+}
+
+.domain-ability-button .tracker-bubbles {
+  top: -10px;
+  right: -10px;
+  flex-direction: row;
+  gap: 3px;
+}
+
+.tracker-bubble {
+  min-width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 10px;
+  cursor: pointer;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+.tracker-bubble:hover {
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* ----------------------------------------- */
+/* Tracker Notification Bubbles             */
+/* ----------------------------------------- */
+.tracker-notification-bubbles {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.tracker-notification-bubble {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 11px;
+  cursor: pointer;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+  pointer-events: all;
+  user-select: none;
+}
+.tracker-notification-bubble .bubble-value {
+  line-height: 1;
+}
+.tracker-notification-bubble:hover {
+  transform: scale(1.15);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.tracker-notification-bubble:active {
+  transform: scale(0.95);
+}
+
+/* ----------------------------------------- */
+/* Domain Ability Sidebar                   */
+/* ----------------------------------------- */
+.domain-abilities-sidebar .domain-ability-button {
+  position: relative;
+  display: inline-block;
+  overflow: visible;
+}
+
+/* ----------------------------------------- */
+/* Tracker Notification Bubbles             */
+/* ----------------------------------------- */
+.tracker-notification-bubbles {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.tracker-notification-bubble {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 11px;
+  cursor: pointer;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+  pointer-events: all;
+  user-select: none;
+}
+.tracker-notification-bubble .bubble-value {
+  line-height: 1;
+}
+.tracker-notification-bubble:hover {
+  transform: scale(1.15);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.tracker-notification-bubble:active {
+  transform: scale(0.95);
+}
+
+/* ------
+----------------------------------- */
+/* Tracker Notification Bubble Tooltips     */
+/* ----------------------------------------- */
+.tracker-notification-bubble::after {
+  content: attr(title);
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  background: rgba(11, 10, 19, 0.95);
+  color: var(--dh-color-gold);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-bottom: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  border: 1px solid var(--dh-color-gold);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+.tracker-notification-bubble:hover::after {
+  opacity: 1;
+  visibility: visible;
+  margin-bottom: 12px;
 }
 
 /* ============================================
@@ -11536,19 +11835,6 @@ input.trait-effects.resize-ta {
   white-space: nowrap;
   text-transform: uppercase;
   color: var(--dh-color-teal);
-}
-.chat-message .dice-roll .dice-formula, .chat-message .dice-roll .dice-total {
-  flex: 0 0 100%;
-  position: relative;
-  margin: 0;
-  line-height: 24px;
-  text-align: center;
-  background: rgba(11, 10, 19, 0.8392156863);
-  border: 1px solid #6d6795;
-  box-shadow: none;
-  border-radius: 10px;
-  word-break: break-all;
-  margin-top: 0.25em;
 }
 .chat-message .message-content {
   -webkit-user-select: text;

@@ -57,15 +57,15 @@ export class CompanionActorSheet extends SimpleActorSheet {
   }
   
   /** @inheritdoc */
-  activateListeners(html) {
+  async activateListeners(html) {
     super.activateListeners(html);
     
-    if (!this.sheetTracker) {
-      this.sheetTracker = new SheetTracker(this);
+    // Initialize or reinitialize sheet tracker
+    if (this.sheetTracker) {
+      this.sheetTracker.destroy();
     }
-
-    // Always initialize on re-render to recreate the DOM
-    this.sheetTracker.initialize();
+    this.sheetTracker = new SheetTracker(this);
+    await this.sheetTracker.initialize();
   }
   
   async _rollTrait(traitName, traitValue) {

@@ -35,41 +35,7 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
     return context;
   }
 
-  /* -------------------------------------------- */
 
-  /** @inheritdoc */
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    // Everything below here is only needed if the sheet is editable
-    if ( !this.isEditable ) return;
-
-    // Attribute Management
-    html.find(".attributes").on("click", ".attribute-control", EntitySheetHelper.onClickAttributeControl.bind(this));
-    html.find(".groups").on("click", ".group-control", EntitySheetHelper.onClickAttributeGroupControl.bind(this));
-    html.find(".attributes").on("click", "a.attribute-roll", EntitySheetHelper.onAttributeRoll.bind(this));
-
-    // Image Click Finder - both left click and right click for image upload
-    html.find('.profile-img').on('contextmenu', event => {
-      event.preventDefault(); // Prevents the browser's context menu from opening
-      this._onProfileImageClick(event.target);
-    });
-    
-    // Also allow left click for easier image upload
-    html.find('.profile-img').on('click', event => {
-      event.preventDefault();
-      this._onImageEdit(event);
-    });
-    
-    // Add draggable for Macro creation
-    html.find(".attributes a.attribute-roll").each((i, a) => {
-      a.setAttribute("draggable", true);
-      a.addEventListener("dragstart", ev => {
-        let dragData = ev.currentTarget.dataset;
-        ev.dataTransfer.setData('text/plain', JSON.stringify(dragData));
-      }, false);
-    });
-  }
 
   /* -------------------------------------------- */
 
@@ -116,44 +82,45 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
   /* -------------------------------------------- */
 
   /** @override */
-  async _render(force, options) {
-    await super._render(force, options);
+  activateListeners(html) {
+    super.activateListeners(html);
 
-    // Initialize sheet tracker after the sheet is rendered
-    // Only initialize once per sheet instance
-    if (this.rendered && this.element && !this.sheetTracker) {
-      await this._initializeSheetTracker();
-    }
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * Initialize the sheet tracker system for this item sheet
-   */
-  async _initializeSheetTracker() {
-    // Clean up any existing tracker first
+    // Initialize or reinitialize sheet tracker
     if (this.sheetTracker) {
       this.sheetTracker.destroy();
-      this.sheetTracker = null;
     }
+    this.sheetTracker = new SheetTracker(this);
+    this.sheetTracker.initialize();
 
-    // Remove any existing sheet tracker sidebars from the DOM
-    this.element.find('.sheet-tracker-sidebar').remove();
+    // Everything below here is only needed if the sheet is editable
+    if ( !this.isEditable ) return;
 
-    // Create new sheet tracker instance
-    // Note: SheetTracker expects an actor, but we're adapting it for items
-    // We'll create a mock actor-like object that has the item as its "actor"
-    const mockActorSheet = {
-      actor: this.object, // Use the item as the "actor"
-      element: this.element
-    };
+    // Attribute Management
+    html.find(".attributes").on("click", ".attribute-control", EntitySheetHelper.onClickAttributeControl.bind(this));
+    html.find(".groups").on("click", ".group-control", EntitySheetHelper.onClickAttributeGroupControl.bind(this));
+    html.find(".attributes").on("click", "a.attribute-roll", EntitySheetHelper.onAttributeRoll.bind(this));
 
-    this.sheetTracker = new SheetTracker(mockActorSheet);
-    await this.sheetTracker.initialize();
+    // Image Click Finder - both left click and right click for image upload
+    html.find('.profile-img').on('contextmenu', event => {
+      event.preventDefault(); // Prevents the browser's context menu from opening
+      this._onProfileImageClick(event.target);
+    });
+    
+    // Also allow left click for easier image upload
+    html.find('.profile-img').on('click', event => {
+      event.preventDefault();
+      this._onImageEdit(event);
+    });
+    
+    // Add draggable for Macro creation
+    html.find(".attributes a.attribute-roll").each((i, a) => {
+      a.setAttribute("draggable", true);
+      a.addEventListener("dragstart", ev => {
+        let dragData = ev.currentTarget.dataset;
+        ev.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+      }, false);
+    });
   }
-
-  /* -------------------------------------------- */
 
   /** @override */
   async close(options) {

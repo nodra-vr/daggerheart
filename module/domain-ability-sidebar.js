@@ -94,6 +94,7 @@ export class DomainAbilitySidebar {
       .map(
         (item) => `
         <div class="domain-ability-button" data-item-id="${item.id}" data-slot-type="${slotType.key}" title="${item.name}">
+          ${this._renderTrackerBubbles(item)}
           <img class="ability-img" src="${item.img}" />
           <div class="ability-overlay">
             <a class="item-control" data-action="edit" title="Edit"><i class="fas fa-edit"></i></a>
@@ -111,6 +112,24 @@ export class DomainAbilitySidebar {
   /** Pull Domain Ability items from the actor (legacy method) */
   _getDomainAbilityItems() {
     return this._getItemsForSlotType({ key: 'domain' });
+  }
+
+  /** Render tracker notification bubbles for an item */
+  _renderTrackerBubbles(item) {
+    const trackers = item.system?.resourceTrackers || [];
+    if (trackers.length === 0) return '';
+
+    const bubbles = trackers.map(tracker => `
+      <div class="tracker-notification-bubble" 
+           data-item-id="${item.id}" 
+           data-tracker-id="${tracker.id}"
+           style="background-color: ${tracker.color}"
+           title="${tracker.name}: ${tracker.value}${tracker.maxValue ? '/' + tracker.maxValue : ''}">
+        <span class="bubble-value">${tracker.value}</span>
+      </div>
+    `).join('');
+
+    return `<div class="tracker-notification-bubbles">${bubbles}</div>`;
   }
 
 
@@ -220,6 +239,9 @@ export class DomainAbilitySidebar {
 
     // Hover preview (350 ms delay)
     this.sidebarElement.on('mouseenter', '.domain-ability-button', (ev) => {
+      // Don't show card preview if hovering over tracker bubbles
+      if ($(ev.target).closest('.tracker-notification-bubble').length) return;
+      
       const buttonEl = ev.currentTarget;
       const hoveredItemId = $(buttonEl).data('item-id');
       // If another preview is pinned and this is a different item, unpin it first
@@ -259,6 +281,23 @@ export class DomainAbilitySidebar {
         }
         this._pinPreview();
       }
+    });
+
+    // Tracker bubble interactions
+    this.sidebarElement.on('click', '.tracker-notification-bubble', async (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const itemId = $(ev.currentTarget).data('item-id');
+      const trackerId = $(ev.currentTarget).data('tracker-id');
+      await this._modifyTrackerValue(itemId, trackerId, 1);
+    });
+
+    this.sidebarElement.on('contextmenu', '.tracker-notification-bubble', async (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const itemId = $(ev.currentTarget).data('item-id');
+      const trackerId = $(ev.currentTarget).data('tracker-id');
+      await this._modifyTrackerValue(itemId, trackerId, -1);
     });
 
     // Drag & Drop handlers for adding abilities
@@ -369,6 +408,32 @@ export class DomainAbilitySidebar {
     $(document).off('mousedown.domainPreview');
     // Hide the preview now that it is no longer pinned
     this._hidePreview();
+  }
+
+  /** Modify tracker value for an item */
+  async _modifyTrackerValue(itemId, trackerId, delta) {
+    try {
+      const item = this.actor.items.get(itemId);
+      if (!item) return;
+
+      const trackers = [...(item.system.resourceTrackers || [])];
+      const tracker = trackers.find(t => t.id === trackerId);
+      if (!tracker) return;
+
+      const oldValue = tracker.value;
+      tracker.value = Math.max(0, tracker.value + delta);
+      if (tracker.maxValue !== null) {
+        tracker.value = Math.min(tracker.value, tracker.maxValue);
+      }
+
+      if (tracker.value !== oldValue) {
+        await item.update({ 'system.resourceTrackers': trackers });
+        // Re-render to update the bubble display
+        this.render();
+      }
+    } catch (error) {
+      console.error('Failed to modify tracker value:', error);
+    }
   }
 
   /** Handle item drops to add new item */
