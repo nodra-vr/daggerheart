@@ -181,6 +181,13 @@ function _addClickableRerollHandlers(html, message) {
   const canReroll = game.user.isGM || message.user?.id === game.user.id;
   if (!canReroll) return;
 
+  // Add instructional text above the dice tooltip for duality rolls
+  const diceTooltip = html.find('.dice-tooltip');
+  if (diceTooltip.length > 0 && !diceTooltip.prev('.reroll-instruction').length) {
+    const instructionText = $('<div class="reroll-instruction"><i class="fas fa-info-circle"></i> Click on the Hope/Fear dice to reroll.</div>');
+    diceTooltip.before(instructionText);
+  }
+
   // Find Hope and Fear dice in the tooltip
   const hopeDice = html.find('.dice-rolls .roll.die.hope-die[data-flavor="Hope"]');
   const fearDice = html.find('.dice-rolls .roll.die.fear-die[data-flavor="Fear"]');
@@ -189,7 +196,6 @@ function _addClickableRerollHandlers(html, message) {
   hopeDice.each((index, die) => {
     const $die = $(die);
     $die.addClass('clickable-die');
-    $die.attr('title', 'Click to reroll Hope die');
     
     $die.off('click.reroll').on('click.reroll', async (event) => {
       event.preventDefault();
@@ -211,7 +217,6 @@ function _addClickableRerollHandlers(html, message) {
   fearDice.each((index, die) => {
     const $die = $(die);
     $die.addClass('clickable-die');
-    $die.attr('title', 'Click to reroll Fear die');
     
     $die.off('click.reroll').on('click.reroll', async (event) => {
       event.preventDefault();
