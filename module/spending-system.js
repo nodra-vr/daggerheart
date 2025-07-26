@@ -726,13 +726,13 @@ if (typeof clearStress === 'function') {
 export async function createDaggerheartMacro(data, slot) {
   if (data.type === "Item") {
     const item = await fromUuid(data.uuid);
-    const actorId = data.uuid.split(".")[1];
+    const isItemInActor = data.uuid.startsWith("Actor.") && item && item.parent && item.parent.id === data.uuid.split(".")[1];
     let command = "";
-
+    
     if (!item) return false;
-
-    if (item.type === "weapon") {
-
+    
+    if (item.type === "weapon" && isItemInActor) {
+      const actorId = data.uuid.split(".")[1];
       command = `const actor = game.actors.get("${actorId}");
 const weaponName = "${item.name}";
 // Figure out if it's the main or off-hand weapon, get the modifier.
