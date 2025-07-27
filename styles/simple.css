@@ -1223,7 +1223,7 @@ input[type=search]:focus {
   overflow-x: hidden;
   margin: 0px;
   width: 100%;
-  padding: 0.5em 5em;
+  padding: 1em 5em;
   border-top: 1px solid var(--dh-color-gold);
 }
 .daggerheart .click-rollable:hover, .daggerheart .basic-rollable:hover {
@@ -1429,7 +1429,7 @@ input[type=search]:focus {
   overflow-x: hidden;
   margin: 0px;
   width: 100%;
-  padding: 0.5em 5em;
+  padding: 1em 5em;
 }
 
 body.game .app {
@@ -2622,7 +2622,8 @@ body.game .app button {
 .actor .item-list .item.expanded .item-description {
   /* Limit the expanded height so huge descriptions don't blow out the sheet */
   max-height: 200px;
-  overflow-y: auto; /* Allow scrolling once the description exceeds the max height */
+  overflow-y: auto;
+  /* Allow scrolling once the description exceeds the max height */
   opacity: 1;
   padding-top: 0.5em;
 }
@@ -2646,14 +2647,16 @@ body.game .app button {
   margin: 0.5em 0;
   display: block;
   object-fit: contain;
-  max-height: 300px; /* Reasonable maximum height for card images */
+  max-height: 300px;
+  /* Reasonable maximum height for card images */
 }
 
 /* Ensure images in expanded descriptions are properly scaled */
 .daggerheart .item-list .item.expanded .item-description img,
 .npc .item-list .item.expanded .item-description img,
 .actor .item-list .item.expanded .item-description img {
-  transform: none; /* Override any inherited transform that might squish the image */
+  transform: none;
+  /* Override any inherited transform that might squish the image */
 }
 
 .daggerheart .item-list .item .item-top-row,
@@ -2735,6 +2738,46 @@ body.game .app button {
   color: white;
   border: 1px solid #15803d;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Category tags */
+.daggerheart .item-list .item .item-name .item-category-tag,
+.npc .item-list .item .item-name .item-category-tag,
+.actor .item-list .item .item-name .item-category-tag {
+  display: inline-block;
+  font-size: 0.75em;
+  font-weight: 500;
+  padding: 0.2em 0.4em;
+  margin-left: 0.4em;
+  border-radius: 0.5em;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  vertical-align: middle;
+  background: none;
+  color: white;
+  border: 1px solid #433f64;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Rarity tags */
+.daggerheart .item-list .item .item-name .item-rarity-tag,
+.npc .item-list .item .item-name .item-rarity-tag,
+.actor .item-list .item .item-name .item-rarity-tag {
+  display: inline-block;
+  font-size: 0.75em;
+  font-weight: 500;
+  padding: 0.2em 0.4em;
+  margin-left: 0.4em;
+  border-radius: 0.5em;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  vertical-align: middle;
+  background: none;
+  color: white;
+  border: 1px solid #433f64;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .daggerheart .item-list .item img,

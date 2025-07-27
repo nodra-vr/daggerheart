@@ -587,7 +587,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         'community': 'New Community',
         'domain': 'New Domain',
         'item': 'New Item',
-        'weapon': 'New Weapon'
+        'weapon': 'New Weapon',
+        'passive': 'New Passive'
       };
       const itemName = defaultNames[type] || 'New Item';
 
@@ -2051,7 +2052,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     event.preventDefault();
     const button = $(event.currentTarget);
     const icon = button.find('i');
-    const category = button.data('category');
+    const category = button.data('category'); // Use data-category for NPC
     const dataType = this._getCategoryDataType(category);
     const categoryList = this.element.find(`.item-list[data-location="${dataType}"]`);
     const categoryHeader = button.closest('.tab-category');
@@ -2061,25 +2062,19 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     }
 
     if (categoryList.hasClass('category-collapsed')) {
-
+      // Expand category
       categoryList.removeClass('category-collapsed');
       categoryHeader.removeClass('section-collapsed');
-
       categoryHeader.addClass('section-expanded');
       icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
       this._categoryStates[category] = true;
-
-      this._updateDynamicSpacing(true);
     } else {
-
+      // Collapse category
       categoryList.addClass('category-collapsed');
       categoryHeader.addClass('section-collapsed');
-
       categoryHeader.removeClass('section-expanded');
       icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
       this._categoryStates[category] = false;
-
-      this._updateDynamicSpacing(true);
     }
 
     await this._saveUiState();
@@ -2395,7 +2390,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
     this._vaultOpen = uiState.vaultOpen ?? false;
 
-    const keys = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack'];
+    const keys = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack', 'passives'];
     const defaults = Object.fromEntries(keys.map(k => [k, false]));
     this._categoryStates = Object.assign(defaults, uiState.categoryStates || {});
   }
@@ -2577,7 +2572,7 @@ export class NPCActorSheet extends SimpleActorSheet {
     });
 
     // Initialize category states for adversary features
-    const categories = ['backpack']; // NPC only has backpack category for adversary features
+    const categories = ['backpack', 'passives']; // Add 'passives' for NPC
     categories.forEach(category => {
       const categoryList = html.find(`.item-list[data-location="${this._getCategoryDataType(category)}"]`);
       const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
@@ -2919,8 +2914,9 @@ export class NPCActorSheet extends SimpleActorSheet {
     event.preventDefault();
     const button = $(event.currentTarget);
     const icon = button.find('i');
-    const location = button.data('location') || 'backpack'; // Use data-location for NPC
-    const categoryList = this.element.find(`.item-list[data-location="${location}"]`);
+    const category = button.data('category'); // Use data-category for NPC
+    const dataType = this._getCategoryDataType(category);
+    const categoryList = this.element.find(`.item-list[data-location="${dataType}"]`);
     const categoryHeader = button.closest('.tab-category');
 
     if (!this._categoryStates) {
@@ -2933,14 +2929,14 @@ export class NPCActorSheet extends SimpleActorSheet {
       categoryHeader.removeClass('section-collapsed');
       categoryHeader.addClass('section-expanded');
       icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-      this._categoryStates[location] = true;
+      this._categoryStates[category] = true;
     } else {
       // Collapse category
       categoryList.addClass('category-collapsed');
       categoryHeader.addClass('section-collapsed');
       categoryHeader.removeClass('section-expanded');
       icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-      this._categoryStates[location] = false;
+      this._categoryStates[category] = false;
     }
 
     await this._saveUiState();

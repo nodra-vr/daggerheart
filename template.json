@@ -346,7 +346,8 @@
       "class",
       "subclass",
       "weapon",
-      "armor"
+      "armor",
+      "passive"
     ],
     "htmlFields": [
       "description"
@@ -483,6 +484,17 @@
         "severe": 0
       },
       "baseScore": 0,
+      "quantity": 1,
+      "weight": 0,
+      "attributes": {},
+      "groups": {},
+      "resourceTrackers": []
+    },
+    "passive": {
+      "description": "",
+      "category": "",
+      "rarity": "",
+      "location": "passives",
       "quantity": 1,
       "weight": 0,
       "attributes": {},

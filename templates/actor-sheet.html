@@ -1,117 +1,142 @@
 <form class="flexcol {{cssClass}} {{#if isDying}}dying{{/if}}" autocomplete="off">
-    
+
     <div class="item-bg" style="background-image: url('{{data.img}}');"></div>
     {{!-- Sheet Header --}}
     <header class="sheet-header">
         <div class="header-wrapper">
-          <div class="header-left">
-            <!-- Portrait and rest buttons -->
-            <div class="portrait-container">
-                <div class="portrait-buttons">
-                    <button type="button" class="rest-button short-rest" data-rest-type="short" title="{{localize 'DH.ShortRest'}}">
-                        <i class="fas fa-hourglass-half"></i>
-                    </button>
-                    <button type="button" class="rest-button long-rest" data-rest-type="long" title="{{localize 'DH.LongRest'}}">
-                        <i class="fas fa-bed"></i>
-                    </button>
-                </div>
-                <div class="portrait-image-wrapper">
-                    <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
-                    {{#if isDying}}
-                    <div class="death-overlay" title="Character is dying!">
-                        <i class="fas fa-skull"></i>
+            <div class="header-left">
+                <!-- Portrait and rest buttons -->
+                <div class="portrait-container">
+                    <div class="portrait-buttons">
+                        <button type="button" class="rest-button short-rest" data-rest-type="short"
+                            title="{{localize 'DH.ShortRest'}}">
+                            <i class="fas fa-hourglass-half"></i>
+                        </button>
+                        <button type="button" class="rest-button long-rest" data-rest-type="long"
+                            title="{{localize 'DH.LongRest'}}">
+                            <i class="fas fa-bed"></i>
+                        </button>
                     </div>
-                    {{/if}}
+                    <div class="portrait-image-wrapper">
+                        <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
+                        {{#if isDying}}
+                        <div class="death-overlay" title="Character is dying!">
+                            <i class="fas fa-skull"></i>
+                        </div>
+                        {{/if}}
+                    </div>
                 </div>
             </div>
-          </div>
-          <div class="header-right">
+            <div class="header-right">
 
-        <!-- resources and fields -->
-        <div class="header-top-fields">
-            <h1 class="charname">
-                <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
-            </h1>
-            <div class="header-domain">
-                <input type="text" name="system.chosenDomains.domain-one" value="{{systemData.chosenDomains.domain-one}}" placeholder="{{localize "DH.DomainOne"}}" />
-                <input type="text" name="system.chosenDomains.domain-two" value="{{systemData.chosenDomains.domain-two}}" placeholder="{{localize "DH.DomainTwo"}}" />
-            </div>
-        </div>
+                <!-- resources and fields -->
+                <div class="header-top-fields">
+                    <h1 class="charname">
+                        <input name="name" type="text" value="{{data.name}}" placeholder="{{localize " DH.Name"}}" />
+                    </h1>
+                    <div class="header-domain">
+                        <input type="text" name="system.chosenDomains.domain-one"
+                            value="{{systemData.chosenDomains.domain-one}}" placeholder="{{localize "
+                            DH.DomainOne"}}" />
+                        <input type="text" name="system.chosenDomains.domain-two"
+                            value="{{systemData.chosenDomains.domain-two}}" placeholder="{{localize "
+                            DH.DomainTwo"}}" />
+                    </div>
+                </div>
 
-        <div class="header-resources-row">
-            <div class="resource health">
-                <div class="resource-content">
-                    <div class="resource-box">
-                        <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}" />
-                        <span>/</span>
-                        <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0" />
+                <div class="header-resources-row">
+                    <div class="resource health">
+                        <div class="resource-content">
+                            <div class="resource-box">
+                                <input type="number" name="system.health.value" value="{{systemData.health.value}}"
+                                    min="0" max="{{systemData.health.max}}" />
+                                <span>/</span>
+                                <input type="number" name="system.health.max" value="{{systemData.health.max}}"
+                                    min="0" />
+                            </div>
+                        </div>
+                        <div class="resource-label-controls">
+                            <a class="resource-control" data-action="decrement" data-field="health.value"><i
+                                    class="fas fa-minus"></i></a>
+                            <label data-trait-tooltip="{{systemData.health.tooltip}}">{{localize
+                                "DH.HitPoints"}}</label>
+                            <a class="resource-control" data-action="increment" data-field="health.value"><i
+                                    class="fas fa-plus"></i></a>
+                        </div>
+                    </div>
+                    <div class="resource stress">
+                        <div class="resource-content">
+                            <div class="resource-box">
+                                <input type="number" name="system.stress.value" value="{{systemData.stress.value}}"
+                                    min="0" max="{{systemData.stress.max}}" />
+                                <span>/</span>
+                                <input type="number" name="system.stress.max" value="{{systemData.stress.max}}"
+                                    min="0" />
+                            </div>
+                        </div>
+                        <div class="resource-label-controls">
+                            <a class="resource-control" data-action="decrement" data-field="stress.value"><i
+                                    class="fas fa-minus"></i></a>
+                            <label data-trait-tooltip="{{systemData.stress.tooltip}}">{{localize "DH.Stress"}}</label>
+                            <a class="resource-control" data-action="increment" data-field="stress.value"><i
+                                    class="fas fa-plus"></i></a>
+                        </div>
+                    </div>
+                    <!-- Hope -->
+                    <div class="resource hope">
+                        <div class="resource-content">
+                            <div class="resource-box">
+                                <input type="number" name="system.hope.value" value="{{systemData.hope.value}}" min="0"
+                                    max="{{systemData.hope.max}}" />
+                                <span>/</span>
+                                <input type="number" name="system.hope.max" value="{{systemData.hope.max}}" min="0" />
+                            </div>
+                        </div>
+                        <div class="resource-label-controls">
+                            <a class="resource-control" data-action="decrement" data-field="hope.value"><i
+                                    class="fas fa-minus"></i></a>
+                            <label data-trait-tooltip="{{systemData.hope.tooltip}}">{{localize "DH.Hope"}}</label>
+                            <a class="resource-control" data-action="increment" data-field="hope.value"><i
+                                    class="fas fa-plus"></i></a>
+                        </div>
+                    </div>
+                    <!-- Armor Slots -->
+                    <div class="resource armor-slots">
+                        <div class="resource-content">
+                            <div class="resource-box">
+                                <input type="number" name="system.defenses.armor-slots.value"
+                                    value="{{systemData.defenses.armor-slots.value}}" min="0"
+                                    max="{{systemData.defenses.armor.value}}" />
+                                <span>/</span>
+                                <input type="number" value="{{systemData.defenses.armor.value}}" min="0" readonly
+                                    disabled title="Edit armor value in the defense section" />
+                            </div>
+                        </div>
+                        <div class="resource-label-controls">
+                            <a class="resource-control" data-action="decrement"
+                                data-field="defenses.armor-slots.value"><i class="fas fa-minus"></i></a>
+                            <label>{{localize "DH.ArmorSlots"}}</label>
+                            <a class="resource-control" data-action="increment"
+                                data-field="defenses.armor-slots.value"><i class="fas fa-plus"></i></a>
+                        </div>
                     </div>
                 </div>
-                <div class="resource-label-controls">
-                    <a class="resource-control" data-action="decrement" data-field="health.value"><i class="fas fa-minus"></i></a>
-                    <label data-trait-tooltip="{{systemData.health.tooltip}}">{{localize "DH.HitPoints"}}</label>
-                    <a class="resource-control" data-action="increment" data-field="health.value"><i class="fas fa-plus"></i></a>
-                </div>
-            </div>
-            <div class="resource stress">
-                <div class="resource-content">
-                    <div class="resource-box">
-                        <input type="number" name="system.stress.value" value="{{systemData.stress.value}}" min="0" max="{{systemData.stress.max}}" />
-                        <span>/</span>
-                        <input type="number" name="system.stress.max" value="{{systemData.stress.max}}" min="0" />
-                    </div>
-                </div>
-                <div class="resource-label-controls">
-                    <a class="resource-control" data-action="decrement" data-field="stress.value"><i class="fas fa-minus"></i></a>
-                    <label data-trait-tooltip="{{systemData.stress.tooltip}}">{{localize "DH.Stress"}}</label>
-                    <a class="resource-control" data-action="increment" data-field="stress.value"><i class="fas fa-plus"></i></a>
-                </div>
-            </div>
-            <!-- Hope -->
-            <div class="resource hope">
-                <div class="resource-content">
-                    <div class="resource-box">
-                        <input type="number" name="system.hope.value" value="{{systemData.hope.value}}" min="0" max="{{systemData.hope.max}}" />
-                        <span>/</span>
-                        <input type="number" name="system.hope.max" value="{{systemData.hope.max}}" min="0" />
-                    </div>
-                </div>
-                <div class="resource-label-controls">
-                    <a class="resource-control" data-action="decrement" data-field="hope.value"><i class="fas fa-minus"></i></a>
-                    <label data-trait-tooltip="{{systemData.hope.tooltip}}">{{localize "DH.Hope"}}</label>
-                    <a class="resource-control" data-action="increment" data-field="hope.value"><i class="fas fa-plus"></i></a>
-                </div>
-            </div>
-            <!-- Armor Slots -->
-            <div class="resource armor-slots">
-                <div class="resource-content">
-                    <div class="resource-box">
-                        <input type="number" name="system.defenses.armor-slots.value" value="{{systemData.defenses.armor-slots.value}}" min="0" max="{{systemData.defenses.armor.value}}" />
-                        <span>/</span>
-                        <input type="number" value="{{systemData.defenses.armor.value}}" min="0" readonly disabled title="Edit armor value in the defense section" />
-                    </div>
-                </div>
-                <div class="resource-label-controls">
-                    <a class="resource-control" data-action="decrement" data-field="defenses.armor-slots.value"><i class="fas fa-minus"></i></a>
-                    <label>{{localize "DH.ArmorSlots"}}</label>
-                    <a class="resource-control" data-action="increment" data-field="defenses.armor-slots.value"><i class="fas fa-plus"></i></a>
-                </div>
-            </div>
-        </div>
-        </div> <!-- close header-right -->
+            </div> <!-- close header-right -->
 
         </div> <!-- header-wrapper -->
-        
+
         <!-- Loadout Card Bar (Class / Subclass / Ancestry / Community) 
         <div class="header-loadout-bar"></div> -->
         <section class="traits">
             <div class="trait" data-trait="agility">
                 <div class="trait-label-wrapper">
-                    <label for="system.agility.value" data-trait-tooltip="{{systemData.agility.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Agility"}}</label>
+                    <label for="system.agility.value" data-trait-tooltip="{{systemData.agility.tooltip}}"><i
+                            class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Agility"}}</label>
                 </div>
                 <div class="trait-value-display" data-field="system.agility.value">{{systemData.agility.value}}</div>
                 <div class="trait-toggle">
-                    <input type="checkbox" name="system.agility.levelled" {{#if systemData.agility.levelled}}checked{{/if}} />
+                    <input type="checkbox" name="system.agility.levelled" {{#if
+                        systemData.agility.levelled}}checked{{/if}} />
                 </div>
                 <div class="trait-effects">
                     <a>{{localize "DH.Sprint"}}</a>
@@ -121,11 +146,13 @@
             </div>
             <div class="trait" data-trait="strength">
                 <div class="trait-label-wrapper">
-                    <label for="system.strength.value" data-trait-tooltip="{{systemData.strength.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Strength"}}</label>
+                    <label for="system.strength.value" data-trait-tooltip="{{systemData.strength.tooltip}}"><i
+                            class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Strength"}}</label>
                 </div>
                 <div class="trait-value-display" data-field="system.strength.value">{{systemData.strength.value}}</div>
                 <div class="trait-toggle">
-                    <input type="checkbox" name="system.strength.levelled" {{#if systemData.strength.levelled}}checked{{/if}} />
+                    <input type="checkbox" name="system.strength.levelled" {{#if
+                        systemData.strength.levelled}}checked{{/if}} />
                 </div>
                 <div class="trait-effects">
                     <a>{{localize "DH.Lift"}}</a>
@@ -135,11 +162,13 @@
             </div>
             <div class="trait" data-trait="finesse">
                 <div class="trait-label-wrapper">
-                    <label for="system.finesse.value" data-trait-tooltip="{{systemData.finesse.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Finesse"}}</label>
+                    <label for="system.finesse.value" data-trait-tooltip="{{systemData.finesse.tooltip}}"><i
+                            class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Finesse"}}</label>
                 </div>
                 <div class="trait-value-display" data-field="system.finesse.value">{{systemData.finesse.value}}</div>
                 <div class="trait-toggle">
-                    <input type="checkbox" name="system.finesse.levelled" {{#if systemData.finesse.levelled}}checked{{/if}} />
+                    <input type="checkbox" name="system.finesse.levelled" {{#if
+                        systemData.finesse.levelled}}checked{{/if}} />
                 </div>
                 <div class="trait-effects">
                     <a>{{localize "DH.Control"}}</a>
@@ -149,11 +178,13 @@
             </div>
             <div class="trait" data-trait="instinct">
                 <div class="trait-label-wrapper">
-                    <label for="system.instinct.value" data-trait-tooltip="{{systemData.instinct.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Instinct"}}</label>
+                    <label for="system.instinct.value" data-trait-tooltip="{{systemData.instinct.tooltip}}"><i
+                            class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Instinct"}}</label>
                 </div>
                 <div class="trait-value-display" data-field="system.instinct.value">{{systemData.instinct.value}}</div>
                 <div class="trait-toggle">
-                    <input type="checkbox" name="system.instinct.levelled" {{#if systemData.instinct.levelled}}checked{{/if}} />
+                    <input type="checkbox" name="system.instinct.levelled" {{#if
+                        systemData.instinct.levelled}}checked{{/if}} />
                 </div>
                 <div class="trait-effects">
                     <a>{{localize "DH.Perceive"}}</a>
@@ -163,11 +194,13 @@
             </div>
             <div class="trait" data-trait="presence">
                 <div class="trait-label-wrapper">
-                    <label for="system.presence.value" data-trait-tooltip="{{systemData.presence.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Presence"}}</label>
+                    <label for="system.presence.value" data-trait-tooltip="{{systemData.presence.tooltip}}"><i
+                            class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Presence"}}</label>
                 </div>
                 <div class="trait-value-display" data-field="system.presence.value">{{systemData.presence.value}}</div>
                 <div class="trait-toggle">
-                    <input type="checkbox" name="system.presence.levelled" {{#if systemData.presence.levelled}}checked{{/if}} />
+                    <input type="checkbox" name="system.presence.levelled" {{#if
+                        systemData.presence.levelled}}checked{{/if}} />
                 </div>
                 <div class="trait-effects">
                     <a>{{localize "DH.Charm"}}</a>
@@ -177,11 +210,14 @@
             </div>
             <div class="trait" data-trait="knowledge">
                 <div class="trait-label-wrapper">
-                    <label for="system.knowledge.value" data-trait-tooltip="{{systemData.knowledge.tooltip}}"><i class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Knowledge"}}</label>
+                    <label for="system.knowledge.value" data-trait-tooltip="{{systemData.knowledge.tooltip}}"><i
+                            class="fas fa-dice-d12 trait-d12-icon"></i>{{localize "DH.Knowledge"}}</label>
                 </div>
-                <div class="trait-value-display" data-field="system.knowledge.value">{{systemData.knowledge.value}}</div>
+                <div class="trait-value-display" data-field="system.knowledge.value">{{systemData.knowledge.value}}
+                </div>
                 <div class="trait-toggle">
-                    <input type="checkbox" name="system.knowledge.levelled" {{#if systemData.knowledge.levelled}}checked{{/if}} />
+                    <input type="checkbox" name="system.knowledge.levelled" {{#if
+                        systemData.knowledge.levelled}}checked{{/if}} />
                 </div>
                 <div class="trait-effects">
                     <a>{{localize "DH.Recall"}}</a>
@@ -191,7 +227,7 @@
             </div>
         </section>
     </header>
-    
+
     {{!-- Trait Edit Popup (backwards compatibility) --}}
     <div class="trait-edit-popup-overlay" style="display: none;">
         <div class="trait-edit-popup">
@@ -218,7 +254,7 @@
             </div>
         </div>
     </div>
-    
+
     {{!-- Sheet Tab Navigation --}}
     <!-- CASE SENSITIVE! -->
     <nav class="sheet-tabs tabs" data-group="primary">
@@ -228,10 +264,10 @@
         <a class="item" data-tab="loadout">{{localize "DH.Loadout"}}</a>
         <a class="item" data-tab="biography">{{localize "DH.Biography"}}</a>
     </nav>
-    
+
     {{!-- Sheet Body --}}
     <section class="sheet-body">
-        
+
         <div class="tab character" data-group="primary" data-tab="character">
             <section class="character-main-section">
 
@@ -240,8 +276,7 @@
                         <label>{{localize "DH.Advancement"}}</label>
                         <div class="advancement-values">
                             <div class="resource-group">
-                                <input type="number" name="system.level.value"
-                                    value="{{systemData.level.value}}" />
+                                <input type="number" name="system.level.value" value="{{systemData.level.value}}" />
                                 <a class="trait-effects">{{localize "DH.Level"}}</a>
                             </div>
                             <div class="resource-group">
@@ -254,47 +289,44 @@
 
                     <div class="defense-group">
                         <div class="defense" data-defense="armor">
-                            <div class="attribute-value-display defense-value-display" 
-                                 data-field="system.defenses.armor.value"
-                                 data-label="Armor"
-                                 data-has-modifiers="true"
-                                 data-min="0">{{systemData.defenses.armor.value}}</div>
+                            <div class="attribute-value-display defense-value-display"
+                                data-field="system.defenses.armor.value" data-label="Armor" data-has-modifiers="true"
+                                data-min="0">{{systemData.defenses.armor.value}}</div>
                             <div class="armor-controls">
-                                <label data-trait-tooltip="{{systemData.defenses.armor.tooltip}}">{{localize "DH.Armor"}}</label>
+                                <label data-trait-tooltip="{{systemData.defenses.armor.tooltip}}">{{localize
+                                    "DH.Armor"}}</label>
                             </div>
                         </div>
                         <div class="defense" data-defense="evasion">
-                            <div class="attribute-value-display defense-value-display" 
-                                 data-field="system.defenses.evasion.value"
-                                 data-label="Evasion"
-                                 data-has-modifiers="true"
-                                 data-min="0">{{systemData.defenses.evasion.value}}</div>
-                            <label data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize "DH.Evasion"}}</label>
+                            <div class="attribute-value-display defense-value-display"
+                                data-field="system.defenses.evasion.value" data-label="Evasion"
+                                data-has-modifiers="true" data-min="0">{{systemData.defenses.evasion.value}}</div>
+                            <label data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize
+                                "DH.Evasion"}}</label>
                         </div>
                     </div>
 
                     <div class="threshold-group">
                         <label>{{localize "DH.Threshold"}}</label>
                         <div class="threshold-values">
-                            <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">{{localize "DH.Mark1HP"}}</span>
+                            <span class="threshold-text threshold-clickable" data-action="mark-hp"
+                                data-hp-amount="1">{{localize "DH.Mark1HP"}}</span>
                             <div class="resource-group">
                                 <div class="attribute-value-display threshold-value-display"
-                                     data-field="system.threshold.major.value"
-                                     data-label="Major Threshold"
-                                     data-has-modifiers="true"
-                                     data-min="0">{{systemData.threshold.major.value}}</div>
+                                    data-field="system.threshold.major.value" data-label="Major Threshold"
+                                    data-has-modifiers="true" data-min="0">{{systemData.threshold.major.value}}</div>
                                 <a class="trait-effects">{{localize "DH.Major"}}</a>
                             </div>
-                            <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">{{localize "DH.Mark2HP"}}</span>
+                            <span class="threshold-text threshold-clickable" data-action="mark-hp"
+                                data-hp-amount="2">{{localize "DH.Mark2HP"}}</span>
                             <div class="resource-group">
                                 <div class="attribute-value-display threshold-value-display"
-                                     data-field="system.threshold.severe.value"
-                                     data-label="Severe Threshold"
-                                     data-has-modifiers="true"
-                                     data-min="0">{{systemData.threshold.severe.value}}</div>
+                                    data-field="system.threshold.severe.value" data-label="Severe Threshold"
+                                    data-has-modifiers="true" data-min="0">{{systemData.threshold.severe.value}}</div>
                                 <a class="trait-effects">{{localize "DH.Severe"}}</a>
                             </div>
-                            <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">{{localize "DH.Mark3HP"}}</span>
+                            <span class="threshold-text threshold-clickable" data-action="mark-hp"
+                                data-hp-amount="3">{{localize "DH.Mark3HP"}}</span>
                         </div>
                     </div>
                 </section>
@@ -304,12 +336,13 @@
                 <div class="experience-group">
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
-                            <div class="exp-level"><input type="number" name="system.experience.1level" value="{{systemData.experience.1level}}" placeholder="1" /></div>
-                            <a class="trait-effects">{{localize "DH.Level"}}</a>  
+                            <div class="exp-level"><input type="number" name="system.experience.1level"
+                                    value="{{systemData.experience.1level}}" placeholder="1" /></div>
+                            <a class="trait-effects">{{localize "DH.Level"}}</a>
                         </div>
                         <div class="experience-row-column-2">
                             <input class="click-rollable-name" name="system.experience.1Name" type="text"
-                                value="{{systemData.experience.1Name}}" placeholder="{{localize "DH.Experience"}}" />
+                                value="{{systemData.experience.1Name}}" placeholder="{{localize " DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier" type="number" name="system.experience.1Mod"
@@ -318,48 +351,58 @@
                     </div>
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
-                            <div class="exp-level"><input type="number" name="system.experience.2level" value="{{systemData.experience.2level}}" placeholder="1"/></div>
+                            <div class="exp-level"><input type="number" name="system.experience.2level"
+                                    value="{{systemData.experience.2level}}" placeholder="1" /></div>
                             <a class="trait-effects">{{localize "DH.Level"}}</a>
                         </div>
                         <div class="experience-row-column-2">
-                            <input class="click-rollable-name" name="system.experience.2Name" type="text" value="{{systemData.experience.2Name}}" placeholder="{{localize "DH.Experience"}}"/>
+                            <input class="click-rollable-name" name="system.experience.2Name" type="text"
+                                value="{{systemData.experience.2Name}}" placeholder="{{localize " DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
-                            <input class="click-rollable-modifier"type="number" name="system.experience.2Mod" value="{{systemData.experience.2Mod}}"/>
+                            <input class="click-rollable-modifier" type="number" name="system.experience.2Mod"
+                                value="{{systemData.experience.2Mod}}" />
                         </div>
                     </div>
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
-                            <div class="exp-level"><input type="number" name="system.experience.5level" value="{{systemData.experience.5level}}" placeholder="2"/></div>
+                            <div class="exp-level"><input type="number" name="system.experience.5level"
+                                    value="{{systemData.experience.5level}}" placeholder="2" /></div>
                             <a class="trait-effects">{{localize "DH.Level"}}</a>
                         </div>
                         <div class="experience-row-column-2">
-                            <input class="click-rollable-name" name="system.experience.5Name" type="text" value="{{systemData.experience.5Name}}" placeholder="{{localize "DH.Experience"}}"/>
+                            <input class="click-rollable-name" name="system.experience.5Name" type="text"
+                                value="{{systemData.experience.5Name}}" placeholder="{{localize " DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
-                            <input class="click-rollable-modifier"type="number" name="system.experience.5Mod" value="{{systemData.experience.5Mod}}"/>
+                            <input class="click-rollable-modifier" type="number" name="system.experience.5Mod"
+                                value="{{systemData.experience.5Mod}}" />
                         </div>
                     </div>
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
-                            <div class="exp-level"><input type="number" name="system.experience.8level" value="{{systemData.experience.8level}}" placeholder="5"/></div>
+                            <div class="exp-level"><input type="number" name="system.experience.8level"
+                                    value="{{systemData.experience.8level}}" placeholder="5" /></div>
                             <a class="trait-effects">{{localize "DH.Level"}}</a>
                         </div>
                         <div class="experience-row-column-2">
-                            <input class="click-rollable-name" name="system.experience.8Name" type="text" value="{{systemData.experience.8Name}}" placeholder="{{localize "DH.Experience"}}"/>
+                            <input class="click-rollable-name" name="system.experience.8Name" type="text"
+                                value="{{systemData.experience.8Name}}" placeholder="{{localize " DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
-                            <input class="click-rollable-modifier"type="number" name="system.experience.8Mod" value="{{systemData.experience.8Mod}}"/>
+                            <input class="click-rollable-modifier" type="number" name="system.experience.8Mod"
+                                value="{{systemData.experience.8Mod}}" />
                         </div>
                     </div>
                     <div class="experience-row click-rollable-group">
                         <div class="experience-row-column">
-                            <div class="exp-level"><input type="number" name="system.experience.11level" value="{{systemData.experience.11level}}" placeholder="8"/></div>
+                            <div class="exp-level"><input type="number" name="system.experience.11level"
+                                    value="{{systemData.experience.11level}}" placeholder="8" /></div>
                             <a class="trait-effects">{{localize "DH.Level"}}</a>
                         </div>
                         <div class="experience-row-column-2">
                             <input class="click-rollable-name" name="system.experience.1Name2" type="text"
-                                value="{{systemData.experience.1Name2}}" placeholder="{{localize "DH.Experience"}}" />
+                                value="{{systemData.experience.1Name2}}" placeholder="{{localize " DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier" type="number" name="system.experience.1Mod2"
@@ -373,7 +416,7 @@
         <div class="tab biography" data-group="primary" data-tab="biography">
             <div class="tab-title">{{localize "DH.Biography"}}</div>
 
-            <section class="character-main-section">                
+            <section class="character-main-section">
                 <div class="character-details">
                     <div class="char-detail-item">
                         <label>{{localize "DH.Age"}}</label>
@@ -406,35 +449,46 @@
                     <div class="weapon-row">
                         <label class="weapon-label">{{weaponDisplay.primary.name}}</label>
                         <div class="weapon-box click-rollable-group basic-rollable-group">
-                            <button type="button" class="weapon-attack-button {{#if weaponDisplay.primary.hasWeapon}}primary-weapon{{/if}} click-rollable" data-roll-type="attack" title="Roll Attack">
+                            <button type="button"
+                                class="weapon-attack-button {{#if weaponDisplay.primary.hasWeapon}}primary-weapon{{/if}} click-rollable"
+                                data-roll-type="attack" title="Roll Attack">
                                 <i class="fas fa-sword"></i>
                             </button>
                             <div class="weapon-box-inner">
                                 <div class="weapon-infobox-first">
-                                    <input class="weapon-field basic-rollable-name click-rollable-name {{#if weaponDisplay.primary.hasWeapon}}weapon-field-hidden{{/if}}"
+                                    <input
+                                        class="weapon-field basic-rollable-name click-rollable-name {{#if weaponDisplay.primary.hasWeapon}}weapon-field-hidden{{/if}}"
                                         name="system.weapon-main.name" type="text"
-                                        value="{{systemData.weapon-main.name}}" placeholder="{{localize "DH.Weapon"}}" />
-                                        <div class="textarea-container">
-                                            <input class="trait-effects resize-ta" name="system.weapon-main.description"
-                                                placeholder="{{localize "DH.WeaponTraitsHere"}}"
-                                                value="{{systemData.weapon-main.description}}" />
-                                        </div>
+                                        value="{{systemData.weapon-main.name}}" placeholder="{{localize "
+                                        DH.Weapon"}}" />
+                                    <div class="textarea-container">
+                                        <input class="trait-effects resize-ta" name="system.weapon-main.description"
+                                            placeholder="{{localize " DH.WeaponTraitsHere"}}"
+                                            value="{{systemData.weapon-main.description}}" />
+                                    </div>
                                 </div>
                                 <div class="weapon-roller-box">
                                     <div class="weapon-infobox">
                                         <div class="attribute-value-display weapon-modifier-display {{#if weaponDisplay.primary.hasWeapon}}primary-weapon{{/if}}"
-                                             data-field="system.weapon-main.to-hit"
-                                             data-label="Primary Weapon Attack"
-                                             data-has-modifiers="true">{{#if systemData.weapon-main.to-hit.value}}{{systemData.weapon-main.to-hit.value}}{{else}}0{{/if}}</div>
-                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
+                                            data-field="system.weapon-main.to-hit" data-label="Primary Weapon Attack"
+                                            data-has-modifiers="true">{{#if
+                                            systemData.weapon-main.to-hit.value}}{{systemData.weapon-main.to-hit.value}}{{else}}0{{/if}}
+                                        </div>
+                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize
+                                            "DH.Modifier"}}</a>
                                     </div>
                                     <div class="weapon-infobox">
                                         <div class="weapon-damage-display damage-value-display {{#if weaponDisplay.primary.hasWeapon}}primary-weapon{{/if}}"
-                                             data-field="system.weapon-main.damage"
-                                             data-label="Primary Weapon Damage"
-                                             data-has-modifiers="true"
-                                             data-edit-type="damage">{{#if systemData.weapon-main.damage.baseValue}}{{systemData.weapon-main.damage.baseValue}}{{#if systemData.weapon-main.damage.modifiers}}{{#each systemData.weapon-main.damage.modifiers}}{{#if this.enabled}} {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if systemData.weapon-main.damage}}{{systemData.weapon-main.damage}}{{else}}1d8{{/if}}{{/if}}</div>
-                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
+                                            data-field="system.weapon-main.damage" data-label="Primary Weapon Damage"
+                                            data-has-modifiers="true" data-edit-type="damage">{{#if
+                                            systemData.weapon-main.damage.baseValue}}{{systemData.weapon-main.damage.baseValue}}{{#if
+                                            systemData.weapon-main.damage.modifiers}}{{#each
+                                            systemData.weapon-main.damage.modifiers}}{{#if this.enabled}}
+                                            {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if
+                                            systemData.weapon-main.damage}}{{systemData.weapon-main.damage}}{{else}}1d8{{/if}}{{/if}}
+                                        </div>
+                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize
+                                            "DH.Damage"}}</a>
                                     </div>
                                 </div>
                             </div>
@@ -444,35 +498,45 @@
                     <div class="weapon-row">
                         <label class="weapon-label">{{weaponDisplay.secondary.name}}</label>
                         <div class="weapon-box click-rollable-group basic-rollable-group">
-                            <button type="button" class="weapon-attack-button {{#if weaponDisplay.secondary.hasWeapon}}secondary-weapon{{/if}} click-rollable" data-roll-type="attack" title="Roll Attack">
+                            <button type="button"
+                                class="weapon-attack-button {{#if weaponDisplay.secondary.hasWeapon}}secondary-weapon{{/if}} click-rollable"
+                                data-roll-type="attack" title="Roll Attack">
                                 <i class="fas fa-sword"></i>
                             </button>
                             <div class="weapon-box-inner">
                                 <div class="weapon-infobox-first">
-                                    <input class="weapon-field basic-rollable-name click-rollable-name {{#if weaponDisplay.secondary.hasWeapon}}weapon-field-hidden{{/if}}"
-                                        name="system.weapon-off.name" type="text"
-                                        value="{{systemData.weapon-off.name}}" placeholder="{{localize "DH.Weapon"}}" />
-                                        <div class="textarea-container">
-                                            <input class="trait-effects resize-ta" name="system.weapon-off.description"
-                                                placeholder="{{localize "DH.WeaponTraitsHere"}}"
-                                                value="{{systemData.weapon-off.description}}" />
-                                        </div>
+                                    <input
+                                        class="weapon-field basic-rollable-name click-rollable-name {{#if weaponDisplay.secondary.hasWeapon}}weapon-field-hidden{{/if}}"
+                                        name="system.weapon-off.name" type="text" value="{{systemData.weapon-off.name}}"
+                                        placeholder="{{localize " DH.Weapon"}}" />
+                                    <div class="textarea-container">
+                                        <input class="trait-effects resize-ta" name="system.weapon-off.description"
+                                            placeholder="{{localize " DH.WeaponTraitsHere"}}"
+                                            value="{{systemData.weapon-off.description}}" />
+                                    </div>
                                 </div>
                                 <div class="weapon-roller-box">
                                     <div class="weapon-infobox">
                                         <div class="attribute-value-display weapon-modifier-display {{#if weaponDisplay.secondary.hasWeapon}}secondary-weapon{{/if}}"
-                                             data-field="system.weapon-off.to-hit"
-                                             data-label="Secondary Weapon Attack"
-                                             data-has-modifiers="true">{{#if systemData.weapon-off.to-hit.value}}{{systemData.weapon-off.to-hit.value}}{{else}}0{{/if}}</div>
-                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
+                                            data-field="system.weapon-off.to-hit" data-label="Secondary Weapon Attack"
+                                            data-has-modifiers="true">{{#if
+                                            systemData.weapon-off.to-hit.value}}{{systemData.weapon-off.to-hit.value}}{{else}}0{{/if}}
+                                        </div>
+                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize
+                                            "DH.Modifier"}}</a>
                                     </div>
                                     <div class="weapon-infobox">
                                         <div class="weapon-damage-display damage-value-display {{#if weaponDisplay.secondary.hasWeapon}}secondary-weapon{{/if}}"
-                                             data-field="system.weapon-off.damage"
-                                             data-label="Secondary Weapon Damage"
-                                             data-has-modifiers="true"
-                                             data-edit-type="damage">{{#if systemData.weapon-off.damage.baseValue}}{{systemData.weapon-off.damage.baseValue}}{{#if systemData.weapon-off.damage.modifiers}}{{#each systemData.weapon-off.damage.modifiers}}{{#if this.enabled}} {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if systemData.weapon-off.damage}}{{systemData.weapon-off.damage}}{{else}}1d8{{/if}}{{/if}}</div>
-                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
+                                            data-field="system.weapon-off.damage" data-label="Secondary Weapon Damage"
+                                            data-has-modifiers="true" data-edit-type="damage">{{#if
+                                            systemData.weapon-off.damage.baseValue}}{{systemData.weapon-off.damage.baseValue}}{{#if
+                                            systemData.weapon-off.damage.modifiers}}{{#each
+                                            systemData.weapon-off.damage.modifiers}}{{#if this.enabled}}
+                                            {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if
+                                            systemData.weapon-off.damage}}{{systemData.weapon-off.damage}}{{else}}1d8{{/if}}{{/if}}
+                                        </div>
+                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize
+                                            "DH.Damage"}}</a>
                                     </div>
                                 </div>
                             </div>
@@ -480,36 +544,38 @@
                     </div>
                 </div>
             </div>
-                
+
             {{!-- Treasure Tracking Section --}}
             <div class="treasure-tracker">
                 <div class="treasure-item">
-                    <input type="number" name="system.treasure.coins.value" value="{{systemData.treasure.coins.value}}" 
-                           title="{{systemData.treasure.coins.tooltip}}" min="0" />
+                    <input type="number" name="system.treasure.coins.value" value="{{systemData.treasure.coins.value}}"
+                        title="{{systemData.treasure.coins.tooltip}}" min="0" />
                     <div class="treasure-icon">
                         <i class="fas fa-coins"></i>
                         <label>{{localize "DH.Coins"}}</label>
                     </div>
                 </div>
                 <div class="treasure-item">
-                    <input type="number" name="system.treasure.handfuls.value" value="{{systemData.treasure.handfuls.value}}" 
-                           title="{{systemData.treasure.handfuls.tooltip}}" min="0" />
+                    <input type="number" name="system.treasure.handfuls.value"
+                        value="{{systemData.treasure.handfuls.value}}" title="{{systemData.treasure.handfuls.tooltip}}"
+                        min="0" />
                     <div class="treasure-icon">
                         <i class="fas fa-hand-holding"></i>
                         <label>{{localize "DH.Handfuls"}}</label>
                     </div>
                 </div>
                 <div class="treasure-item">
-                    <input type="number" name="system.treasure.bags.value" value="{{systemData.treasure.bags.value}}" 
-                           title="{{systemData.treasure.bags.tooltip}}" min="0" />
+                    <input type="number" name="system.treasure.bags.value" value="{{systemData.treasure.bags.value}}"
+                        title="{{systemData.treasure.bags.tooltip}}" min="0" />
                     <div class="treasure-icon">
                         <i class="fas fa-shopping-bag"></i>
                         <label>{{localize "DH.Bags"}}</label>
                     </div>
                 </div>
                 <div class="treasure-item">
-                    <input type="number" name="system.treasure.chests.value" value="{{systemData.treasure.chests.value}}" 
-                           title="{{systemData.treasure.chests.tooltip}}" min="0" />
+                    <input type="number" name="system.treasure.chests.value"
+                        value="{{systemData.treasure.chests.value}}" title="{{systemData.treasure.chests.tooltip}}"
+                        min="0" />
                     <div class="treasure-icon">
                         <i class="fas fa-treasure-chest"></i>
                         <label>{{localize "DH.Chests"}}</label>
@@ -519,15 +585,18 @@
 
             {{!-- Owned Inventory Tab --}}
             <div class="inventory">
-                <div class="tab-category {{#unless uiState.categoryStates.worn}}section-collapsed{{/unless}}">{{localize "DH.Worn"}}
+                <div class="tab-category {{#unless uiState.categoryStates.worn}}section-collapsed{{/unless}}">{{localize
+                    "DH.Worn"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                             data-type="item" data-location="worn">
                             <i class="fas fa-plus"></i></a>
-                        <a class="item-control category-toggle" data-category="worn" title="Toggle Worn Section"><i class="fas fa-chevron-down"></i></a>
+                        <a class="item-control category-toggle" data-category="worn" title="Toggle Worn Section"><i
+                                class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list {{#unless uiState.categoryStates.worn}}category-collapsed{{/unless}}" data-location="worn">
+                <ol class="item-list {{#unless uiState.categoryStates.worn}}category-collapsed{{/unless}}"
+                    data-location="worn">
                     {{#each data.items as |item id|}}
                     {{#if (or (eq item.system.location "worn") (and (not item.system.location) (eq item.type "worn")))}}
                     <li class="item" data-item-id="{{item._id}}">
@@ -536,6 +605,12 @@
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.system.category}}
+                                    <span class="item-category-tag">{{item.system.category}}</span>
+                                    {{/if}}
+                                    {{#if item.system.rarity}}
+                                    <span class="item-rarity-tag">{{item.system.rarity}}</span>
+                                    {{/if}}
                                     {{#if item.equippedSlot}}
                                     <span class="weapon-slot-tag {{item.equippedSlot}}">
                                         {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
@@ -549,19 +624,25 @@
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
-                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "primary")}}Unequip from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
+                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "
+                                    primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot " primary")}}Unequip
+                                    from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
-                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "
+                                    secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "
+                                    secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-sword"></i><span
+                                        class="weapon-slot-label">S</span></a>
                                 {{/if}}
                                 {{#if (eq item.type "armor")}}
-                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-shield-alt"></i></a>
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}"
+                                    title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
-                                        class="fas fa-trash"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}"
+                                    data-action="delete"><i class="fas fa-trash"></i></a>
                             </div>
                         </div>
                         <div class="item-description">
@@ -572,24 +653,34 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category {{#unless uiState.categoryStates.backpack}}section-collapsed{{/unless}}">{{localize "DH.Backpack"}}
+                <div class="tab-category {{#unless uiState.categoryStates.backpack}}section-collapsed{{/unless}}">
+                    {{localize "DH.Backpack"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                             data-type="item" data-location="backpack">
                             <i class="fas fa-plus"></i></a>
-                        <a class="item-control category-toggle" data-category="backpack" title="Toggle Backpack Section"><i class="fas fa-chevron-down"></i></a>
+                        <a class="item-control category-toggle" data-category="backpack"
+                            title="Toggle Backpack Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
 
-                <ol class="item-list {{#unless uiState.categoryStates.backpack}}category-collapsed{{/unless}}" data-location="backpack">
+                <ol class="item-list {{#unless uiState.categoryStates.backpack}}category-collapsed{{/unless}}"
+                    data-location="backpack">
                     {{#each data.items as |item id|}}
-                    {{#if (or (eq item.system.location "backpack") (and (not item.system.location) (eq item.type "inventory")) (and (not item.system.location) (eq item.type "weapon")))}}
+                    {{#if (or (eq item.system.location "backpack") (and (not item.system.location) (eq item.type
+                    "inventory")) (and (not item.system.location) (eq item.type "weapon")))}}
                     <li class="item" data-item-id="{{item._id}}">
                         <div class="item-main-row">
                             <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.system.category}}
+                                    <span class="item-category-tag">{{item.system.category}}</span>
+                                    {{/if}}
+                                    {{#if item.system.rarity}}
+                                    <span class="item-rarity-tag">{{item.system.rarity}}</span>
+                                    {{/if}}
                                     {{#if item.equippedSlot}}
                                     <span class="weapon-slot-tag {{item.equippedSlot}}">
                                         {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
@@ -603,19 +694,25 @@
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
-                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "primary")}}Unequip from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
+                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "
+                                    primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot " primary")}}Unequip
+                                    from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
-                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "
+                                    secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "
+                                    secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-sword"></i><span
+                                        class="weapon-slot-label">S</span></a>
                                 {{/if}}
                                 {{#if (eq item.type "armor")}}
-                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-shield-alt"></i></a>
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}"
+                                    title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
-                                        class="fas fa-trash"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}"
+                                    data-action="delete"><i class="fas fa-trash"></i></a>
                             </div>
                         </div>
                         <div class="item-description">
@@ -633,23 +730,33 @@
             <div class="features">
                 <div class="tab-title">{{localize "DH.Loadout"}}</div>
 
-                <div class="tab-category {{#unless uiState.categoryStates.class}}section-collapsed{{/unless}}">{{localize "DH.Class"}}
+                <div class="tab-category {{#unless uiState.categoryStates.class}}section-collapsed{{/unless}}">
+                    {{localize "DH.Class"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-class"
                             data-type="class" data-location="class">
                             <i class="fas fa-plus"></i></a>
-                        <a class="item-control category-toggle" data-category="class" title="Toggle Class Section"><i class="fas fa-chevron-down"></i></a>
+                        <a class="item-control category-toggle" data-category="class" title="Toggle Class Section"><i
+                                class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list {{#unless uiState.categoryStates.class}}category-collapsed{{/unless}}" data-location="class">
+                <ol class="item-list {{#unless uiState.categoryStates.class}}category-collapsed{{/unless}}"
+                    data-location="class">
                     {{#each data.items as |item id|}}
-                    {{#if (or (eq item.system.location "class") (and (not item.system.location) (eq item.type "class")))}}
+                    {{#if (or (eq item.system.location "class") (and (not item.system.location) (eq item.type
+                    "class")))}}
                     <li class="item" data-item-id="{{item._id}}">
                         <div class="item-main-row">
-                             <div class="item-top-row">
+                            <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.system.category}}
+                                    <span class="item-category-tag">{{item.system.category}}</span>
+                                    {{/if}}
+                                    {{#if item.system.rarity}}
+                                    <span class="item-rarity-tag">{{item.system.rarity}}</span>
+                                    {{/if}}
                                     {{#if item.equippedSlot}}
                                     <span class="weapon-slot-tag {{item.equippedSlot}}">
                                         {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
@@ -663,19 +770,25 @@
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
-                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "primary")}}Unequip from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
+                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "
+                                    primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot " primary")}}Unequip
+                                    from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
-                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "
+                                    secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "
+                                    secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-sword"></i><span
+                                        class="weapon-slot-label">S</span></a>
                                 {{/if}}
                                 {{#if (eq item.type "armor")}}
-                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-shield-alt"></i></a>
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}"
+                                    title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
-                                        class="fas fa-trash"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}"
+                                    data-action="delete"><i class="fas fa-trash"></i></a>
                             </div>
                         </div>
                         <div class="item-description">
@@ -685,23 +798,33 @@
                     {{/if}}
                     {{/each}}
                 </ol>
-                <div class="tab-category {{#unless uiState.categoryStates.subclass}}section-collapsed{{/unless}}">{{localize "DH.Subclass"}}
+                <div class="tab-category {{#unless uiState.categoryStates.subclass}}section-collapsed{{/unless}}">
+                    {{localize "DH.Subclass"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-subclass"
                             data-type="subclass" data-location="subclass">
                             <i class="fas fa-plus"></i></a>
-                        <a class="item-control category-toggle" data-category="subclass" title="Toggle Subclass Section"><i class="fas fa-chevron-down"></i></a>
+                        <a class="item-control category-toggle" data-category="subclass"
+                            title="Toggle Subclass Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list {{#unless uiState.categoryStates.subclass}}category-collapsed{{/unless}}" data-location="subclass">
+                <ol class="item-list {{#unless uiState.categoryStates.subclass}}category-collapsed{{/unless}}"
+                    data-location="subclass">
                     {{#each data.items as |item id|}}
-                    {{#if (or (eq item.system.location "subclass") (and (not item.system.location) (eq item.type "subclass")))}}
+                    {{#if (or (eq item.system.location "subclass") (and (not item.system.location) (eq item.type
+                    "subclass")))}}
                     <li class="item" data-item-id="{{item._id}}">
                         <div class="item-main-row">
-                             <div class="item-top-row">
+                            <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.system.category}}
+                                    <span class="item-category-tag">{{item.system.category}}</span>
+                                    {{/if}}
+                                    {{#if item.system.rarity}}
+                                    <span class="item-rarity-tag">{{item.system.rarity}}</span>
+                                    {{/if}}
                                     {{#if item.equippedSlot}}
                                     <span class="weapon-slot-tag {{item.equippedSlot}}">
                                         {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
@@ -715,19 +838,25 @@
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
-                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "primary")}}Unequip from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
+                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "
+                                    primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot " primary")}}Unequip
+                                    from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
-                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "
+                                    secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "
+                                    secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-sword"></i><span
+                                        class="weapon-slot-label">S</span></a>
                                 {{/if}}
                                 {{#if (eq item.type "armor")}}
-                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-shield-alt"></i></a>
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}"
+                                    title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
-                                        class="fas fa-trash"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}"
+                                    data-action="delete"><i class="fas fa-trash"></i></a>
                             </div>
                         </div>
                         <div class="item-description">
@@ -738,23 +867,33 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category {{#unless uiState.categoryStates.ancestry}}section-collapsed{{/unless}}">{{localize "DH.Ancestry"}}
+                <div class="tab-category {{#unless uiState.categoryStates.ancestry}}section-collapsed{{/unless}}">
+                    {{localize "DH.Ancestry"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-ancestry"
                             data-type="ancestry" data-location="ancestry">
                             <i class="fas fa-plus"></i></a>
-                        <a class="item-control category-toggle" data-category="ancestry" title="Toggle Ancestry Section"><i class="fas fa-chevron-down"></i></a>
+                        <a class="item-control category-toggle" data-category="ancestry"
+                            title="Toggle Ancestry Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list {{#unless uiState.categoryStates.ancestry}}category-collapsed{{/unless}}" data-location="ancestry">
+                <ol class="item-list {{#unless uiState.categoryStates.ancestry}}category-collapsed{{/unless}}"
+                    data-location="ancestry">
                     {{#each data.items as |item id|}}
-                    {{#if (or (eq item.system.location "ancestry") (and (not item.system.location) (eq item.type "ancestry")))}}
+                    {{#if (or (eq item.system.location "ancestry") (and (not item.system.location) (eq item.type
+                    "ancestry")))}}
                     <li class="item" data-item-id="{{item._id}}">
                         <div class="item-main-row">
-                             <div class="item-top-row">
+                            <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.system.category}}
+                                    <span class="item-category-tag">{{item.system.category}}</span>
+                                    {{/if}}
+                                    {{#if item.system.rarity}}
+                                    <span class="item-rarity-tag">{{item.system.rarity}}</span>
+                                    {{/if}}
                                     {{#if item.equippedSlot}}
                                     <span class="weapon-slot-tag {{item.equippedSlot}}">
                                         {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
@@ -768,72 +907,25 @@
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
-                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "primary")}}Unequip from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
+                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "
+                                    primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot " primary")}}Unequip
+                                    from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
-                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "
+                                    secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "
+                                    secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-sword"></i><span
+                                        class="weapon-slot-label">S</span></a>
                                 {{/if}}
                                 {{#if (eq item.type "armor")}}
-                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-shield-alt"></i></a>
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}"
+                                    title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
-                                        class="fas fa-trash"></i></a>
-                            </div>
-                        </div>
-                        <div class="item-description">
-                            {{{item.system.enrichedDescription}}}
-                        </div>
-                    </li>
-                    {{/if}}
-                    {{/each}}
-                </ol>
-                
-                <div class="tab-category {{#unless uiState.categoryStates.community}}section-collapsed{{/unless}}">{{localize "DH.Community"}}
-                    <div class="category-controls">
-                        <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-community"
-                            data-type="community" data-location="community">
-                            <i class="fas fa-plus"></i></a>
-                        <a class="item-control category-toggle" data-category="community" title="Toggle Community Section"><i class="fas fa-chevron-down"></i></a>
-                    </div>
-                </div>
-                <ol class="item-list {{#unless uiState.categoryStates.community}}category-collapsed{{/unless}}" data-location="community">
-                    {{#each data.items as |item id|}}
-                    {{#if (or (eq item.system.location "community") (and (not item.system.location) (eq item.type "community")))}}
-                    <li class="item" data-item-id="{{item._id}}">
-                        <div class="item-main-row">
-                             <div class="item-top-row">
-                                <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
-                                    width="30" height="30" />
-                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
-                                    {{#if item.equippedSlot}}
-                                    <span class="weapon-slot-tag {{item.equippedSlot}}">
-                                        {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
-                                        {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
-                                    </span>
-                                    {{/if}}
-                                    {{#if (and (eq item.type "armor") item.system.equipped)}}
-                                    <span class="armor-slot-tag equipped">Equipped Armor</span>
-                                    {{/if}}
-                                </h4>
-                            </div>
-                            <div class="item-controls">
-                                {{#if (eq item.type "weapon")}}
-                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "primary")}}Unequip from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
-                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
-                                {{/if}}
-                                {{#if (eq item.type "armor")}}
-                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-shield-alt"></i></a>
-                                {{/if}}
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
-                                        class="fas fa-edit"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
-                                        class="fas fa-trash"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}"
+                                    data-action="delete"><i class="fas fa-trash"></i></a>
                             </div>
                         </div>
                         <div class="item-description">
@@ -844,23 +936,102 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category {{#unless uiState.categoryStates.abilities}}section-collapsed{{/unless}}">{{localize "DH.Abilities"}}
+                <div class="tab-category {{#unless uiState.categoryStates.community}}section-collapsed{{/unless}}">
+                    {{localize "DH.Community"}}
+                    <div class="category-controls">
+                        <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}"
+                            data-action="create-community" data-type="community" data-location="community">
+                            <i class="fas fa-plus"></i></a>
+                        <a class="item-control category-toggle" data-category="community"
+                            title="Toggle Community Section"><i class="fas fa-chevron-down"></i></a>
+                    </div>
+                </div>
+                <ol class="item-list {{#unless uiState.categoryStates.community}}category-collapsed{{/unless}}"
+                    data-location="community">
+                    {{#each data.items as |item id|}}
+                    {{#if (or (eq item.system.location "community") (and (not item.system.location) (eq item.type
+                    "community")))}}
+                    <li class="item" data-item-id="{{item._id}}">
+                        <div class="item-main-row">
+                            <div class="item-top-row">
+                                <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
+                                    width="30" height="30" />
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.system.category}}
+                                    <span class="item-category-tag">{{item.system.category}}</span>
+                                    {{/if}}
+                                    {{#if item.system.rarity}}
+                                    <span class="item-rarity-tag">{{item.system.rarity}}</span>
+                                    {{/if}}
+                                    {{#if item.equippedSlot}}
+                                    <span class="weapon-slot-tag {{item.equippedSlot}}">
+                                        {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
+                                        {{#if (eq item.equippedSlot "secondary")}}Secondary Weapon{{/if}}
+                                    </span>
+                                    {{/if}}
+                                    {{#if (and (eq item.type "armor") item.system.equipped)}}
+                                    <span class="armor-slot-tag equipped">Equipped Armor</span>
+                                    {{/if}}
+                                </h4>
+                            </div>
+                            <div class="item-controls">
+                                {{#if (eq item.type "weapon")}}
+                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "
+                                    primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot " primary")}}Unequip
+                                    from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
+                                        class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
+                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "
+                                    secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "
+                                    secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-sword"></i><span
+                                        class="weapon-slot-label">S</span></a>
+                                {{/if}}
+                                {{#if (eq item.type "armor")}}
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}"
+                                    title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-shield-alt"></i></a>
+                                {{/if}}
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
+                                        class="fas fa-edit"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}"
+                                    data-action="delete"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                        <div class="item-description">
+                            {{{item.system.enrichedDescription}}}
+                        </div>
+                    </li>
+                    {{/if}}
+                    {{/each}}
+                </ol>
+
+                <div class="tab-category {{#unless uiState.categoryStates.abilities}}section-collapsed{{/unless}}">
+                    {{localize "DH.Abilities"}}
                     <div class="category-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create"
                             data-type="item" data-location="abilities">
                             <i class="fas fa-plus"></i></a>
-                        <a class="item-control category-toggle" data-category="abilities" title="Toggle Abilities Section"><i class="fas fa-chevron-down"></i></a>
+                        <a class="item-control category-toggle" data-category="abilities"
+                            title="Toggle Abilities Section"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
-                <ol class="item-list {{#unless uiState.categoryStates.abilities}}category-collapsed{{/unless}}" data-location="abilities">
+                <ol class="item-list {{#unless uiState.categoryStates.abilities}}category-collapsed{{/unless}}"
+                    data-location="abilities">
                     {{#each data.items as |item id|}}
-                    {{#if (or (eq item.system.location "abilities") (and (not item.system.location) (or (eq item.type "item") (eq item.type "domain"))))}}
+                    {{#if (or (eq item.system.location "abilities") (and (not item.system.location) (or (eq item.type
+                    "item") (eq item.type "domain"))))}}
                     <li class="item" data-item-id="{{item._id}}">
                         <div class="item-main-row">
                             <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.system.category}}
+                                    <span class="item-category-tag">{{item.system.category}}</span>
+                                    {{/if}}
+                                    {{#if item.system.rarity}}
+                                    <span class="item-rarity-tag">{{item.system.rarity}}</span>
+                                    {{/if}}
                                     {{#if item.equippedSlot}}
                                     <span class="weapon-slot-tag {{item.equippedSlot}}">
                                         {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
@@ -874,24 +1045,32 @@
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
-                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "primary")}}Unequip from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
+                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "
+                                    primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot " primary")}}Unequip
+                                    from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
-                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "
+                                    secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "
+                                    secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-sword"></i><span
+                                        class="weapon-slot-label">S</span></a>
                                 {{/if}}
                                 {{#if (eq item.type "armor")}}
-                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-shield-alt"></i></a>
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}"
+                                    title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 {{#if (eq item.system.location "vault")}}
-                                <a class="item-control" title="Send to Domain" data-action="send-to-domain"><i class="fas fa-arrow-left"></i></a>
+                                <a class="item-control" title="Send to Domain" data-action="send-to-domain"><i
+                                        class="fas fa-arrow-left"></i></a>
                                 {{else}}
-                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i class="fas fa-arrow-right"></i></a>
+                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
+                                        class="fas fa-arrow-right"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
-                                        class="fas fa-trash"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}"
+                                    data-action="delete"><i class="fas fa-trash"></i></a>
                             </div>
                         </div>
                         <div class="item-description">
@@ -902,23 +1081,32 @@
                     {{/each}}
                 </ol>
 
-                <div class="tab-category {{#unless uiState.vaultOpen}}section-collapsed{{/unless}}">{{localize "DH.Vault"}}
+                <div class="tab-category {{#unless uiState.vaultOpen}}section-collapsed{{/unless}}">{{localize
+                    "DH.Vault"}}
                     <div class="vault-controls">
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                             data-type="item" data-location="vault">
                             <i class="fas fa-plus"></i></a>
-                        <a class="item-control vault-toggle" title="{{localize "DH.ToggleVault"}}"><i class="fas fa-chevron-down"></i></a>
+                        <a class="item-control vault-toggle" title="{{localize " DH.ToggleVault"}}"><i
+                                class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
                 <ol class="item-list {{#unless uiState.vaultOpen}}vault-collapsed{{/unless}}" data-location="vault">
                     {{#each data.items as |item id|}}
-                    {{#if (or (eq item.system.location "vault") (and (not item.system.location) (eq item.type "vault")))}}
+                    {{#if (or (eq item.system.location "vault") (and (not item.system.location) (eq item.type
+                    "vault")))}}
                     <li class="item" data-item-id="{{item._id}}">
                         <div class="item-main-row">
                             <div class="item-top-row">
                                 <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
                                     width="30" height="30" />
                                 <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.system.category}}
+                                    <span class="item-category-tag">{{item.system.category}}</span>
+                                    {{/if}}
+                                    {{#if item.system.rarity}}
+                                    <span class="item-rarity-tag">{{item.system.rarity}}</span>
+                                    {{/if}}
                                     {{#if item.equippedSlot}}
                                     <span class="weapon-slot-tag {{item.equippedSlot}}">
                                         {{#if (eq item.equippedSlot "primary")}}Primary Weapon{{/if}}
@@ -932,24 +1120,32 @@
                             </div>
                             <div class="item-controls">
                                 {{#if (eq item.type "weapon")}}
-                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "primary")}}Unequip from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
+                                <a class="item-control weapon-equip-primary {{#if (eq item.equippedSlot "
+                                    primary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot " primary")}}Unequip
+                                    from Primary{{else}}Equip as Primary{{/if}}" data-item-id="{{item._id}}"><i
                                         class="fas fa-sword"></i><span class="weapon-slot-label">P</span></a>
-                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-sword"></i><span class="weapon-slot-label">S</span></a>
+                                <a class="item-control weapon-equip-secondary {{#if (eq item.equippedSlot "
+                                    secondary")}}equipped{{/if}}" title="{{#if (eq item.equippedSlot "
+                                    secondary")}}Unequip from Secondary{{else}}Equip as Secondary{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-sword"></i><span
+                                        class="weapon-slot-label">S</span></a>
                                 {{/if}}
                                 {{#if (eq item.type "armor")}}
-                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}" title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}" data-item-id="{{item._id}}"><i
-                                        class="fas fa-shield-alt"></i></a>
+                                <a class="item-control armor-equip {{#if item.system.equipped}}equipped{{/if}}"
+                                    title="{{#if item.system.equipped}}Unequip Armor{{else}}Equip Armor{{/if}}"
+                                    data-item-id="{{item._id}}"><i class="fas fa-shield-alt"></i></a>
                                 {{/if}}
                                 {{#if (eq item.system.location "vault")}}
-                                <a class="item-control" title="Send to Domain" data-action="send-to-domain"><i class="fas fa-arrow-left"></i></a>
+                                <a class="item-control" title="Send to Domain" data-action="send-to-domain"><i
+                                        class="fas fa-arrow-left"></i></a>
                                 {{else}}
-                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i class="fas fa-arrow-right"></i></a>
+                                <a class="item-control" title="Send to Vault" data-action="send-to-vault"><i
+                                        class="fas fa-arrow-right"></i></a>
                                 {{/if}}
                                 <a class="item-control" title="{{ localize 'SIMPLE.ItemEdit' }}" data-action="edit"><i
                                         class="fas fa-edit"></i></a>
-                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}" data-action="delete"><i
-                                        class="fas fa-trash"></i></a>
+                                <a class="item-control" title="{{ localize 'SIMPLE.ItemDelete' }}"
+                                    data-action="delete"><i class="fas fa-trash"></i></a>
                             </div>
                         </div>
                         <div class="item-description">
@@ -959,8 +1155,7 @@
                     {{/if}}
                     {{/each}}
                 </ol>
-            </div>        
+            </div>
         </div>
     </section>
 </form>
-    
