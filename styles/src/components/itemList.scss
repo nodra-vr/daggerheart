@@ -1,5 +1,7 @@
 /* Item list */
-.daggerheart .item-list {
+.daggerheart .item-list,
+.npc .item-list,
+.actor .item-list {
   list-style: none;
   margin: .5em;
   padding: 0em;
@@ -31,7 +33,11 @@
 
 /* Show empty item lists during drag operations */
 .daggerheart .item-list.is-empty.drag-over,
-.daggerheart .dragging .item-list.is-empty {
+.daggerheart .dragging .item-list.is-empty,
+.npc .item-list.is-empty.drag-over,
+.npc .dragging .item-list.is-empty,
+.actor .item-list.is-empty.drag-over,
+.actor .dragging .item-list.is-empty {
   display: flex;
   min-height: 100px;
   border: 1px dashed var(--dh-color-gold);
@@ -42,7 +48,9 @@
 }
 
 /* Visual feedback for populated item lists during drag */
-.daggerheart .item-list:not(.is-empty).drag-over {
+.daggerheart .item-list:not(.is-empty).drag-over,
+.npc .item-list:not(.is-empty).drag-over,
+.actor .item-list:not(.is-empty).drag-over {
   border-color: var(--dh-color-gold);
   border-radius: 5px;
   background-color: rgba(243, 194, 103, 0.05);
@@ -50,7 +58,9 @@
 }
 
 /* Make section headers droppable during drag operations */
-.daggerheart .dragging .tab-category {
+.daggerheart .dragging .tab-category,
+.npc .dragging .tab-category,
+.actor .dragging .tab-category {
   position: relative;
   transition: all 0.2s ease-in-out;
   border-radius: .5em;
@@ -58,7 +68,9 @@
   margin: 0.5em 0;
 }
 
-.daggerheart .tab-category.drag-over {
+.daggerheart .tab-category.drag-over,
+.npc .tab-category.drag-over,
+.actor .tab-category.drag-over {
   background-color: rgba(243, 194, 103, 0.2);
   border: 1px dashed var(--dh-color-gold);
   border-radius: 1em;
@@ -67,7 +79,9 @@
 }
 
 /* Vault animation styles */
-.daggerheart .item-list[data-item-type="vault"] {
+.daggerheart .item-list[data-item-type="vault"],
+.npc .item-list[data-item-type="vault"],
+.actor .item-list[data-item-type="vault"] {
   max-height: 500px;
   opacity: 1;
   /* Rely solely on max-height for the slide-down animation */
@@ -76,7 +90,9 @@
   overflow: hidden;
 }
 
-.daggerheart .item-list[data-item-type="vault"].vault-collapsed {
+.daggerheart .item-list[data-item-type="vault"].vault-collapsed,
+.npc .item-list[data-item-type="vault"].vault-collapsed,
+.actor .item-list[data-item-type="vault"].vault-collapsed {
   max-height: 0;
   opacity: 0;
   /* No transform scaling – height handles the collapse */
@@ -92,7 +108,21 @@
 .daggerheart .item-list[data-item-type="community"],
 .daggerheart .item-list[data-item-type="item"],
 .daggerheart .item-list[data-item-type="worn"],
-.daggerheart .item-list[data-item-type="inventory"] {
+.daggerheart .item-list[data-item-type="inventory"],
+.npc .item-list[data-item-type="class"],
+.npc .item-list[data-item-type="subclass"],
+.npc .item-list[data-item-type="ancestry"],
+.npc .item-list[data-item-type="community"],
+.npc .item-list[data-item-type="item"],
+.npc .item-list[data-item-type="worn"],
+.npc .item-list[data-item-type="inventory"],
+.actor .item-list[data-item-type="class"],
+.actor .item-list[data-item-type="subclass"],
+.actor .item-list[data-item-type="ancestry"],
+.actor .item-list[data-item-type="community"],
+.actor .item-list[data-item-type="item"],
+.actor .item-list[data-item-type="worn"],
+.actor .item-list[data-item-type="inventory"] {
   max-height: 500px;
   opacity: 1;
   /* Use only max-height for smoother, single-direction animation */
@@ -101,7 +131,9 @@
   overflow: hidden;
 }
 
-.daggerheart .item-list.category-collapsed {
+.daggerheart .item-list.category-collapsed,
+.npc .item-list.category-collapsed,
+.actor .item-list.category-collapsed {
   max-height: 0;
   opacity: 0;
   /* No transform scaling – height handles the collapse */
@@ -111,55 +143,79 @@
 }
 
 /* Dynamic spacing system for collapsed/expanded sections */
-.daggerheart .tab-category {
+.daggerheart .tab-category,
+.npc .tab-category,
+.actor .tab-category {
   /* Only apply transitions when explicitly enabled for user interactions */
 }
 
 /* Completely disable all transitions during initialization */
 .daggerheart.no-transitions .tab-category,
-.daggerheart.no-transitions .item-list {
+.daggerheart.no-transitions .item-list,
+.npc.no-transitions .tab-category,
+.npc.no-transitions .item-list,
+.actor.no-transitions .tab-category,
+.actor.no-transitions .item-list {
   transition: none !important;
 }
 
 /* Enable transitions only when the sheet allows them (user-initiated toggles) */
-.daggerheart.transitions-enabled .tab-category {
+.daggerheart.transitions-enabled .tab-category,
+.npc.transitions-enabled .tab-category,
+.actor.transitions-enabled .tab-category {
   transition: margin-bottom 0.3s ease-in-out;
 }
 
 /* Only the bottom margin changes between collapsed/expanded to keep the header anchored */
-.daggerheart .tab-category.dynamic-collapsed {
+.daggerheart .tab-category.dynamic-collapsed,
+.npc .tab-category.dynamic-collapsed,
+.actor .tab-category.dynamic-collapsed {
   margin-bottom: 0.05em;
 }
 
-.daggerheart .tab-category.dynamic-expanded {
+.daggerheart .tab-category.dynamic-expanded,
+.npc .tab-category.dynamic-expanded,
+.actor .tab-category.dynamic-expanded {
   margin-bottom: 0.75em;
 }
 
 /* Fallback: Reduce tab-category spacing when associated section is collapsed (backwards compatibility) */
-.daggerheart .tab-category.section-collapsed:not(.dynamic-collapsed):not(.dynamic-expanded) {
+.daggerheart .tab-category.section-collapsed:not(.dynamic-collapsed):not(.dynamic-expanded),
+.npc .tab-category.section-collapsed:not(.dynamic-collapsed):not(.dynamic-expanded),
+.actor .tab-category.section-collapsed:not(.dynamic-collapsed):not(.dynamic-expanded) {
   margin-bottom: 0.1em;
   margin-top: 0.1em;
+  padding-bottom: 5px;
 }
 
 /* Fallback: Ensure normal spacing when expanded (backwards compatibility) */
-.daggerheart .tab-category:not(.section-collapsed):not(.dynamic-collapsed):not(.dynamic-expanded) {
+.daggerheart .tab-category:not(.section-collapsed):not(.dynamic-collapsed):not(.dynamic-expanded),
+.npc .tab-category:not(.section-collapsed):not(.dynamic-collapsed):not(.dynamic-expanded),
+.actor .tab-category:not(.section-collapsed):not(.dynamic-collapsed):not(.dynamic-expanded) {
   margin-bottom: 0.75em;
+  padding-bottom: 5px;
 }
 
 /* Category controls styling */
-.daggerheart .category-controls {
+.daggerheart .category-controls,
+.npc .category-controls,
+.actor .category-controls {
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
-.daggerheart .vault-controls {
+.daggerheart .vault-controls,
+.npc .vault-controls,
+.actor .vault-controls {
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
-.daggerheart .item-list .item {
+.daggerheart .item-list .item,
+.npc .item-list .item,
+.actor .item-list .item {
   display: flex;
   flex-direction: column;
   gap: 0.25em;
@@ -171,11 +227,15 @@
   background: rgba(0,0,0,0.2);
 }
 
-.daggerheart .item-list .item.expanded {
+.daggerheart .item-list .item.expanded,
+.npc .item-list .item.expanded,
+.actor .item-list .item.expanded {
   padding-bottom: 0.5em;
 }
 
-.daggerheart .item-list .item .item-main-row {
+.daggerheart .item-list .item .item-main-row,
+.npc .item-list .item .item-main-row,
+.actor .item-list .item .item-main-row {
   display: flex;
   align-items: center;
   width: 100%;
@@ -184,11 +244,15 @@
   min-height: 3em;
 }
 
-.daggerheart .item-list .item:nth-child(even) {
+.daggerheart .item-list .item:nth-child(even),
+.npc .item-list .item:nth-child(even),
+.actor .item-list .item:nth-child(even) {
     background: rgb(141 120 151 / 7%);
 }
 
-.daggerheart .item-list .item .item-description {
+.daggerheart .item-list .item .item-description,
+.npc .item-list .item .item-description,
+.actor .item-list .item .item-description {
 	max-height: 0;
 	opacity: 0;
 	overflow: hidden;
@@ -199,12 +263,16 @@
 	padding: 0em 1.5em;
 }
 
-.daggerheart .item-list .item .item-description > * {
+.daggerheart .item-list .item .item-description > *,
+.npc .item-list .item .item-description > *,
+.actor .item-list .item .item-description > * {
   opacity: 0;
   transition: opacity 0.2s ease-out 0.1s;
 }
 
-.daggerheart .item-list .item.expanded .item-description {
+.daggerheart .item-list .item.expanded .item-description,
+.npc .item-list .item.expanded .item-description,
+.actor .item-list .item.expanded .item-description {
   /* Limit the expanded height so huge descriptions don't blow out the sheet */
   max-height: 200px;
   overflow-y: auto; /* Allow scrolling once the description exceeds the max height */
@@ -212,14 +280,18 @@
   padding-top: 0.5em;
 }
 
-.daggerheart .item-list .item.expanded .item-description > * {
+.daggerheart .item-list .item.expanded .item-description > *,
+.npc .item-list .item.expanded .item-description > *,
+.actor .item-list .item.expanded .item-description > * {
   opacity: 1;
   height: auto;
   width: 85%;
 }
 
 /* Fix image display in item descriptions */
-.daggerheart .item-list .item .item-description img {
+.daggerheart .item-list .item .item-description img,
+.npc .item-list .item .item-description img,
+.actor .item-list .item .item-description img {
   max-width: 100%;
   height: auto;
   border: 1px solid var(--dh-color-gold);
@@ -231,17 +303,23 @@
 }
 
 /* Ensure images in expanded descriptions are properly scaled */
-.daggerheart .item-list .item.expanded .item-description img {
+.daggerheart .item-list .item.expanded .item-description img,
+.npc .item-list .item.expanded .item-description img,
+.actor .item-list .item.expanded .item-description img {
   transform: none; /* Override any inherited transform that might squish the image */
 }
 
-.daggerheart .item-list .item .item-top-row {
+.daggerheart .item-list .item .item-top-row,
+.npc .item-list .item .item-top-row,
+.actor .item-list .item .item-top-row {
   display: flex;
   align-items: center;
   flex-grow: 1;
 }
 
-.daggerheart .item-list .item .item-name {
+.daggerheart .item-list .item .item-name,
+.npc .item-list .item .item-name,
+.actor .item-list .item .item-name {
   padding-left: 0.5em;
   font-size: 0.9em;
   font-weight: normal;
@@ -250,12 +328,16 @@
   cursor: pointer;
 }
 
-.daggerheart .item-list .item .item-name:hover {
+.daggerheart .item-list .item .item-name:hover,
+.npc .item-list .item .item-name:hover,
+.actor .item-list .item .item-name:hover {
   color: var(--dh-color-gold);
 }
 
 /* Weapon slot tags */
-.daggerheart .item-list .item .item-name .weapon-slot-tag {
+.daggerheart .item-list .item .item-name .weapon-slot-tag,
+.npc .item-list .item .item-name .weapon-slot-tag,
+.actor .item-list .item .item-name .weapon-slot-tag {
   display: inline-block;
   font-size: 0.7em;
   font-weight: 600;
@@ -283,7 +365,9 @@
 }
 
 /* Armor slot tags */
-.daggerheart .item-list .item .item-name .armor-slot-tag {
+.daggerheart .item-list .item .item-name .armor-slot-tag,
+.npc .item-list .item .item-name .armor-slot-tag,
+.actor .item-list .item .item-name .armor-slot-tag {
   display: inline-block;
   font-size: 0.7em;
   font-weight: 600;
@@ -303,7 +387,9 @@
   }
 }
 
-.daggerheart .item-list .item img {
+.daggerheart .item-list .item img,
+.npc .item-list .item img,
+.actor .item-list .item img {
   flex: 0 0 24px;
   margin-right: 5px;
   border: 1px solid var(--dh-color-gold);
@@ -312,17 +398,23 @@
   height: 25px;
 }
 
-.daggerheart .item-list .item-controls {
+.daggerheart .item-list .item-controls,
+.npc .item-list .item-controls,
+.actor .item-list .item-controls {
   flex: 0 0 36px;
   display: flex;
   gap: 5px;
 }
 
-.daggerheart .item-control{
+.daggerheart .item-control,
+.npc .item-control,
+.actor .item-control {
   cursor: pointer;
 }
 
-.daggerheart .vault-content .item-control {
+.daggerheart .vault-content .item-control,
+.npc .vault-content .item-control,
+.actor .vault-content .item-control {
   display: flex;
 }
 

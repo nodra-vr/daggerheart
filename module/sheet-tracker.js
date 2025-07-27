@@ -288,9 +288,12 @@ export class SheetTracker {
       
       this.isInitialized = true;
       
-      // Set initial nav state for character sheets
+      // Set initial nav state for character and NPC sheets
       if (this._isCharacterSheet()) {
         const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'character';
+        this._updateNavActiveState(currentTab);
+      } else if (this._isNPCSheet()) {
+        const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'description';
         this._updateNavActiveState(currentTab);
       }
     } catch (error) {
@@ -325,6 +328,13 @@ export class SheetTracker {
   }
 
   /**
+   * Check if this is an NPC sheet (for navigation buttons)
+   */
+  _isNPCSheet() {
+    return this.actor.type === "npc" && this.actorSheet.constructor.name === "NPCActorSheet";
+  }
+
+  /**
    * Check if this is an item sheet
    */
   _isItemSheet() {
@@ -344,7 +354,8 @@ export class SheetTracker {
     this._cleanupDOM();
 
     const isCharacterSheet = this._isCharacterSheet();
-    const sidebarHtml = this._buildSidebarHTML(isCharacterSheet);
+    const isNPCSheet = this._isNPCSheet();
+    const sidebarHtml = this._buildSidebarHTML(isCharacterSheet, isNPCSheet);
 
     // Insert sidebar
     const windowContent = sheet.find('.window-content');
@@ -368,14 +379,24 @@ export class SheetTracker {
   /**
    * Build the sidebar HTML structure
    */
-  _buildSidebarHTML(isCharacterSheet) {
-    const navButtons = isCharacterSheet ? `
-      <div class="sidebar-nav-buttons">
-        <div class="nav-button" data-tab="character" title="Character"><i class="fas fa-user"></i></div>
-        <div class="nav-button" data-tab="equipment" title="Equipment"><i class="fas fa-hammer"></i></div>
-        <div class="nav-button" data-tab="loadout" title="Loadout"><i class="fas fa-suitcase"></i></div>
-        <div class="nav-button" data-tab="biography" title="Biography"><i class="fas fa-book-open"></i></div>
-      </div>` : '';
+  _buildSidebarHTML(isCharacterSheet, isNPCSheet) {
+    let navButtons = '';
+    
+    if (isCharacterSheet) {
+      navButtons = `
+        <div class="sidebar-nav-buttons">
+          <div class="nav-button" data-tab="character" title="Character"><i class="fas fa-user"></i></div>
+          <div class="nav-button" data-tab="equipment" title="Equipment"><i class="fas fa-hammer"></i></div>
+          <div class="nav-button" data-tab="loadout" title="Loadout"><i class="fas fa-suitcase"></i></div>
+          <div class="nav-button" data-tab="biography" title="Biography"><i class="fas fa-book-open"></i></div>
+        </div>`;
+    } else if (isNPCSheet) {
+      navButtons = `
+        <div class="sidebar-nav-buttons">
+          <div class="nav-button" data-tab="adversary" title="Adversary"><i class="fas fa-sword"></i></div>
+          <div class="nav-button" data-tab="description" title="Description"><i class="fas fa-file-text"></i></div>
+        </div>`;
+    }
 
     return `
       <div class="sheet-tracker-sidebar" data-actor-id="${this.actorId}">
@@ -575,8 +596,8 @@ export class SheetTracker {
       this.sidebarElement.find('.color-preview').css('background-color', color);
     });
 
-    // Navigation buttons for character sheets
-    if (this._isCharacterSheet()) {
+    // Navigation buttons for character and NPC sheets
+    if (this._isCharacterSheet() || this._isNPCSheet()) {
       this._setupNavigationListeners();
     }
   }
@@ -584,7 +605,7 @@ export class SheetTracker {
 
 
   /**
-   * Set up navigation listeners for character sheets
+   * Set up navigation listeners for character and NPC sheets
    */
   _setupNavigationListeners() {
     // Navigation button clicks
@@ -820,7 +841,7 @@ export class SheetTracker {
    * Update navigation active state
    */
   _updateNavActiveState(activeTab) {
-    if (!this.sidebarElement || !this._isCharacterSheet()) return;
+    if (!this.sidebarElement || (!this._isCharacterSheet() && !this._isNPCSheet())) return;
     
     const navButtons = this.sidebarElement.find('.nav-button');
     navButtons.removeClass('active');

@@ -1,5 +1,5 @@
 import { EntitySheetHelper } from "./helper.js";
-import {ATTRIBUTE_TYPES} from "./constants.js";
+import { ATTRIBUTE_TYPES } from "./constants.js";
 import { DaggerheartDialogHelper } from "./dialog-helper.js";
 import { SheetTracker } from "./sheet-tracker.js";
 import { EquipmentHandler } from "./equipmentHandler.js";
@@ -15,7 +15,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   getPendingRollType() {
     return this._pendingRollType;
   }
-  setPendingRollType(newValue){
+  setPendingRollType(newValue) {
     this._pendingRollType = newValue;
   }
   _pendingWeaponName = null;
@@ -23,7 +23,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   getPendingWeaponName() {
     return this._pendingWeaponName;
   }
-  setPendingWeaponName(newValue){
+  setPendingWeaponName(newValue) {
     this._pendingWeaponName = newValue;
   }
 
@@ -50,11 +50,11 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-          classes: ["daggerheart", "sheet", "actor"],
-    template: "systems/daggerheart/templates/actor-sheet.html",
+      classes: ["daggerheart", "sheet", "actor"],
+      template: "systems/daggerheart/templates/actor-sheet.html",
       width: 690,
       height: 915,
-      tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
       scrollY: [".biography", ".items", ".attributes"],
       dragDrop: [
         { dragSelector: ".item-list .item", dropSelector: null },
@@ -115,7 +115,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     context.data.items = this._sortItemsWithWeaponsFirst(context.data.items);
 
-    context.actor = this.actor; 
+    context.actor = this.actor;
 
     if (this.actor.type === "character") {
       context.weaponDisplay = EquipmentHandler.getWeaponDisplayData(this.actor);
@@ -125,7 +125,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     context.imageStyle = `background: url(${imageLink});`;
 
     context.uiState = {
-      vaultOpen : this._vaultOpen,
+      vaultOpen: this._vaultOpen,
       categoryStates: this._categoryStates
     };
 
@@ -178,7 +178,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     this._markEmptyItemLists(html);
 
-    if ( !this.isEditable ) return;
+    if (!this.isEditable) return;
 
     this._setupDragDropListeners(html);
 
@@ -352,21 +352,21 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
     const domainInputs = html.find('.header-domain input');
 
-    domainInputs.each(function() {
-      adjustTextSize(this, 1, 0.625); 
+    domainInputs.each(function () {
+      adjustTextSize(this, 1, 0.625);
     });
 
-    domainInputs.on('input', function() {
+    domainInputs.on('input', function () {
       adjustTextSize(this, 1, 0.625);
     });
 
     const charnameInput = html.find('.charname input');
 
-    charnameInput.each(function() {
-      adjustTextSize(this, 2.5, 1.2); 
+    charnameInput.each(function () {
+      adjustTextSize(this, 2.5, 1.2);
     });
 
-    charnameInput.on('input', function() {
+    charnameInput.on('input', function () {
       adjustTextSize(this, 2.5, 1.2);
     });
 
@@ -387,38 +387,38 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     textarea.on("keyup", () => {
       textarea.css("height", calcHeight(textarea.val()) + "px");
     });
-    
+
+  }
+
+  close(options) {
+    // Clean up sheet tracker
+    if (this.sheetTracker) {
+      this.sheetTracker.destroy();
+      this.sheetTracker = null;
     }
-    
-    close(options) {
-        // Clean up sheet tracker
-        if (this.sheetTracker) {
-            this.sheetTracker.destroy();
-            this.sheetTracker = null;
-        }
-        
-        // Clean up domain ability sidebar
-        if (this.domainAbilitySidebar) {
-            this.domainAbilitySidebar.destroy?.();
-            this.domainAbilitySidebar = null;
-        }
-        
-        // Clean up header loadout bar
-        if (this.headerLoadoutBar) {
-            this.headerLoadoutBar.destroy?.();
-            this.headerLoadoutBar = null;
-        }
-        
-        // Check if the tooltip element exists and remove it from the DOM
-        let tooltipElement = document.querySelector('.daggerheart-tooltip');
-        if (tooltipElement) {
-            tooltipElement.remove();
-        }
-        
-        return super.close(options);
+
+    // Clean up domain ability sidebar
+    if (this.domainAbilitySidebar) {
+      this.domainAbilitySidebar.destroy?.();
+      this.domainAbilitySidebar = null;
     }
-    
-    async _onToggleWeaponEquip(event) {
+
+    // Clean up header loadout bar
+    if (this.headerLoadoutBar) {
+      this.headerLoadoutBar.destroy?.();
+      this.headerLoadoutBar = null;
+    }
+
+    // Check if the tooltip element exists and remove it from the DOM
+    let tooltipElement = document.querySelector('.daggerheart-tooltip');
+    if (tooltipElement) {
+      tooltipElement.remove();
+    }
+
+    return super.close(options);
+  }
+
+  async _onToggleWeaponEquip(event) {
     event.preventDefault();
 
     const button = event.currentTarget;
@@ -568,11 +568,11 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       });
 
       ChatMessage.create({
-          user: game.user.id,
-          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-          content: chatCard
+        user: game.user.id,
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: chatCard
       });
-      return; 
+      return;
     }
 
     const type = button.dataset.type;
@@ -591,7 +591,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       };
       const itemName = defaultNames[type] || 'New Item';
 
-      const fallbackLoc = ['item','weapon'].includes(type) ? 'backpack' : (type || 'abilities');
+      const fallbackLoc = ['item', 'weapon'].includes(type) ? 'backpack' : (type || 'abilities');
       const loc = location || fallbackLoc;
 
       await ItemCls.create({ name: itemName, type, system: { location: loc } }, { parent: this.actor });
@@ -600,48 +600,48 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
     switch (action) {
       case "create-item":
-      const cls = getDocumentClass("Item");
-      return cls.create({
-        name: "New Item", 
-        type: type,
-        system: { location: location || "backpack" }
-      }, {parent: this.actor});
+        const cls = getDocumentClass("Item");
+        return cls.create({
+          name: "New Item",
+          type: type,
+          system: { location: location || "backpack" }
+        }, { parent: this.actor });
       case "create-domain":
-      const clsd = getDocumentClass("Item");
-      return clsd.create({
-        name: "New Domain", 
-        type: type,
-        system: { location: location || "abilities" }
-      }, {parent: this.actor});
+        const clsd = getDocumentClass("Item");
+        return clsd.create({
+          name: "New Domain",
+          type: type,
+          system: { location: location || "abilities" }
+        }, { parent: this.actor });
       case "create-ancestry":
-      const clsa = getDocumentClass("Item");
-      return clsa.create({
-        name: "New Ancestry", 
-        type: type,
-        system: { location: location || "ancestry" }
-      }, {parent: this.actor});
+        const clsa = getDocumentClass("Item");
+        return clsa.create({
+          name: "New Ancestry",
+          type: type,
+          system: { location: location || "ancestry" }
+        }, { parent: this.actor });
       case "create-community":
-      const clscom = getDocumentClass("Item");
-      return clscom.create({
-        name: "New Community", 
-        type: type,
-        system: { location: location || "community" }
-      }, {parent: this.actor});
+        const clscom = getDocumentClass("Item");
+        return clscom.create({
+          name: "New Community",
+          type: type,
+          system: { location: location || "community" }
+        }, { parent: this.actor });
       case "create-class":
-      const clscl = getDocumentClass("Item");
-      return clscl.create({
-        name: "New Class", 
-        type: type,
-        system: { location: location || "class" }
-      }, {parent: this.actor});
+        const clscl = getDocumentClass("Item");
+        return clscl.create({
+          name: "New Class",
+          type: type,
+          system: { location: location || "class" }
+        }, { parent: this.actor });
       case "create-subclass":
-      const clssc = getDocumentClass("Item");
-      return clssc.create({
-        name: "New Subclass", 
-        type: type,
-        system: { location: location || "subclass" }
-      }, {parent: this.actor});
-      case "edit": 
+        const clssc = getDocumentClass("Item");
+        return clssc.create({
+          name: "New Subclass",
+          type: type,
+          system: { location: location || "subclass" }
+        }, { parent: this.actor });
+      case "edit":
         if (item) return item.sheet.render(true);
         break;
       case "delete":
@@ -722,9 +722,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       event.preventDefault();
       const card = await fromUuid(data.uuid);
       const domains = this.actor.system.domains || [];
-      const newCardId = foundry.utils.randomID(); 
+      const newCardId = foundry.utils.randomID();
       domains.push({ _id: newCardId, name: card.name, img: card.img });
-      await this.actor.update({"system.domains": domains});
+      await this.actor.update({ "system.domains": domains });
       return;
     }
 
@@ -748,21 +748,21 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     });
 
     if (this.actor.items.has(item.id)) {
-        const existingItem = this.actor.items.get(item.id);
+      const existingItem = this.actor.items.get(item.id);
 
-        if (existingItem.system.location === newLocation) {
-          return;
-        }
+      if (existingItem.system.location === newLocation) {
+        return;
+      }
 
-        try {
-          const result = await existingItem.update({
-            "system.location": newLocation
-          });
-          return result;
-        } catch (error) {
-          ui.notifications?.error(`Failed to move ${item.name}: ${error.message}`);
-          return false;
-        }
+      try {
+        const result = await existingItem.update({
+          "system.location": newLocation
+        });
+        return result;
+      } catch (error) {
+        ui.notifications?.error(`Failed to move ${item.name}: ${error.message}`);
+        return false;
+      }
 
     } else {
 
@@ -784,7 +784,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const cardId = event.currentTarget.dataset.cardId;
     const domains = this.actor.system.domains || [];
     const updatedDomains = domains.filter(domain => domain._id !== cardId);
-    await this.actor.update({"system.domains": updatedDomains});
+    await this.actor.update({ "system.domains": updatedDomains });
   }
 
   _getSubmitData(updateData) {
@@ -846,7 +846,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
       const displayValue = damageData.value || '1d8';
       damageData = {
-        baseValue: displayValue, 
+        baseValue: displayValue,
         modifiers: damageData.modifiers || [],
         value: displayValue
       };
@@ -996,7 +996,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     }
 
     const pathParts = config.field.split('.');
-    const attributeName = pathParts[pathParts.length - 2]; 
+    const attributeName = pathParts[pathParts.length - 2];
 
     overlay.find('.attribute-edit-label').text(config.label);
 
@@ -1146,7 +1146,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     }
 
     const pathParts = config.field.split('.');
-    const attributeName = pathParts[pathParts.length - 2]; 
+    const attributeName = pathParts[pathParts.length - 2];
 
     overlay.find('.damage-edit-label').text(config.label);
 
@@ -1157,22 +1157,22 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
     const equippedIndicator = overlay.find('.equipped-weapon-indicator');
 
-     const hasRestriction = this.hasBaseValueRestriction(config.field);
-     const restriction = this.getBaseValueRestriction(config.field);
+    const hasRestriction = this.hasBaseValueRestriction(config.field);
+    const restriction = this.getBaseValueRestriction(config.field);
 
-     if (hasRestriction && restriction && !restriction.editable) {
+    if (hasRestriction && restriction && !restriction.editable) {
 
-       baseInput.prop('readonly', true).addClass('restriction-locked');
-       equippedIndicator.show();
-        overlay.find('.equipped-weapon-text').text('Base formula locked by equipped weapon');
-        overlay.find('.base-value-label').text('Base Formula (From Equipped Weapon)');
+      baseInput.prop('readonly', true).addClass('restriction-locked');
+      equippedIndicator.show();
+      overlay.find('.equipped-weapon-text').text('Base formula locked by equipped weapon');
+      overlay.find('.base-value-label').text('Base Formula (From Equipped Weapon)');
 
-       baseInput.val(restriction.value);
-     } else {
-       baseInput.prop('readonly', false).removeClass('weapon-locked restriction-locked');
-       equippedIndicator.hide();
-       overlay.find('.base-value-label').text('Base Formula');
-     }
+      baseInput.val(restriction.value);
+    } else {
+      baseInput.prop('readonly', false).removeClass('weapon-locked restriction-locked');
+      equippedIndicator.hide();
+      overlay.find('.base-value-label').text('Base Formula');
+    }
 
     overlay.data('config', config);
     overlay.data('attribute-name', attributeName);
@@ -1209,7 +1209,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
     overlay.find('.base-value-decrement').on('click', () => {
       const currentValue = parseInt(baseInput.val()) || 0;
-      const newValue = Math.max(-3, currentValue - 1); 
+      const newValue = Math.max(-3, currentValue - 1);
       baseInput.val(newValue);
       this._updateTotal(overlay);
     });
@@ -1446,17 +1446,17 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const config = overlay.data('config');
     const attributeName = overlay.data('attribute-name');
 
-     const hasRestriction = this.hasBaseValueRestriction(config.field);
-     const restriction = this.getBaseValueRestriction(config.field);
+    const hasRestriction = this.hasBaseValueRestriction(config.field);
+    const restriction = this.getBaseValueRestriction(config.field);
 
-     let baseValue;
-     if (hasRestriction && restriction && !restriction.editable) {
+    let baseValue;
+    if (hasRestriction && restriction && !restriction.editable) {
 
-       baseValue = String(restriction.value) || '1d8';
-     } else {
+      baseValue = String(restriction.value) || '1d8';
+    } else {
 
-       baseValue = overlay.find('.damage-base-input').val().trim() || '1d8';
-     }
+      baseValue = overlay.find('.damage-base-input').val().trim() || '1d8';
+    }
 
     const modifiers = [];
     overlay.find('.damage-modifier-row').each((index, row) => {
@@ -1477,15 +1477,15 @@ await game.daggerheart.rollHandler.dualityWithDialog({
           value: value,
           enabled: enabled
         };
-        
+
         if (isPermanent) {
           modifier.permanent = true;
         }
-        
+
         if (modifierId) {
           modifier.id = modifierId;
         }
-        
+
         modifiers.push(modifier);
       }
     });
@@ -1530,7 +1530,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const popup = overlay.find('.damage-edit-popup');
     this._animatePopupOut(popup, () => {
       overlay.hide();
-      overlay.remove(); 
+      overlay.remove();
     });
   }
 
@@ -1585,17 +1585,17 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const config = overlay.data('config');
     const attributeName = overlay.data('attribute-name');
 
-     const hasRestriction = this.hasBaseValueRestriction(config.field);
-     const restriction = this.getBaseValueRestriction(config.field);
+    const hasRestriction = this.hasBaseValueRestriction(config.field);
+    const restriction = this.getBaseValueRestriction(config.field);
 
-     let baseValue;
-     if (hasRestriction && restriction && !restriction.editable) {
+    let baseValue;
+    if (hasRestriction && restriction && !restriction.editable) {
 
-       baseValue = typeof restriction.value === 'number' ? restriction.value : parseInt(restriction.value) || 0;
-     } else {
+      baseValue = typeof restriction.value === 'number' ? restriction.value : parseInt(restriction.value) || 0;
+    } else {
 
-       baseValue = parseInt(overlay.find('.attribute-base-input').val()) || 0;
-     }
+      baseValue = parseInt(overlay.find('.attribute-base-input').val()) || 0;
+    }
 
     const modifiers = [];
     overlay.find('.modifier-row').each((index, row) => {
@@ -1616,15 +1616,15 @@ await game.daggerheart.rollHandler.dualityWithDialog({
           value: value,
           enabled: enabled
         };
-        
+
         if (isPermanent) {
           modifier.permanent = true;
         }
-        
+
         if (modifierId) {
           modifier.id = modifierId;
         }
-        
+
         modifiers.push(modifier);
       }
     });
@@ -1688,13 +1688,13 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const popup = overlay.find('.attribute-edit-popup');
     this._animatePopupOut(popup, () => {
       overlay.hide();
-      overlay.remove(); 
+      overlay.remove();
     });
   }
 
   _animatePopupIn(popup, callback) {
     let start = null;
-    const duration = 200; 
+    const duration = 200;
 
     const animate = (timestamp) => {
       if (!start) start = timestamp;
@@ -1702,8 +1702,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
       const eased = 1 - Math.pow(1 - progress, 3);
 
-      const scale = 0.8 + (0.2 * eased); 
-      const opacity = eased; 
+      const scale = 0.8 + (0.2 * eased);
+      const opacity = eased;
 
       popup.css({
         'transform': `scale(${scale})`,
@@ -1722,7 +1722,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
   _animatePopupOut(popup, callback) {
     let start = null;
-    const duration = 150; 
+    const duration = 150;
 
     const animate = (timestamp) => {
       if (!start) start = timestamp;
@@ -1730,8 +1730,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
       const eased = Math.pow(progress, 2);
 
-      const scale = 1.0 - (0.2 * eased); 
-      const opacity = 1 - eased; 
+      const scale = 1.0 - (0.2 * eased);
+      const opacity = 1 - eased;
 
       popup.css({
         'transform': `scale(${scale})`,
@@ -1790,15 +1790,15 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   async _onBasicRollableClick(event) {
     event.preventDefault();
 
-    const rollableElement = event.currentTarget; 
-    const rollableGroup = rollableElement.closest(".basic-rollable-group"); 
+    const rollableElement = event.currentTarget;
+    const rollableGroup = rollableElement.closest(".basic-rollable-group");
     const rollName = rollableGroup.querySelector(".basic-rollable-name")?.value || "Basic Roll";
-    const rollType = rollableElement.dataset.rollType || "damage"; 
+    const rollType = rollableElement.dataset.rollType || "damage";
 
     event.currentTarget.dataset.actorId = this.actor.id;
     event.currentTarget.dataset.weaponName = rollName;
-    event.currentTarget.dataset.weaponType = "basic"; 
-    event.currentTarget.dataset.isCritical = "false"; 
+    event.currentTarget.dataset.weaponType = "basic";
+    event.currentTarget.dataset.isCritical = "false";
 
     let damageData = null;
     const damageValueDisplay = rollableGroup.querySelector(".damage-value-display");
@@ -1819,7 +1819,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     }
 
     if (typeof damageData !== 'object' || damageData === null || !('baseValue' in damageData)) {
-        damageData = { baseValue: damageData, modifiers: [], value: damageData };
+      damageData = { baseValue: damageData, modifiers: [], value: damageData };
     }
     event.currentTarget.dataset.weaponDamageStructure = JSON.stringify(damageData);
 
@@ -1920,10 +1920,10 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   async _rollTrait(traitName, traitValue) {
     const traitNamePrint = traitName.charAt(0).toUpperCase() + traitName.slice(1);
     const title = `Roll for ${traitNamePrint}`;
-    await game.daggerheart.rollHandler.dualityWithDialog({title, traitValue, actor: this.actor});
+    await game.daggerheart.rollHandler.dualityWithDialog({ title, traitValue, actor: this.actor });
   }
 
-  async handleDualityResult({isCrit, isFear, isHope}) {
+  async handleDualityResult({ isCrit, isFear, isHope }) {
     console.log("Daggerheart | handleDualityResult called but automation is now handled globally");
 
     return;
@@ -1989,7 +1989,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   _getTargetingResults(attackTotal) {
 
     if (!game.user.targets || game.user.targets.size === 0) {
-      return ""; 
+      return "";
     }
 
     let targetingText = "";
@@ -2008,11 +2008,11 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         defenseValue = parseInt(targetActor.system.defenses?.evasion?.value) || 0;
         defenseName = "Difficulty";
       } else {
-        continue; 
+        continue;
       }
 
-      const isCritical = this.getPendingRollType() === "attack" && 
-                         (this._lastRollResult?.isCrit || false);
+      const isCritical = this.getPendingRollType() === "attack" &&
+        (this._lastRollResult?.isCrit || false);
 
       const hit = isCritical || attackTotal >= defenseValue;
 
@@ -2034,14 +2034,14 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
     if (vaultList.hasClass('vault-collapsed')) {
 
-        vaultList.removeClass('vault-collapsed');
-        icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-        this._vaultOpen = true;
+      vaultList.removeClass('vault-collapsed');
+      icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      this._vaultOpen = true;
     } else {
 
-        vaultList.addClass('vault-collapsed');
-        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-        this._vaultOpen = false;
+      vaultList.addClass('vault-collapsed');
+      icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+      this._vaultOpen = false;
     }
 
     await this._saveUiState();
@@ -2062,24 +2062,24 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
     if (categoryList.hasClass('category-collapsed')) {
 
-        categoryList.removeClass('category-collapsed');
-        categoryHeader.removeClass('section-collapsed');
+      categoryList.removeClass('category-collapsed');
+      categoryHeader.removeClass('section-collapsed');
 
-        categoryHeader.addClass('section-expanded');
-        icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-        this._categoryStates[category] = true;
+      categoryHeader.addClass('section-expanded');
+      icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      this._categoryStates[category] = true;
 
-        this._updateDynamicSpacing(true);
+      this._updateDynamicSpacing(true);
     } else {
 
-        categoryList.addClass('category-collapsed');
-        categoryHeader.addClass('section-collapsed');
+      categoryList.addClass('category-collapsed');
+      categoryHeader.addClass('section-collapsed');
 
-        categoryHeader.removeClass('section-expanded');
-        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-        this._categoryStates[category] = false;
+      categoryHeader.removeClass('section-expanded');
+      icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+      this._categoryStates[category] = false;
 
-        this._updateDynamicSpacing(true);
+      this._updateDynamicSpacing(true);
     }
 
     await this._saveUiState();
@@ -2087,7 +2087,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
   _updateDynamicSpacing(enableTransitions = true) {
 
-    return; 
+    return;
   }
 
   _disableTransitions() {
@@ -2379,7 +2379,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     if (weapon && restrictedValue !== null) {
       return {
         value: restrictedValue,
-        editable: false, 
+        editable: false,
         reason: reason,
         weaponName: weapon.name,
         weaponId: weapon.id
@@ -2395,7 +2395,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
     this._vaultOpen = uiState.vaultOpen ?? false;
 
-    const keys = ['class','subclass','ancestry','community','abilities','worn','backpack'];
+    const keys = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack'];
     const defaults = Object.fromEntries(keys.map(k => [k, false]));
     this._categoryStates = Object.assign(defaults, uiState.categoryStates || {});
   }
@@ -2408,15 +2408,15 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     };
     try {
       await this.actor.setFlag('daggerheart', 'uiState', data);
-    } catch(e) {
+    } catch (e) {
       console.error('Failed to save UI state', e);
     }
   }
 
   async _loadCategoryStates() { return this._loadUiState(); }
   async _saveCategoryStates() { return this._saveUiState(); }
-  async _loadVaultState()     { return this._loadUiState(); }
-  async _saveVaultState()     { return this._saveUiState(); }
+  async _loadVaultState() { return this._loadUiState(); }
+  async _saveVaultState() { return this._saveUiState(); }
 }
 
 export class NPCActorSheet extends SimpleActorSheet {
@@ -2427,14 +2427,14 @@ export class NPCActorSheet extends SimpleActorSheet {
     const screenWidth = window.innerWidth;
 
     const maxHeight = Math.floor(screenHeight * 0.85);
-    const minHeight = 500; 
-    const preferredHeight = 840; 
+    const minHeight = 500;
+    const preferredHeight = 840;
 
     const height = Math.max(minHeight, Math.min(preferredHeight, maxHeight));
 
     const maxWidth = Math.floor(screenWidth * 0.9);
-    const minWidth = 690; 
-    const preferredWidth = 650; 
+    const minWidth = 690;
+    const preferredWidth = 650;
 
     const width = Math.max(minWidth, Math.min(preferredWidth, maxWidth));
 
@@ -2443,7 +2443,7 @@ export class NPCActorSheet extends SimpleActorSheet {
       template: "systems/daggerheart/templates/actor-sheet-npc.html",
       width: width,
       height: height,
-      tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "experience"}],
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "adversary" }],
       scrollY: [".biography", ".items", ".attributes"],
       dragDrop: [
         { dragSelector: ".item-list .item", dropSelector: null },
@@ -2454,20 +2454,12 @@ export class NPCActorSheet extends SimpleActorSheet {
 
   async getData(options) {
 
-    await this._loadUiState();
-
     const context = await super.getData(options);
-    EntitySheetHelper.getAttributeData(context.data);
-    context.shorthand = !!game.settings.get("daggerheart", "macroShorthand");
-    context.systemData = context.data.system;
-    context.domains = this.actor.system.domains;
-    context.dtypes = ATTRIBUTE_TYPES;
 
-    if (this.actor.type === "character") {
-
-      context.systemData["weapon-main"] = EquipmentHandler.getDynamicWeaponData(this.actor, "primary");
-      context.systemData["weapon-off"] = EquipmentHandler.getDynamicWeaponData(this.actor, "secondary");
-    }
+    // Generate weapon display data for NPCs similar to character sheets
+    context.systemData["weapon-main"] = this._getNPCWeaponData("primary");
+    context.systemData["weapon-off"] = this._getNPCWeaponData("secondary");
+    context.weaponDisplay = this._getWeaponDisplayData();
 
     if (!context.systemData.health?.tooltip) {
       context.systemData.health = context.systemData.health || {};
@@ -2499,13 +2491,13 @@ export class NPCActorSheet extends SimpleActorSheet {
 
     }
 
-    context.actor = this.actor; 
+    context.actor = this.actor;
 
     const imageLink = context.data.img;
     context.imageStyle = `background: url(${imageLink});`;
 
     context.uiState = {
-      vaultOpen : this._vaultOpen,
+      vaultOpen: this._vaultOpen,
       categoryStates: this._categoryStates
     };
 
@@ -2534,14 +2526,29 @@ export class NPCActorSheet extends SimpleActorSheet {
       }
     }, 100);
 
-    if ( !this.isEditable ) return;
+    if (!this.isEditable) return;
 
+    // Basic attribute and group controls
     html.find(".attributes").on("click", ".attribute-control", EntitySheetHelper.onClickAttributeControl.bind(this));
     html.find(".groups").on("click", ".group-control", EntitySheetHelper.onClickAttributeGroupControl.bind(this));
     html.find(".attributes").on("click", "a.attribute-roll", EntitySheetHelper.onAttributeRoll.bind(this));
 
-    html.find(".item-control").click(this._onItemControl.bind(this));
+    // Attack roll handlers for both primary and secondary attacks
+    html.find(".click-rollable-group").on("click", ".click-rollable", this._onRollableClick.bind(this));
+    html.find(".basic-rollable-group").on("click", ".basic-rollable", this._onBasicRollableClick.bind(this));
+
+    // Item management handlers are inherited from parent class
     html.find(".items .rollable").on("click", this._onItemRoll.bind(this));
+
+    // Threshold click handlers for marking HP
+    html.find(".threshold-clickable").click(this._onThresholdClick.bind(this));
+
+    // Damage value display click handlers for weapon damage editing
+    html.find(".damage-value-display").click(this._onDamageValueClick.bind(this));
+
+    // Category toggle handlers are already bound in parent class
+
+    // Item description toggle handlers are inherited from parent class
 
     html.find(".attributes a.attribute-roll").each((i, a) => {
       a.setAttribute("draggable", true);
@@ -2569,7 +2576,8 @@ export class NPCActorSheet extends SimpleActorSheet {
       textarea.css("height", calcHeight(textarea.val()) + "px");
     });
 
-    const categories = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack'];
+    // Initialize category states for adversary features
+    const categories = ['backpack']; // NPC only has backpack category for adversary features
     categories.forEach(category => {
       const categoryList = html.find(`.item-list[data-location="${this._getCategoryDataType(category)}"]`);
       const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
@@ -2578,10 +2586,12 @@ export class NPCActorSheet extends SimpleActorSheet {
       if (this._categoryStates?.[category]) {
         categoryList.removeClass('category-collapsed');
         categoryHeader.removeClass('section-collapsed');
+        categoryHeader.addClass('section-expanded');
         categoryIcon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
       } else {
         categoryList.addClass('category-collapsed');
         categoryHeader.addClass('section-collapsed');
+        categoryHeader.removeClass('section-expanded');
         categoryIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
       }
     });
@@ -2609,18 +2619,28 @@ export class NPCActorSheet extends SimpleActorSheet {
       });
 
       ChatMessage.create({
-          user: game.user.id,
-          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-          content: chatCard
+        user: game.user.id,
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: chatCard
       });
-      return; 
+      return;
     }
 
-    switch ( button.dataset.action ) {
+    const type = button.dataset.type;
+    const location = button.dataset.location;
+
+    switch (button.dataset.action) {
+      case "create-item":
+        const cls = getDocumentClass("Item");
+        return cls.create({
+          name: "New Item",
+          type: type || "item",
+          system: { location: location || "backpack" }
+        }, { parent: this.actor });
       case "create":
-      const cls = getDocumentClass("Item");
-      return cls.create({name: game.i18n.localize("SIMPLE.ItemNew"), type: "item"}, {parent: this.actor});
-      case "edit": 
+        const clsOld = getDocumentClass("Item");
+        return clsOld.create({ name: game.i18n.localize("SIMPLE.ItemNew"), type: "item" }, { parent: this.actor });
+      case "edit":
         if (item) return item.sheet.render(true);
         break;
       case "delete":
@@ -2660,7 +2680,7 @@ export class NPCActorSheet extends SimpleActorSheet {
     });
   }
 
-  async handleNPCResult({isCrit}) {
+  async handleNPCResult({ isCrit }) {
     if (isCrit) {
       await this._applyCriticalSuccess();
     }
@@ -2670,7 +2690,7 @@ export class NPCActorSheet extends SimpleActorSheet {
     const traitNamePrint = traitName.charAt(0).toUpperCase() + traitName.slice(1);
     const title = `Roll for ${traitNamePrint}`;
 
-    await game.daggerheart.rollHandler.npcRollWithDialog({title, traitValue, actor: this.actor});
+    await game.daggerheart.rollHandler.npcRollWithDialog({ title, traitValue, actor: this.actor });
   }
 
   _getSubmitData(updateData) {
@@ -2679,5 +2699,284 @@ export class NPCActorSheet extends SimpleActorSheet {
       formData["system.isNPC"] = true;
     }
     return formData;
+  }
+
+  /**
+   * Get NPC weapon data for a specific slot
+   * @param {string} slot - Either "primary" or "secondary"
+   * @returns {Object} - Weapon data with calculated damage and to-hit
+   * @private
+   */
+  _getNPCWeaponData(slot) {
+    const slotKey = slot === "primary" ? "weapon-main" : "weapon-off";
+    const currentData = foundry.utils.getProperty(this.actor, `system.${slotKey}`) || {};
+
+    // For NPCs, we use the data directly from the template without equipment system
+    return {
+      name: currentData.name || "",
+      description: currentData.description || "Range | 1H | Trait",
+      damage: currentData.damage || {
+        baseValue: "1d8",
+        modifiers: [],
+        value: "1d8"
+      },
+      "to-hit": currentData["to-hit"] || {
+        baseValue: 0,
+        modifiers: [],
+        value: 0
+      },
+      range: currentData.range || "",
+      modifier: currentData.modifier || "",
+      dmgType: currentData.dmgType || ""
+    };
+  }
+
+  /**
+   * Get weapon display data for NPC sheet
+   * @returns {Object} Object with primary and secondary weapon data
+   * @private
+   */
+  _getWeaponDisplayData() {
+    const primaryData = this._getNPCWeaponData("primary");
+    const secondaryData = this._getNPCWeaponData("secondary");
+
+    return {
+      primary: {
+        name: primaryData.name || "Primary Attack",
+        hasWeapon: !!(primaryData.name && primaryData.name.trim()),
+        data: primaryData
+      },
+      secondary: {
+        name: secondaryData.name || "Secondary Attack",
+        hasWeapon: !!(secondaryData.name && secondaryData.name.trim()),
+        data: secondaryData
+      }
+    };
+  }
+
+  /**
+   * Handle rollable click events for NPC attacks
+   * @param {Event} event - The click event
+   * @private
+   */
+  async _onRollableClick(event) {
+    event.preventDefault();
+
+    const rollableElement = event.currentTarget;
+    const weaponBox = rollableElement.closest(".click-rollable-group");
+
+    const rollNameInput = weaponBox.querySelector(".click-rollable-name");
+    const rollModifierElement = weaponBox.querySelector(".click-rollable-modifier");
+
+    const rollName = rollNameInput ? rollNameInput.value.trim() : "";
+    let rollModifier = 0;
+
+    if (rollModifierElement) {
+      rollModifier = parseInt(rollModifierElement.value) || 0;
+    }
+
+    const rollType = rollableElement.dataset.rollType || "unknown";
+
+    this._pendingRollType = rollType;
+    this._pendingWeaponName = rollName;
+
+    await this._rollTrait(rollName, rollModifier);
+  }
+
+  /**
+   * Handle basic rollable click events for NPC damage rolls
+   * @param {Event} event - The click event
+   * @private
+   */
+  async _onBasicRollableClick(event) {
+    event.preventDefault();
+
+    const rollableElement = event.currentTarget;
+    const rollableGroup = rollableElement.closest(".basic-rollable-group");
+    const rollName = rollableGroup.querySelector(".basic-rollable-name")?.value || "Basic Roll";
+    const rollType = rollableElement.dataset.rollType || "damage";
+
+    event.currentTarget.dataset.actorId = this.actor.id;
+    event.currentTarget.dataset.weaponName = rollName;
+    event.currentTarget.dataset.weaponType = "basic";
+    event.currentTarget.dataset.isCritical = "false";
+
+    let damageData = null;
+    const damageValueDisplay = rollableGroup.querySelector(".damage-value-display");
+
+    if (damageValueDisplay && rollType === "damage") {
+      const fieldPath = damageValueDisplay.dataset.field;
+      damageData = foundry.utils.getProperty(this.actor, fieldPath) || damageValueDisplay.textContent.trim() || '1d8';
+    }
+
+    if (typeof damageData !== 'object' || damageData === null || !('baseValue' in damageData)) {
+      damageData = { baseValue: damageData, modifiers: [], value: damageData };
+    }
+    event.currentTarget.dataset.weaponDamageStructure = JSON.stringify(damageData);
+
+    await game.daggerheart.damageApplication.rollConsolidatedDamage(event);
+  }
+
+  /**
+   * Handle threshold click events for marking HP
+   * @param {Event} event - The click event
+   * @private
+   */
+  async _onThresholdClick(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const hpAmount = parseInt(element.dataset.hpAmount);
+
+    if (!hpAmount || !this.actor.system.health) {
+      return;
+    }
+
+    await this._addDamage(hpAmount);
+  }
+
+  /**
+   * Add damage to the NPC
+   * @param {number} damage - Amount of damage to add
+   * @private
+   */
+  async _addDamage(damage) {
+    const currentHP = parseInt(this.actor.system.health.value) || 0;
+    const maxHP = parseInt(this.actor.system.health.max) || 0;
+    const newHP = Math.max(0, Math.min(maxHP, currentHP + damage));
+
+    await this.actor.update({
+      "system.health.value": newHP
+    });
+  }
+
+  /**
+   * Handle damage value display clicks for editing weapon damage
+   * @param {Event} event - The click event
+   * @private
+   */
+  async _onDamageValueClick(event) {
+    event.preventDefault();
+    const displayElement = event.currentTarget;
+
+    const config = {
+      field: displayElement.dataset.field,
+      label: displayElement.dataset.label,
+      type: displayElement.dataset.editType || 'damage',
+      hasModifiers: displayElement.dataset.hasModifiers !== 'false',
+      min: displayElement.dataset.min ? parseInt(displayElement.dataset.min) : null,
+      max: displayElement.dataset.max ? parseInt(displayElement.dataset.max) : null
+    };
+
+    if (!config.label) {
+      config.label = 'Weapon Damage';
+    }
+
+    let damageData = foundry.utils.getProperty(this.actor, config.field);
+
+    if (typeof damageData === 'object' && damageData !== null && 'baseValue' in damageData) {
+      const baseValue = damageData.baseValue || '1d8';
+      const modifiers = damageData.modifiers || [];
+
+      if (baseValue.includes(' ') && modifiers.length === 0) {
+        const match = baseValue.match(/^(\d*d\d+)/);
+        if (match) {
+          damageData.baseValue = match[1];
+          damageData.modifiers = [];
+          damageData.value = match[1];
+        }
+      }
+    } else if (typeof damageData === 'object' && damageData !== null && 'value' in damageData) {
+      const displayValue = damageData.value || '1d8';
+      damageData = {
+        baseValue: displayValue,
+        modifiers: damageData.modifiers || [],
+        value: displayValue
+      };
+    } else {
+      const simpleValue = damageData || '1d8';
+      damageData = {
+        baseValue: simpleValue,
+        modifiers: [],
+        value: simpleValue
+      };
+    }
+
+    if (!Array.isArray(damageData.modifiers)) {
+      damageData.modifiers = [];
+    }
+
+    config.isFromEquippedWeapon = damageData.isFromEquippedWeapon || false;
+
+    this._showDamageModifierEditPopup(config, damageData, displayElement);
+  }
+
+  /**
+   * Handle category toggle clicks for adversary features
+   * @param {Event} event - The click event
+   * @private
+   */
+  async _onToggleCategory(event) {
+    event.preventDefault();
+    const button = $(event.currentTarget);
+    const icon = button.find('i');
+    const location = button.data('location') || 'backpack'; // Use data-location for NPC
+    const categoryList = this.element.find(`.item-list[data-location="${location}"]`);
+    const categoryHeader = button.closest('.tab-category');
+
+    if (!this._categoryStates) {
+      this._categoryStates = {};
+    }
+
+    if (categoryList.hasClass('category-collapsed')) {
+      // Expand category
+      categoryList.removeClass('category-collapsed');
+      categoryHeader.removeClass('section-collapsed');
+      categoryHeader.addClass('section-expanded');
+      icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      this._categoryStates[location] = true;
+    } else {
+      // Collapse category
+      categoryList.addClass('category-collapsed');
+      categoryHeader.addClass('section-collapsed');
+      categoryHeader.removeClass('section-expanded');
+      icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+      this._categoryStates[location] = false;
+    }
+
+    await this._saveUiState();
+  }
+
+  /**
+   * Handle item description toggle clicks
+   * @param {Event} event - The click event
+   * @private
+   */
+  async _onToggleDescription(event) {
+    event.preventDefault();
+    const li = event.currentTarget.closest(".item");
+    const descriptionDiv = li.querySelector(".item-description");
+
+    if (!descriptionDiv) return;
+
+    li.classList.toggle("expanded");
+  }
+
+  /**
+   * Get category data type mapping
+   * @param {string} category - The category name
+   * @returns {string} The data type
+   * @private
+   */
+  _getCategoryDataType(category) {
+    const mapping = {
+      'class': 'class',
+      'subclass': 'subclass',
+      'ancestry': 'ancestry',
+      'community': 'community',
+      'abilities': 'abilities',
+      'worn': 'worn',
+      'backpack': 'backpack'
+    };
+    return mapping[category] || category;
   }
 }

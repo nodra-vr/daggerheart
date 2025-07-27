@@ -1,7 +1,15 @@
 {
   "Actor": {
-    "types": ["character", "npc", "companion"],
-    "htmlFields": ["biography", "inventory", "worn"],
+    "types": [
+      "character",
+      "npc",
+      "companion"
+    ],
+    "htmlFields": [
+      "biography",
+      "inventory",
+      "worn"
+    ],
     "character": {
       "features": [],
       "biography": "<h1><strong>Backstory</strong></h1><p></p><hr /><h1>Campaign Notes</h1><p></p>",
@@ -24,7 +32,6 @@
         "min": 0,
         "max": 6,
         "tooltip": "Your character's health and well-being are represented by Hit Points and Stress. Hit Points (sometimes called HP) are an abstract reflection of your physical fortitude and ability to take hits from both blade and magic."
-        
       },
       "stress": {
         "value": 0,
@@ -253,6 +260,25 @@
         "modifier": "",
         "dmgType": ""
       },
+      "weapon-off": {
+        "name": "",
+        "description": "Range | 1H | Trait",
+        "damage": {
+          "baseValue": "1d8",
+          "modifiers": [],
+          "permanentModifiers": [],
+          "value": "1d8"
+        },
+        "to-hit": {
+          "baseValue": 0,
+          "modifiers": [],
+          "permanentModifiers": [],
+          "value": 0
+        },
+        "range": "",
+        "modifier": "",
+        "dmgType": ""
+      },
       "resourceTrackers": []
     },
     "companion": {
@@ -309,8 +335,22 @@
     }
   },
   "Item": {
-    "types": ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass", "weapon", "armor"],
-    "htmlFields": ["description"],
+    "types": [
+      "item",
+      "inventory",
+      "worn",
+      "domain",
+      "vault",
+      "ancestry",
+      "community",
+      "class",
+      "subclass",
+      "weapon",
+      "armor"
+    ],
+    "htmlFields": [
+      "description"
+    ],
     "item": {
       "description": "",
       "category": "",

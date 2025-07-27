@@ -56,48 +56,53 @@
                     placeholder="{{localize "DH.Solo"}}" />
             </div>
         </div>
+
+        <div class="npc-defense-section">
+            <div class="defense" data-trait="evasion">
+                <input type="number" name="system.defenses.evasion.value"
+                    value="{{systemData.defenses.evasion.value}}" />
+                <label for="system.defenses.evasion.value">{{localize "DH.Difficulty"}}</label>
+            </div>
+            <div class="threshold-group">
+                <label>{{localize "DH.Threshold"}}</label>
+                <div class="threshold-values">
+                    <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">{{localize "DH.Mark1HP"}}</span>
+                    <div class="resource-group">
+                        <input type="number" name="system.threshold.major"
+                            value="{{systemData.threshold.major}}" />
+                        <a class="trait-effects">{{localize "DH.Major"}}</a>
+                    </div>
+                    <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">{{localize "DH.Mark2HP"}}</span>
+                    <div class="resource-group">
+                        <input type="number" name="system.threshold.severe"
+                            value="{{systemData.threshold.severe}}" />
+                        <a class="trait-effects">{{localize "DH.Severe"}}</a>
+                    </div>
+                    <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">{{localize "DH.Mark3HP"}}</span>
+                </div>
+            </div>
+        </div>
     </header>
 
     {{!-- Sheet Tab Navigation --}}
     <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item active" data-tab="adversary">{{localize "DH.Adversary"}}</a>
         <a class="item" data-tab="description">{{localize "DH.Description"}}</a>
     </nav>
 
     {{!-- Sheet Body --}}
     <section class="sheet-body">
         <div class="tab description" data-group="primary" data-tab="description">
-            <div class="npc-defense-section">
-                <div class="defense" data-trait="evasion">
-                    <input type="number" name="system.defenses.evasion.value"
-                        value="{{systemData.defenses.evasion.value}}" />
-                    <label for="system.defenses.evasion.value">{{localize "DH.Difficulty"}}</label>
-                </div>
-                <div class="threshold-group">
-                    <label>{{localize "DH.Threshold"}}</label>
-                    <div class="threshold-values">
-                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">{{localize "DH.Mark1HP"}}</span>
-                        <div class="resource-group">
-                            <input type="number" name="system.threshold.major"
-                                value="{{systemData.threshold.major}}" />
-                            <a class="trait-effects">{{localize "DH.Major"}}</a>
-                        </div>
-                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">{{localize "DH.Mark2HP"}}</span>
-                        <div class="resource-group">
-                            <input type="number" name="system.threshold.severe"
-                                value="{{systemData.threshold.severe}}" />
-                            <a class="trait-effects">{{localize "DH.Severe"}}</a>
-                        </div>
-                        <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">{{localize "DH.Mark3HP"}}</span>
-                    </div>
-                </div>
-            </div>
+            {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
+        </div>
+        <div class="tab adversary" data-group="primary" data-tab="adversary">
 
             <div class="defenses">
                 <div class="weapon-group">
                     <div class="weapon-row">
                         <label class="weapon-label">{{localize "DH.PrimaryAttack"}}</label>
                         <div class="weapon-box click-rollable-group basic-rollable-group">
-                            <button type="button" class="weapon-attack-button click-rollable" data-roll-type="attack" title="Roll Attack">
+                            <button type="button" class="weapon-attack-button click-rollable" data-roll-type="attack" title="{{localize "SIMPLE.RollAttack"}}">
                                 <i class="fas fa-sword"></i>
                             </button>
                             <div class="weapon-box-inner">
@@ -130,9 +135,79 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="weapon-row">
+                        <label class="weapon-label">{{localize "DH.SecondaryAttack"}}</label>
+                        <div class="weapon-box click-rollable-group basic-rollable-group">
+                            <button type="button" class="weapon-attack-button click-rollable" data-roll-type="attack" title="{{localize "SIMPLE.RollAttack"}}">
+                                <i class="fas fa-sword"></i>
+                            </button>
+                            <div class="weapon-box-inner">
+                                <div class="weapon-infobox-first">
+                                    <input class="weapon-field basic-rollable-name click-rollable-name"
+                                        name="system.weapon-off.name" type="text"
+                                        value="{{systemData.weapon-off.name}}" placeholder="{{localize "DH.Attack"}}" />
+                                        <div class="textarea-container">
+                                            <input class="trait-effects resize-ta" name="system.weapon-off.description"
+                                                placeholder="{{localize "DH.AttackTraitsHere"}}"
+                                                value="{{systemData.weapon-off.description}}" />
+                                        </div>
+                                </div>
+                                <div class="weapon-roller-box">
+                                    <div class="weapon-infobox">
+                                        <input class="weapon-to-hit click-rollable-modifier"
+                                            name="system.weapon-off.to-hit.value" type="number"
+                                            value="{{systemData.weapon-off.to-hit.value}}" placeholder="2" />
+                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
+                                    </div>
+                                    <div class="weapon-infobox">
+                                        <div class="weapon-damage-display damage-value-display"
+                                             data-field="system.weapon-off.damage"
+                                             data-label="Secondary Attack Damage"
+                                             data-has-modifiers="true"
+                                             data-edit-type="damage">{{#if systemData.weapon-off.damage.baseValue}}{{systemData.weapon-off.damage.baseValue}}{{#if systemData.weapon-off.damage.modifiers}}{{#each systemData.weapon-off.damage.modifiers}}{{#if this.enabled}} {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if systemData.weapon-off.damage}}{{systemData.weapon-off.damage}}{{else}}1d8{{/if}}{{/if}}</div>
+                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
+
+            <div class="inventory">
+                <div class="tab-category {{#unless uiState.categoryStates.backpack}}section-collapsed{{/unless}}">{{localize "DH.AdversaryFeatures"}}
+                    <div class="category-controls">
+                        <a class="item-control" data-action="create-item" data-type="item" data-location="backpack" title="{{localize "SIMPLE.ItemCreate"}}">
+                            <i class="fas fa-plus"></i>
+                        </a>
+                        <a class="item-control category-toggle" data-category="backpack" title="{{localize "SIMPLE.ToggleCategory"}}">
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                    </div>
+                </div>
+                <ol class="item-list {{#unless uiState.categoryStates.backpack}}category-collapsed{{/unless}}" data-location="backpack">
+                    {{#each data.items as |item id|}}
+                        {{#if (or (eq item.system.location "backpack") (and (not item.system.location) (eq item.type "item")))}}
+                        <li class="item" data-item-id="{{item._id}}">
+                            <div class="item-main-row">
+                                <div class="item-top-row">
+                                    <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}" width="30" height="30" />
+                                    <h4 class="item-name" data-action="toggle-description">{{item.name}}</h4>
+                                </div>
+                                <div class="item-controls">
+                                    <a class="item-control" data-action="edit" title="{{localize "SIMPLE.ItemEdit"}}"><i class="fas fa-edit"></i></a>
+                                    <a class="item-control" data-action="delete" title="{{localize "SIMPLE.ItemDelete"}}"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </div>
+                            <div class="item-description">
+                                {{{item.system.enrichedDescription}}}
+                            </div>
+                        </li>
+                        {{/if}}
+                    {{/each}}
+                </ol>
+            </div>
         </div>
     </section>
 </form>

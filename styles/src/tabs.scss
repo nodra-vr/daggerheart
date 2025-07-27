@@ -44,6 +44,25 @@
   }
 }
 
+/* Ensure NPC tabs have consistent styling with character sheets */
+.daggerheart.sheet.actor.npc .sheet-tabs {
+  .item {
+    &.active {
+      color: var(--dh-color-gold);
+      opacity: 1;
+    }
+    
+    &:not(.active) {
+      opacity: 0.7;
+      
+      &:hover {
+        opacity: 1;
+        color: var(--dh-color-gold);
+      }
+    }
+  }
+}
+
 .nav-gem {
   width: 20px;
   height: 35px;

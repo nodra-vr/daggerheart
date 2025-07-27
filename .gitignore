@@ -19,3 +19,4 @@ docs/private/glassmorphism-design-system.json
 docs/test-character-level-modifier.js
 .gitignore
 docs/test-armor-permanent-modifiers.js
+.vscode/settings.json
