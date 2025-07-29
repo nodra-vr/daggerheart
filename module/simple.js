@@ -253,7 +253,7 @@ Hooks.once("init", async function () {
     onChange: formula => _simpleUpdateInit(formula, true)
   });
 
-  game.settings.register("daggerheart", "dualityDiceTypes", {
+  game.settings.register("daggerheart", "advantageDieTypes", {
     name: "SETTINGS.AdvantageDieTypesN",
     hint: "SETTINGS.AdvantageDieTypesL",
     scope: "world",

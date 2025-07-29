@@ -558,7 +558,7 @@ export class DaggerheartDialogHelper {
       }
     }
 
-    const allowedDice = (game.settings.get("daggerheart", "dualityDiceTypes") || "d6").split(",");
+    const allowedDice = (game.settings.get("daggerheart", "advantageDieTypes") || "d6").split(",");
     const diceControls = allowedDice.map(die => `
       <div class="dice-control" data-die="${die}">
         <button type="button" class="dice-btn increase" data-type="advantage" data-die="${die}"><i class="fas fa-plus"></i></button>
