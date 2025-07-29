@@ -253,6 +253,15 @@ Hooks.once("init", async function () {
     onChange: formula => _simpleUpdateInit(formula, true)
   });
 
+  game.settings.register("daggerheart", "dualityDiceTypes", {
+    name: "SETTINGS.AdvantageDieTypesN",
+    hint: "SETTINGS.AdvantageDieTypesL",
+    scope: "world",
+    config: true,
+    type: String,
+    default: "d4,d6,d8,d10",
+  });
+
   const initFormula = game.settings.get("daggerheart", "initFormula");
   _simpleUpdateInit(initFormula);
 

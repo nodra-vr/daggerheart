@@ -558,6 +558,19 @@ export class DaggerheartDialogHelper {
       }
     }
 
+    const allowedDice = (game.settings.get("daggerheart", "dualityDiceTypes") || "d6").split(",");
+    const diceControls = allowedDice.map(die => `
+      <div class="dice-control" data-die="${die}">
+        <button type="button" class="dice-btn increase" data-type="advantage" data-die="${die}"><i class="fas fa-plus"></i></button>
+        <div class="dice-icon ${die}-icon">
+          <i class="fad fa-dice-${[die]}"></i>
+          <span class="dice-count">${initialValues.advantage[die] - initialValues.disadvantage[die]}</span>
+        </div>
+        <button type="button" class="dice-btn decrease" data-type="advantage" data-die="${die}"><i class="fas fa-minus"></i></button>
+        <input type="hidden" name="advantage-${die}" value="${initialValues.advantage[die] - initialValues.disadvantage[die]}">
+      </div>
+    `).join("");
+
     const content = `
     <form>
     <div class="flex-col" style="align-items: stretch; gap: 2rem">
@@ -588,42 +601,7 @@ export class DaggerheartDialogHelper {
       <div class="flex-col">
         <span class="label-bar">Advantage / Disadvantage</span>
         <div class="dice-grid advantage-disadvantage-grid">
-          <div class="dice-control" data-die="d4">
-            <button type="button" class="dice-btn increase" data-type="advantage" data-die="d4"><i class="fas fa-plus"></i></button>
-            <div class="dice-icon d4-icon">
-              <i class="fad fa-dice-d4"></i>
-              <span class="dice-count">${initialValues.advantage.d4 - initialValues.disadvantage.d4}</span>
-            </div>
-            <button type="button" class="dice-btn decrease" data-type="advantage" data-die="d4"><i class="fas fa-minus"></i></button>
-            <input type="hidden" name="advantage-d4" value="${initialValues.advantage.d4 - initialValues.disadvantage.d4}">
-          </div>
-          <div class="dice-control" data-die="d6">
-            <button type="button" class="dice-btn increase" data-type="advantage" data-die="d6"><i class="fas fa-plus"></i></button>
-            <div class="dice-icon d6-icon">
-              <i class="fad fa-dice-d6"></i>
-              <span class="dice-count">${initialValues.advantage.d6 - initialValues.disadvantage.d6}</span>
-            </div>
-            <button type="button" class="dice-btn decrease" data-type="advantage" data-die="d6"><i class="fas fa-minus"></i></button>
-            <input type="hidden" name="advantage-d6" value="${initialValues.advantage.d6 - initialValues.disadvantage.d6}">
-          </div>
-          <div class="dice-control" data-die="d8">
-            <button type="button" class="dice-btn increase" data-type="advantage" data-die="d8"><i class="fas fa-plus"></i></button>
-            <div class="dice-icon d8-icon">
-              <i class="fad fa-dice-d8"></i>
-              <span class="dice-count">${initialValues.advantage.d8 - initialValues.disadvantage.d8}</span>
-            </div>
-            <button type="button" class="dice-btn decrease" data-type="advantage" data-die="d8"><i class="fas fa-minus"></i></button>
-            <input type="hidden" name="advantage-d8" value="${initialValues.advantage.d8 - initialValues.disadvantage.d8}">
-          </div>
-          <div class="dice-control" data-die="d10">
-            <button type="button" class="dice-btn increase" data-type="advantage" data-die="d10"><i class="fas fa-plus"></i></button>
-            <div class="dice-icon d10-icon">
-              <i class="fad fa-dice-d10"></i>
-              <span class="dice-count">${initialValues.advantage.d10 - initialValues.disadvantage.d10}</span>
-            </div>
-            <button type="button" class="dice-btn decrease" data-type="advantage" data-die="d10"><i class="fas fa-minus"></i></button>
-            <input type="hidden" name="advantage-d10" value="${initialValues.advantage.d10 - initialValues.disadvantage.d10}">
-          </div>
+          ${diceControls}
         </div>
       </div>
       <div class="flex-row">
