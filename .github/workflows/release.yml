@@ -1,0 +1,97 @@
+name: Release Daggerheart System
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Build CSS
+        run: npm run css
+        
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        
+      - name: Update system.json with release version
+        run: |
+          sed -i 's/"version": "[^"]*"/"version": "${{ steps.version.outputs.VERSION }}"/' system.json
+          sed -i 's|"download": "[^"]*"|"download": "https://github.com/unofficial-daggerheart/daggerheart/archive/refs/tags/v${{ steps.version.outputs.VERSION }}.zip"|' system.json
+          
+      - name: Dry run release to Foundry (validation)
+        run: |
+          response=$(curl -s -w "%{http_code}" -X POST "https://foundryvtt.com/_api/packages/release_version/" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: ${{ secrets.FOUNDRY_RELEASE_TOKEN }}" \
+            -d '{
+              "id": "daggerheart-unofficial",
+              "dry-run": true,
+              "release": {
+                "version": "${{ steps.version.outputs.VERSION }}",
+                "manifest": "https://raw.githubusercontent.com/unofficial-daggerheart/daggerheart/v${{ steps.version.outputs.VERSION }}/system.json",
+                "notes": "https://github.com/unofficial-daggerheart/daggerheart/releases/tag/v${{ steps.version.outputs.VERSION }}",
+                "compatibility": {
+                  "minimum": "13",
+                  "verified": "13",
+                  "maximum": ""
+                }
+              }
+            }')
+          
+          http_code="${response: -3}"
+          response_body="${response%???}"
+          
+          echo "Dry run HTTP status: $http_code"
+          echo "Dry run response: $response_body"
+          
+          if [ "$http_code" != "200" ]; then
+            echo "Dry run failed with status $http_code"
+            exit 1
+          fi
+          
+      - name: Release to Foundry VTT
+        run: |
+          response=$(curl -s -w "%{http_code}" -X POST "https://foundryvtt.com/_api/packages/release_version/" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: ${{ secrets.FOUNDRY_RELEASE_TOKEN }}" \
+            -d '{
+              "id": "daggerheart-unofficial",
+              "release": {
+                "version": "${{ steps.version.outputs.VERSION }}",
+                "manifest": "https://raw.githubusercontent.com/unofficial-daggerheart/daggerheart/v${{ steps.version.outputs.VERSION }}/system.json",
+                "notes": "https://github.com/unofficial-daggerheart/daggerheart/releases/tag/v${{ steps.version.outputs.VERSION }}",
+                "compatibility": {
+                  "minimum": "13",
+                  "verified": "13",
+                  "maximum": ""
+                }
+              }
+            }')
+          
+          http_code="${response: -3}"
+          response_body="${response%???}"
+          
+          echo "Release HTTP status: $http_code"
+          echo "Release response: $response_body"
+          
+          if [ "$http_code" != "200" ]; then
+            echo "Release failed with status $http_code"
+            echo "Response: $response_body"
+            exit 1
+          fi
+          
+          echo "✅ Successfully released Daggerheart v${{ steps.version.outputs.VERSION }} to Foundry VTT!"

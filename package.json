@@ -6,7 +6,10 @@
     "start": "npm run gulp",
     "css": "gulp css",
     "watch": "gulp",
-    "gulp": "gulp"
+    "gulp": "gulp",
+    "release": "node scripts/release.js",
+    "release:dry": "node scripts/release.js --dry-run",
+    "release:test": "node scripts/release.js 2.11.2 --dry-run"
   },
   "browserslist": [
     "last 3 versions"
