@@ -2,7 +2,7 @@ import { ModifierManager } from "./modifierManager.js";
 
 export class DaggerheartMigrations {
 
-  static CURRENT_VERSION = "1.2.4";
+  static CURRENT_VERSION = "1.2.5";
 
   static async migrateDocument(document) {
     let needsUpdate = false;
@@ -84,6 +84,18 @@ export class DaggerheartMigrations {
           }
         } catch (error) {
           console.error(`❌ Error adding modifier IDs for "${document.name}":`, error);
+        }
+      }
+
+      if (this.compareVersions(currentVersion, "1.2.5") < 0 && document.documentName === "Actor") {
+        try {
+          const difficultyMigration = this._migrateDifficultyToModifierSystem(document);
+          if (difficultyMigration) {
+            Object.assign(updateData, difficultyMigration);
+            needsUpdate = true;
+          }
+        } catch (error) {
+          console.error(`❌ Error migrating difficulty to modifier system for "${document.name}":`, error);
         }
       }
 
@@ -694,6 +706,81 @@ export class DaggerheartMigrations {
         updateData[`${fieldPath}.permanentModifiers`] = [...existingPermanentModifiers, ...newPermanentModifiers];
         needsUpdate = true;
         console.log(`📋 Adding ${newPermanentModifiers.length} permanent modifiers to tracking at ${fieldPath} for "${document.name}"`);
+      }
+    }
+
+    return needsUpdate ? updateData : null;
+  }
+
+  /**
+   * Migrate difficulty fields to use the modifier system
+   * @param {Document} document - The document to migrate
+   * @returns {Object|null} - Update data or null if no changes needed
+   * @private
+   */
+  static _migrateDifficultyToModifierSystem(document) {
+    if (document.documentName !== "Actor") {
+      return null;
+    }
+
+    const updateData = {};
+    let needsUpdate = false;
+
+    // Handle Environment actors - migrate difficulty field
+    if (document.type === "environment") {
+      const difficulty = document.system?.defenses?.difficulty;
+      if (difficulty && typeof difficulty === "object" && typeof difficulty.value === "number") {
+        const currentValue = difficulty.value || 0;
+        
+        // Case 1: No baseValue field exists - add it
+        if (!difficulty.hasOwnProperty('baseValue')) {
+          updateData["system.defenses.difficulty.baseValue"] = currentValue;
+          updateData["system.defenses.difficulty.modifiers"] = [];
+          updateData["system.defenses.difficulty.permanentModifiers"] = [];
+          needsUpdate = true;
+          console.log(`🔄 Adding modifier fields to environment difficulty for "${document.name}" (value: ${currentValue})`);
+        }
+        // Case 2: baseValue exists but is wrong (0 when value is not 0)
+        else if (difficulty.baseValue === 0 && currentValue !== 0) {
+          updateData["system.defenses.difficulty.baseValue"] = currentValue;
+          needsUpdate = true;
+          console.log(`🔧 Fixing incorrect baseValue for environment difficulty "${document.name}" (0 -> ${currentValue})`);
+        }
+        
+        // Always ensure tooltip exists
+        if (!difficulty.tooltip) {
+          updateData["system.defenses.difficulty.tooltip"] = "Difficulty for overcoming this environment.";
+          needsUpdate = true;
+        }
+      }
+    }
+
+    // Handle NPC actors - migrate evasion field to use modifier system
+    if (document.type === "npc") {
+      const evasion = document.system?.defenses?.evasion;
+      if (evasion && typeof evasion === "object" && typeof evasion.value === "number") {
+        const currentValue = evasion.value || 0;
+        
+        // Case 1: No baseValue field exists - add it
+        if (!evasion.hasOwnProperty('baseValue')) {
+          updateData["system.defenses.evasion.baseValue"] = currentValue;
+          updateData["system.defenses.evasion.modifiers"] = [];
+          updateData["system.defenses.evasion.permanentModifiers"] = [];
+          needsUpdate = true;
+          console.log(`🔄 Adding modifier fields to NPC evasion for "${document.name}" (value: ${currentValue})`);
+        }
+        // Case 2: baseValue exists but is wrong (0 when value is not 0)
+        else if (evasion.baseValue === 0 && currentValue !== 0) {
+          updateData["system.defenses.evasion.baseValue"] = currentValue;
+          needsUpdate = true;
+          console.log(`🔧 Fixing incorrect baseValue for NPC evasion "${document.name}" (0 -> ${currentValue})`);
+        }
+        
+        // Always ensure tooltip exists
+        if (!evasion.tooltip) {
+          updateData["system.defenses.evasion.tooltip"] = "Your character's Evasion reflects how hard it is for adversaries to hit them.";
+          needsUpdate = true;
+        }
       }
     }
 

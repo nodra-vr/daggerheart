@@ -288,12 +288,15 @@ export class SheetTracker {
       
       this.isInitialized = true;
       
-      // Set initial nav state for character and NPC sheets
+      // Set initial nav state for character, NPC, and environment sheets
       if (this._isCharacterSheet()) {
         const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'character';
         this._updateNavActiveState(currentTab);
       } else if (this._isNPCSheet()) {
         const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'description';
+        this._updateNavActiveState(currentTab);
+      } else if (this._isEnvironmentSheet()) {
+        const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'actions';
         this._updateNavActiveState(currentTab);
       }
     } catch (error) {
@@ -335,6 +338,13 @@ export class SheetTracker {
   }
 
   /**
+   * Check if this is an environment sheet (for navigation buttons)
+   */
+  _isEnvironmentSheet() {
+    return this.actor.type === "environment" && this.actorSheet.constructor.name === "EnvironmentActorSheet";
+  }
+
+  /**
    * Check if this is an item sheet
    */
   _isItemSheet() {
@@ -355,7 +365,8 @@ export class SheetTracker {
 
     const isCharacterSheet = this._isCharacterSheet();
     const isNPCSheet = this._isNPCSheet();
-    const sidebarHtml = this._buildSidebarHTML(isCharacterSheet, isNPCSheet);
+    const isEnvironmentSheet = this._isEnvironmentSheet();
+    const sidebarHtml = this._buildSidebarHTML(isCharacterSheet, isNPCSheet, isEnvironmentSheet);
 
     // Insert sidebar
     const windowContent = sheet.find('.window-content');
@@ -379,7 +390,7 @@ export class SheetTracker {
   /**
    * Build the sidebar HTML structure
    */
-  _buildSidebarHTML(isCharacterSheet, isNPCSheet) {
+  _buildSidebarHTML(isCharacterSheet, isNPCSheet, isEnvironmentSheet) {
     let navButtons = '';
     
     if (isCharacterSheet) {
@@ -395,6 +406,13 @@ export class SheetTracker {
         <div class="sidebar-nav-buttons">
           <div class="nav-button" data-tab="adversary" title="Adversary"><i class="fas fa-sword"></i></div>
           <div class="nav-button" data-tab="description" title="Description"><i class="fas fa-file-text"></i></div>
+        </div>`;
+    } else if (isEnvironmentSheet) {
+      navButtons = `
+        <div class="sidebar-nav-buttons">
+          <div class="nav-button" data-tab="actions" title="Actions"><i class="fas fa-bolt"></i></div>
+          <div class="nav-button" data-tab="adversaries" title="Potential Adversaries"><i class="fas fa-users"></i></div>
+          <div class="nav-button" data-tab="notes" title="Notes"><i class="fas fa-sticky-note"></i></div>
         </div>`;
     }
 
@@ -596,8 +614,8 @@ export class SheetTracker {
       this.sidebarElement.find('.color-preview').css('background-color', color);
     });
 
-    // Navigation buttons for character and NPC sheets
-    if (this._isCharacterSheet() || this._isNPCSheet()) {
+    // Navigation buttons for character, NPC, and environment sheets
+    if (this._isCharacterSheet() || this._isNPCSheet() || this._isEnvironmentSheet()) {
       this._setupNavigationListeners();
     }
   }
@@ -841,7 +859,7 @@ export class SheetTracker {
    * Update navigation active state
    */
   _updateNavActiveState(activeTab) {
-    if (!this.sidebarElement || (!this._isCharacterSheet() && !this._isNPCSheet())) return;
+    if (!this.sidebarElement || (!this._isCharacterSheet() && !this._isNPCSheet() && !this._isEnvironmentSheet())) return;
     
     const navButtons = this.sidebarElement.find('.nav-button');
     navButtons.removeClass('active');

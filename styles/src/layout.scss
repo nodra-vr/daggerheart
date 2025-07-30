@@ -7,7 +7,8 @@
 }
 
 .daggerheart.sheet.npc,
-.daggerheart.sheet.companion {
+.daggerheart.sheet.companion,
+.daggerheart.sheet.environment {
   min-width: 690px;
   min-height: 500px;
 }
@@ -18,11 +19,15 @@
 }
 
 /* Window Content Styling */
-.actor .window-content, .item .window-content, .npc .window-content, .companion .window-content {
+.actor .window-content,
+.item .window-content,
+.npc .window-content,
+.companion .window-content,
+.environment .window-content {
   background: transparent;
   background-color: transparent;
   color: #f0f0e0;
-  border: 1px solid rgba(255, 255, 255, 0.2392156863);
+  border: none;
   border-radius: 0 0 10px 10px;
   border-top: none;
   position: relative;
@@ -33,10 +38,13 @@
 }
 
 /* Window Header Styling */
-.actor .window-header, .npc .window-header, .companion .window-header, .item .window-header {
+.actor .window-header,
+.npc .window-header,
+.companion .window-header,
+.item .window-header,
+.environment .window-header {
   background: transparent;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2392156863);
+  border: none;
   box-shadow: none;
   color: #ffffff;
   cursor: auto;
@@ -63,7 +71,11 @@
   background: transparent;
 }
 
-.sheet.actor, .sheet.npc, .sheet.companion, .sheet.item {
+.environment {
+  background: transparent;
+}
+
+.sheet.actor, .sheet.npc, .sheet.companion, .sheet.item, .sheet.environment {
   background: rgba(11, 10, 19, 0.8392156863);
   backdrop-filter: blur(5px);
 }
@@ -131,7 +143,7 @@
 /* NPC Sheet Specific Styling */
 .daggerheart .npc {
   /* Make evasion defense text white for dark background */
-  .defense[data-trait="evasion"] label {
+  .defense[data-defense="evasion"] label {
     color: var(--dh-color-off-white) !important;
   }
 }
@@ -226,5 +238,9 @@ body.game .app {
   button {
     border: 1px solid var(--dh-color-gold);
   }
+
+  textarea {
+    font-family: var(--font-body);
+    }
 
 }

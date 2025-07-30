@@ -3,12 +3,14 @@
     "types": [
       "character",
       "npc",
-      "companion"
+      "companion",
+      "environment"
     ],
     "htmlFields": [
       "biography",
       "inventory",
-      "worn"
+      "worn",
+      "notes"
     ],
     "character": {
       "features": [],
@@ -223,6 +225,9 @@
       },
       "defenses": {
         "evasion": {
+          "baseValue": 0,
+          "modifiers": [],
+          "permanentModifiers": [],
           "value": 0,
           "tooltip": "Your character's Evasion reflects how hard it is for adversaries to hit them."
         },
@@ -332,6 +337,25 @@
         "dmgType": "physical"
       },
       "resourceTrackers": []
+    },
+    "environment": {
+      "name": "",
+      "tier": "",
+      "typing": "",
+      "shortDescription": "",
+      "impulses": "",
+      "notes": "",
+      "defenses": {
+        "difficulty": {
+          "baseValue": 0,
+          "modifiers": [],
+          "permanentModifiers": [],
+          "value": 0,
+          "tooltip": "Difficulty for overcoming this environment."
+        }
+      },
+      "potentialAdversaries": [],
+      "features": []
     }
   },
   "Item": {

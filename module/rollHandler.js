@@ -86,7 +86,15 @@ async function _handleAutomaticFearGain(message) {
       const canModify = game.user?.isGM || game.user?.hasRole?.("ASSISTANT") || targetActor.isOwner;
 
       if (Object.keys(updateData).length > 0 && canModify) {
-        await targetActor.update(updateData);
+        if (canvas?.ready) {
+          try {
+            await targetActor.update(updateData);
+          } catch (error) {
+            console.warn("Daggerheart | Error updating actor:", error);
+          }
+        } else {
+          console.warn("Daggerheart | Canvas not ready, skipping actor update");
+        }
       }
     } else {
 

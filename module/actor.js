@@ -128,6 +128,8 @@ export class SimpleActor extends Actor {
     }
   }
 
+
+
   async _handleCharacterLevelModifier() {
     if (!game.user.isGM && !this.isOwner) {
       return;

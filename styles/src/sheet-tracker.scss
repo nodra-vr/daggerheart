@@ -1,8 +1,9 @@
 /* Sheet Tracker Styles */
 
-/* Ensure the Daggerheart actor, npc, and item sheets have proper positioning and overflow handling */
+/* Ensure the Daggerheart actor, npc, environment, and item sheets have proper positioning and overflow handling */
 .daggerheart.sheet.actor,
 .daggerheart.sheet.npc,
+.daggerheart.sheet.environment,
 .daggerheart.sheet.item {
   overflow: visible !important;
 
@@ -10,6 +11,7 @@
     position: relative;
     overflow: visible !important;
     max-height: 97%;
+    border: none;
   }
 }
 
@@ -588,7 +590,9 @@
 
 /* Completely hide the original nav bar but keep it in the DOM for fallback */
 .daggerheart.sheet.actor .sheet-tabs,
-.daggerheart.sheet.npc .sheet-tabs {
+.daggerheart.sheet.npc .sheet-tabs,
+.daggerheart.sheet.environment .sheet-tabs,
+.daggerheart.sheet.companion .sheet-tabs {
   display: none !important;
 }
 

@@ -5,6 +5,7 @@ import { SimpleWeaponSheet } from "./weapon-sheet.js";
 import { SimpleArmorSheet } from "./armor-sheet.js";
 import { SimpleActorSheet, NPCActorSheet } from "./actor-sheet.js";
 import { CompanionActorSheet } from "./actor-sheet-companion.js";
+import { EnvironmentActorSheet } from "./actor-sheet-environment.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
 import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, createClearStressMacro, createSpendHopeMacro, createGainHopeMacro, spendStress, clearStress, spendHope, gainHope } from "./spending-system.js";
 import { SimpleToken, SimpleTokenDocument } from "./token.js";
@@ -164,7 +165,8 @@ Hooks.once("init", async function () {
   CONFIG.Actor.typeLabels = {
     character: "ACTOR.TypeCharacter",
     npc: "ACTOR.TypeNpc",
-    companion: "ACTOR.TypeCompanion"
+    companion: "ACTOR.TypeCompanion",
+    environment: "ACTOR.TypeEnvironment"
   };
   CONFIG.Item.documentClass = SimpleItem;
   CONFIG.Item.typeLabels = {
@@ -198,6 +200,11 @@ Hooks.once("init", async function () {
     types: ["companion"],
     makeDefault: true,
     label: "SHEET.Actor.companion"
+  });
+  foundry.documents.collections.Actors.registerSheet("daggerheart", EnvironmentActorSheet, {
+    types: ["environment"],
+    makeDefault: true,
+    label: "SHEET.Actor.environment"
   });
   foundry.documents.collections.Items.unregisterSheet("core", foundry.applications.sheets.ItemSheetV2);
   foundry.documents.collections.Items.registerSheet("daggerheart", SimpleItemSheet, {

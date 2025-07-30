@@ -58,10 +58,11 @@
         </div>
 
         <div class="npc-defense-section">
-            <div class="defense" data-trait="evasion">
-                <input type="number" name="system.defenses.evasion.value"
-                    value="{{systemData.defenses.evasion.value}}" />
-                <label for="system.defenses.evasion.value">{{localize "DH.Difficulty"}}</label>
+            <div class="defense" data-defense="evasion">
+                <div class="attribute-value-display defense-value-display"
+                    data-field="system.defenses.evasion.value" data-label="Difficulty" data-has-modifiers="true"
+                    data-min="0">{{systemData.defenses.evasion.value}}</div>
+                <label data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize "DH.Difficulty"}}</label>
             </div>
             <div class="threshold-group">
                 <label>{{localize "DH.Threshold"}}</label>

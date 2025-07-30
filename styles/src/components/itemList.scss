@@ -29,6 +29,35 @@
   }
 }
 
+/* Actor list */
+.daggerheart .actor-list {
+  list-style: none;
+  margin: .5em;
+  padding: 0em;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #433f64;
+  border-radius: .5em;
+  min-height: 3em;
+  transition: all 0.2s ease-in-out;
+
+  &.is-empty {
+    display: none;
+    min-height: 0;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* General drag-over styles (fallback) */
+  &.drag-over {
+    min-height: 100px;
+    border-color: var(--dh-color-gold);
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
 // TODO: finish refactoring
 
 /* Show empty item lists during drag operations */
@@ -227,9 +256,25 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
+.daggerheart .actor-list .actor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  align-items: center;
+  overflow: hidden;
+  border-radius: .5em;
+  width: 100%;
+  padding: 0em 0.5em;
+  background: rgba(0, 0, 0, 0.2);
+}
+
 .daggerheart .item-list .item.expanded,
 .npc .item-list .item.expanded,
 .actor .item-list .item.expanded {
+  padding-bottom: 0.5em;
+}
+
+.daggerheart .actor-list .actor.expanded {
   padding-bottom: 0.5em;
 }
 
@@ -244,15 +289,39 @@
   min-height: 3em;
 }
 
+.daggerheart .actor-list .actor .actor-main-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  justify-content: space-between;
+  min-height: 3em;
+}
+
 .daggerheart .item-list .item:nth-child(even),
 .npc .item-list .item:nth-child(even),
 .actor .item-list .item:nth-child(even) {
   background: rgb(141 120 151 / 7%);
 }
 
+.daggerheart .actor-list .actor:nth-child(even) {
+  background: rgb(141 120 151 / 7%);
+}
+
 .daggerheart .item-list .item .item-description,
 .npc .item-list .item .item-description,
 .actor .item-list .item .item-description {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+  margin: 0 0.5em;
+  min-width: 100%;
+  border-left: solid 2px var(--dh-color-gold);
+  padding: 0em 1.5em;
+}
+
+.daggerheart .actor-list .actor .actor-description {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
@@ -270,6 +339,11 @@
   transition: opacity 0.2s ease-out 0.1s;
 }
 
+.daggerheart .actor-list .actor .actor-description>* {
+  opacity: 0;
+  transition: opacity 0.2s ease-out 0.1s;
+}
+
 .daggerheart .item-list .item.expanded .item-description,
 .npc .item-list .item.expanded .item-description,
 .actor .item-list .item.expanded .item-description {
@@ -281,9 +355,24 @@
   padding-top: 0.5em;
 }
 
+.daggerheart .actor-list .actor.expanded .actor-description {
+  /* Limit the expanded height so huge descriptions don't blow out the sheet */
+  max-height: 200px;
+  overflow-y: auto;
+  /* Allow scrolling once the description exceeds the max height */
+  opacity: 1;
+  padding-top: 0.5em;
+}
+
 .daggerheart .item-list .item.expanded .item-description>*,
 .npc .item-list .item.expanded .item-description>*,
 .actor .item-list .item.expanded .item-description>* {
+  opacity: 1;
+  height: auto;
+  width: 85%;
+}
+
+.daggerheart .actor-list .actor.expanded .actor-description>* {
   opacity: 1;
   height: auto;
   width: 85%;
@@ -320,6 +409,12 @@
   flex-grow: 1;
 }
 
+.daggerheart .actor-list .actor .actor-top-row {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
 .daggerheart .item-list .item .item-name,
 .npc .item-list .item .item-name,
 .actor .item-list .item .item-name {
@@ -331,9 +426,22 @@
   cursor: pointer;
 }
 
+.daggerheart .actor-list .actor .actor-name {
+  padding-left: 0.5em;
+  font-size: 0.9em;
+  font-weight: normal;
+  color: var(--dh-color-off-white);
+  margin: 0;
+  cursor: pointer;
+}
+
 .daggerheart .item-list .item .item-name:hover,
 .npc .item-list .item .item-name:hover,
 .actor .item-list .item .item-name:hover {
+  color: var(--dh-color-gold);
+}
+
+.daggerheart .actor-list .actor .actor-name:hover {
   color: var(--dh-color-gold);
 }
 
@@ -438,9 +546,56 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
+/* Actor tags for environment sheet */
+.daggerheart .actor-list .actor .actor-name .actor-tier-tag,
+.daggerheart .actor-list .actor .actor-name .actor-category-tag,
+.daggerheart .actor-list .actor .actor-name .actor-type-tag {
+  display: inline-block;
+  font-size: 0.75em;
+  font-weight: 500;
+  padding: 0.2em 0.4em;
+  margin-left: 0.4em;
+  border-radius: 0.5em;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  vertical-align: middle;
+  background: none;
+  color: white;
+  border: 1px solid #433f64;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Item trait tags for environment sheet */
+.daggerheart .item-list .item .item-name .item-trait-tag {
+  display: inline-block;
+  font-size: 0.75em;
+  font-weight: 500;
+  padding: 0.2em 0.4em;
+  margin-left: 0.4em;
+  border-radius: 0.5em;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  vertical-align: middle;
+  background: none;
+  color: white;
+  border: 1px solid #433f64;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
 .daggerheart .item-list .item img,
 .npc .item-list .item img,
 .actor .item-list .item img {
+  flex: 0 0 24px;
+  margin-right: 5px;
+  border: 1px solid var(--dh-color-gold);
+  border-radius: 0px 10px;
+  width: 100%;
+  height: 25px;
+}
+
+.daggerheart .actor-list .actor img {
   flex: 0 0 24px;
   margin-right: 5px;
   border: 1px solid var(--dh-color-gold);
@@ -457,9 +612,19 @@
   gap: 5px;
 }
 
+.daggerheart .actor-list .actor-controls {
+  flex: 0 0 36px;
+  display: flex;
+  gap: 5px;
+}
+
 .daggerheart .item-control,
 .npc .item-control,
 .actor .item-control {
+  cursor: pointer;
+}
+
+.daggerheart .actor-control {
   cursor: pointer;
 }
 
