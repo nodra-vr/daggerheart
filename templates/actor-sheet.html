@@ -32,7 +32,7 @@
                 <!-- resources and fields -->
                 <div class="header-top-fields">
                     <h1 class="charname">
-                        <input name="name" type="text" value="{{data.name}}" placeholder="{{localize " DH.Name"}}" />
+                        <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
                     </h1>
                     <div class="header-domain">
                         <input type="text" name="system.chosenDomains.domain-one"
@@ -342,7 +342,7 @@
                         </div>
                         <div class="experience-row-column-2">
                             <input class="click-rollable-name" name="system.experience.1Name" type="text"
-                                value="{{systemData.experience.1Name}}" placeholder="{{localize " DH.Experience"}}" />
+                                value="{{systemData.experience.1Name}}" placeholder="{{localize "DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier" type="number" name="system.experience.1Mod"
@@ -357,7 +357,7 @@
                         </div>
                         <div class="experience-row-column-2">
                             <input class="click-rollable-name" name="system.experience.2Name" type="text"
-                                value="{{systemData.experience.2Name}}" placeholder="{{localize " DH.Experience"}}" />
+                                value="{{systemData.experience.2Name}}" placeholder="{{localize "DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier" type="number" name="system.experience.2Mod"
@@ -372,7 +372,7 @@
                         </div>
                         <div class="experience-row-column-2">
                             <input class="click-rollable-name" name="system.experience.5Name" type="text"
-                                value="{{systemData.experience.5Name}}" placeholder="{{localize " DH.Experience"}}" />
+                                value="{{systemData.experience.5Name}}" placeholder="{{localize "DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier" type="number" name="system.experience.5Mod"
@@ -387,7 +387,7 @@
                         </div>
                         <div class="experience-row-column-2">
                             <input class="click-rollable-name" name="system.experience.8Name" type="text"
-                                value="{{systemData.experience.8Name}}" placeholder="{{localize " DH.Experience"}}" />
+                                value="{{systemData.experience.8Name}}" placeholder="{{localize "DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier" type="number" name="system.experience.8Mod"
@@ -402,7 +402,7 @@
                         </div>
                         <div class="experience-row-column-2">
                             <input class="click-rollable-name" name="system.experience.1Name2" type="text"
-                                value="{{systemData.experience.1Name2}}" placeholder="{{localize " DH.Experience"}}" />
+                                value="{{systemData.experience.1Name2}}" placeholder="{{localize "DH.Experience"}}" />
                         </div>
                         <div class="experience-row-column">
                             <input class="click-rollable-modifier" type="number" name="system.experience.1Mod2"
@@ -459,11 +459,10 @@
                                     <input
                                         class="weapon-field basic-rollable-name click-rollable-name {{#if weaponDisplay.primary.hasWeapon}}weapon-field-hidden{{/if}}"
                                         name="system.weapon-main.name" type="text"
-                                        value="{{systemData.weapon-main.name}}" placeholder="{{localize "
-                                        DH.Weapon"}}" />
+                                        value="{{systemData.weapon-main.name}}" placeholder="{{localize "DH.Weapon"}}" />
                                     <div class="textarea-container">
                                         <input class="trait-effects resize-ta" name="system.weapon-main.description"
-                                            placeholder="{{localize " DH.WeaponTraitsHere"}}"
+                                            placeholder="{{localize "DH.WeaponTraitsHere"}}"
                                             value="{{systemData.weapon-main.description}}" />
                                     </div>
                                 </div>
@@ -474,8 +473,7 @@
                                             data-has-modifiers="true">{{#if
                                             systemData.weapon-main.to-hit.value}}{{systemData.weapon-main.to-hit.value}}{{else}}0{{/if}}
                                         </div>
-                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize
-                                            "DH.Modifier"}}</a>
+                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
                                     </div>
                                     <div class="weapon-infobox">
                                         <div class="weapon-damage-display damage-value-display {{#if weaponDisplay.primary.hasWeapon}}primary-weapon{{/if}}"
@@ -487,8 +485,7 @@
                                             {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if
                                             systemData.weapon-main.damage}}{{systemData.weapon-main.damage}}{{else}}1d8{{/if}}{{/if}}
                                         </div>
-                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize
-                                            "DH.Damage"}}</a>
+                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
                                     </div>
                                 </div>
                             </div>
@@ -508,10 +505,10 @@
                                     <input
                                         class="weapon-field basic-rollable-name click-rollable-name {{#if weaponDisplay.secondary.hasWeapon}}weapon-field-hidden{{/if}}"
                                         name="system.weapon-off.name" type="text" value="{{systemData.weapon-off.name}}"
-                                        placeholder="{{localize " DH.Weapon"}}" />
+                                        placeholder="{{localize "DH.Weapon"}}" />
                                     <div class="textarea-container">
                                         <input class="trait-effects resize-ta" name="system.weapon-off.description"
-                                            placeholder="{{localize " DH.WeaponTraitsHere"}}"
+                                            placeholder="{{localize "DH.WeaponTraitsHere"}}"
                                             value="{{systemData.weapon-off.description}}" />
                                     </div>
                                 </div>
@@ -1087,7 +1084,7 @@
                         <a class="item-control" title="{{ localize 'SIMPLE.ItemCreate' }}" data-action="create-item"
                             data-type="item" data-location="vault">
                             <i class="fas fa-plus"></i></a>
-                        <a class="item-control vault-toggle" title="{{localize " DH.ToggleVault"}}"><i
+                        <a class="item-control vault-toggle" title="{{localize "DH.ToggleVault"}}"><i
                                 class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
