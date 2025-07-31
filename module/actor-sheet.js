@@ -2528,10 +2528,6 @@ export class NPCActorSheet extends SimpleActorSheet {
     html.find(".groups").on("click", ".group-control", EntitySheetHelper.onClickAttributeGroupControl.bind(this));
     html.find(".attributes").on("click", "a.attribute-roll", EntitySheetHelper.onAttributeRoll.bind(this));
 
-    // Attack roll handlers for both primary and secondary attacks
-    html.find(".click-rollable-group").on("click", ".click-rollable", this._onRollableClick.bind(this));
-    html.find(".basic-rollable-group").on("click", ".basic-rollable", this._onBasicRollableClick.bind(this));
-
     // Item management handlers are inherited from parent class
     html.find(".items .rollable").on("click", this._onItemRoll.bind(this));
 
