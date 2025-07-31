@@ -12,6 +12,7 @@ import { SimpleToken, SimpleTokenDocument } from "./token.js";
 import { CounterUI } from "./counter-ui.js";
 import { TokenCounterUI } from "./token-counter-ui.js";
 import { CountdownTracker } from "./countdown-tracker.js";
+import { TopBarUI } from "./top-bar-ui.js";
 import { SheetTracker } from "./sheet-tracker.js";
 import { TrackerNotificationBubbles } from "./tracker-notification-bubbles.js";
 import { DaggerheartMigrations } from "./migrations.js";
@@ -372,6 +373,9 @@ Hooks.once("ready", async function () {
 
   game.daggerheart.countdownTracker = new CountdownTracker();
   await game.daggerheart.countdownTracker.initialize();
+
+  game.daggerheart.topBarUI = new TopBarUI();
+  await game.daggerheart.topBarUI.initialize();
 
   // Initialize tracker notification bubbles
   game.daggerheart.trackerNotificationBubbles = new TrackerNotificationBubbles();
