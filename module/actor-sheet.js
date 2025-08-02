@@ -69,7 +69,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     const context = await super.getData(options);
     EntitySheetHelper.getAttributeData(context.data);
-    context.shorthand = !!game.settings.get("daggerheart", "macroShorthand");
+
     context.systemData = context.data.system;
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;

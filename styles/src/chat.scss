@@ -2194,3 +2194,48 @@
     }
   }
 }
+
+/* Template Button Styling for Range Measurement */
+.measured-template-button {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  margin: 0.2rem;
+  background: rgba(243, 194, 103, 0.12);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 194, 103, 0.25);
+  border-radius: 0.4rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(243, 194, 103, 0.15);
+  color: var(--dh-color-gold);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  vertical-align: baseline;
+  line-height: 1.2;
+
+  i {
+    margin-right: 0.4rem;
+    color: var(--dh-color-gold);
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 8px rgba(243, 194, 103, 0.3);
+    background: rgba(243, 194, 103, 0.18);
+    border-color: rgba(243, 194, 103, 0.35);
+    color: var(--dh-color-gold);
+    text-decoration: none;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  &:focus {
+    outline: 1px solid rgba(243, 194, 103, 0.4);
+    outline-offset: 1px;
+  }
+}

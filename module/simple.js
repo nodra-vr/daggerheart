@@ -21,6 +21,18 @@ import { EntitySheetHelper, buildItemCardChat } from "./helper.js";
 import { ModifierManager } from "./modifierManager.js";
 import { ArmorCleanup } from "./armorCleanup.js";
 
+// Range Measurement System
+import { 
+  DaggerheartMeasuredTemplate,
+  DaggerheartRuler,
+  DaggerheartTokenRuler,
+  DaggerheartTemplateEnricher,
+  renderMeasuredTemplate,
+  testRangeMeasurement,
+  testTemplateEnricher
+} from "./range-measurement.js";
+
+
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
 import { applyDamage, applyHealing, applyDirectDamage, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
 
@@ -186,6 +198,11 @@ Hooks.once("init", async function () {
   CONFIG.Token.documentClass = SimpleTokenDocument;
   CONFIG.Token.objectClass = SimpleToken;
 
+  // Register custom canvas classes for range measurement
+  CONFIG.MeasuredTemplate.objectClass = DaggerheartMeasuredTemplate;
+  CONFIG.Canvas.rulerClass = DaggerheartRuler;
+  CONFIG.Token.rulerClass = DaggerheartTokenRuler;
+
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.applications.sheets.ActorSheetV2);
   foundry.documents.collections.Actors.registerSheet("daggerheart", SimpleActorSheet, {
     types: ["character"],
@@ -224,14 +241,7 @@ Hooks.once("init", async function () {
     label: "SHEET.Item.armor"
   });
 
-  game.settings.register("daggerheart", "macroShorthand", {
-    name: "SETTINGS.SimpleMacroShorthandN",
-    hint: "SETTINGS.SimpleMacroShorthandL",
-    scope: "world",
-    type: Boolean,
-    default: true,
-    config: true
-  });
+
 
   game.settings.register("daggerheart", "counterValue", {
     name: "Counter Value",
@@ -251,15 +261,7 @@ Hooks.once("init", async function () {
     config: false
   });
 
-  game.settings.register("daggerheart", "initFormula", {
-    name: "SETTINGS.SimpleInitFormulaN",
-    hint: "SETTINGS.SimpleInitFormulaL",
-    scope: "world",
-    type: String,
-    default: "1d20",
-    config: true,
-    onChange: formula => _simpleUpdateInit(formula, true)
-  });
+
 
   game.settings.register("daggerheart", "advantageDieTypes", {
     name: "SETTINGS.AdvantageDieTypesN",
@@ -270,20 +272,77 @@ Hooks.once("init", async function () {
     default: "d4,d6,d8,d10",
   });
 
-  const initFormula = game.settings.get("daggerheart", "initFormula");
-  _simpleUpdateInit(initFormula);
+  // Register range measurement settings
+  game.settings.register("daggerheart", "rangeMeasurementEnabled", {
+    name: "DAGGERHEART.SETTINGS.RangeMeasurement.enabled",
+    hint: "Enable narrative range measurement display",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+    restricted: true
+  });
 
-  function _simpleUpdateInit(formula, notify = false) {
-    const isValid = Roll.validate(formula);
-    if (!isValid) {
-      if (notify) ui.notifications.error(`${game.i18n.localize("SIMPLE.NotifyInitFormulaInvalid")}: ${formula}`);
-      return;
-    }
-    CONFIG.Combat.initiative.formula = formula;
-  }
+  game.settings.register("daggerheart", "rangeMeasurementMelee", {
+    name: "DAGGERHEART.CONFIG.Range.melee.name",
+    hint: "Distance threshold for Melee range (in grid units)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 5,
+    restricted: true
+  });
+
+  game.settings.register("daggerheart", "rangeMeasurementVeryClose", {
+    name: "DAGGERHEART.CONFIG.Range.veryClose.name",
+    hint: "Distance threshold for Very Close range (in grid units)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 15,
+    restricted: true
+  });
+
+  game.settings.register("daggerheart", "rangeMeasurementClose", {
+    name: "DAGGERHEART.CONFIG.Range.close.name",
+    hint: "Distance threshold for Close range (in grid units)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 30,
+    restricted: true
+  });
+
+  game.settings.register("daggerheart", "rangeMeasurementFar", {
+    name: "DAGGERHEART.CONFIG.Range.far.name",
+    hint: "Distance threshold for Far range (in grid units)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 60,
+    restricted: true
+  });
+
+  game.settings.register("daggerheart", "rangeMeasurementVeryFar", {
+    name: "DAGGERHEART.CONFIG.Range.veryFar.name",
+    hint: "Distance threshold for Very Far range (in grid units)",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 120,
+    restricted: true
+  });
+
+
 
   Handlebars.registerHelper('slugify', function (value) {
     return value.slugify({ strict: true });
+  });
+
+  // Register template enricher for chat integration
+  CONFIG.TextEditor.enrichers.push({
+    pattern: /@Template\[([^\]]+)\]/g,
+    enricher: DaggerheartTemplateEnricher
   });
 
   await preloadHandlebarsTemplates();
@@ -380,6 +439,11 @@ Hooks.once("ready", async function () {
   // Initialize tracker notification bubbles
   game.daggerheart.trackerNotificationBubbles = new TrackerNotificationBubbles();
   game.daggerheart.trackerNotificationBubbles.initialize();
+
+  // Add event listeners for template buttons in chat
+  Hooks.on('renderChatMessage', (message, html, data) => {
+    html.find('.measured-template-button').on('click', renderMeasuredTemplate);
+  });
 
   window.spendFear = async function (amount) {
     if (!game.daggerheart?.counter) {
@@ -764,6 +828,10 @@ Hooks.once("ready", async function () {
     }
     return game.daggerheart.damageApplication.debugUndoData(undoId);
   };
+
+  // Expose test functions globally
+  window.testTemplateEnricher = testTemplateEnricher;
+  window.testRangeMeasurement = testRangeMeasurement;
 
   game.daggerheart.applyDamage = window.applyDamage;
   game.daggerheart.applyHealing = window.applyHealing;

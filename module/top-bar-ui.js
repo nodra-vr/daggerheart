@@ -14,38 +14,7 @@ export class TopBarUI {
       this.element.remove();
     }
 
-    const html = `
-      <div id="top-bar-ui" class="top-bar-ui">
-        <div class="top-bar-background"></div>
-        <div class="top-bar-gradient-mask"></div>
-        <div class="top-bar-content">
-          <div class="top-bar-section top-bar-section--environment-actions">
-            <div class="top-bar-section-icon">
-              <i class="fas fa-cogs"></i>
-            </div>
-            <div class="top-bar-section-text">Environment Actions</div>
-          </div>
-          
-          <div class="top-bar-divider"></div>
-          
-          <div class="top-bar-section top-bar-section--environment-name">
-            <div class="environment-name-container">
-              <div class="environment-name-primary">ABANDONED GROVE</div>
-              <div class="environment-name-secondary">Tier 1 • Exploration</div>
-            </div>
-          </div>
-          
-          <div class="top-bar-divider"></div>
-          
-          <div class="top-bar-section top-bar-section--possible-adversaries">
-            <div class="top-bar-section-icon">
-              <i class="fas fa-skull"></i>
-            </div>
-            <div class="top-bar-section-text">Possible Adversaries</div>
-          </div>
-        </div>
-      </div>
-    `;
+    const html = ``; //To be implemented
 
     let topBarWrapper = document.getElementById("top-bar-wrapper");
     if (!topBarWrapper) {

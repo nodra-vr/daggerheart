@@ -40,7 +40,7 @@ export class CompanionActorSheet extends SimpleActorSheet {
   /** @inheritdoc */
   async getData(options) {
     const context = await super.getData(options);
-    context.shorthand = !!game.settings.get("daggerheart", "macroShorthand");
+
     context.systemData = context.data.system;
     context.domains = this.actor.system.domains;
     context.biographyHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.systemData.biography, {

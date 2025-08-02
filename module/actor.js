@@ -167,7 +167,7 @@ export class SimpleActor extends Actor {
   getRollData() {
 
     const data = this.toObject(false).system;
-    const shorthand = game.settings.get("daggerheart", "macroShorthand");
+
     const formulaAttributes = [];
     const itemAttributes = [];
 
@@ -232,48 +232,40 @@ export class SimpleActor extends Actor {
       }
     }
 
-    this._applyShorthand(data, formulaAttributes, shorthand);
+    this._applyShorthand(data, formulaAttributes);
 
-    this._applyItems(data, itemAttributes, shorthand);
+    this._applyItems(data, itemAttributes);
 
-    this._applyItemsFormulaReplacements(data, itemAttributes, shorthand);
+    this._applyItemsFormulaReplacements(data, itemAttributes);
 
-    this._applyFormulaReplacements(data, formulaAttributes, shorthand);
-
-    if ( !!shorthand ) {
-      delete data.attributes;
-      delete data.attr;
-      delete data.groups;
-    }
+    this._applyFormulaReplacements(data, formulaAttributes);
     return data;
   }
 
-  _applyShorthand(data, formulaAttributes, shorthand) {
+  _applyShorthand(data, formulaAttributes) {
 
     for ( let [k, v] of Object.entries(data.attributes || {}) ) {
 
       if ( v.dtype === "Formula" ) formulaAttributes.push(k);
 
-      if ( !!shorthand ) {
-        if ( !(k in data) ) {
+      if ( !(k in data) ) {
 
-          if ( v.dtype ) {
-            data[k] = v.value;
-          }
+        if ( v.dtype ) {
+          data[k] = v.value;
+        }
 
-          else {
-            data[k] = {};
-            for ( let [gk, gv] of Object.entries(v) ) {
-              data[k][gk] = gv.value;
-              if ( gv.dtype === "Formula" ) formulaAttributes.push(`${k}.${gk}`);
-            }
+        else {
+          data[k] = {};
+          for ( let [gk, gv] of Object.entries(v) ) {
+            data[k][gk] = gv.value;
+            if ( gv.dtype === "Formula" ) formulaAttributes.push(`${k}.${gk}`);
           }
         }
       }
     }
   }
 
-  _applyItems(data, itemAttributes, shorthand) {
+  _applyItems(data, itemAttributes) {
 
     data.items = this.items.reduce((obj, item) => {
       const key = item.name.slugify({strict: true});
@@ -283,25 +275,13 @@ export class SimpleActor extends Actor {
 
         if ( v.dtype === "Formula" ) itemAttributes.push(`${key}..${k}`);
 
-        if ( !!shorthand ) {
-          if ( !(k in itemData) ) {
+        if ( !(k in itemData) ) {
 
-            if ( v.dtype ) {
-              itemData[k] = v.value;
-            }
-
-            else {
-              if ( !itemData[k] ) itemData[k] = {};
-              for ( let [gk, gv] of Object.entries(v) ) {
-                itemData[k][gk] = gv.value;
-                if ( gv.dtype === "Formula" ) itemAttributes.push(`${key}..${k}.${gk}`);
-              }
-            }
+          if ( v.dtype ) {
+            itemData[k] = v.value;
           }
-        }
 
-        else {
-          if ( !v.dtype ) {
+          else {
             if ( !itemData[k] ) itemData[k] = {};
             for ( let [gk, gv] of Object.entries(v) ) {
               itemData[k][gk] = gv.value;
@@ -311,15 +291,12 @@ export class SimpleActor extends Actor {
         }
       }
 
-      if ( !!shorthand ) {
-        delete itemData.attributes;
-      }
       obj[key] = itemData;
       return obj;
     }, {});
   }
 
-  _applyItemsFormulaReplacements(data, itemAttributes, shorthand) {
+  _applyItemsFormulaReplacements(data, itemAttributes) {
     for ( let k of itemAttributes ) {
 
       let item = null;
@@ -335,34 +312,20 @@ export class SimpleActor extends Actor {
       }
 
       let formula = '';
-      if ( !!shorthand ) {
 
-        if ( data.items[item][k][gk] ) {
-          formula = data.items[item][k][gk].replace('@item.', `@items.${item}.`);
-          data.items[item][k][gk] = Roll.replaceFormulaData(formula, data);
-        }
-
-        else if ( data.items[item][k] ) {
-          formula = data.items[item][k].replace('@item.', `@items.${item}.`);
-          data.items[item][k] = Roll.replaceFormulaData(formula, data);
-        }
+      if ( data.items[item][k][gk] ) {
+        formula = data.items[item][k][gk].replace('@item.', `@items.${item}.`);
+        data.items[item][k][gk] = Roll.replaceFormulaData(formula, data);
       }
-      else {
 
-        if ( data.items[item]['attributes'][k][gk] ) {
-          formula = data.items[item]['attributes'][k][gk]['value'].replace('@item.', `@items.${item}.attributes.`);
-          data.items[item]['attributes'][k][gk]['value'] = Roll.replaceFormulaData(formula, data);
-        }
-
-        else if ( data.items[item]['attributes'][k]['value'] ) {
-          formula = data.items[item]['attributes'][k]['value'].replace('@item.', `@items.${item}.attributes.`);
-          data.items[item]['attributes'][k]['value'] = Roll.replaceFormulaData(formula, data);
-        }
+      else if ( data.items[item][k] ) {
+        formula = data.items[item][k].replace('@item.', `@items.${item}.`);
+        data.items[item][k] = Roll.replaceFormulaData(formula, data);
       }
     }
   }
 
-  _applyFormulaReplacements(data, formulaAttributes, shorthand) {
+  _applyFormulaReplacements(data, formulaAttributes) {
 
     for ( let k of formulaAttributes ) {
 
@@ -381,20 +344,17 @@ export class SimpleActor extends Actor {
         data.attributes[k][attr].value = Roll.replaceFormulaData(String(data.attributes[k][attr].value), data);
       }
 
-      if ( !!shorthand ) {
+      if ( data.attributes[k]?.value ) {
+        data[k] = data.attributes[k].value;
+      }
 
-        if ( data.attributes[k]?.value ) {
-          data[k] = data.attributes[k].value;
-        }
+      else {
+        if ( attr ) {
 
-        else {
-          if ( attr ) {
-
-            if ( !data[k] ) {
-              data[k] = {};
-            }
-            data[k][attr] = data.attributes[k][attr].value;
+          if ( !data[k] ) {
+            data[k] = {};
           }
+          data[k][attr] = data.attributes[k][attr].value;
         }
       }
     }

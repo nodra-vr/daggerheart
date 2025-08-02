@@ -179,18 +179,15 @@ export class EntitySheetHelper {
     const button = event.currentTarget;
     const label = button.closest(".attribute").querySelector(".attribute-label")?.value;
     const chatLabel = label ?? button.parentElement.querySelector(".attribute-key").value;
-    const shorthand = game.settings.get("daggerheart", "macroShorthand");
-
     // actor rollData
     const rollData = this.actor.getRollData();
     let formula = button.closest(".attribute").querySelector(".attribute-value")?.value;
 
     // roll formula
     if ( formula ) {
-      let replacement = null;
       if ( formula.includes('@item.') && this.item ) {
         let itemName = this.item.name.slugify({strict: true}); // item slug
-        replacement = !!shorthand ? `@items.${itemName}.` : `@items.${itemName}.attributes.`;
+        let replacement = `@items.${itemName}.`;
         formula = formula.replace('@item.', replacement);
       }
 
