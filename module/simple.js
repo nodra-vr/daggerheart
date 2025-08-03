@@ -22,19 +22,17 @@ import { ModifierManager } from "./modifierManager.js";
 import { ArmorCleanup } from "./armorCleanup.js";
 
 // Range Measurement System
-import { 
+import {
   DaggerheartMeasuredTemplate,
   DaggerheartRuler,
   DaggerheartTokenRuler,
   DaggerheartTemplateEnricher,
-  renderMeasuredTemplate,
-  testRangeMeasurement,
-  testTemplateEnricher
+  renderMeasuredTemplate
 } from "./range-measurement.js";
 
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
-import { applyDamage, applyHealing, applyDirectDamage, extractRollTotal, rollDamage, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
+import { applyDamage, applyHealing, applyDirectDamage, extractRollTotal, rollDamage, rollDamageWithDialog, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
 
 function _getTierOfPlay(actor = null, level = null) {
   let characterLevel = level;
@@ -163,6 +161,7 @@ Hooks.once("init", async function () {
       applyDamage: applyDamage,
       applyHealing: applyHealing,
       rollDamage: rollDamage,
+      rollDamageWithDialog: rollDamageWithDialog,
       rollHealing: rollHealing,
       extractRollTotal: extractRollTotal,
       undoDamageHealing: undoDamageHealing,
@@ -758,6 +757,7 @@ Hooks.once("ready", async function () {
     applyHealing,
     applyDirectDamage,
     rollDamage,
+    rollDamageWithDialog,
     rollHealing,
     undoDamageHealing,
     debugUndoData
@@ -803,6 +803,15 @@ Hooks.once("ready", async function () {
     return await game.daggerheart.damageApplication.rollDamage(formula, options);
   };
 
+  window.rollDamageWithDialog = async function (formula, options) {
+    if (!game.daggerheart?.damageApplication?.rollDamageWithDialog) {
+      console.error("Damage rolling with dialog not initialized");
+      ui.notifications.error("Damage rolling with dialog not available");
+      return null;
+    }
+    return await game.daggerheart.damageApplication.rollDamageWithDialog(formula, options);
+  };
+
   window.rollHealing = async function (formula, options) {
     if (!game.daggerheart?.damageApplication?.rollHealing) {
       console.error("Healing rolling not initialized");
@@ -829,14 +838,11 @@ Hooks.once("ready", async function () {
     return game.daggerheart.damageApplication.debugUndoData(undoId);
   };
 
-  // Expose test functions globally
-  window.testTemplateEnricher = testTemplateEnricher;
-  window.testRangeMeasurement = testRangeMeasurement;
-
   game.daggerheart.applyDamage = window.applyDamage;
   game.daggerheart.applyHealing = window.applyHealing;
   game.daggerheart.applyDirectDamage = window.applyDirectDamage;
   game.daggerheart.rollDamage = window.rollDamage;
+  game.daggerheart.rollDamageWithDialog = window.rollDamageWithDialog;
   game.daggerheart.rollHealing = window.rollHealing;
   game.daggerheart.undoDamageHealing = window.undoDamageHealing;
   game.daggerheart.debugUndoData = window.debugUndoData;
@@ -1044,7 +1050,7 @@ Hooks.once("ready", async function () {
   game.daggerheart.testModifierSystem = window.testModifierSystem;
 
   console.log("Counter UI initialized and displayed above the hotbar.");
-  console.log("spendFear(), gainFear(), spendStress(), clearStress(), spendHope(), gainHope(), applyDamage(), applyHealing(), rollDamage(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), testModifierSystem(), and testFearAutomation() functions are now available globally.");
+  console.log("spendFear(), gainFear(), spendStress(), clearStress(), spendHope(), gainHope(), applyDamage(), applyHealing(), rollDamage(), rollDamageWithDialog(), rollHealing(), undoDamageHealing(), debugUndoData(), cleanupDuplicateMacros(), testWeaponEquip(), testModifierSystem(), and testFearAutomation() functions are now available globally.");
   console.log("🎯 Modifier System: addModifier(), removeModifier(), and listModifiers() functions are now available globally.");
   console.log("� Global Hope/Fear automation is now active for ALL duality rolls!");
 
@@ -1586,12 +1592,18 @@ function _handleAdversaryDamageButton(message, html, actor, flavor) {
 }
 
 async function _rollConsolidatedDamage(event) {
+  console.log("Daggerheart | _rollConsolidatedDamage called with event:", event);
+
   const button = event.currentTarget;
   const actorId = button.dataset.actorId;
   const weaponType = button.dataset.weaponType;
   const weaponName = button.dataset.weaponName;
   const damageStructureJson = button.dataset.weaponDamageStructure;
   const isCritical = button.dataset.isCritical === "true";
+
+  console.log("Daggerheart | Damage roll data:", {
+    actorId, weaponType, weaponName, damageStructureJson, isCritical
+  });
 
   const actor = game.actors.get(actorId);
   if (!actor) {
@@ -1635,28 +1647,30 @@ async function _rollConsolidatedDamage(event) {
   const flavorText = isCritical ? `${weaponName} - Critical Damage!` : `${weaponName} - Damage`;
 
   try {
-    await game.daggerheart.damageApplication.rollDamage(
-      null,
-      {
-        sourceActor: actor,
-        weaponName: weaponName,
-        weaponType: weaponType,
-        isCritical: isCritical,
-        damageData: damageData,
-        proficiency: proficiency,
-        source: "chat-card",
-        flavor: flavorText,
-        chatFlags: {
-          rollType: "damage",
-          actorId: actor.id,
-          actorType: actor.type,
-          weaponName: weaponName,
-          weaponType: weaponType,
-          isCritical: isCritical,
-          isManualRoll: true
-        }
+    // Extract base formula from damage data
+    let baseFormula = '1d8';
+    if (damageData) {
+      if (typeof damageData === 'string') {
+        baseFormula = damageData;
+      } else if (damageData.baseValue) {
+        baseFormula = damageData.baseValue;
+      } else if (damageData.value) {
+        baseFormula = damageData.value;
       }
-    );
+    }
+
+    // Determine weapon slot for modifier filtering
+    const weaponSlot = weaponType === "primary" ? "weapon-main" : "weapon-off";
+
+    // Use the damage dialog for interactive damage rolling
+    await game.daggerheart.damageApplication.rollDamageWithDialog(baseFormula, {
+      sourceActor: actor,
+      weaponName: weaponName,
+      weaponType: weaponType,
+      weaponSlot: weaponSlot,
+      isCritical: isCritical,
+      damageModifiers: damageData?.modifiers || []
+    });
   } catch (error) {
     console.error("Error creating consolidated damage roll:", error);
     ui.notifications.warn("Damage roll failed. Check console for details.");

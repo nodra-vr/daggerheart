@@ -102,7 +102,7 @@
         font-weight: var(--dh-font-weight-bold);
       }
 
-      + label {
+      +label {
         color: var(--dh-color-gold);
       }
     }
@@ -203,12 +203,12 @@
 
 /* Dialog Button Styling - Using global button styles */
 .daggerheart-dialog .dialog-buttons {
-	display: flex;
-	gap: var(--dh-space-lg);
-	flex-direction: row;
-	align-items: center;
-	margin-top: 0;
-	padding: 0;
+  display: flex;
+  gap: var(--dh-space-lg);
+  flex-direction: row;
+  align-items: center;
+  margin-top: 0;
+  padding: 0;
 
   button {
     background: var(--dh-bg-section);
@@ -447,7 +447,7 @@
   white-space: nowrap;
 
   &:hover {
-    background: rgba(109, 103, 149,.8);
+    background: rgba(109, 103, 149, .8);
     border-color: var(--dh-color-gold);
     color: var(--dh-color-gold);
     transform: translateY(-1px);
@@ -461,6 +461,164 @@
 
 .daggerheart-dialog.daggerheart-roll-dialog .dialog-content {
   padding-bottom: 0;
+}
+
+/* ====================================
+   DAMAGE ROLL DIALOG STYLES
+   Used for damage roll configuration
+   ==================================== */
+
+.daggerheart-dialog.daggerheart-damage-dialog {
+  .dialog-content {
+    padding-bottom: 0;
+  }
+
+  .formula-display,
+  .final-formula-display {
+    background: var(--dh-bg-section);
+    border: 1px solid var(--dh-border-purple-light);
+    border-radius: var(--dh-radius-md);
+    padding: var(--dh-space-lg);
+    font-size: var(--dh-font-size-lg);
+    text-align: center;
+    color: var(--dh-color-off-white);
+    font-weight: var(--dh-font-weight-semibold);
+  }
+
+  .damage-formula-input {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    width: 100%;
+    outline: none;
+
+    &:focus {
+      background: rgba(67, 63, 100, 0.3);
+      border-radius: var(--dh-radius-sm);
+    }
+
+    &.invalid {
+      color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.1);
+    }
+  }
+
+  .final-formula-display.invalid {
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+  }
+
+  .critical-notice {
+    background: rgba(255, 162, 0, 0.2);
+    border: 1px solid var(--dh-color-gold);
+    border-radius: var(--dh-radius-md);
+    padding: var(--dh-space-md);
+    text-align: center;
+    color: var(--dh-color-gold);
+    font-weight: var(--dh-font-weight-bold);
+    margin-top: var(--dh-space-sm);
+
+    i {
+      margin-right: var(--dh-space-xs);
+    }
+  }
+
+  .modifiers-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dh-space-sm);
+    max-height: 200px;
+    overflow-y: auto;
+    padding: var(--dh-space-xs);
+  }
+
+  .modifier-item {
+    display: flex;
+    align-items: center;
+    background: var(--dh-bg-section);
+    border: 1px solid var(--dh-border-purple-light);
+    border-radius: var(--dh-radius-md);
+    padding: var(--dh-space-md);
+    cursor: pointer;
+    gap: 1em;
+
+    &:hover {
+      background: rgba(67, 63, 100, 0.5);
+      border-color: var(--dh-color-gold);
+    }
+
+    &.enabled {
+      background: rgba(255, 162, 0, 0.1);
+      border-color: var(--dh-color-gold);
+
+      .modifier-name {
+        color: var(--dh-color-gold);
+      }
+
+      .modifier-formula {
+        background: rgba(255, 162, 0, 0.2);
+        border-color: var(--dh-color-gold);
+      }
+    }
+
+
+
+    &.permanent {
+      border-style: dashed;
+
+      .permanent-indicator {
+        color: var(--dh-color-teal);
+        font-size: 0.8em;
+        font-weight: var(--dh-font-weight-bold);
+      }
+    }
+
+    .modifier-checkbox {
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .modifier-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      cursor: pointer;
+      margin: 0;
+      gap: 1em;
+    }
+
+    .modifier-info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--dh-space-xs);
+    }
+
+    .modifier-name {
+      font-weight: var(--dh-font-weight-semibold);
+      color: var(--dh-color-off-white);
+      font-size: var(--dh-font-size-base);
+    }
+
+    .modifier-source {
+      font-size: var(--dh-font-size-sm);
+      color: #a0a0a0;
+      font-style: italic;
+    }
+
+    .modifier-formula {
+      color: var(--dh-color-gold);
+      background: rgba(0, 0, 0, 0.3);
+      padding: var(--dh-space-xs) var(--dh-space-sm);
+      border-radius: var(--dh-radius-sm);
+      font-size: var(--dh-font-size-sm);
+      font-weight: var(--dh-font-weight-bold);
+      border: 1px solid rgba(255, 162, 0, 0.3);
+    }
+  }
 }
 
 .daggerheart-dialog.daggerheart-roll-dialog {
@@ -592,7 +750,7 @@
      DICE GRID SYSTEM STYLES
      New advantage/disadvantage dice system
      ==================================== */
-  
+
   .dice-grid {
     display: flex;
     justify-content: center;
@@ -600,7 +758,7 @@
     margin: var(--dh-space-md) 0;
     flex-wrap: wrap;
   }
-  
+
   .dice-control {
     display: flex;
     flex-direction: column;
@@ -608,7 +766,7 @@
     gap: var(--dh-space-xs);
     min-width: 60px;
   }
-  
+
   .dice-btn {
     background: rgba(67, 63, 100, 0.5);
     border: 1px solid #6d6795;
@@ -625,16 +783,16 @@
     font-size: 0.9em;
     font-weight: bold;
     line-height: 1;
-    
+
     &:hover {
       background: rgba(67, 63, 100, 0.8);
       border-color: var(--dh-color-gold);
       color: var(--dh-color-gold);
       transform: scale(1.1);
     }
-    
+
   }
-  
+
   .dice-icon {
     position: relative;
     width: 48px;
@@ -646,16 +804,16 @@
     font-size: 12px;
     font-weight: bold;
     color: var(--dh-color-gold);
-    
+
     &.empty {
       color: #6d6795;
     }
-    
+
     &:hover {
       transform: scale(1.05);
     }
   }
-  
+
   /* Font Awesome dice icon styling */
   .dice-icon {
     i {
@@ -663,7 +821,7 @@
       color: inherit;
       line-height: 1;
     }
-    
+
     .dice-count {
       position: absolute;
       top: 50%;
@@ -687,29 +845,29 @@
         0 0 4px rgba(0, 0, 0, 0.9);
     }
   }
-  
+
   /* Advantage/Disadvantage single grid system */
   .advantage-disadvantage-grid {
     .dice-icon {
       color: #391f73;
-      
+
       &.empty {
         color: #2d2540;
       }
-      
+
       &.advantage {
         color: var(--dh-color-gold);
-        
+
         .dice-count {
           color: #fadd9f;
         }
       }
-      
+
       &.disadvantage {
         color: #3b75c2;
-        
+
         .dice-count {
-          color: #b5d5ff ;
+          color: #b5d5ff;
         }
       }
     }

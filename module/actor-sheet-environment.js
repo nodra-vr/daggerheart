@@ -19,7 +19,7 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
     const context = await super.getData(options);
     context.systemData = context.data.system;
     context.actor = this.actor;
-    
+
     // Initialize UI state for environment sheet
     if (!context.uiState) {
       context.uiState = {};
@@ -27,17 +27,17 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
     if (!context.uiState.categoryStates) {
       context.uiState.categoryStates = {};
     }
-    
+
     // Get category states from flags with defaults
     context.uiState.categoryStates.actions = this.actor.getFlag('daggerheart', 'uiState.categoryStates.actions') !== false;
     context.uiState.categoryStates.adversaries = this.actor.getFlag('daggerheart', 'uiState.categoryStates.adversaries') !== false;
-    
+
     // Prepare notes HTML for the editor
     context.notesHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.systemData.notes, {
       secrets: this.document.isOwner,
       async: true
     });
-    
+
     context.adversaries = [];
     if (this.actor.system.potentialAdversaries) {
       for (const adversaryRef of this.actor.system.potentialAdversaries) {
@@ -47,7 +47,7 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
             const adversaryData = actor.toObject();
             adversaryData.uuid = adversaryRef.uuid; // Preserve the UUID for drag operations
             adversaryData.system.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
-              adversaryData.system.description || "", 
+              adversaryData.system.description || "",
               { secrets: this.actor.isOwner, async: true }
             );
             context.adversaries.push(adversaryData);
@@ -57,7 +57,7 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
         }
       }
     }
-    
+
     return context;
   }
 
@@ -66,13 +66,13 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
 
     html.find('.adversary-control').click(this._onAdversaryControl.bind(this));
     html.find('.category-toggle').click(this._onToggleCategory.bind(this));
-    
+
     // Initialize category states
     this._initializeCategoryStates(html);
-    
+
     // Setup drag listeners for adversary slots
     this._setupAdversaryDragListeners(html);
-    
+
     // Setup drop listeners for adversaries grid
     this._setupAdversaryDropListeners(html);
   }
@@ -100,24 +100,24 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
 
   async _addAdversary(actor) {
     const adversaries = this.actor.system.potentialAdversaries || [];
-    
+
     // Check if adversary already exists
     const existingAdversary = adversaries.find(adv => adv.uuid === actor.uuid);
     if (existingAdversary) {
       ui.notifications.warn(`${actor.name} is already in the potential adversaries list.`);
       return;
     }
-    
+
     adversaries.push({
       uuid: actor.uuid,
       name: actor.name,
       img: actor.img
     });
-    
+
     await this.actor.update({
       "system.potentialAdversaries": adversaries
     });
-    
+
     ui.notifications.info(`${actor.name} added to potential adversaries.`);
   }
 
@@ -125,11 +125,11 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
     const adversaries = this.actor.system.potentialAdversaries || [];
     const adversaryToRemove = adversaries.find(adv => adv.uuid.includes(actorId));
     const updatedAdversaries = adversaries.filter(adv => !adv.uuid.includes(actorId));
-    
+
     await this.actor.update({
       "system.potentialAdversaries": updatedAdversaries
     });
-    
+
     if (adversaryToRemove) {
       ui.notifications.info(`${adversaryToRemove.name} removed from potential adversaries.`);
     }
@@ -167,7 +167,7 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
     const categoryHeader = button.closest('.tab-category');
 
     const isCollapsed = categoryList.hasClass('category-collapsed');
-    
+
     if (isCollapsed) {
       // Expand category
       categoryList.removeClass('category-collapsed');
@@ -210,34 +210,18 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
       const slot = $(el);
       const actorId = slot.data('actor-id');
       const uuid = slot.data('document-uuid');
-      
-      if (uuid) {
-        slot[0].setAttribute('draggable', true);
-        slot[0].addEventListener('dragstart', (event) => {
-          const actor = game.actors.get(actorId);
-          if (actor) {
-            const dragData = {
-              type: 'Actor',
-              uuid: uuid,
-              id: actorId
-            };
-            event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
-            event.dataTransfer.effectAllowed = 'move';
-          }
-        });
-      }
-    });
-  }
 
-  _setupAdversaryDragListeners(html) {
-    html.find('.adversary-slot:not(.empty-slot)').each((i, el) => {
-      const slot = $(el);
-      const actorId = slot.data('actor-id');
-      const uuid = slot.data('document-uuid');
-      
       if (uuid) {
+        // Make the entire slot draggable
         slot[0].setAttribute('draggable', true);
-        slot[0].addEventListener('dragstart', (event) => {
+
+        // Also make the image specifically draggable to ensure it works when clicking on the image
+        const image = slot.find('.adversary-image img')[0];
+        if (image) {
+          image.setAttribute('draggable', true);
+        }
+
+        const dragHandler = (event) => {
           const actor = game.actors.get(actorId);
           if (actor) {
             const dragData = {
@@ -249,30 +233,37 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
             };
             event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
             event.dataTransfer.setData('application/json', JSON.stringify(dragData));
+            event.dataTransfer.effectAllowed = 'move';
           }
-        });
+        };
+
+        // Add drag handler to both the slot and the image
+        slot[0].addEventListener('dragstart', dragHandler);
+        if (image) {
+          image.addEventListener('dragstart', dragHandler);
+        }
       }
     });
   }
 
   _setupAdversaryDropListeners(html) {
     const adversariesGrid = html.find('.adversaries-grid');
-    
+
     adversariesGrid.on('dragover', (event) => {
       event.preventDefault();
       adversariesGrid.addClass('drag-over');
     });
-    
+
     adversariesGrid.on('dragleave', (event) => {
       if (!adversariesGrid[0].contains(event.relatedTarget)) {
         adversariesGrid.removeClass('drag-over');
       }
     });
-    
+
     adversariesGrid.on('drop', async (event) => {
       event.preventDefault();
       adversariesGrid.removeClass('drag-over');
-      
+
       try {
         const data = event.originalEvent?.dataTransfer?.getData('text/plain');
         if (data) {

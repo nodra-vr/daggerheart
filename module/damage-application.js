@@ -1,3 +1,5 @@
+import { DamageRollDialog } from './damage-roll-dialog.js';
+
 const undoData = new Map();
 
 export async function applyDamage(targetActors = null, damageAmount, sourceActor = null, createUndo = true, armorSlotsUsed = 0) {
@@ -116,7 +118,7 @@ export async function applyDamage(targetActors = null, damageAmount, sourceActor
         isFromToken: isFromToken,
         tokenId: target.token?.id || null,
         sceneId: target.token?.scene?.id || null,
-        actorId: isFromToken ? null : target.id  
+        actorId: isFromToken ? null : target.id
       };
 
       if (isCharacter) {
@@ -265,7 +267,7 @@ export async function applyDirectDamage(targetActors = null, hpDamage, sourceAct
         isFromToken: isFromToken,
         tokenId: target.token?.id || null,
         sceneId: target.token?.scene?.id || null,
-        actorId: isFromToken ? null : target.id  
+        actorId: isFromToken ? null : target.id
       };
 
       undoRecord.actors.push(actorData);
@@ -391,11 +393,11 @@ export async function applyHealing(targetActors = null, healAmount, sourceActor 
         isFromToken: isFromToken,
         tokenId: target.token?.id || null,
         sceneId: target.token?.scene?.id || null,
-        actorId: isFromToken ? null : target.id  
+        actorId: isFromToken ? null : target.id
       });
     }
 
-    const newHealth = Math.max(0, currentHealth - healAmount); 
+    const newHealth = Math.max(0, currentHealth - healAmount);
     const actualHealing = currentHealth - newHealth;
 
     if (actualHealing <= 0) {
@@ -571,7 +573,7 @@ export async function undoDamageHealing(undoId) {
           }
         } else {
 
-          const damageResult = await applyDamage([actor], damageAmount, null, false, 0); 
+          const damageResult = await applyDamage([actor], damageAmount, null, false, 0);
           if (damageResult.success) {
             successfulUndos++;
             results.push({ actor: actor, restoredHealth: originalHealth });
@@ -641,7 +643,7 @@ function _getTargetActors() {
       actorWrapper._sourceToken = token;
 
       Object.defineProperty(actorWrapper, 'token', {
-        get: function() { return this._sourceToken; },
+        get: function () { return this._sourceToken; },
         enumerable: true,
         configurable: true
       });
@@ -661,7 +663,7 @@ function _getTargetActors() {
       actorWrapper._sourceToken = token;
 
       Object.defineProperty(actorWrapper, 'token', {
-        get: function() { return this._sourceToken; },
+        get: function () { return this._sourceToken; },
         enumerable: true,
         configurable: true
       });
@@ -679,14 +681,108 @@ function _calculateDamageToHP(damageAmount, thresholds) {
   const majorThreshold = parseInt(thresholds.major?.value ?? thresholds.major) || 0;
 
   if (severeThreshold === 0 || (severeThreshold > 0 && damageAmount >= severeThreshold)) {
-    return 3; 
+    return 3;
   }
 
   if (majorThreshold === 0 || (majorThreshold > 0 && damageAmount >= majorThreshold)) {
-    return 2; 
+    return 2;
   }
 
-  return 1; 
+  return 1;
+}
+
+function _getAvailableModifiers(actor, weaponSlot = null) {
+  const modifiers = [];
+
+  if (!actor) return modifiers;
+
+  // Get modifiers from the modifier system (always include these)
+  if (actor.system?.modifiers) {
+    Object.entries(actor.system.modifiers).forEach(([key, modifier]) => {
+      if (modifier.active && modifier.type === 'damage') {
+        modifiers.push({
+          name: modifier.name || 'Damage Modifier',
+          formula: modifier.value || '+1',
+          enabled: false,
+          source: 'modifier',
+          id: modifier.id || key
+        });
+      }
+    });
+  }
+
+  // Get modifiers from specific weapon slot only
+  if (actor.system && weaponSlot) {
+    const weaponData = actor.system[weaponSlot];
+    if (weaponData?.damage) {
+      // Regular damage modifiers
+      if (weaponData.damage.modifiers) {
+        weaponData.damage.modifiers.forEach(mod => {
+          modifiers.push({
+            name: mod.name || 'Damage Modifier',
+            formula: mod.value || '+1',
+            enabled: mod.enabled !== false,
+            source: weaponSlot,
+            id: mod.id
+          });
+        });
+      }
+
+      // Permanent damage modifiers
+      if (weaponData.damage.permanentModifiers) {
+        weaponData.damage.permanentModifiers.forEach(mod => {
+          modifiers.push({
+            name: mod.name || 'Permanent Damage Modifier',
+            formula: mod.value || '+1',
+            enabled: true, // Permanent modifiers are always enabled
+            source: `${weaponSlot}-permanent`,
+            id: mod.id,
+            permanent: true
+          });
+        });
+      }
+    }
+  }
+
+  // Get modifiers from equipped items with damage modifiers (always include these)
+  if (actor.items) {
+    actor.items.forEach(item => {
+      if (item.system?.equipped && item.system?.damageModifiers) {
+        item.system.damageModifiers.forEach(mod => {
+          if (mod.active) {
+            modifiers.push({
+              name: `${item.name}: ${mod.name}`,
+              formula: mod.formula || '+1',
+              enabled: false,
+              source: 'equipment',
+              id: mod.id || `${item.id}_${mod.name}`
+            });
+          }
+        });
+      }
+    });
+  }
+
+  // Get temporary modifiers from effects (always include these)
+  if (actor.effects) {
+    actor.effects.forEach(effect => {
+      if (!effect.disabled && effect.changes) {
+        effect.changes.forEach(change => {
+          if (change.key.includes('damage')) {
+            modifiers.push({
+              name: `${effect.name}: Damage`,
+              formula: change.value || '+1',
+              enabled: false,
+              source: 'effect',
+              id: `${effect.id}_${change.key}`
+            });
+          }
+        });
+      }
+    });
+  }
+
+  return modifiers;
 }
 
 function _getThresholdDescription(damageAmount, thresholds, hpDamage) {
@@ -728,6 +824,59 @@ export function extractRollTotal(message) {
   }
 }
 
+export async function rollDamageWithDialog(formula, options = {}) {
+  console.log("Daggerheart | rollDamageWithDialog called with:", { formula, options });
+
+  try {
+    const defaults = {
+      sourceActor: null,
+      weaponName: null,
+      weaponType: null,
+      weaponSlot: null, // Add weapon slot to determine which weapon's modifiers to show
+      isCritical: false,
+      damageModifiers: [],
+      availableModifiers: []
+    };
+
+    const config = { ...defaults, ...options };
+
+    // Get available modifiers from the source actor for the specific weapon slot
+    const availableModifiers = config.sourceActor ? _getAvailableModifiers(config.sourceActor, config.weaponSlot) : [];
+
+    console.log("Daggerheart | Showing damage dialog with config:", {
+      title: config.weaponName ? `${config.weaponName} Damage` : "Damage Roll",
+      formula,
+      sourceActor: config.sourceActor?.name,
+      weaponName: config.weaponName,
+      weaponType: config.weaponType,
+      weaponSlot: config.weaponSlot,
+      isCritical: config.isCritical,
+      damageModifiers: config.damageModifiers,
+      availableModifiers: [...availableModifiers, ...config.availableModifiers]
+    });
+
+    // Show the damage roll dialog
+    const result = await DamageRollDialog.show({
+      title: config.weaponName ? `${config.weaponName} Damage` : "Damage Roll",
+      formula,
+      sourceActor: config.sourceActor,
+      weaponName: config.weaponName,
+      weaponType: config.weaponType,
+      weaponSlot: config.weaponSlot,
+      isCritical: config.isCritical,
+      damageModifiers: config.damageModifiers,
+      availableModifiers: [...availableModifiers, ...config.availableModifiers]
+    });
+
+    console.log("Daggerheart | Damage dialog result:", result);
+    return result;
+  } catch (error) {
+    console.error("Daggerheart | Error in rollDamageWithDialog:", error);
+    ui.notifications.error("Failed to show damage dialog. Check console for details.");
+    throw error;
+  }
+}
+
 export async function rollDamage(formula, options = {}) {
   const defaults = {
     sourceActor: null,
@@ -739,10 +888,16 @@ export async function rollDamage(formula, options = {}) {
     isCritical: false,
     damageData: null,
     proficiency: null,
-    source: "manual"
+    source: "manual",
+    showDialog: false
   };
 
   const config = { ...defaults, ...options };
+
+  // If showDialog is true, use the dialog version
+  if (config.showDialog) {
+    return await rollDamageWithDialog(formula, config);
+  }
 
   let finalFormula = formula;
 
@@ -1142,7 +1297,7 @@ function _buildConsolidatedCharacterDamageFormula(damageData, proficiency, isCri
 
   const diceMatch = baseFormula.match(/^(\d*)d(\d+)(.*)$/i);
   if (diceMatch) {
-    const diceCount = (diceMatch[1] === "" || diceMatch[1] === "1") ? proficiency : parseInt(diceMatch[1]); 
+    const diceCount = (diceMatch[1] === "" || diceMatch[1] === "1") ? proficiency : parseInt(diceMatch[1]);
     const dieType = parseInt(diceMatch[2]);
     const remainder = diceMatch[3] || "";
     baseFormula = `${diceCount}d${dieType}${remainder}`;
@@ -1207,7 +1362,7 @@ function _calculateConsolidatedAdversaryCriticalDamage(damageFormula) {
     const dieSides = parseInt(sides);
     const maxValue = diceCount * dieSides;
     maxDamageTotal += maxValue;
-    return match; 
+    return match;
   });
 
   if (maxDamageTotal > 0) {

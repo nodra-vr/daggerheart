@@ -1677,7 +1677,6 @@ body.game .app textarea {
 .countdown-tracker .tracker-header .tracker-name-section .tracker-values {
   color: var(--dh-color-gray);
   font-size: 0.8em;
-  font-family: monospace;
   font-weight: 600;
 }
 .countdown-tracker .tracker-header .tracker-controls {
@@ -2007,7 +2006,6 @@ body.game .app textarea {
   display: flex;
   align-items: center;
   gap: var(--dh-space-sm);
-  font-family: monospace;
 }
 .daggerheart-dialog.countdown-management-dialog .management-tracker .tracker-info .tracker-details .visibility-indicator.visible {
   color: var(--dh-color-teal);
@@ -5261,6 +5259,12 @@ input.trait-effects.resize-ta {
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--dh-color-gold);
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: element;
+}
+.daggerheart.sheet.environment .tab.adversaries .adversaries-grid .adversary-card .adversary-image img:active {
+  cursor: grabbing;
 }
 .daggerheart.sheet.environment .tab.adversaries .adversaries-grid .adversary-card .adversary-image i {
   font-size: 2em;
@@ -5298,6 +5302,8 @@ input.trait-effects.resize-ta {
   gap: 0.25em;
   opacity: 0;
   transition: opacity 0.2s ease;
+  z-index: 10;
+  pointer-events: none;
 }
 .daggerheart.sheet.environment .tab.adversaries .adversaries-grid .adversary-card .adversary-controls .adversary-control {
   background: rgba(11, 10, 19, 0.9);
@@ -5312,6 +5318,7 @@ input.trait-effects.resize-ta {
   font-size: 0.7em;
   cursor: pointer;
   transition: all 0.2s ease;
+  pointer-events: auto;
 }
 .daggerheart.sheet.environment .tab.adversaries .adversaries-grid .adversary-card .adversary-controls .adversary-control:hover {
   background: var(--dh-color-gold);
@@ -5778,6 +5785,138 @@ input.trait-effects.resize-ta {
   padding-bottom: 0;
 }
 
+/* ====================================
+   DAMAGE ROLL DIALOG STYLES
+   Used for damage roll configuration
+   ==================================== */
+.daggerheart-dialog.daggerheart-damage-dialog .dialog-content {
+  padding-bottom: 0;
+}
+.daggerheart-dialog.daggerheart-damage-dialog .formula-display,
+.daggerheart-dialog.daggerheart-damage-dialog .final-formula-display {
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-md);
+  padding: var(--dh-space-lg);
+  font-size: var(--dh-font-size-lg);
+  text-align: center;
+  color: var(--dh-color-off-white);
+  font-weight: var(--dh-font-weight-semibold);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .damage-formula-input {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  width: 100%;
+  outline: none;
+}
+.daggerheart-dialog.daggerheart-damage-dialog .damage-formula-input:focus {
+  background: rgba(67, 63, 100, 0.3);
+  border-radius: var(--dh-radius-sm);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .damage-formula-input.invalid {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .final-formula-display.invalid {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .critical-notice {
+  background: rgba(255, 162, 0, 0.2);
+  border: 1px solid var(--dh-color-gold);
+  border-radius: var(--dh-radius-md);
+  padding: var(--dh-space-md);
+  text-align: center;
+  color: var(--dh-color-gold);
+  font-weight: var(--dh-font-weight-bold);
+  margin-top: var(--dh-space-sm);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .critical-notice i {
+  margin-right: var(--dh-space-xs);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifiers-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dh-space-sm);
+  max-height: 200px;
+  overflow-y: auto;
+  padding: var(--dh-space-xs);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item {
+  display: flex;
+  align-items: center;
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-md);
+  padding: var(--dh-space-md);
+  cursor: pointer;
+  gap: 1em;
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item:hover {
+  background: rgba(67, 63, 100, 0.5);
+  border-color: var(--dh-color-gold);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item.enabled {
+  background: rgba(255, 162, 0, 0.1);
+  border-color: var(--dh-color-gold);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item.enabled .modifier-name {
+  color: var(--dh-color-gold);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item.enabled .modifier-formula {
+  background: rgba(255, 162, 0, 0.2);
+  border-color: var(--dh-color-gold);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item.permanent {
+  border-style: dashed;
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item.permanent .permanent-indicator {
+  color: var(--dh-color-teal);
+  font-size: 0.8em;
+  font-weight: var(--dh-font-weight-bold);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item .modifier-checkbox {
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item .modifier-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  margin: 0;
+  gap: 1em;
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item .modifier-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dh-space-xs);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item .modifier-name {
+  font-weight: var(--dh-font-weight-semibold);
+  color: var(--dh-color-off-white);
+  font-size: var(--dh-font-size-base);
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item .modifier-source {
+  font-size: var(--dh-font-size-sm);
+  color: #a0a0a0;
+  font-style: italic;
+}
+.daggerheart-dialog.daggerheart-damage-dialog .modifier-item .modifier-formula {
+  color: var(--dh-color-gold);
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--dh-space-xs) var(--dh-space-sm);
+  border-radius: var(--dh-radius-sm);
+  font-size: var(--dh-font-size-sm);
+  font-weight: var(--dh-font-weight-bold);
+  border: 1px solid rgba(255, 162, 0, 0.3);
+}
+
 .daggerheart-dialog.daggerheart-roll-dialog {
   /* ====================================
      DICE GRID SYSTEM STYLES
@@ -6084,13 +6223,13 @@ input.trait-effects.resize-ta {
 
 /* Hope and Fear Roll Background Styling */
 .chat-message.dh-hope-roll {
-  background: linear-gradient(135deg, rgba(243, 194, 103, 0.25) 0%, rgba(255, 235, 59, 0.15) 100%);
-  border: 1px solid rgba(243, 194, 103, 0.6);
-  box-shadow: 0 2px 8px rgba(243, 194, 103, 0.2);
+  background: linear-gradient(135deg, rgba(96, 69, 20, 0.8) 0%, rgb(206, 134, 41) 100%);
+  border: 1px solid rgba(243, 194, 103, 0.8);
+  box-shadow: 0 2px 8px rgba(243, 194, 103, 0.3);
 }
 .chat-message.dh-hope-roll.whisper {
-  background: linear-gradient(135deg, rgba(243, 194, 103, 0.2) 0%, rgba(255, 235, 59, 0.1) 100%);
-  border: 1px solid rgba(243, 194, 103, 0.5);
+  background: linear-gradient(135deg, rgba(96, 69, 20, 0.8) 0%, rgb(206, 134, 41) 100%);
+  border: 1px solid rgba(243, 194, 103, 0.7);
 }
 
 .chat-message.dh-fear-roll {
@@ -10472,7 +10611,6 @@ button.weapon-locked:hover {
   background: rgba(0, 0, 0, 0.3);
   padding: 2px 4px;
   border-radius: 3px;
-  font-family: monospace;
 }
 .daggerheart.sheet.item .card-description .description-editor .editor-menu {
   background: rgba(67, 63, 100, 0.4);

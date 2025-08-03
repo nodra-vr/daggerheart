@@ -343,6 +343,13 @@
                             object-fit: cover;
                             border-radius: 50%;
                             border: 2px solid var(--dh-color-gold);
+                            cursor: grab;
+                            user-select: none;
+                            -webkit-user-drag: element;
+                            
+                            &:active {
+                                cursor: grabbing;
+                            }
                         }
 
                         i {
@@ -386,6 +393,8 @@
                         gap: 0.25em;
                         opacity: 0;
                         transition: opacity 0.2s ease;
+                        z-index: 10;
+                        pointer-events: none;
 
                         .adversary-control {
                             background: rgba(11, 10, 19, 0.9);
@@ -400,6 +409,7 @@
                             font-size: 0.7em;
                             cursor: pointer;
                             transition: all 0.2s ease;
+                            pointer-events: auto;
 
                             &:hover {
                                 background: var(--dh-color-gold);

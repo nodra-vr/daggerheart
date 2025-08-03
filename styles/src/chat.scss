@@ -107,13 +107,13 @@
 
 /* Hope and Fear Roll Background Styling */
 .chat-message.dh-hope-roll {
-  background: linear-gradient(135deg, rgba(243, 194, 103, 0.25) 0%, rgba(255, 235, 59, 0.15) 100%);
-  border: 1px solid rgba(243, 194, 103, 0.6);
-  box-shadow: 0 2px 8px rgba(243, 194, 103, 0.2);
+  background: linear-gradient(135deg, rgba(96, 69, 20, 0.8) 0%, rgb(206, 134, 41) 100%);
+  border: 1px solid rgba(243, 194, 103, 0.8);
+  box-shadow: 0 2px 8px rgba(243, 194, 103, 0.3);
 
   &.whisper {
-    background: linear-gradient(135deg, rgba(243, 194, 103, 0.2) 0%, rgba(255, 235, 59, 0.1) 100%);
-    border: 1px solid rgba(243, 194, 103, 0.5);
+    background: linear-gradient(135deg, rgba(96, 69, 20, 0.8) 0%, rgb(206, 134, 41) 100%);
+    border: 1px solid rgba(243, 194, 103, 0.7);
   }
 }
 

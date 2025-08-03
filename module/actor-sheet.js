@@ -1808,6 +1808,13 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     if (damageValueDisplay && rollType === "damage") {
       const fieldPath = damageValueDisplay.dataset.field;
       damageData = foundry.utils.getProperty(this.actor, fieldPath) || damageValueDisplay.textContent.trim() || '1d8';
+      
+      // Extract weapon slot from field path for modifier filtering
+      if (fieldPath && fieldPath.includes('weapon-main')) {
+        event.currentTarget.dataset.weaponType = "primary";
+      } else if (fieldPath && fieldPath.includes('weapon-off')) {
+        event.currentTarget.dataset.weaponType = "secondary";
+      }
     } else if (rollValueInput && (rollType === "damage" || rollType === "healing")) {
       damageData = rollValueInput.value.trim() || '1d8';
     } else {
@@ -1895,10 +1902,21 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   async _rollBasic(basicName, basicValue) {
 
     if (this._pendingRollType === "damage") {
+      // Try to determine weapon slot from the pending weapon name or basic name
+      let weaponSlot = null;
+      const weaponName = this._pendingWeaponName || basicName;
+      
+      // Check if this is a weapon damage roll by looking at the name or field
+      if (weaponName.toLowerCase().includes('primary') || weaponName.toLowerCase().includes('main')) {
+        weaponSlot = 'weapon-main';
+      } else if (weaponName.toLowerCase().includes('secondary') || weaponName.toLowerCase().includes('off')) {
+        weaponSlot = 'weapon-off';
+      }
 
-      await game.daggerheart.damageApplication.rollDamage(basicValue, {
-        flavor: `<p class="roll-flavor-line"><b>${basicName}</b></p>`,
-        sourceActor: this.actor
+      await game.daggerheart.damageApplication.rollDamageWithDialog(basicValue, {
+        sourceActor: this.actor,
+        weaponName: weaponName,
+        weaponSlot: weaponSlot
       });
     } else if (this._pendingRollType === "healing") {
 
