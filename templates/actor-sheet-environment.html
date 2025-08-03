@@ -1,47 +1,50 @@
 <form class="flexcol {{cssClass}}" autocomplete="off">
     <div class="item-bg" style="background-image: url('{{data.img}}');"></div>
     <header class="sheet-header environment-header">
-        <div class="environment-title-section">
-            <h1 class="environment-name">
-                <input name="name" type="text" value="{{data.name}}" placeholder="{{localize 'DH.Name'}}" />
-            </h1>
-            <div class="environment-meta">
-                <div class="environment-tags">
-                    <span class="environment-tag tier-tag">
-                        <input type="text" name="system.tier" value="{{systemData.tier}}"
-                            placeholder="{{localize 'DH.Tier'}}" />
-                    </span>
-                    <span class="environment-tag type-tag">
-                        <input type="text" name="system.typing" value="{{systemData.typing}}"
-                            placeholder="{{localize 'DH.Typing'}}" />
-                    </span>
-                </div>
-                <div class="environment-difficulty">
-                    <div class="attribute-value-display defense-value-display"
-                        data-field="system.defenses.difficulty.value" data-label="Difficulty" data-has-modifiers="true"
-                        data-min="0">{{systemData.defenses.difficulty.value}}</div>
-                    <label data-trait-tooltip="{{systemData.defenses.difficulty.tooltip}}">{{localize "DH.Difficulty"}}</label>
+        <div class="header-wrapper">
+            <div class="header-left">
+                <div class="portrait-container square-portrait">
+                    <div class="portrait-image-wrapper">
+                        <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
+                    </div>
                 </div>
             </div>
-        </div>
+            <div class="header-right">
+                <div class="header-top-fields">
+                    <h1 class="environment-name">
+                        <input name="name" type="text" value="{{data.name}}" placeholder="{{localize 'DH.Name'}}" />
+                    </h1>
+                    <div class="environment-meta">
+                        <div class="environment-tags">
+                            <span class="environment-tag tier-tag">
+                                <input type="text" name="system.tier" value="{{systemData.tier}}"
+                                    placeholder="{{localize 'DH.Tier'}}" />
+                            </span>
+                            <span class="environment-tag type-tag">
+                                <input type="text" name="system.typing" value="{{systemData.typing}}"
+                                    placeholder="{{localize 'DH.Typing'}}" />
+                            </span>
+                        </div>
+                        <div class="environment-difficulty">
+                            <div class="attribute-value-display defense-value-display"
+                                data-field="system.defenses.difficulty.value" data-label="Difficulty" data-has-modifiers="true"
+                                data-min="0">{{systemData.defenses.difficulty.value}}</div>
+                            <label data-trait-tooltip="{{systemData.defenses.difficulty.tooltip}}">{{localize "DH.Difficulty"}}</label>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="environment-description-section">
-            <div class="environment-description">
-                <label>{{localize 'DH.ShortDescription'}}:</label>
-                <textarea name="system.shortDescription"
-                    placeholder="{{localize 'DH.ShortDescription'}}">{{systemData.shortDescription}}</textarea>
-            </div>
-            <div class="environment-impulses">
-                <label>{{localize 'DH.Impulses'}}:</label>
-                <textarea name="system.impulses"
-                    placeholder="{{localize 'DH.Impulses'}}">{{systemData.impulses}}</textarea>
-            </div>
-        </div>
-
-        <div class="environment-portrait-section">
-            <div class="portrait-container square-portrait">
-                <div class="portrait-image-wrapper">
-                    <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
+                <div class="environment-description-section">
+                    <div class="environment-description">
+                        <label>{{localize 'DH.ShortDescription'}}:</label>
+                        <textarea name="system.shortDescription"
+                            placeholder="{{localize 'DH.ShortDescription'}}">{{systemData.shortDescription}}</textarea>
+                    </div>
+                    <div class="environment-impulses">
+                        <label>{{localize 'DH.Impulses'}}:</label>
+                        <textarea name="system.impulses"
+                            placeholder="{{localize 'DH.Impulses'}}">{{systemData.impulses}}</textarea>
+                    </div>
                 </div>
             </div>
         </div>

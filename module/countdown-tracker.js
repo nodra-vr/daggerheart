@@ -138,7 +138,7 @@ export class CountdownTracker {
     });
 
     if (visibleTrackers.length === 0) {
-      return '<div class="no-trackers">No Visible Countdowns</div>';
+      return '';
     }
 
     return visibleTrackers.map(tracker => {

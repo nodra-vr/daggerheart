@@ -1298,6 +1298,18 @@ input[type=search]:focus {
 .npc {
   background: transparent;
 }
+.npc .header-resources-row {
+  margin-left: 0;
+  display: flex;
+  justify-content: space-evenly;
+}
+.npc .header-right {
+  height: 100%;
+}
+.npc .header-left .profile-img {
+  width: 200px;
+  height: 250px;
+}
 
 .companion {
   background: transparent;
@@ -3804,7 +3816,7 @@ body.game .app textarea {
 }
 
 .npc .sheet-header {
-  max-height: 30em;
+  max-height: 22em;
 }
 
 .header-top-container {
@@ -4078,7 +4090,7 @@ body.game .app textarea {
 .npc .portrait-image-wrapper {
   position: relative;
   width: 200px;
-  height: 200px;
+  height: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11694,13 +11706,6 @@ button.weapon-locked:hover {
   position: relative;
 }
 
-.portrait-image-wrapper {
-  position: relative;
-  width: 200px;
-  height: 200px;
-  flex-shrink: 0;
-}
-
 .profile-img {
   position: absolute;
   top: 0;
@@ -11886,14 +11891,6 @@ button.weapon-locked:hover {
 
 .npc .portrait-container {
   align-self: center;
-}
-.npc .portrait-image-wrapper {
-  position: relative;
-  width: 200px;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .portrait-buttons {

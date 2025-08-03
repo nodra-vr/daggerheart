@@ -65,6 +65,19 @@
 
 .npc {
   background: transparent;
+
+  .header-resources-row {
+    margin-left: 0;
+    display: flex;
+    justify-content: space-evenly;
+  }
+  .header-right {
+    height: 100%;
+  }
+  .header-left .profile-img {
+    width: 200px;
+    height: 250px;
+  }
 }
 
 .companion {

@@ -2,18 +2,27 @@
     <div class="item-bg" style="background-image: url('{{data.img}}');"></div>
     {{!-- Sheet Header --}}
     <header class="sheet-header">
-        <div class="header-main-container">
-            <div class="portrait-container">
-                <div class="portrait-image-wrapper">
-                    <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
-                    {{#if isOutOfScene}}
-                    <div class="death-overlay" title="Companion is out of scene!">
-                        <i class="fas fa-skull"></i>
+        <div class="header-wrapper">
+            <div class="header-left">
+                <div class="portrait-container">
+                    <div class="portrait-image-wrapper">
+                        <img class="profile-img" src="{{data.img}}" data-edit="img" title="{{data.name}}" />
+                        {{#if isOutOfScene}}
+                        <div class="death-overlay" title="Companion is out of scene!">
+                            <i class="fas fa-skull"></i>
+                        </div>
+                        {{/if}}
                     </div>
-                    {{/if}}
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="header-top-fields">
+                    <h1 class="charname">
+                        <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
+                    </h1>
                 </div>
 
-                <div class="portrait-resources">
+                <div class="header-resources-row">
                     <div class="resource stress">
                         <div class="resource-content">
                             <div class="resource-box">
@@ -30,12 +39,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="header-bottom-container">
-            <h1 class="charname">
-                <input name="name" type="text" value="{{data.name}}" placeholder="{{localize "DH.Name"}}" />
-            </h1>
         </div>
     </header>
 
