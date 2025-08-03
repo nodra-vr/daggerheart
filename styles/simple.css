@@ -5400,6 +5400,72 @@ input.trait-effects.resize-ta {
   color: #81ccc3;
 }
 
+/* Message Type Selection - Using global glass and interactive styles */
+.daggerheart-dialog .message-type-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--dh-space-md);
+  margin-top: var(--dh-space-sm);
+}
+
+.daggerheart-dialog .message-type-option {
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-lg);
+  padding: var(--dh-space-md);
+  transition: var(--dh-transition-fast);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+}
+.daggerheart-dialog .message-type-option:hover {
+  background: rgba(67, 63, 100, 0.5);
+  border-color: var(--dh-color-gold);
+  transform: translateY(-2px);
+  box-shadow: var(--dh-shadow-md);
+}
+.daggerheart-dialog .message-type-option input[type=radio] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.daggerheart-dialog .message-type-option .message-type-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--dh-space-xs);
+  text-align: center;
+  color: var(--dh-color-off-white);
+  font-size: var(--dh-font-size-sm);
+  font-weight: 500;
+}
+.daggerheart-dialog .message-type-option .message-type-label i {
+  font-size: var(--dh-font-size-lg);
+  color: var(--dh-color-gold);
+  margin-bottom: var(--dh-space-xs);
+}
+.daggerheart-dialog .message-type-option .message-type-label span {
+  font-size: var(--dh-font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.daggerheart-dialog .message-type-option input[type=radio]:checked + .message-type-label {
+  color: var(--dh-color-gold);
+}
+.daggerheart-dialog .message-type-option input[type=radio]:checked + .message-type-label i {
+  color: var(--dh-color-gold-light);
+}
+.daggerheart-dialog .message-type-option input[type=radio]:checked ~ .message-type-label {
+  color: var(--dh-color-gold);
+}
+.daggerheart-dialog .message-type-option input[type=radio]:checked ~ .message-type-label i {
+  color: var(--dh-color-gold-light);
+}
+
 /* Checkbox/Radio Group Container - Using global layout */
 .daggerheart-dialog .checkbox-group {
   display: flex;
