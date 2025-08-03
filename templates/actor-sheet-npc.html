@@ -18,30 +18,30 @@
         <div class="header-right">
                 <div class="header-top-fields">
                     <h1 class="charname">
-                        <input name="name" type="text" value="Cadaver Mass" placeholder="Name" style="font-size: 2.5em;">
+                        <input name="name" type="text" value="{{data.name}}" placeholder="Name" style="font-size: 2.5em;">
                     </h1>
                     <div class="header-domain">
-                        <input type="text" name="system.chosenDomains.domain-one" value="Tier 1" placeholder="Tier X" style="font-size: 1em;">
-                        <input type="text" name="system.chosenDomains.domain-two" value="Solo" placeholder="Solo" style="font-size: 1em;">
+                        <input type="text" name="system.chosenDomains.domain-one" value="{{systemData.chosenDomains.domain-one}}" placeholder="{{localize "DH.TierX"}}" style="font-size: 1em;">
+                        <input type="text" name="system.chosenDomains.domain-two" value="{{systemData.chosenDomains.domain-two}}" placeholder="{{localize "DH.Solo"}}" style="font-size: 1em;">
                     </div>
                 </div>
 
                 <div class="npc-defense-section">
                     <div class="defense" data-defense="evasion">
-                        <div class="attribute-value-display defense-value-display" data-field="system.defenses.evasion.value" data-label="Difficulty" data-has-modifiers="true" data-min="0">13</div>
-                        <label data-trait-tooltip="Your character's Evasion reflects how hard it is for adversaries to hit them.">Difficulty</label>
+                        <div class="attribute-value-display defense-value-display" data-field="system.defenses.evasion.value" data-label="Difficulty" data-has-modifiers="true" data-min="0">{{systemData.defenses.evasion.value}}</div>
+                        <label data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize "DH.Difficulty"}}</label>
                     </div>
                     <div class="threshold-group">
                         <label>Threshold</label>
                         <div class="threshold-values">
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">Mark 1 HP</span>
                             <div class="resource-group">
-                                <input type="number" name="system.threshold.major" value="8">
+                                <input type="number" name="system.threshold.major" value="{{systemData.threshold.major}}">
                                 <a class="trait-effects">Major</a>
                             </div>
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">Mark 2 HP</span>
                             <div class="resource-group">
-                                <input type="number" name="system.threshold.severe" value="15">
+                                <input type="number" name="system.threshold.severe" value="{{systemData.threshold.severe}}">
                                 <a class="trait-effects">Severe</a>
                             </div>
                             <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">Mark 3 HP</span>
@@ -53,9 +53,9 @@
                     <div class="resource health">
                         <div class="resource-content">
                             <div class="resource-box">
-                                <input type="number" name="system.health.value" value="0" min="0" max="10">
+                                <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}">
                                 <span>/</span>
-                                <input type="number" name="system.health.max" value="10" min="0">
+                                <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0">
                             </div>
                         </div>
                         <div class="resource-label-controls">
@@ -67,9 +67,9 @@
                     <div class="resource stress">
                         <div class="resource-content">
                             <div class="resource-box">
-                                <input type="number" name="system.stress.value" value="0" min="0" max="3">
+                                <input type="number" name="system.stress.value" value="{{systemData.stress.value}}" min="0" max="{{systemData.stress.max}}">
                                 <span>/</span>
-                                <input type="number" name="system.stress.max" value="3" min="0">
+                                <input type="number" name="system.stress.max" value="{{systemData.stress.max}}" min="0">
                             </div>
                         </div>
                         <div class="resource-label-controls">

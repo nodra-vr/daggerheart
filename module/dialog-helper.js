@@ -623,7 +623,7 @@ export class DaggerheartDialogHelper {
             <input type="radio" name="messageType" value="public" ${initialValues.messageType === 'public' ? 'checked' : ''}>
             <span class="message-type-label">
               <i class="fas fa-globe"></i>
-              <span>Public</span>
+              <span>Public Roll</span>
             </span>
           </label>
           <label class="message-type-option">
@@ -883,7 +883,7 @@ export class DaggerheartDialogHelper {
             <input type="radio" name="messageType" value="public" ${initialValues.messageType === 'public' ? 'checked' : ''}>
             <span class="message-type-label">
               <i class="fas fa-globe"></i>
-              <span>Public</span>
+              <span>Public Roll</span>
             </span>
           </label>
           <label class="message-type-option">
