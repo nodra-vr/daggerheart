@@ -5406,6 +5406,7 @@ input.trait-effects.resize-ta {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--dh-space-md);
   margin-top: var(--dh-space-sm);
+  width: 100%;
 }
 
 .daggerheart-dialog .message-type-option {
@@ -5435,10 +5436,11 @@ input.trait-effects.resize-ta {
 }
 .daggerheart-dialog .message-type-option .message-type-label {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 4px;
   gap: var(--dh-space-xs);
-  text-align: center;
   color: var(--dh-color-off-white);
   font-size: var(--dh-font-size-sm);
   font-weight: 500;
