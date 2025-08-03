@@ -376,7 +376,8 @@ export async function _rollHope(options = {}) {
     sendToChat: true,
     flavor: null,
     returnRoll: false,
-    speaker: null
+    speaker: null,
+    messageType: 'public'
   };
 
   const config = { ...defaults, ...options };
@@ -398,7 +399,7 @@ export async function _rollHope(options = {}) {
     const defaultFlavor = config.flavor || `<p class="roll-flavor-line"><b>Hope Die</b>${config.modifier !== 0 ? (config.modifier > 0 ? ` +${config.modifier}` : ` ${config.modifier}`) : ''}</p>`;
 
     try {
-      const chatMessage = await ChatMessage.create({
+      const chatMessageData = {
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: defaultFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -410,7 +411,18 @@ export async function _rollHope(options = {}) {
             modifier: config.modifier
           }
         }
-      });
+      };
+
+      if (config.messageType === 'blind') {
+        chatMessageData.whisper = game.users.filter(u => u.isGM).map(u => u.id);
+      } else if (config.messageType === 'private') {
+        chatMessageData.whisper = [game.user.id];
+      } else if (config.messageType === 'self') {
+        chatMessageData.whisper = [game.user.id];
+        chatMessageData.blind = true;
+      }
+
+      const chatMessage = await ChatMessage.create(chatMessageData);
 
       if (chatMessage?.id && game.dice3d) {
         await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
@@ -445,7 +457,8 @@ export async function _rollFear(options = {}) {
     sendToChat: true,
     flavor: null,
     returnRoll: false,
-    speaker: null
+    speaker: null,
+    messageType: 'public'
   };
 
   const config = { ...defaults, ...options };
@@ -467,7 +480,7 @@ export async function _rollFear(options = {}) {
     const defaultFlavor = config.flavor || `<p class="roll-flavor-line"><b>Fear Die</b>${config.modifier !== 0 ? (config.modifier > 0 ? ` +${config.modifier}` : ` ${config.modifier}`) : ''}</p>`;
 
     try {
-      const chatMessage = await ChatMessage.create({
+      const chatMessageData = {
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: defaultFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -479,7 +492,18 @@ export async function _rollFear(options = {}) {
             modifier: config.modifier
           }
         }
-      });
+      };
+
+      if (config.messageType === 'blind') {
+        chatMessageData.whisper = game.users.filter(u => u.isGM).map(u => u.id);
+      } else if (config.messageType === 'private') {
+        chatMessageData.whisper = [game.user.id];
+      } else if (config.messageType === 'self') {
+        chatMessageData.whisper = [game.user.id];
+        chatMessageData.blind = true;
+      }
+
+      const chatMessage = await ChatMessage.create(chatMessageData);
 
       if (chatMessage?.id && game.dice3d) {
         await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
@@ -518,7 +542,8 @@ export async function _rollDuality(options = {}) {
     flavor: null,
     returnRoll: false,
     speaker: null,
-    reaction: false
+    reaction: false,
+    messageType: 'public'
   };
 
   const config = { ...defaults, ...options };
@@ -620,7 +645,7 @@ export async function _rollDuality(options = {}) {
 
     try {
       const speaker = config.speaker || ChatMessage.getSpeaker();
-      const chatMessage = await ChatMessage.create({
+      const chatMessageData = {
         speaker: speaker,
         flavor: finalFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -642,7 +667,18 @@ export async function _rollDuality(options = {}) {
             isDuality: true 
           }
         }
-      });
+      };
+
+      if (config.messageType === 'blind') {
+        chatMessageData.whisper = game.users.filter(u => u.isGM).map(u => u.id);
+      } else if (config.messageType === 'private') {
+        chatMessageData.whisper = [game.user.id];
+      } else if (config.messageType === 'self') {
+        chatMessageData.whisper = [game.user.id];
+        chatMessageData.blind = true;
+      }
+
+      const chatMessage = await ChatMessage.create(chatMessageData);
 
       if (chatMessage?.id && game.dice3d) {
         await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
@@ -693,7 +729,8 @@ export async function _rollNPC(options = {}) {
     flavor: null,
     returnRoll: false,
     speaker: null,
-    reaction: false
+    reaction: false,
+    messageType: 'public'
   };
 
   const config = { ...defaults, ...options };
@@ -758,7 +795,7 @@ export async function _rollNPC(options = {}) {
     }
 
     try {
-      const chatMessage = await ChatMessage.create({
+      const chatMessageData = {
         speaker: config.speaker || ChatMessage.getSpeaker(),
         flavor: finalFlavor,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -774,7 +811,18 @@ export async function _rollNPC(options = {}) {
             reaction: config.reaction
           }
         }
-      });
+      };
+
+      if (config.messageType === 'blind') {
+        chatMessageData.whisper = game.users.filter(u => u.isGM).map(u => u.id);
+      } else if (config.messageType === 'private') {
+        chatMessageData.whisper = [game.user.id];
+      } else if (config.messageType === 'self') {
+        chatMessageData.whisper = [game.user.id];
+        chatMessageData.blind = true;
+      }
+
+      const chatMessage = await ChatMessage.create(chatMessageData);
 
       if (chatMessage?.id && game.dice3d) {
         await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
@@ -1211,6 +1259,7 @@ export async function _dualityWithDialog(config) {
   rollDetails.disadvantage = rollDetails.disadvantage || 0;
   rollDetails.modifier = rollDetails.modifier || 0;
   rollDetails.reaction = rollDetails.reaction || false;
+  rollDetails.messageType = rollDetails.messageType || 'public';
 
   if (!skipDialog) {
     const dialogChoice = await DaggerheartDialogHelper.showDualityRollDialog({
@@ -1223,7 +1272,7 @@ export async function _dualityWithDialog(config) {
     rollDetails = { ...dialogChoice };
   }
 
-  const { advantage, disadvantage, modifier, hopeDieSize, fearDieSize, reaction } = rollDetails;
+  const { advantage, disadvantage, modifier, hopeDieSize, fearDieSize, reaction, messageType } = rollDetails;
 
   const normalizedAdvantage = normalizeAdvantageData(advantage);
   const normalizedDisadvantage = normalizeAdvantageData(disadvantage);
@@ -1301,7 +1350,7 @@ export async function _dualityWithDialog(config) {
     }
 
     const speaker = actor ? ChatMessage.getSpeaker({ actor }) : ChatMessage.getSpeaker();
-    const chatMessage = await ChatMessage.create({
+    const chatMessageData = {
       speaker: speaker,
       flavor: finalFlavor,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -1326,7 +1375,18 @@ export async function _dualityWithDialog(config) {
           automationHandled: false
         }
       }
-    });
+    };
+
+    if (messageType === 'blind') {
+      chatMessageData.whisper = game.users.filter(u => u.isGM).map(u => u.id);
+    } else if (messageType === 'private') {
+      chatMessageData.whisper = [game.user.id];
+    } else if (messageType === 'self') {
+      chatMessageData.whisper = [game.user.id];
+      chatMessageData.blind = true;
+    }
+
+    const chatMessage = await ChatMessage.create(chatMessageData);
 
     if (chatMessage?.id && game.dice3d) {
       await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
@@ -1363,6 +1423,7 @@ export async function _npcRollWithDialog(config) {
   rollDetails.disadvantage = rollDetails.disadvantage || 0;
   rollDetails.modifier = rollDetails.modifier || 0;
   rollDetails.reaction = rollDetails.reaction || false;
+  rollDetails.messageType = rollDetails.messageType || 'public';
 
   if (!skipDialog) {
     const dialogChoice = await DaggerheartDialogHelper.showNPCRollDialog({
@@ -1374,7 +1435,7 @@ export async function _npcRollWithDialog(config) {
     rollDetails = { ...dialogChoice };
   }
 
-  const { advantage, disadvantage, modifier, dieSize, reaction } = rollDetails;
+  const { advantage, disadvantage, modifier, dieSize, reaction, messageType } = rollDetails;
 
   const result = await _rollNPC({
     dieSize,
@@ -1427,7 +1488,7 @@ export async function _npcRollWithDialog(config) {
   const pendingWeaponName = sheet?.getPendingWeaponName ? sheet.getPendingWeaponName() : "";
 
   try {
-    const chatMessage = await ChatMessage.create({
+    const chatMessageData = {
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor: finalFlavor,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -1442,7 +1503,18 @@ export async function _npcRollWithDialog(config) {
           reaction
         }
       }
-    });
+    };
+
+    if (messageType === 'blind') {
+      chatMessageData.whisper = game.users.filter(u => u.isGM).map(u => u.id);
+    } else if (messageType === 'private') {
+      chatMessageData.whisper = [game.user.id];
+    } else if (messageType === 'self') {
+      chatMessageData.whisper = [game.user.id];
+      chatMessageData.blind = true;
+    }
+
+    const chatMessage = await ChatMessage.create(chatMessageData);
 
     if (chatMessage?.id && game.dice3d) {
       await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);

@@ -512,7 +512,8 @@ export class DaggerheartDialogHelper {
       fearDieSize: 'd12',
       advantage: createEmptyAdvantageSet(),
       disadvantage: createEmptyAdvantageSet(),
-      modifier: 0
+      modifier: 0,
+      messageType: 'public'
     };
 
     const normalizedRollDetails = {
@@ -615,6 +616,39 @@ export class DaggerheartDialogHelper {
         </div>
       </div>
       ${experienceSection}
+      <div class="flex-col">
+        <span class="label-bar">Message Type</span>
+        <div class="message-type-selection">
+          <label class="message-type-option">
+            <input type="radio" name="messageType" value="public" ${initialValues.messageType === 'public' ? 'checked' : ''}>
+            <span class="message-type-label">
+              <i class="fas fa-globe"></i>
+              <span>Public</span>
+            </span>
+          </label>
+          <label class="message-type-option">
+            <input type="radio" name="messageType" value="blind" ${initialValues.messageType === 'blind' ? 'checked' : ''}>
+            <span class="message-type-label">
+              <i class="fas fa-eye-slash"></i>
+              <span>Blind GM</span>
+            </span>
+          </label>
+          <label class="message-type-option">
+            <input type="radio" name="messageType" value="private" ${initialValues.messageType === 'private' ? 'checked' : ''}>
+            <span class="message-type-label">
+              <i class="fas fa-user-secret"></i>
+              <span>Private Roll</span>
+            </span>
+          </label>
+          <label class="message-type-option">
+            <input type="radio" name="messageType" value="self" ${initialValues.messageType === 'self' ? 'checked' : ''}>
+            <span class="message-type-label">
+              <i class="fas fa-user"></i>
+              <span>Self Only</span>
+            </span>
+          </label>
+        </div>
+      </div>
     </div>
     </form>
     `;
@@ -676,7 +710,8 @@ export class DaggerheartDialogHelper {
 
             const hopeDieSize = html.find('#hopeDieSize').val();
             const fearDieSize = html.find('#fearDieSize').val();
-            return { advantage: netResult.advantage, disadvantage: netResult.disadvantage, modifier, hopeDieSize, fearDieSize };
+            const messageType = html.find('input[name="messageType"]:checked').val() || 'public';
+            return { advantage: netResult.advantage, disadvantage: netResult.disadvantage, modifier, hopeDieSize, fearDieSize, messageType };
           }
         },
         rollReaction: {
@@ -713,7 +748,8 @@ export class DaggerheartDialogHelper {
             });
             const hopeDieSize = html.find('#hopeDieSize').val();
             const fearDieSize = html.find('#fearDieSize').val();
-            return { advantage: netResult.advantage, disadvantage: netResult.disadvantage, modifier, hopeDieSize, fearDieSize, reaction: true };
+            const messageType = html.find('input[name="messageType"]:checked').val() || 'public';
+            return { advantage: netResult.advantage, disadvantage: netResult.disadvantage, modifier, hopeDieSize, fearDieSize, reaction: true, messageType };
           }
         },
         cancel: {
@@ -803,7 +839,8 @@ export class DaggerheartDialogHelper {
       dieSize: 'd20',
       advantage: 0,
       disadvantage: 0,
-      modifier: 0
+      modifier: 0,
+      messageType: 'public'
     };
 
     const initialValues = { ...defaults, ...rollDetails };
@@ -839,6 +876,39 @@ export class DaggerheartDialogHelper {
           </div>
         </div>
       </div>
+      <div class="flex-col">
+        <span class="label-bar">Message Type</span>
+        <div class="message-type-selection">
+          <label class="message-type-option">
+            <input type="radio" name="messageType" value="public" ${initialValues.messageType === 'public' ? 'checked' : ''}>
+            <span class="message-type-label">
+              <i class="fas fa-globe"></i>
+              <span>Public</span>
+            </span>
+          </label>
+          <label class="message-type-option">
+            <input type="radio" name="messageType" value="blind" ${initialValues.messageType === 'blind' ? 'checked' : ''}>
+            <span class="message-type-label">
+              <i class="fas fa-eye-slash"></i>
+              <span>Blind GM</span>
+            </span>
+          </label>
+          <label class="message-type-option">
+            <input type="radio" name="messageType" value="private" ${initialValues.messageType === 'private' ? 'checked' : ''}>
+            <span class="message-type-label">
+              <i class="fas fa-user-secret"></i>
+              <span>Private Roll</span>
+            </span>
+          </label>
+          <label class="message-type-option">
+            <input type="radio" name="messageType" value="self" ${initialValues.messageType === 'self' ? 'checked' : ''}>
+            <span class="message-type-label">
+              <i class="fas fa-user"></i>
+              <span>Self Only</span>
+            </span>
+          </label>
+        </div>
+      </div>
     </div>
     </form>
     `;
@@ -856,7 +926,8 @@ export class DaggerheartDialogHelper {
             const disadvantage = parseInt(html.find('#npcDiceDisadvantageInput').val()) || 0;
             const modifier = parseInt(html.find('#npcDiceModifierInput').val()) || 0;
             const dieSize = defaults.dieSize;
-            return { advantage, disadvantage, modifier, dieSize };
+            const messageType = html.find('input[name="messageType"]:checked').val() || 'public';
+            return { advantage, disadvantage, modifier, dieSize, messageType };
           }
         },
         rollReaction: {
@@ -867,7 +938,8 @@ export class DaggerheartDialogHelper {
             const disadvantage = parseInt(html.find('#npcDiceDisadvantageInput').val()) || 0;
             const modifier = parseInt(html.find('#npcDiceModifierInput').val()) || 0;
             const dieSize = defaults.dieSize;
-            return { advantage, disadvantage, modifier, dieSize, reaction: true };
+            const messageType = html.find('input[name="messageType"]:checked').val() || 'public';
+            return { advantage, disadvantage, modifier, dieSize, reaction: true, messageType };
           }
         },
         cancel: {
