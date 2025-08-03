@@ -744,7 +744,7 @@ export async function _rollNPC(options = {}) {
     coreFormula += `kh`;
     flavorSuffix = ` with Advantage`;
   } else if (totalAdvantage < 0) {
-    coreFormula += `kh`;
+    coreFormula += `kl`;
     flavorSuffix = ` with Disadvantage`;
   }
 
