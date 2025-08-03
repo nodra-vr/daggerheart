@@ -5400,71 +5400,90 @@ input.trait-effects.resize-ta {
   color: #81ccc3;
 }
 
-/* Message Type Selection - Using global glass and interactive styles */
+/* Message Type Selection - Horizontal radio button layout */
 .daggerheart-dialog .message-type-selection {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: var(--dh-space-md);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 0;
   margin-top: var(--dh-space-sm);
   width: 100%;
+  padding: var(--dh-space-md) 0;
 }
 
 .daggerheart-dialog .message-type-option {
-  background: var(--dh-bg-section);
-  border: 1px solid var(--dh-border-purple-light);
-  border-radius: var(--dh-radius-lg);
-  padding: var(--dh-space-md);
-  transition: var(--dh-transition-fast);
-  cursor: pointer;
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 60px;
-}
-.daggerheart-dialog .message-type-option:hover {
-  background: rgba(67, 63, 100, 0.5);
-  border-color: var(--dh-color-gold);
-  transform: translateY(-2px);
-  box-shadow: var(--dh-shadow-md);
-}
-.daggerheart-dialog .message-type-option input[type=radio] {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.daggerheart-dialog .message-type-option .message-type-label {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-  padding-top: 4px;
-  gap: var(--dh-space-xs);
+  gap: var(--dh-space-sm);
+  cursor: pointer;
   color: var(--dh-color-off-white);
   font-size: var(--dh-font-size-sm);
   font-weight: 500;
+  transition: var(--dh-transition-fast);
+  padding: var(--dh-space-xs) var(--dh-space-sm);
+  border-radius: var(--dh-radius-sm);
+  line-height: 1;
+}
+.daggerheart-dialog .message-type-option:hover {
+  color: var(--dh-color-gold);
+  background: rgba(67, 63, 100, 0.3);
+}
+.daggerheart-dialog .message-type-option input[type=radio] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--dh-radius-full);
+  background: var(--dh-bg-input);
+  cursor: pointer;
+  transition: var(--dh-transition-fast);
+  flex-shrink: 0;
+  position: relative;
+  margin: 0;
+  vertical-align: middle;
+}
+.daggerheart-dialog .message-type-option input[type=radio]:checked {
+  background: var(--dh-color-gold);
+  border-color: var(--dh-color-gold-light);
+}
+.daggerheart-dialog .message-type-option input[type=radio]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: var(--dh-color-off-black);
+  border-radius: var(--dh-radius-full);
+}
+.daggerheart-dialog .message-type-option input[type=radio]:hover:not(:disabled) {
+  border-color: var(--dh-color-gold);
+  transform: scale(1.1);
+}
+.daggerheart-dialog .message-type-option .message-type-label {
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-xs);
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1;
 }
 .daggerheart-dialog .message-type-option .message-type-label i {
-  font-size: var(--dh-font-size-lg);
+  font-size: var(--dh-font-size-base);
   color: var(--dh-color-gold);
-  margin-bottom: var(--dh-space-xs);
 }
 .daggerheart-dialog .message-type-option .message-type-label span {
-  font-size: var(--dh-font-size-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: var(--dh-font-size-sm);
+  text-transform: none;
+  letter-spacing: normal;
 }
 .daggerheart-dialog .message-type-option input[type=radio]:checked + .message-type-label {
   color: var(--dh-color-gold);
 }
 .daggerheart-dialog .message-type-option input[type=radio]:checked + .message-type-label i {
-  color: var(--dh-color-gold-light);
-}
-.daggerheart-dialog .message-type-option input[type=radio]:checked ~ .message-type-label {
-  color: var(--dh-color-gold);
-}
-.daggerheart-dialog .message-type-option input[type=radio]:checked ~ .message-type-label i {
   color: var(--dh-color-gold-light);
 }
 

@@ -623,28 +623,28 @@ export class DaggerheartDialogHelper {
             <input type="radio" name="messageType" value="public" ${initialValues.messageType === 'public' ? 'checked' : ''}>
             <span class="message-type-label">
               <i class="fas fa-globe"></i>
-              <span>Public Roll</span>
+              <span>Public</span>
             </span>
           </label>
           <label class="message-type-option">
             <input type="radio" name="messageType" value="blind" ${initialValues.messageType === 'blind' ? 'checked' : ''}>
             <span class="message-type-label">
               <i class="fas fa-eye-slash"></i>
-              <span>Blind GM</span>
+              <span>Blind</span>
             </span>
           </label>
           <label class="message-type-option">
             <input type="radio" name="messageType" value="private" ${initialValues.messageType === 'private' ? 'checked' : ''}>
             <span class="message-type-label">
               <i class="fas fa-user-secret"></i>
-              <span>Private Roll</span>
+              <span>Private</span>
             </span>
           </label>
           <label class="message-type-option">
             <input type="radio" name="messageType" value="self" ${initialValues.messageType === 'self' ? 'checked' : ''}>
             <span class="message-type-label">
               <i class="fas fa-user"></i>
-              <span>Self Only</span>
+              <span>Self</span>
             </span>
           </label>
         </div>
@@ -883,28 +883,28 @@ export class DaggerheartDialogHelper {
             <input type="radio" name="messageType" value="public" ${initialValues.messageType === 'public' ? 'checked' : ''}>
             <span class="message-type-label">
               <i class="fas fa-globe"></i>
-              <span>Public Roll</span>
+              <span>Public</span>
             </span>
           </label>
           <label class="message-type-option">
             <input type="radio" name="messageType" value="blind" ${initialValues.messageType === 'blind' ? 'checked' : ''}>
             <span class="message-type-label">
               <i class="fas fa-eye-slash"></i>
-              <span>Blind GM</span>
+              <span>Blind</span>
             </span>
           </label>
           <label class="message-type-option">
             <input type="radio" name="messageType" value="private" ${initialValues.messageType === 'private' ? 'checked' : ''}>
             <span class="message-type-label">
               <i class="fas fa-user-secret"></i>
-              <span>Private Roll</span>
+              <span>Private</span>
             </span>
           </label>
           <label class="message-type-option">
             <input type="radio" name="messageType" value="self" ${initialValues.messageType === 'self' ? 'checked' : ''}>
             <span class="message-type-label">
               <i class="fas fa-user"></i>
-              <span>Self Only</span>
+              <span>Self</span>
             </span>
           </label>
         </div>
