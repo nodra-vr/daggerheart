@@ -45,7 +45,7 @@ export class DamageRollDialog {
           }
         },
         default: 'roll',
-        render: (html) => this._setupEventHandlers(html, parsedFormula)
+        render: (html) => this._setupEventHandlers(html, parsedFormula, sourceActor)
       });
 
       if (result && result.button === 'roll') {
@@ -66,14 +66,27 @@ export class DamageRollDialog {
           flavorText += `<p class="damage-modifiers">${game.i18n.localize("DH.DamageModifiers")}: ${enabledModifiers.join(', ')}</p>`;
         }
 
-        // Roll the damage
-        await rollDamage(finalFormula, {
+        // Roll the damage using the proper damage system that handles proficiency and critical damage
+        await rollDamage(result.baseFormula, {
           sourceActor,
           flavor: flavorText,
           weaponName,
           weaponType,
           isCritical,
-          sendToChat: true
+          sendToChat: true,
+          damageData: {
+            baseValue: result.baseFormula,
+            modifiers: result.enabledModifiers.map(name => {
+              const modifier = cleanModifiers.find(m => m.name === name);
+              return {
+                name: modifier?.name || name,
+                value: modifier?.formula || modifier?.value || '+1',
+                enabled: true
+              };
+            })
+          },
+          proficiency: sourceActor?.type === "character" ? 
+            Math.max(1, parseInt(sourceActor.system.proficiency?.value) || 1) : null
         });
       }
 
@@ -220,7 +233,7 @@ export class DamageRollDialog {
     `;
   }
 
-  static _setupEventHandlers(html, parsedFormula) {
+  static _setupEventHandlers(html, parsedFormula, sourceActor = null) {
     const formulaInput = html.find('#damage-formula-input');
     const finalFormulaDisplay = html.find('#final-formula-display');
 
@@ -228,11 +241,16 @@ export class DamageRollDialog {
       const baseFormula = formulaInput.val() || parsedFormula.originalFormula;
       const enabledModifiers = [];
 
-      let finalFormula = baseFormula;
+      // Preview what the formula will look like after proficiency processing
+      let finalFormula = this._previewProficiencyFormula(baseFormula, sourceActor);
 
-      // Validate base formula
+      // Validate base formula - allow simple dice patterns that will be processed by proficiency system
       try {
-        new Roll(baseFormula);
+        // Test if it's a valid roll formula or a proficiency dice pattern like "d12"
+        const isProficiencyDice = /^d\d+(\s*[+\-]\s*\d+)*$/i.test(baseFormula.trim());
+        if (!isProficiencyDice) {
+          new Roll(baseFormula);
+        }
         formulaInput.removeClass('invalid');
       } catch (error) {
         formulaInput.addClass('invalid');
@@ -260,9 +278,10 @@ export class DamageRollDialog {
         }
       });
 
-      // Validate final formula
+      // Validate final formula - show preview but don't validate since proficiency processing happens later
       try {
-        new Roll(finalFormula);
+        // For display purposes, show what the formula will look like
+        // The actual proficiency processing will happen in the damage system
         finalFormulaDisplay.text(finalFormula).removeClass('invalid');
       } catch (error) {
         finalFormulaDisplay.text('Invalid Formula').addClass('invalid');
@@ -300,13 +319,30 @@ export class DamageRollDialog {
   static _processRollResult(html, parsedFormula) {
     const finalFormula = html.data('finalFormula') || parsedFormula.originalFormula;
     const enabledModifiers = html.data('enabledModifiers') || [];
+    const baseFormula = html.find('#damage-formula-input').val() || parsedFormula.originalFormula;
 
     return {
       button: 'roll',
       finalFormula,
       enabledModifiers,
-      baseFormula: html.find('#damage-formula-input').val() || parsedFormula.originalFormula
+      baseFormula
     };
+  }
+
+  static _previewProficiencyFormula(baseFormula, sourceActor = null) {
+    // This is just for preview - the actual processing happens in the damage system
+    // Check if it looks like a proficiency dice pattern (e.g., "d12", "d8+2")
+    const proficiencyMatch = baseFormula.match(/^d(\d+)(.*)$/i);
+    if (proficiencyMatch) {
+      if (sourceActor?.type === "character") {
+        const proficiency = Math.max(1, parseInt(sourceActor.system.proficiency?.value) || 1);
+        return `${proficiency}d${proficiencyMatch[1]}${proficiencyMatch[2] || ''}`;
+      } else {
+        // Show as "Pd12" to indicate proficiency dice will be applied
+        return `P${baseFormula} (Proficiency Dice)`;
+      }
+    }
+    return baseFormula;
   }
 
   static _getSourceDisplayName(source) {
