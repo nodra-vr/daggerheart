@@ -1233,13 +1233,10 @@ Hooks.on("getSceneControlButtons", (controls) => {
 });
 
 Hooks.on("preCreateActor", function (document, data, options, userId) {
-
-  const prototypeToken = {
-    actorLink: true
-  };
-
   document.updateSource({
-    "prototypeToken": foundry.utils.mergeObject(document.prototypeToken?.toObject() || {}, prototypeToken)
+    "prototypeToken": foundry.utils.mergeObject(document.prototypeToken?.toObject() || {}, {
+      actorLink: data.type === 'character' || data.type === 'companion'
+    })
   });
 });
 
