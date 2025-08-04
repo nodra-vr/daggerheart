@@ -400,6 +400,7 @@ export class SheetTracker {
           <div class="nav-button" data-tab="equipment" title="Equipment"><i class="fas fa-hammer"></i></div>
           <div class="nav-button" data-tab="loadout" title="Loadout"><i class="fas fa-suitcase"></i></div>
           <div class="nav-button" data-tab="biography" title="Biography"><i class="fas fa-book-open"></i></div>
+          <div class="nav-button" data-tab="advancement" title="Advancement"><i class="fas fa-medal"></i></div>
         </div>`;
     } else if (isNPCSheet) {
       navButtons = `
