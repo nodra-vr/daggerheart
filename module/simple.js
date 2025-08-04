@@ -274,7 +274,7 @@ Hooks.once("init", async function () {
   // Register range measurement settings
   game.settings.register("daggerheart", "rangeMeasurementEnabled", {
     name: "DAGGERHEART.SETTINGS.RangeMeasurement.enabled",
-    hint: "Enable narrative range measurement display",
+    hint: "Enable narrative range measurement display (scenes using 'mi' or 'km' as units are exempt)",
     scope: "world",
     config: true,
     type: Boolean,
