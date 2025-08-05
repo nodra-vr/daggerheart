@@ -114,11 +114,13 @@
         <div class="tab description" data-group="primary" data-tab="description">
             {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
         </div>
+    {{#if settings.simple}}
         <div class="tab simple" data-group="primary" data-tab="simple">
             {{> "systems/daggerheart/templates/parts/npc-weapons.html"}}
 
             {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
         </div>
+    {{else}}
         <div class="tab adversary" data-group="primary" data-tab="adversary">
 
             <div class="defenses">
@@ -221,5 +223,6 @@
                 </ol>
             </div>
         </div>
+    {{/if}}
     </section>
 </form>
