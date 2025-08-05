@@ -10,7 +10,8 @@
       "biography",
       "inventory",
       "worn",
-      "notes"
+      "notes",
+      "advancement"
     ],
     "character": {
       "features": [],

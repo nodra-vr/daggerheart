@@ -101,6 +101,10 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       secrets: this.document.isOwner,
       async: true
     });
+    context.advancementHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.systemData.advancementnotes, {
+      secrets: this.document.isOwner,
+      async: true
+    });
 
     for (let item of context.data.items) {
       item.system.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(item.system.description, {
