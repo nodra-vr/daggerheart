@@ -1808,7 +1808,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     if (damageValueDisplay && rollType === "damage") {
       const fieldPath = damageValueDisplay.dataset.field;
       damageData = foundry.utils.getProperty(this.actor, fieldPath) || damageValueDisplay.textContent.trim() || '1d8';
-      
+
       // Extract weapon slot from field path for modifier filtering
       if (fieldPath && fieldPath.includes('weapon-main')) {
         event.currentTarget.dataset.weaponType = "primary";
@@ -1905,7 +1905,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       // Try to determine weapon slot from the pending weapon name or basic name
       let weaponSlot = null;
       const weaponName = this._pendingWeaponName || basicName;
-      
+
       // Check if this is a weapon damage roll by looking at the name or field
       if (weaponName.toLowerCase().includes('primary') || weaponName.toLowerCase().includes('main')) {
         weaponSlot = 'weapon-main';
@@ -2451,12 +2451,15 @@ export class NPCActorSheet extends SimpleActorSheet {
 
     const width = Math.max(minWidth, Math.min(preferredWidth, maxWidth));
 
+    // Determine initial tab based on simple adversary setting
+    const initialTab = game.settings?.get("daggerheart", "simpleAdversarySheets") ? "simple" : "adversary";
+
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["daggerheart", "sheet", "npc"],
       template: "systems/daggerheart/templates/actor-sheet-npc.html",
       width: width,
       height: height,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "adversary" }],
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: initialTab }],
       scrollY: [".biography", ".items", ".attributes"],
       dragDrop: [
         { dragSelector: ".item-list .item", dropSelector: null },
@@ -2534,6 +2537,11 @@ export class NPCActorSheet extends SimpleActorSheet {
       try {
         await this.sheetTracker.initialize();
         console.log("SheetTracker initialized successfully for NPC:", this.actor.name);
+
+        // Handle simple adversary sheets
+        if (game.settings.get("daggerheart", "simpleAdversarySheets")) {
+          this._activateSimpleAdversaryMode(html);
+        }
       } catch (error) {
         console.error("Error initializing SheetTracker for NPC:", this.actor.name, error);
       }
@@ -2752,12 +2760,12 @@ export class NPCActorSheet extends SimpleActorSheet {
     return {
       primary: {
         name: primaryData.name || "Primary Attack",
-        hasWeapon: !!(primaryData.name && primaryData.name.trim()),
+        hasWeapon: !!(primaryData.name && typeof primaryData.name === 'string' && primaryData.name.trim()),
         data: primaryData
       },
       secondary: {
         name: secondaryData.name || "Secondary Attack",
-        hasWeapon: !!(secondaryData.name && secondaryData.name.trim()),
+        hasWeapon: !!(secondaryData.name && typeof secondaryData.name === 'string' && secondaryData.name.trim()),
         data: secondaryData
       }
     };
@@ -2989,4 +2997,54 @@ export class NPCActorSheet extends SimpleActorSheet {
     };
     return mapping[category] || category;
   }
+
+  /**
+   * Activate simple adversary mode - hide all tabs except simple
+   */
+  _activateSimpleAdversaryMode(html) {
+    // Hide all tab navigation items except simple
+    html.find('.sheet-tabs .item').hide();
+    html.find('.sheet-tabs .item[data-tab="simple"]').show().addClass('active');
+
+    // Hide all tab content except simple
+    html.find('.sheet-body .tab').removeClass('active');
+    html.find('.sheet-body .tab[data-tab="simple"]').addClass('active');
+
+    // Weapon content is now shared via partial template - no copying needed
+
+    // Prevent tab switching by disabling click handlers on hidden tabs
+    html.find('.sheet-tabs .item:not([data-tab="simple"])').off('click');
+  }
+
+  /**
+   * Override form submission to deduplicate weapon data from both tabs
+   */
+  _getSubmitData(updateData) {
+    let formData = super._getSubmitData(updateData);
+    
+    // Get all form elements
+    const form = this.form;
+    const formElements = new FormData(form);
+    
+    // Create a clean object to store deduplicated data
+    const cleanData = {};
+    
+    // Process each form field
+    for (let [key, value] of formElements.entries()) {
+      // Only keep the first occurrence of each field name
+      if (!cleanData.hasOwnProperty(key)) {
+        cleanData[key] = value;
+      }
+    }
+    
+    // Convert back to the expected format
+    const deduplicatedData = foundry.utils.expandObject(cleanData);
+    
+    // Apply entity sheet helper processing
+    const processedData = EntitySheetHelper.updateAttributes(deduplicatedData, this.object);
+    const finalData = EntitySheetHelper.updateGroups(processedData, this.object);
+    
+    return finalData;
+  }
 }
+

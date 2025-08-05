@@ -2,6 +2,8 @@
 
   "SETTINGS.AdvantageDieTypesN": "Advantage Die Types Shown",
   "SETTINGS.AdvantageDieTypesL": "Enter die types to show in roll dialog for advantage/disadvantage. Choose any combination from d4, d6, d8, and d10. For example 'd6,d10'",
+  "SETTINGS.SimpleAdversarySheetsN": "Enable Simple Adversary Sheets",
+  "SETTINGS.SimpleAdversarySheetsL": "When enabled, NPC sheets will show only a simplified view with defenses and description. This is a per-client setting.",
   "SIMPLE.ItemCreate": "Create Item",
   "SIMPLE.ItemEdit": "Edit Item",
   "SIMPLE.ItemDelete": "Delete Item",
@@ -93,6 +95,7 @@
   "DH.Equipment": "Equipment",
   "DH.AdversaryFeatures": "Features",
   "DH.AdversaryPassives": "Passives",
+  "DH.Simple": "Simple",
   "DH.Loadout": "Loadout",
   "DH.Biography": "Biography",
   "DH.Description": "Description",

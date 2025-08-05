@@ -10,11 +10,11 @@
 export class SheetTracker {
   // Static registry to track all active instances
   static instances = new Map();
-  
+
   /**
    * Static API Methods - These can be called from macros or other code
    */
-  
+
   /**
    * Add a new tracker to an actor or item
    * @param {string|Actor|Item} actorRef - Actor/Item ID or Actor/Item object (names deprecated)
@@ -27,7 +27,7 @@ export class SheetTracker {
   static async addTracker(actorRef, trackerName, hexColor = "#f3c267", initialValue = 0, maxValue = null) {
     const actor = this._resolveActor(actorRef);
     if (!actor) throw new Error(`Document not found: ${actorRef}`);
-    
+
     const tracker = {
       id: foundry.utils.randomID(),
       name: trackerName || "Resource",
@@ -36,15 +36,15 @@ export class SheetTracker {
       color: hexColor || "#f3c267",
       order: (actor.system.resourceTrackers?.length || 0)
     };
-    
+
     const trackers = [...(actor.system.resourceTrackers || [])];
     trackers.push(tracker);
-    
+
     await actor.update({ "system.resourceTrackers": trackers });
     SheetTracker._updateInstances(actor.id);
     return tracker;
   }
-  
+
   /**
    * Update a tracker's value
    * @param {string|Actor|Item} actorRef - Actor/Item ID or Actor/Item object
@@ -55,22 +55,22 @@ export class SheetTracker {
   static async updateTrackerValue(actorRef, trackerNameOrId, newValue) {
     const actor = this._resolveActor(actorRef);
     if (!actor) throw new Error(`Actor not found: ${actorRef}`);
-    
+
     const trackers = [...(actor.system.resourceTrackers || [])];
     const tracker = trackers.find(t => t.id === trackerNameOrId || t.name === trackerNameOrId);
-    
+
     if (!tracker) throw new Error(`Tracker not found: ${trackerNameOrId}`);
-    
+
     tracker.value = Math.max(0, parseInt(newValue) || 0);
     if (tracker.maxValue !== null) {
       tracker.value = Math.min(tracker.value, tracker.maxValue);
     }
-    
+
     await actor.update({ "system.resourceTrackers": trackers });
     SheetTracker._updateInstances(actor.id);
     return tracker;
   }
-  
+
   /**
    * Modify a tracker's value by a delta
    * @param {string|Actor|Item} actorRef - Actor/Item ID or Actor/Item object
@@ -81,22 +81,22 @@ export class SheetTracker {
   static async modifyTrackerValue(actorRef, trackerNameOrId, delta) {
     const actor = this._resolveActor(actorRef);
     if (!actor) throw new Error(`Actor not found: ${actorRef}`);
-    
+
     const trackers = [...(actor.system.resourceTrackers || [])];
     const tracker = trackers.find(t => t.id === trackerNameOrId || t.name === trackerNameOrId);
-    
+
     if (!tracker) throw new Error(`Tracker not found: ${trackerNameOrId}`);
-    
+
     tracker.value = Math.max(0, tracker.value + (parseInt(delta) || 0));
     if (tracker.maxValue !== null) {
       tracker.value = Math.min(tracker.value, tracker.maxValue);
     }
-    
+
     await actor.update({ "system.resourceTrackers": trackers });
     SheetTracker._updateInstances(actor.id);
     return tracker;
   }
-  
+
   /**
    * Remove a tracker from an actor or item
    * @param {string|Actor|Item} actorRef - Actor/Item ID or Actor/Item object
@@ -106,20 +106,20 @@ export class SheetTracker {
   static async removeTracker(actorRef, trackerNameOrId) {
     const actor = this._resolveActor(actorRef);
     if (!actor) throw new Error(`Actor not found: ${actorRef}`);
-    
+
     const trackers = [...(actor.system.resourceTrackers || [])];
     const index = trackers.findIndex(t => t.id === trackerNameOrId || t.name === trackerNameOrId);
-    
+
     if (index === -1) throw new Error(`Tracker not found: ${trackerNameOrId}`);
-    
+
     trackers.splice(index, 1);
     trackers.forEach((t, i) => t.order = i);
-    
+
     await actor.update({ "system.resourceTrackers": trackers });
     SheetTracker._updateInstances(actor.id);
     return true;
   }
-  
+
   /**
    * Get all trackers for an actor or item
    * @param {string|Actor|Item} actorRef - Actor/Item ID or Actor/Item object
@@ -130,7 +130,7 @@ export class SheetTracker {
     if (!actor) throw new Error(`Actor not found: ${actorRef}`);
     return [...(actor.system.resourceTrackers || [])];
   }
-  
+
   /**
    * Get a specific tracker
    * @param {string|Actor|Item} actorRef - Actor/Item ID or Actor/Item object
@@ -140,11 +140,11 @@ export class SheetTracker {
   static getTracker(actorRef, trackerNameOrId) {
     const actor = this._resolveActor(actorRef);
     if (!actor) return null;
-    
+
     const trackers = actor.system.resourceTrackers || [];
     return trackers.find(t => t.id === trackerNameOrId || t.name === trackerNameOrId) || null;
   }
-  
+
   /**
    * Clear all trackers for an actor or item
    * @param {string|Actor|Item} actorRef - Actor/Item ID or Actor/Item object
@@ -156,7 +156,7 @@ export class SheetTracker {
     await actor.update({ "system.resourceTrackers": [] });
     SheetTracker._updateInstances(actor.id);
   }
-  
+
   /**
    * Batch update multiple trackers
    * @param {string|Actor|Item} actorRef - Actor/Item ID or Actor/Item object
@@ -166,10 +166,10 @@ export class SheetTracker {
   static async batchUpdateTrackers(actorRef, updates) {
     const actor = this._resolveActor(actorRef);
     if (!actor) throw new Error(`Actor not found: ${actorRef}`);
-    
+
     const trackers = [...(actor.system.resourceTrackers || [])];
     const updatedTrackers = [];
-    
+
     for (const update of updates) {
       const tracker = trackers.find(t => t.id === update.nameOrId || t.name === update.nameOrId);
       if (tracker) {
@@ -180,27 +180,27 @@ export class SheetTracker {
         updatedTrackers.push(tracker);
       }
     }
-    
+
     await actor.update({ "system.resourceTrackers": trackers });
     SheetTracker._updateInstances(actor.id);
     return updatedTrackers;
   }
-  
+
   /**
    * Resolve an actor or item from various input types
    * @private
    */
   static _resolveActor(actorRef) {
     if (actorRef instanceof Actor || actorRef instanceof Item) return actorRef;
-    
+
     // Try actors first
     let document = game.actors.get(actorRef);
-    
+
     // If not found, try global items
     if (!document) {
       document = game.items.get(actorRef);
     }
-    
+
     // If still not found, search embedded items in all actors
     if (!document && typeof actorRef === 'string') {
       for (const actor of game.actors) {
@@ -211,7 +211,7 @@ export class SheetTracker {
         }
       }
     }
-    
+
     // Fallback to name lookup with warning (actors only for now)
     if (!document && typeof actorRef === 'string') {
       const nameActor = game.actors.find(a => a.name === actorRef);
@@ -220,7 +220,7 @@ export class SheetTracker {
         return nameActor;
       }
     }
-    
+
     return document;
   }
 
@@ -236,40 +236,40 @@ export class SheetTracker {
       instance._renderTrackerList();
     }
   }
-  
+
   /**
    * Instance Methods
    */
   constructor(actorSheet) {
     this.actorSheet = actorSheet;
-    
+
     // For item sheets, always use the item (object), not the owning actor
     if (actorSheet.constructor.name.includes('ItemSheet') || actorSheet.object?.documentName === 'Item') {
       this.actor = actorSheet.object; // Always use the item itself
     } else {
       this.actor = actorSheet.actor; // Use the actor for actor sheets
     }
-    
+
     this.actorId = this.actor.id;
-    
+
     // UI Elements
     this.sidebarElement = null;
     this.managerElement = null;
     this.buttonsContainer = null;
     this.listContainer = null;
-    
+
     // State
     this.isExpanded = false;
     this.trackers = new Map(); // Use Map for O(1) lookups
     this.isInitialized = false;
-    
+
     // Debouncing and batching
     this.updateQueue = new Set();
     this.updateTimeout = null;
-    
+
     // Hook management
     this.hooks = new Map();
-    
+
     // Register this instance
     SheetTracker.instances.set(this.actorId, this);
   }
@@ -279,22 +279,27 @@ export class SheetTracker {
    */
   async initialize() {
     if (this.isInitialized) return;
-    
+
     try {
       this._loadTrackers();
       await this._render();
       this._setupEventListeners();
       this._setupHooks();
-      
+
       this.isInitialized = true;
-      
+
       // Set initial nav state for character, NPC, and environment sheets
       if (this._isCharacterSheet()) {
         const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'character';
         this._updateNavActiveState(currentTab);
       } else if (this._isNPCSheet()) {
-        const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'description';
-        this._updateNavActiveState(currentTab);
+        if (this._isSimpleAdversaryEnabled()) {
+          // For simple adversary sheets, force the simple tab to be active
+          this._activateSimpleTab();
+        } else {
+          const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'adversary';
+          this._updateNavActiveState(currentTab);
+        }
       } else if (this._isEnvironmentSheet()) {
         const currentTab = this.actorSheet.element.find('.sheet-tabs .item.active').data('tab') || 'actions';
         this._updateNavActiveState(currentTab);
@@ -310,7 +315,7 @@ export class SheetTracker {
   _loadTrackers() {
     const trackerData = this.actor.system.resourceTrackers || [];
     this.trackers.clear();
-    
+
     trackerData.forEach(t => {
       this.trackers.set(t.id, {
         id: t.id,
@@ -335,6 +340,13 @@ export class SheetTracker {
    */
   _isNPCSheet() {
     return this.actor.type === "npc" && this.actorSheet.constructor.name === "NPCActorSheet";
+  }
+
+  /**
+   * Check if simple adversary sheets are enabled
+   */
+  _isSimpleAdversaryEnabled() {
+    return game.settings.get("daggerheart", "simpleAdversarySheets");
   }
 
   /**
@@ -366,7 +378,8 @@ export class SheetTracker {
     const isCharacterSheet = this._isCharacterSheet();
     const isNPCSheet = this._isNPCSheet();
     const isEnvironmentSheet = this._isEnvironmentSheet();
-    const sidebarHtml = this._buildSidebarHTML(isCharacterSheet, isNPCSheet, isEnvironmentSheet);
+    const isSimpleAdversary = isNPCSheet && this._isSimpleAdversaryEnabled();
+    const sidebarHtml = this._buildSidebarHTML(isCharacterSheet, isNPCSheet, isEnvironmentSheet, isSimpleAdversary);
 
     // Insert sidebar
     const windowContent = sheet.find('.window-content');
@@ -375,13 +388,13 @@ export class SheetTracker {
     }
 
     windowContent.first().append(sidebarHtml);
-    
+
     // Cache DOM references
     this.sidebarElement = sheet.find('.sheet-tracker-sidebar');
     this.managerElement = this.sidebarElement.find('.tracker-manager-panel');
     this.buttonsContainer = this.sidebarElement.find('.tracker-buttons-container');
     this.listContainer = this.sidebarElement.find('.tracker-list-items');
-    
+
     // Render content
     this._renderTrackerButtons();
     this._renderTrackerList();
@@ -390,9 +403,9 @@ export class SheetTracker {
   /**
    * Build the sidebar HTML structure
    */
-  _buildSidebarHTML(isCharacterSheet, isNPCSheet, isEnvironmentSheet) {
+  _buildSidebarHTML(isCharacterSheet, isNPCSheet, isEnvironmentSheet, isSimpleAdversary) {
     let navButtons = '';
-    
+
     if (isCharacterSheet) {
       navButtons = `
         <div class="sidebar-nav-buttons">
@@ -401,7 +414,7 @@ export class SheetTracker {
           <div class="nav-button" data-tab="loadout" title="Loadout"><i class="fas fa-suitcase"></i></div>
           <div class="nav-button" data-tab="biography" title="Biography"><i class="fas fa-book-open"></i></div>
         </div>`;
-    } else if (isNPCSheet) {
+    } else if (isNPCSheet && !isSimpleAdversary) {
       navButtons = `
         <div class="sidebar-nav-buttons">
           <div class="nav-button" data-tab="adversary" title="Adversary"><i class="fas fa-sword"></i></div>
@@ -415,6 +428,7 @@ export class SheetTracker {
           <div class="nav-button" data-tab="notes" title="Notes"><i class="fas fa-sticky-note"></i></div>
         </div>`;
     }
+    // Note: For simple adversary sheets (isSimpleAdversary = true), navButtons remains empty
 
     return `
       <div class="sheet-tracker-sidebar" data-actor-id="${this.actorId}">
@@ -472,10 +486,10 @@ export class SheetTracker {
    */
   _renderTrackerButtons() {
     if (!this.buttonsContainer) return;
-    
+
     const fragment = document.createDocumentFragment();
     const sortedTrackers = Array.from(this.trackers.values()).sort((a, b) => a.order - b.order);
-    
+
     sortedTrackers.forEach(tracker => {
       const button = document.createElement('div');
       button.className = 'tracker-button';
@@ -484,15 +498,15 @@ export class SheetTracker {
       button.dataset.trackerColor = tracker.color;
       button.title = `${tracker.name}: ${tracker.value}${tracker.maxValue ? '/' + tracker.maxValue : ''}`;
       button.style.backgroundColor = tracker.color;
-      
+
       const valueSpan = document.createElement('span');
       valueSpan.className = 'tracker-button-value';
       valueSpan.textContent = tracker.value;
       button.appendChild(valueSpan);
-      
+
       fragment.appendChild(button);
     });
-    
+
     this.buttonsContainer.empty().append(fragment);
   }
 
@@ -501,20 +515,20 @@ export class SheetTracker {
    */
   _renderTrackerList() {
     if (!this.listContainer) return;
-    
+
     if (this.trackers.size === 0) {
       this.listContainer.html('<div class="no-trackers">No resources yet</div>');
       return;
     }
-    
+
     const fragment = document.createDocumentFragment();
     const sortedTrackers = Array.from(this.trackers.values()).sort((a, b) => a.order - b.order);
-    
+
     sortedTrackers.forEach(tracker => {
       const item = document.createElement('div');
       item.className = 'tracker-list-item';
       item.dataset.trackerId = tracker.id;
-      
+
       item.innerHTML = `
         <span class="tracker-item-color" style="background-color: ${tracker.color};"></span>
         <span class="tracker-item-name">${tracker.name}</span>
@@ -523,10 +537,10 @@ export class SheetTracker {
           <i class="fas fa-times"></i>
         </button>
       `;
-      
+
       fragment.appendChild(item);
     });
-    
+
     this.listContainer.empty().append(fragment);
   }
 
@@ -536,7 +550,7 @@ export class SheetTracker {
   _updateTrackerButton(trackerId) {
     const tracker = this.trackers.get(trackerId);
     if (!tracker) return;
-    
+
     const button = this.buttonsContainer?.find(`[data-tracker-id="${trackerId}"]`);
     if (button?.length) {
       button.find('.tracker-button-value').text(tracker.value);
@@ -551,7 +565,7 @@ export class SheetTracker {
   _updateTrackerListItem(trackerId) {
     const tracker = this.trackers.get(trackerId);
     if (!tracker) return;
-    
+
     const listItem = this.listContainer?.find(`[data-tracker-id="${trackerId}"]`);
     if (listItem?.length) {
       listItem.find('.tracker-item-value').text(`${tracker.value}${tracker.maxValue ? '/' + tracker.maxValue : ''}`);
@@ -634,13 +648,31 @@ export class SheetTracker {
       this._handleNavigation(tab);
     });
 
-    // Keep sidebar navigation in sync with tab changes
-    this.actorSheet.element.on('click.sheetTracker', '.sheet-tabs .item', (e) => {
-      const tab = $(e.currentTarget).data('tab');
-      if (tab) {
-        this._updateNavActiveState(tab);
-      }
-    });
+    // Keep sidebar navigation in sync with tab changes (only if not simple adversary)
+    if (!(this._isNPCSheet() && this._isSimpleAdversaryEnabled())) {
+      this.actorSheet.element.on('click.sheetTracker', '.sheet-tabs .item', (e) => {
+        const tab = $(e.currentTarget).data('tab');
+        if (tab) {
+          this._updateNavActiveState(tab);
+        }
+      });
+    }
+  }
+
+  /**
+   * Activate the simple tab for simple adversary sheets
+   */
+  _activateSimpleTab() {
+    // Hide all other tabs and show only the simple tab
+    const sheetElement = this.actorSheet.element;
+
+    // Hide all tab navigation items except simple
+    sheetElement.find('.sheet-tabs .item').hide();
+    sheetElement.find('.sheet-tabs .item[data-tab="simple"]').show().addClass('active');
+
+    // Hide all tab content except simple
+    sheetElement.find('.sheet-body .tab').removeClass('active');
+    sheetElement.find('.sheet-body .tab[data-tab="simple"]').addClass('active');
   }
 
   /**
@@ -661,7 +693,7 @@ export class SheetTracker {
    */
   toggleManager(show = null) {
     this.isExpanded = show !== null ? show : !this.isExpanded;
-    
+
     if (this.isExpanded) {
       this.sidebarElement.addClass('expanded');
       this.managerElement.addClass('show');
@@ -724,7 +756,7 @@ export class SheetTracker {
     try {
       this.trackers.set(trackerData.id, trackerData);
       await this._saveTrackers();
-      
+
       // Update UI efficiently
       this._renderTrackerButtons();
       this._renderTrackerList();
@@ -743,15 +775,15 @@ export class SheetTracker {
 
     try {
       this.trackers.delete(trackerId);
-      
+
       // Reorder remaining trackers
       let order = 0;
       for (const t of this.trackers.values()) {
         t.order = order++;
       }
-      
+
       await this._saveTrackers();
-      
+
       // Update UI
       this._renderTrackerButtons();
       this._renderTrackerList();
@@ -774,18 +806,18 @@ export class SheetTracker {
         break;
       }
     }
-    
+
     if (existingUpdate) {
       existingUpdate.delta += delta;
     } else {
       this.updateQueue.add({ trackerId, delta });
     }
-    
+
     // Clear existing timeout
     if (this.updateTimeout) {
       clearTimeout(this.updateTimeout);
     }
-    
+
     // Process updates after a short delay
     this.updateTimeout = setTimeout(() => {
       this._processUpdateQueue();
@@ -797,36 +829,36 @@ export class SheetTracker {
    */
   async _processUpdateQueue() {
     if (this.updateQueue.size === 0) return;
-    
+
     const updates = Array.from(this.updateQueue);
     this.updateQueue.clear();
-    
+
     try {
       // Batch process updates
       const changes = new Map();
-      
+
       for (const { trackerId, delta } of updates) {
         const tracker = this.trackers.get(trackerId);
         if (!tracker) continue;
-        
+
         const currentDelta = changes.get(trackerId) || 0;
         const newDelta = currentDelta + delta;
         changes.set(trackerId, newDelta);
       }
-      
+
       // Apply changes
       let hasChanges = false;
       for (const [trackerId, delta] of changes) {
         const tracker = this.trackers.get(trackerId);
         if (!tracker) continue;
-        
+
         const oldValue = tracker.value;
         tracker.value = Math.max(0, tracker.value + delta);
-        
+
         if (tracker.maxValue !== null) {
           tracker.value = Math.min(tracker.value, tracker.maxValue);
         }
-        
+
         if (tracker.value !== oldValue) {
           hasChanges = true;
           // Update UI immediately for responsiveness
@@ -834,7 +866,7 @@ export class SheetTracker {
           this._updateTrackerListItem(trackerId);
         }
       }
-      
+
       // Save to actor if there were changes
       if (hasChanges) {
         await this._saveTrackers();
@@ -860,7 +892,10 @@ export class SheetTracker {
    */
   _updateNavActiveState(activeTab) {
     if (!this.sidebarElement || (!this._isCharacterSheet() && !this._isNPCSheet() && !this._isEnvironmentSheet())) return;
-    
+
+    // Don't update nav state for simple adversary sheets since they have no nav buttons
+    if (this._isNPCSheet() && this._isSimpleAdversaryEnabled()) return;
+
     const navButtons = this.sidebarElement.find('.nav-button');
     navButtons.removeClass('active');
     this.sidebarElement.find(`.nav-button[data-tab="${activeTab}"]`).addClass('active');
@@ -881,17 +916,17 @@ export class SheetTracker {
     if (this._isItemSheet()) {
       // For items, we need to listen to both updateItem (for global items) 
       // and updateActor (for embedded items)
-      
+
       // Listen for direct item updates (global items)
       const itemUpdateHook = Hooks.on('updateItem', (item, changes) => {
         if (item.id !== this.actorId) return;
         if (!changes.system?.resourceTrackers) return;
-        
+
         this._loadTrackers();
         this._renderTrackerButtons();
         this._renderTrackerList();
       });
-      
+
       // Listen for actor updates that might affect embedded items
       const actorUpdateHook = Hooks.on('updateActor', (actor, changes) => {
         // Check if this update affects our embedded item
@@ -908,7 +943,7 @@ export class SheetTracker {
           }
         }
       });
-      
+
       this.hooks.set('updateItem', itemUpdateHook);
       this.hooks.set('updateActor', actorUpdateHook);
     } else {
@@ -916,12 +951,12 @@ export class SheetTracker {
       const updateHook = Hooks.on('updateActor', (actor, changes) => {
         if (actor.id !== this.actorId) return;
         if (!changes.system?.resourceTrackers) return;
-        
+
         this._loadTrackers();
         this._renderTrackerButtons();
         this._renderTrackerList();
       });
-      
+
       this.hooks.set('updateActor', updateHook);
     }
   }
@@ -978,10 +1013,10 @@ export class SheetTracker {
     this._cleanupHooks();
     this._cleanupUpdateQueue();
     this._cleanupDOM();
-    
+
     // Remove from static registry
     SheetTracker.instances.delete(this.actorId);
-    
+
     this.isInitialized = false;
   }
 } 

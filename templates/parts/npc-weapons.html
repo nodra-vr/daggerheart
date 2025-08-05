@@ -1,0 +1,90 @@
+<div class="weapon-group">
+    <div class="weapon-row">
+        <label class="weapon-label">{{localize "DH.PrimaryAttack"}}</label>
+        <div class="weapon-box click-rollable-group basic-rollable-group">
+            <button type="button" class="weapon-attack-button click-rollable" data-roll-type="attack"
+                title="{{localize " SIMPLE.RollAttack"}}">
+                <i class="fas fa-sword"></i>
+            </button>
+            <div class="weapon-box-inner">
+                <div class="weapon-infobox-first">
+                    <input class="weapon-field basic-rollable-name click-rollable-name"
+                        name="system.weapon-main.name" type="text"
+                        value="{{systemData.weapon-main.name}}" placeholder="{{localize "
+                        DH.Attack"}}" />
+                    <div class="textarea-container">
+                        <input class="trait-effects resize-ta" name="system.weapon-main.description"
+                            placeholder="{{localize " DH.AttackTraitsHere"}}"
+                            value="{{systemData.weapon-main.description}}" />
+                    </div>
+                </div>
+                <div class="weapon-roller-box">
+                    <div class="weapon-infobox">
+                        <input class="weapon-to-hit click-rollable-modifier"
+                            name="system.weapon-main.to-hit.value" type="number"
+                            value="{{systemData.weapon-main.to-hit.value}}" placeholder="2" />
+                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize
+                            "DH.Modifier"}}</a>
+                    </div>
+                    <div class="weapon-infobox">
+                        <div class="weapon-damage-display damage-value-display"
+                            data-field="system.weapon-main.damage" data-label="Primary Attack Damage"
+                            data-has-modifiers="true" data-edit-type="damage">{{#if
+                            systemData.weapon-main.damage.baseValue}}{{systemData.weapon-main.damage.baseValue}}{{#if
+                            systemData.weapon-main.damage.modifiers}}{{#each
+                            systemData.weapon-main.damage.modifiers}}{{#if this.enabled}}
+                            {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if
+                            systemData.weapon-main.damage}}{{systemData.weapon-main.damage}}{{else}}1d8{{/if}}{{/if}}
+                        </div>
+                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize
+                            "DH.Damage"}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="weapon-row">
+        <label class="weapon-label">{{localize "DH.SecondaryAttack"}}</label>
+        <div class="weapon-box click-rollable-group basic-rollable-group">
+            <button type="button" class="weapon-attack-button click-rollable" data-roll-type="attack"
+                title="{{localize " SIMPLE.RollAttack"}}">
+                <i class="fas fa-sword"></i>
+            </button>
+            <div class="weapon-box-inner">
+                <div class="weapon-infobox-first">
+                    <input class="weapon-field basic-rollable-name click-rollable-name"
+                        name="system.weapon-off.name" type="text" value="{{systemData.weapon-off.name}}"
+                        placeholder="{{localize " DH.Attack"}}" />
+                    <div class="textarea-container">
+                        <input class="trait-effects resize-ta" name="system.weapon-off.description"
+                            placeholder="{{localize " DH.AttackTraitsHere"}}"
+                            value="{{systemData.weapon-off.description}}" />
+                    </div>
+                </div>
+                <div class="weapon-roller-box">
+                    <div class="weapon-infobox">
+                        <input class="weapon-to-hit click-rollable-modifier"
+                            name="system.weapon-off.to-hit.value" type="number"
+                            value="{{systemData.weapon-off.to-hit.value}}" placeholder="2" />
+                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize
+                            "DH.Modifier"}}</a>
+                    </div>
+                    <div class="weapon-infobox">
+                        <div class="weapon-damage-display damage-value-display"
+                            data-field="system.weapon-off.damage" data-label="Secondary Attack Damage"
+                            data-has-modifiers="true" data-edit-type="damage">{{#if
+                            systemData.weapon-off.damage.baseValue}}{{systemData.weapon-off.damage.baseValue}}{{#if
+                            systemData.weapon-off.damage.modifiers}}{{#each
+                            systemData.weapon-off.damage.modifiers}}{{#if this.enabled}}
+                            {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if
+                            systemData.weapon-off.damage}}{{systemData.weapon-off.damage}}{{else}}1d8{{/if}}{{/if}}
+                        </div>
+                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize
+                            "DH.Damage"}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

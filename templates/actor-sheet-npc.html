@@ -15,70 +15,90 @@
                     </div>
                 </div>
             </div>
-        <div class="header-right">
+            <div class="header-right">
                 <div class="header-top-fields">
                     <h1 class="charname">
-                        <input name="name" type="text" value="{{data.name}}" placeholder="Name" style="font-size: 2.5em;">
+                        <input name="name" type="text" value="{{data.name}}" placeholder="Name"
+                            style="font-size: 2.5em;">
                     </h1>
                     <div class="header-domain">
-                        <input type="text" name="system.chosenDomains.domain-one" value="{{systemData.chosenDomains.domain-one}}" placeholder="{{localize "DH.TierX"}}" style="font-size: 1em;">
-                        <input type="text" name="system.chosenDomains.domain-two" value="{{systemData.chosenDomains.domain-two}}" placeholder="{{localize "DH.Solo"}}" style="font-size: 1em;">
+                        <input type="text" name="system.chosenDomains.domain-one"
+                            value="{{systemData.chosenDomains.domain-one}}" placeholder="{{localize " DH.TierX"}}"
+                            style="font-size: 1em;">
+                        <input type="text" name="system.chosenDomains.domain-two"
+                            value="{{systemData.chosenDomains.domain-two}}" placeholder="{{localize " DH.Solo"}}"
+                            style="font-size: 1em;">
                     </div>
                 </div>
 
                 <div class="npc-defense-section">
                     <div class="defense" data-defense="evasion">
-                        <div class="attribute-value-display defense-value-display" data-field="system.defenses.evasion.value" data-label="Difficulty" data-has-modifiers="true" data-min="0">{{systemData.defenses.evasion.value}}</div>
-                        <label data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize "DH.Difficulty"}}</label>
+                        <div class="attribute-value-display defense-value-display"
+                            data-field="system.defenses.evasion.value" data-label="Difficulty" data-has-modifiers="true"
+                            data-min="0">{{systemData.defenses.evasion.value}}</div>
+                        <label data-trait-tooltip="{{systemData.defenses.evasion.tooltip}}">{{localize
+                            "DH.Difficulty"}}</label>
                     </div>
                     <div class="threshold-group">
                         <label>Threshold</label>
                         <div class="threshold-values">
-                            <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="1">Mark 1 HP</span>
+                            <span class="threshold-text threshold-clickable" data-action="mark-hp"
+                                data-hp-amount="1">Mark 1 HP</span>
                             <div class="resource-group">
-                                <input type="number" name="system.threshold.major" value="{{systemData.threshold.major}}">
+                                <input type="number" name="system.threshold.major"
+                                    value="{{systemData.threshold.major}}">
                                 <a class="trait-effects">Major</a>
                             </div>
-                            <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="2">Mark 2 HP</span>
+                            <span class="threshold-text threshold-clickable" data-action="mark-hp"
+                                data-hp-amount="2">Mark 2 HP</span>
                             <div class="resource-group">
-                                <input type="number" name="system.threshold.severe" value="{{systemData.threshold.severe}}">
+                                <input type="number" name="system.threshold.severe"
+                                    value="{{systemData.threshold.severe}}">
                                 <a class="trait-effects">Severe</a>
                             </div>
-                            <span class="threshold-text threshold-clickable" data-action="mark-hp" data-hp-amount="3">Mark 3 HP</span>
+                            <span class="threshold-text threshold-clickable" data-action="mark-hp"
+                                data-hp-amount="3">Mark 3 HP</span>
                         </div>
                     </div>
                 </div>
-                
-            <div class="header-resources-row">
+
+                <div class="header-resources-row">
                     <div class="resource health">
                         <div class="resource-content">
                             <div class="resource-box">
-                                <input type="number" name="system.health.value" value="{{systemData.health.value}}" min="0" max="{{systemData.health.max}}">
+                                <input type="number" name="system.health.value" value="{{systemData.health.value}}"
+                                    min="0" max="{{systemData.health.max}}">
                                 <span>/</span>
                                 <input type="number" name="system.health.max" value="{{systemData.health.max}}" min="0">
                             </div>
                         </div>
                         <div class="resource-label-controls">
-                            <a class="resource-control" data-action="decrement" data-field="health.value"><i class="fas fa-minus"></i></a>
+                            <a class="resource-control" data-action="decrement" data-field="health.value"><i
+                                    class="fas fa-minus"></i></a>
                             <label>Hit Points</label>
-                            <a class="resource-control" data-action="increment" data-field="health.value"><i class="fas fa-plus"></i></a>
+                            <a class="resource-control" data-action="increment" data-field="health.value"><i
+                                    class="fas fa-plus"></i></a>
                         </div>
                     </div>
                     <div class="resource stress">
                         <div class="resource-content">
                             <div class="resource-box">
-                                <input type="number" name="system.stress.value" value="{{systemData.stress.value}}" min="0" max="{{systemData.stress.max}}">
+                                <input type="number" name="system.stress.value" value="{{systemData.stress.value}}"
+                                    min="0" max="{{systemData.stress.max}}">
                                 <span>/</span>
                                 <input type="number" name="system.stress.max" value="{{systemData.stress.max}}" min="0">
                             </div>
                         </div>
                         <div class="resource-label-controls">
-                            <a class="resource-control" data-action="decrement" data-field="stress.value"><i class="fas fa-minus"></i></a>
+                            <a class="resource-control" data-action="decrement" data-field="stress.value"><i
+                                    class="fas fa-minus"></i></a>
                             <label>Stress</label>
-                            <a class="resource-control" data-action="increment" data-field="stress.value"><i class="fas fa-plus"></i></a>
+                            <a class="resource-control" data-action="increment" data-field="stress.value"><i
+                                    class="fas fa-plus"></i></a>
                         </div>
                     </div>
-            </div></div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -86,6 +106,7 @@
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item active" data-tab="adversary">{{localize "DH.Adversary"}}</a>
         <a class="item" data-tab="description">{{localize "DH.Description"}}</a>
+        <a class="item" data-tab="simple" style="display: none;">{{localize "DH.Simple"}}</a>
     </nav>
 
     {{!-- Sheet Body --}}
@@ -93,162 +114,109 @@
         <div class="tab description" data-group="primary" data-tab="description">
             {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
         </div>
+        <div class="tab simple" data-group="primary" data-tab="simple">
+            {{> "systems/daggerheart/templates/parts/npc-weapons.html"}}
+
+            {{editor biographyHTML target="system.biography" button=true editable=editable engine="prosemirror"}}
+        </div>
         <div class="tab adversary" data-group="primary" data-tab="adversary">
 
             <div class="defenses">
-                <div class="weapon-group">
-                    <div class="weapon-row">
-                        <label class="weapon-label">{{localize "DH.PrimaryAttack"}}</label>
-                        <div class="weapon-box click-rollable-group basic-rollable-group">
-                            <button type="button" class="weapon-attack-button click-rollable" data-roll-type="attack" title="{{localize "SIMPLE.RollAttack"}}">
-                                <i class="fas fa-sword"></i>
-                            </button>
-                            <div class="weapon-box-inner">
-                                <div class="weapon-infobox-first">
-                                    <input class="weapon-field basic-rollable-name click-rollable-name"
-                                        name="system.weapon-main.name" type="text"
-                                        value="{{systemData.weapon-main.name}}" placeholder="{{localize "DH.Attack"}}" />
-                                        <div class="textarea-container">
-                                            <input class="trait-effects resize-ta" name="system.weapon-main.description"
-                                                placeholder="{{localize "DH.AttackTraitsHere"}}"
-                                                value="{{systemData.weapon-main.description}}" />
-                                        </div>
-                                </div>
-                                <div class="weapon-roller-box">
-                                    <div class="weapon-infobox">
-                                        <input class="weapon-to-hit click-rollable-modifier"
-                                            name="system.weapon-main.to-hit.value" type="number"
-                                            value="{{systemData.weapon-main.to-hit.value}}" placeholder="2" />
-                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
-                                    </div>
-                                    <div class="weapon-infobox">
-                                        <div class="weapon-damage-display damage-value-display"
-                                             data-field="system.weapon-main.damage"
-                                             data-label="Primary Attack Damage"
-                                             data-has-modifiers="true"
-                                             data-edit-type="damage">{{#if systemData.weapon-main.damage.baseValue}}{{systemData.weapon-main.damage.baseValue}}{{#if systemData.weapon-main.damage.modifiers}}{{#each systemData.weapon-main.damage.modifiers}}{{#if this.enabled}} {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if systemData.weapon-main.damage}}{{systemData.weapon-main.damage}}{{else}}1d8{{/if}}{{/if}}</div>
-                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="weapon-row">
-                        <label class="weapon-label">{{localize "DH.SecondaryAttack"}}</label>
-                        <div class="weapon-box click-rollable-group basic-rollable-group">
-                            <button type="button" class="weapon-attack-button click-rollable" data-roll-type="attack" title="{{localize "SIMPLE.RollAttack"}}">
-                                <i class="fas fa-sword"></i>
-                            </button>
-                            <div class="weapon-box-inner">
-                                <div class="weapon-infobox-first">
-                                    <input class="weapon-field basic-rollable-name click-rollable-name"
-                                        name="system.weapon-off.name" type="text"
-                                        value="{{systemData.weapon-off.name}}" placeholder="{{localize "DH.Attack"}}" />
-                                        <div class="textarea-container">
-                                            <input class="trait-effects resize-ta" name="system.weapon-off.description"
-                                                placeholder="{{localize "DH.AttackTraitsHere"}}"
-                                                value="{{systemData.weapon-off.description}}" />
-                                        </div>
-                                </div>
-                                <div class="weapon-roller-box">
-                                    <div class="weapon-infobox">
-                                        <input class="weapon-to-hit click-rollable-modifier"
-                                            name="system.weapon-off.to-hit.value" type="number"
-                                            value="{{systemData.weapon-off.to-hit.value}}" placeholder="2" />
-                                        <a class="trait-effects click-rollable" data-roll-type="attack">{{localize "DH.Modifier"}}</a>
-                                    </div>
-                                    <div class="weapon-infobox">
-                                        <div class="weapon-damage-display damage-value-display"
-                                             data-field="system.weapon-off.damage"
-                                             data-label="Secondary Attack Damage"
-                                             data-has-modifiers="true"
-                                             data-edit-type="damage">{{#if systemData.weapon-off.damage.baseValue}}{{systemData.weapon-off.damage.baseValue}}{{#if systemData.weapon-off.damage.modifiers}}{{#each systemData.weapon-off.damage.modifiers}}{{#if this.enabled}} {{this.value}}{{/if}}{{/each}}{{/if}}{{else}}{{#if systemData.weapon-off.damage}}{{systemData.weapon-off.damage}}{{else}}1d8{{/if}}{{/if}}</div>
-                                        <a class="trait-effects basic-rollable" data-roll-type="damage">{{localize "DH.Damage"}}</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {{> "systems/daggerheart/templates/parts/npc-weapons.html"}}
             </div>
 
             <div class="inventory">
-                <div class="tab-category {{#unless uiState.categoryStates.backpack}}section-collapsed{{/unless}}">{{localize "DH.AdversaryFeatures"}}
+                <div class="tab-category {{#unless uiState.categoryStates.backpack}}section-collapsed{{/unless}}">
+                    {{localize "DH.AdversaryFeatures"}}
                     <div class="category-controls">
-                        <a class="item-control" data-action="create-item" data-type="item" data-location="backpack" title="{{localize "SIMPLE.ItemCreate"}}">
+                        <a class="item-control" data-action="create-item" data-type="item" data-location="backpack"
+                            title="{{localize " SIMPLE.ItemCreate"}}">
                             <i class="fas fa-plus"></i>
                         </a>
-                        <a class="item-control category-toggle" data-category="backpack" title="{{localize "SIMPLE.ToggleCategory"}}">
+                        <a class="item-control category-toggle" data-category="backpack" title="{{localize "
+                            SIMPLE.ToggleCategory"}}">
                             <i class="fas fa-chevron-down"></i>
                         </a>
                     </div>
                 </div>
-                <ol class="item-list {{#unless uiState.categoryStates.backpack}}category-collapsed{{/unless}}" data-location="backpack">
+                <ol class="item-list {{#unless uiState.categoryStates.backpack}}category-collapsed{{/unless}}"
+                    data-location="backpack">
                     {{#each data.items as |item id|}}
-                        {{#if (or (eq item.system.location "backpack") (and (not item.system.location) (eq item.type "item")))}}
-                        <li class="item" data-item-id="{{item._id}}">
-                            <div class="item-main-row">
-                                <div class="item-top-row">
-                                    <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}" width="30" height="30" />
-                                    <h4 class="item-name" data-action="toggle-description">{{item.name}}
-                                        {{#if item.system.category}}
-                                        <span class="item-category-tag">{{item.system.category}}</span>
-                                        {{/if}}
-                                        {{#if item.system.rarity}}
-                                        <span class="item-rarity-tag">{{item.system.rarity}}</span>
-                                        {{/if}}
-                                    </h4>
-                                </div>
-                                <div class="item-controls">
-                                    <a class="item-control" data-action="edit" title="{{localize "SIMPLE.ItemEdit"}}"><i class="fas fa-edit"></i></a>
-                                    <a class="item-control" data-action="delete" title="{{localize "SIMPLE.ItemDelete"}}"><i class="fas fa-trash"></i></a>
-                                </div>
+                    {{#if (or (eq item.system.location "backpack") (and (not item.system.location) (eq item.type
+                    "item")))}}
+                    <li class="item" data-item-id="{{item._id}}">
+                        <div class="item-main-row">
+                            <div class="item-top-row">
+                                <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
+                                    width="30" height="30" />
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.system.category}}
+                                    <span class="item-category-tag">{{item.system.category}}</span>
+                                    {{/if}}
+                                    {{#if item.system.rarity}}
+                                    <span class="item-rarity-tag">{{item.system.rarity}}</span>
+                                    {{/if}}
+                                </h4>
                             </div>
-                            <div class="item-description">
-                                {{{item.system.enrichedDescription}}}
+                            <div class="item-controls">
+                                <a class="item-control" data-action="edit" title="{{localize " SIMPLE.ItemEdit"}}"><i
+                                        class="fas fa-edit"></i></a>
+                                <a class="item-control" data-action="delete" title="{{localize "
+                                    SIMPLE.ItemDelete"}}"><i class="fas fa-trash"></i></a>
                             </div>
-                        </li>
-                        {{/if}}
+                        </div>
+                        <div class="item-description">
+                            {{{item.system.enrichedDescription}}}
+                        </div>
+                    </li>
+                    {{/if}}
                     {{/each}}
                 </ol>
 
-                <div class="tab-category {{#unless uiState.categoryStates.passives}}section-collapsed{{/unless}}">{{localize "DH.AdversaryPassives"}}
+                <div class="tab-category {{#unless uiState.categoryStates.passives}}section-collapsed{{/unless}}">
+                    {{localize "DH.AdversaryPassives"}}
                     <div class="category-controls">
-                        <a class="item-control" data-action="create-item" data-type="item" data-location="passives" title="{{localize "SIMPLE.ItemCreate"}}">
+                        <a class="item-control" data-action="create-item" data-type="item" data-location="passives"
+                            title="{{localize " SIMPLE.ItemCreate"}}">
                             <i class="fas fa-plus"></i>
                         </a>
-                        <a class="item-control category-toggle" data-category="passives" title="{{localize "SIMPLE.ToggleCategory"}}">
+                        <a class="item-control category-toggle" data-category="passives" title="{{localize "
+                            SIMPLE.ToggleCategory"}}">
                             <i class="fas fa-chevron-down"></i>
                         </a>
                     </div>
                 </div>
-                <ol class="item-list {{#unless uiState.categoryStates.passives}}category-collapsed{{/unless}}" data-location="passives">
+                <ol class="item-list {{#unless uiState.categoryStates.passives}}category-collapsed{{/unless}}"
+                    data-location="passives">
                     {{#each data.items as |item id|}}
-                        {{#if (or (eq item.system.location "passives") (and (not item.system.location) (eq item.type "item")))}}
-                        <li class="item" data-item-id="{{item._id}}">
-                            <div class="item-main-row">
-                                <div class="item-top-row">
-                                    <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}" width="30" height="30" />
-                                    <h4 class="item-name" data-action="toggle-description">{{item.name}}
-                                        {{#if item.system.category}}
-                                        <span class="item-category-tag">{{item.system.category}}</span>
-                                        {{/if}}
-                                        {{#if item.system.rarity}}
-                                        <span class="item-rarity-tag">{{item.system.rarity}}</span>
-                                        {{/if}}
-                                    </h4>
-                                </div>
-                                <div class="item-controls">
-                                    <a class="item-control" data-action="edit" title="{{localize "SIMPLE.ItemEdit"}}"><i class="fas fa-edit"></i></a>
-                                    <a class="item-control" data-action="delete" title="{{localize "SIMPLE.ItemDelete"}}"><i class="fas fa-trash"></i></a>
-                                </div>
+                    {{#if (or (eq item.system.location "passives") (and (not item.system.location) (eq item.type
+                    "item")))}}
+                    <li class="item" data-item-id="{{item._id}}">
+                        <div class="item-main-row">
+                            <div class="item-top-row">
+                                <img class="item-control" data-action="edit" src="{{item.img}}" title="{{item.name}}"
+                                    width="30" height="30" />
+                                <h4 class="item-name" data-action="toggle-description">{{item.name}}
+                                    {{#if item.system.category}}
+                                    <span class="item-category-tag">{{item.system.category}}</span>
+                                    {{/if}}
+                                    {{#if item.system.rarity}}
+                                    <span class="item-rarity-tag">{{item.system.rarity}}</span>
+                                    {{/if}}
+                                </h4>
                             </div>
-                            <div class="item-description">
-                                {{{item.system.enrichedDescription}}}
+                            <div class="item-controls">
+                                <a class="item-control" data-action="edit" title="{{localize " SIMPLE.ItemEdit"}}"><i
+                                        class="fas fa-edit"></i></a>
+                                <a class="item-control" data-action="delete" title="{{localize "
+                                    SIMPLE.ItemDelete"}}"><i class="fas fa-trash"></i></a>
                             </div>
-                        </li>
-                        {{/if}}
+                        </div>
+                        <div class="item-description">
+                            {{{item.system.enrichedDescription}}}
+                        </div>
+                    </li>
+                    {{/if}}
                     {{/each}}
                 </ol>
             </div>

@@ -96,7 +96,9 @@ export class DaggerheartMeasuredTemplate extends foundry.canvas.placeables.Measu
         const close = game.settings.get('daggerheart', 'rangeMeasurementClose');
         const far = game.settings.get('daggerheart', 'rangeMeasurementFar');
         const veryFar = game.settings.get('daggerheart', 'rangeMeasurementVeryFar');
-        if ((canvas.grid.units == 'mi' || canvas.grid.units == 'km')){
+        if ((canvas.grid.units == 'mi' || canvas.grid.units == 'km' 
+            || canvas.grid.units == 'miles' || canvas.grid.units == 'kilometers' 
+            || canvas.grid.units == 'miile' || canvas.grid.units == 'kilometer')){
             return ''
         }
         if (distance <= melee) {

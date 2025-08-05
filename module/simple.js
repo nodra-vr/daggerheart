@@ -319,6 +319,16 @@ Hooks.once("init", async function () {
     restricted: true
   });
 
+  // Simple Adversary Sheets setting
+  game.settings.register("daggerheart", "simpleAdversarySheets", {
+    name: "SETTINGS.SimpleAdversarySheetsN",
+    hint: "SETTINGS.SimpleAdversarySheetsL",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
 
 
   Handlebars.registerHelper('slugify', function (value) {
@@ -823,6 +833,28 @@ Hooks.once("ready", async function () {
       return;
     }
     return game.daggerheart.damageApplication.debugUndoData(undoId);
+  };
+
+  // Test function for Simple Adversary Sheets
+  window.testSimpleAdversarySheets = function() {
+    const currentSetting = game.settings.get("daggerheart", "simpleAdversarySheets");
+    console.log("Current Simple Adversary Sheets setting:", currentSetting);
+    
+    const npcs = game.actors.filter(a => a.type === "npc");
+    console.log("Found NPCs:", npcs.map(n => n.name));
+    
+    if (npcs.length === 0) {
+      ui.notifications.warn("No NPCs found to test with");
+      return;
+    }
+    
+    const testNPC = npcs[0];
+    console.log("Testing with NPC:", testNPC.name);
+    
+    // Try to open the sheet
+    testNPC.sheet.render(true);
+    
+    ui.notifications.info(`Simple Adversary Sheets test completed. Setting is ${currentSetting ? 'enabled' : 'disabled'}.`);
   };
 
   game.daggerheart.applyDamage = window.applyDamage;
