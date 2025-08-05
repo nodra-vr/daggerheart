@@ -263,6 +263,7 @@
         <div class="nav-gem"></div>
         <a class="item" data-tab="loadout">{{localize "DH.Loadout"}}</a>
         <a class="item" data-tab="biography">{{localize "DH.Biography"}}</a>
+        <a class="item" data-tab="advancement">{{localize "DH.Advancements"}}</a>
     </nav>
 
     {{!-- Sheet Body --}}
@@ -1150,6 +1151,489 @@
                     {{/each}}
                 </ol>
             </div>
+        </div>
+
+        <div class="tab advancement" data-group="primary" data-tab="advancement">
+                     <!-- <div class="advancement-group">
+                        <div class="advancement-values">
+                            <div class="resource-group">
+                                <input type="number" name="system.level.value" value="{{systemData.level.value}}"  />
+                                <a class="trait-effects">{{localize "DH.Level"}}</a>
+                            </div>
+                            <div class="resource-group">
+                                <input type="number" name="system.proficiency.value"
+                                    value="{{systemData.proficiency.value}}" />
+                                <a class="trait-effects">{{localize "DH.Prof"}}</a>
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- I'd like to duplicate level and prof to this tab but it seems to cause issues -->
+                     <!-- Trying to place these checkbox lists into collapsable tabs seems to be really buggy, dunno what the proper solution is here -->
+            <!-- Tier 2 -->
+            <div class="tab-category">
+                {{localize "DH.Tier2"}}
+            </div>
+            <ol class="advancement-list"
+                data-location="advancement">
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="level-achievement">
+                            {{localize "DH.Tier2Achievement"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="level-achievement">
+                            {{localize "DH.AdvancementChooseBelow"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier2.traits1" {{#if
+                                    systemData.advancements.tier2.traits1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier2.traits2" {{#if
+                                    systemData.advancements.tier2.traits2}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier2.traits3" {{#if
+                                    systemData.advancements.tier2.traits3}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementGainTraits"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier2.hp1" {{#if
+                                    systemData.advancements.tier2.hp1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier2.hp2" {{#if
+                                    systemData.advancements.tier2.hp2}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementGainHP"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier2.stress1" {{#if
+                                    systemData.advancements.tier2.stress1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier2.stress2" {{#if
+                                    systemData.advancements.tier2.stress2}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementGainStress"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier2.exp" {{#if
+                                    systemData.advancements.tier2.exp}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementIncreaseExperiences"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier2.domaincard" {{#if
+                                    systemData.advancements.tier2.domaincard}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementDomainCardLevel4"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier2.evasion" {{#if
+                                    systemData.advancements.tier2.evasion}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementEvasion"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="level-achievement">
+                            {{localize "DH.AdvancementUpdateThresholdsDomain"}}
+                        </div>
+                    </div>
+                </li>
+            </ol>
+            <!-- Tier 3 -->
+            <div class="tab-category">
+                {{localize "DH.Tier3"}}
+            </div>
+            <ol class="advancement-list"
+                data-location="advancement">
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="level-achievement">
+                            {{localize "DH.Tier3Achievement"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="level-achievement">
+                            {{localize "DH.AdvancementChooseBelow"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.traits1" {{#if
+                                    systemData.advancements.tier3.traits1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.traits2" {{#if
+                                    systemData.advancements.tier3.traits2}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.traits3" {{#if
+                                    systemData.advancements.tier3.traits3}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementGainTraits"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.hp1" {{#if
+                                    systemData.advancements.tier3.hp1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.hp2" {{#if
+                                    systemData.advancements.tier3.hp2}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementGainHP"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.stress1" {{#if
+                                    systemData.advancements.tier3.stress1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.stress2" {{#if
+                                    systemData.advancements.tier3.stress2}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementGainStress"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.exp" {{#if
+                                    systemData.advancements.tier3.exp}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementIncreaseExperiences"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.domaincard" {{#if
+                                    systemData.advancements.tier3.domaincard}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementDomainCardLevel7"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.evasion" {{#if
+                                    systemData.advancements.tier3.evasion}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementEvasion"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier3.subclass" {{#if
+                                    systemData.advancements.tier3.subclass}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementSubclass"}}
+                        </div>
+                    </div>
+                </li>
+                <!-- These paired checkboxes should toggle together but I couldn't get it to work -->
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle advancement-toggle-paired">
+                                <input type="checkbox" name="system.advancements.tier3.proficiency1" {{#if
+                                    systemData.advancements.tier3.proficiency1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle advancement-toggle-paired">
+                                <input type="checkbox" name="system.advancements.tier3.proficiency2" {{#if
+                                    systemData.advancements.tier3.proficiency2}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementProficiency"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle advancement-toggle-paired">
+                                <input type="checkbox" name="system.advancements.tier3.multiclass1" {{#if
+                                    systemData.advancements.tier3.multiclass1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle advancement-toggle-paired">
+                                <input type="checkbox" name="system.advancements.tier3.multiclass2" {{#if
+                                    systemData.advancements.tier3.multiclass2}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementMulticlass"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="level-achievement">
+                            {{localize "DH.AdvancementUpdateThresholdsDomain"}}
+                        </div>
+                    </div>
+                </li>
+            </ol>
+            <!-- Tier 4 -->
+            <div class="tab-category">
+                {{localize "DH.Tier4"}}
+            </div>
+            <ol class="advancement-list"
+                data-location="advancement">
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="level-achievement">
+                            {{localize "DH.Tier4Achievement"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="level-achievement">
+                            {{localize "DH.AdvancementChooseBelow"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.traits1" {{#if
+                                    systemData.advancements.tier4.traits1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.traits2" {{#if
+                                    systemData.advancements.tier4.traits2}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.traits3" {{#if
+                                    systemData.advancements.tier4.traits3}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementGainTraits"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.hp1" {{#if
+                                    systemData.advancements.tier4.hp1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.hp2" {{#if
+                                    systemData.advancements.tier4.hp2}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementGainHP"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.stress1" {{#if
+                                    systemData.advancements.tier4.stress1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.stress2" {{#if
+                                    systemData.advancements.tier4.stress2}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementGainStress"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.exp" {{#if
+                                    systemData.advancements.tier4.exp}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementIncreaseExperiences"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.domaincard" {{#if
+                                    systemData.advancements.tier4.domaincard}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementDomainCardLevel10"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.evasion" {{#if
+                                    systemData.advancements.tier4.evasion}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementEvasion"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle">
+                                <input type="checkbox" name="system.advancements.tier4.subclass" {{#if
+                                    systemData.advancements.tier4.subclass}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementSubclass"}}
+                        </div>
+                    </div>
+                </li>
+                <!-- These paired checkboxes should toggle together but I couldn't get it to work -->
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle advancement-toggle-paired">
+                                <input type="checkbox" name="system.advancements.tier4.proficiency1" {{#if
+                                    systemData.advancements.tier4.proficiency1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle advancement-toggle-paired">
+                                <input type="checkbox" name="system.advancements.tier4.proficiency2" {{#if
+                                    systemData.advancements.tier4.proficiency2}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementProficiency"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="advancement-toggle-row">
+                            <div class="advancement-toggle advancement-toggle-paired">
+                                <input type="checkbox" name="system.advancements.tier4.multiclass1" {{#if
+                                    systemData.advancements.tier4.multiclass1}}checked{{/if}} />
+                            </div>
+                            <div class="advancement-toggle advancement-toggle-paired">
+                                <input type="checkbox" name="system.advancements.tier4.multiclass2" {{#if
+                                    systemData.advancements.tier4.multiclass2}}checked{{/if}} />
+                            </div>
+                        </div>
+                        <div class="advancement-row-label">
+                            {{localize "DH.AdvancementMulticlass"}}
+                        </div>
+                    </div>
+                </li>
+                <li class="item">
+                    <div class="advancement-row">
+                        <div class="level-achievement">
+                            {{localize "DH.AdvancementUpdateThresholdsDomain"}}
+                        </div>
+                    </div>
+                </li>
+            </ol>            
+            <section class="advancement-notes">
+                {{editor advancementHTML target="system.advancementnotes" button=true editable=editable engine="prosemirror"}}
+            </section>
         </div>
     </section>
 </form>
