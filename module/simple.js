@@ -90,19 +90,6 @@ Hooks.once("init", async function () {
       colorset: "custom",
       system: "standard"
     });
-
-    game.dice3d.addColorset({
-      name: "Modifier",
-      category: "Modifier Die",
-      description: "Modifier",
-      texture: "marble",
-      foreground: "#222222",
-      background: "#DDDDDD",
-      outline: "#000000",
-      edge: "#555555",
-      material: "plastic",
-      font: "Arial",
-    });
   }
 
   CONFIG.statusEffects.push({

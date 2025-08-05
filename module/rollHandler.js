@@ -311,10 +311,6 @@ export function _ensureDaggerheartColorsets() {
   if (!existingColorsets["Fear"]) {
     game.dice3d.addColorset(_getDefaultFearColorset());
   }
-
-  if (!existingColorsets["Modifier"]) {
-    game.dice3d.addColorset(_getDefaultModifierColorset());
-  }
 }
 
 function _getDefaultHopeColorset() {
@@ -348,21 +344,6 @@ function _getDefaultFearColorset() {
     font: "Modesto Condensed",
     colorset: "custom",
     system: "standard"
-  };
-}
-
-function _getDefaultModifierColorset() {
-  return {
-    name: "Modifier",
-    category: "Modifier Die",
-    description: "Modifier",
-    texture: "marble",
-    foreground: "#222222", 
-    background: "#DDDDDD",
-    outline: "#000000",
-    edge: "#555555",
-    material: "plastic",
-    font: "Arial",
   };
 }
 
