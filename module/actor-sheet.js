@@ -3021,29 +3021,45 @@ export class NPCActorSheet extends SimpleActorSheet {
    */
   _getSubmitData(updateData) {
     let formData = super._getSubmitData(updateData);
-    
+
+    // Only apply deduplication if we have weapon data duplicates
+    const weaponFields = ['system.weapon-main', 'system.weapon-off'];
+    const hasDuplicateWeaponData = weaponFields.some(field => {
+      const fieldKeys = Object.keys(formData).filter(key => key.startsWith(field));
+      return fieldKeys.length > 0;
+    });
+
+    if (!hasDuplicateWeaponData) {
+      return formData;
+    }
+
     // Get all form elements
     const form = this.form;
     const formElements = new FormData(form);
-    
+
     // Create a clean object to store deduplicated data
     const cleanData = {};
-    
-    // Process each form field
+
+    // Process each form field, focusing on weapon data
     for (let [key, value] of formElements.entries()) {
-      // Only keep the first occurrence of each field name
-      if (!cleanData.hasOwnProperty(key)) {
+      // For weapon fields, only keep the first occurrence
+      if (weaponFields.some(field => key.startsWith(field))) {
+        if (!cleanData.hasOwnProperty(key)) {
+          cleanData[key] = value;
+        }
+      } else {
+        // For non-weapon fields, use normal processing
         cleanData[key] = value;
       }
     }
-    
+
     // Convert back to the expected format
     const deduplicatedData = foundry.utils.expandObject(cleanData);
-    
+
     // Apply entity sheet helper processing
     const processedData = EntitySheetHelper.updateAttributes(deduplicatedData, this.object);
     const finalData = EntitySheetHelper.updateGroups(processedData, this.object);
-    
+
     return finalData;
   }
 }
