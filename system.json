@@ -41,6 +41,22 @@
     "minimum": "13",
     "verified": "13"
   },
+	"documentTypes": {
+		"Item": {
+			"ancestry": { "htmlFields": ["description"] },
+			"armor": { "htmlFields": ["description"] },
+			"class": { "htmlFields": ["description"] },
+			"community": { "htmlFields": ["description"] },
+			"domain": { "htmlFields": ["description"] },
+			"inventory": { "htmlFields": ["description"] },
+			"item": { "htmlFields": ["description"] },
+			"passive": { "htmlFields": ["description"] },
+			"subclass": { "htmlFields": ["description"] },
+			"vault": { "htmlFields": ["description"] },
+			"weapon": { "htmlFields": ["description"] },
+			"worn": { "htmlFields": ["description"] }
+		}
+	},
   "manifest": "https://raw.githubusercontent.com/unofficial-daggerheart/daggerheart/master/system.json",
   "download": "https://github.com/unofficial-daggerheart/daggerheart/archive/refs/tags/v2.12.7.zip"
 }
