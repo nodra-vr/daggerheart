@@ -1,11 +1,12 @@
-import { DaggerheartDialogHelper } from './dialog-helper.js';
+import { DaggerheartDialogHelper } from '../helpers/dialog-helper.js';
 import {
   calculateFinalDice,
   generateAdvantageFormula,
   generateDisadvantageFormula,
   calculateNetResult,
   normalizeAdvantageData
-} from './advantage-manager.js';
+} from '../helpers/advantage-manager.js';
+import { DiceCustomizationHelper } from '../helpers/diceCustomization.mjs';
 
 Hooks.on("diceSoNiceRollStart", (messageId, context) => {
   if (!game.dice3d) return;
@@ -300,52 +301,13 @@ function _styleRollEffectText(chatMessage, rollType) {
 }
 
 export function _ensureDaggerheartColorsets() {
-  if (!game.dice3d) return;
-
-  const existingColorsets = game.dice3d.DiceColors?.getColorsets?.() || {};
-
-  if (!existingColorsets["Hope"]) {
-    game.dice3d.addColorset(_getDefaultHopeColorset());
-  }
-
-  if (!existingColorsets["Fear"]) {
-    game.dice3d.addColorset(_getDefaultFearColorset());
-  }
+  // Use the dynamic dice customization system
+  // Dice customization now uses preset-based approach - no initialization needed
 }
 
-function _getDefaultHopeColorset() {
-  return {
-    name: "Hope",
-    category: "Hope Die", 
-    description: "Hope",
-    texture: "ice",
-    foreground: "#ffffff",
-    background: "#ffa200",
-    outline: "#000000",
-    edge: "#ff8000",
-    material: "glass",
-    font: "Modesto Condensed",
-    colorset: "custom",
-    system: "standard"
-  };
-}
 
-function _getDefaultFearColorset() {
-  return {
-    name: "Fear",
-    category: "Fear Die",
-    description: "Fear", 
-    texture: "ice",
-    foreground: "#b5d5ff",
-    background: "#021280",
-    outline: "#000000",
-    edge: "#210e6b",
-    material: "metal",
-    font: "Modesto Condensed",
-    colorset: "custom",
-    system: "standard"
-  };
-}
+
+
 
 export async function _rollHope(options = {}) {
 
@@ -374,6 +336,12 @@ export async function _rollHope(options = {}) {
 
   if (roll.dice.length > 0) {
     roll.dice[0].options.flavor = "Hope";
+    // Apply custom colorsets to Hope dice
+    try {
+      await DiceCustomizationHelper.applyDiceCustomization(roll, ['hope'], 'd12', 'd12', 'd6', 'd6');
+    } catch (error) {
+      console.warn('RollHandler: Failed to apply Hope dice customization:', error);
+    }
   }
 
   if (config.sendToChat) {
@@ -455,6 +423,12 @@ export async function _rollFear(options = {}) {
 
   if (roll.dice.length > 0) {
     roll.dice[0].options.flavor = "Fear";
+    // Apply custom colorsets to Fear dice
+    try {
+      await DiceCustomizationHelper.applyDiceCustomization(roll, ['fear'], 'd12', 'd12', 'd6', 'd6');
+    } catch (error) {
+      console.warn('RollHandler: Failed to apply Fear dice customization:', error);
+    }
   }
 
   if (config.sendToChat) {
@@ -577,6 +551,84 @@ export async function _rollDuality(options = {}) {
 
     roll.dice[1].options.flavor = "Fear";
     fearDieValue = roll.dice[1].total;
+
+    // Apply custom colorsets to advantage/disadvantage dice if present
+    if (roll.dice.length > 2) {
+      // Build dice types array by examining actual dice rather than assuming order
+      const diceTypes = [];
+      
+      for (let i = 0; i < roll.dice.length; i++) {
+        const die = roll.dice[i];
+        
+        if (i === 0) {
+          // First die is always Hope
+          diceTypes.push('hope');
+        } else if (i === 1) {
+          // Second die is always Fear
+          diceTypes.push('fear');
+        } else {
+          // For additional dice, determine type based on context
+          // Check if this is part of advantage or disadvantage calculation
+          const isAdvantage = advCount > 0;
+          const isDisadvantage = disCount > 0;
+          
+          // If we have both advantage and disadvantage, we need to be more careful
+          // For now, assume advantage dice come first, then disadvantage dice
+          if (isAdvantage && isDisadvantage) {
+            // Calculate how many advantage dice should be present
+            const totalAdvDice = Object.values(netResult.advantage).reduce((sum, count) => sum + count, 0);
+            const advDiceEndIndex = 2 + totalAdvDice; // 2 accounts for Hope + Fear dice
+            
+            if (i < advDiceEndIndex) {
+              diceTypes.push('advantage');
+            } else {
+              diceTypes.push('disadvantage');
+            }
+          } else if (isAdvantage) {
+            diceTypes.push('advantage');
+          } else if (isDisadvantage) {
+            diceTypes.push('disadvantage');
+          } else {
+            // Fallback for modifier dice or unknown types
+            diceTypes.push('advantage'); // Default to advantage styling
+          }
+        }
+      }
+      
+      // Debug logging to understand dice order
+      console.debug('RollHandler: Dice customization debug info:', {
+        rollFormula: roll.formula,
+        actualDiceCount: roll.dice.length,
+        diceTypesArray: diceTypes,
+        diceTypesLength: diceTypes.length,
+        advantageCount: advCount,
+        disadvantageCount: disCount,
+        netAdvantage: netResult.advantage,
+        netDisadvantage: netResult.disadvantage,
+        actualDice: roll.dice.map((die, index) => ({
+          index,
+          faces: die.faces,
+          number: die.number,
+          formula: die.formula,
+          flavor: die.options?.flavor,
+          assignedType: diceTypes[index]
+        }))
+      });
+      
+      // Apply dice customization to the entire roll
+      try {
+        await DiceCustomizationHelper.applyDiceCustomization(roll, diceTypes, 'd12', 'd12', 'd6', 'd6');
+      } catch (error) {
+        console.warn('RollHandler: Failed to apply dice customization to duality roll:', error);
+      }
+    } else {
+      // Apply customization to just Hope and Fear dice
+      try {
+        await DiceCustomizationHelper.applyDiceCustomization(roll, ['hope', 'fear'], 'd12', 'd12', 'd6', 'd6');
+      } catch (error) {
+        console.warn('RollHandler: Failed to apply dice customization to Hope/Fear dice:', error);
+      }
+    }
 
     if (_isForcedCriticalActive()) {
       wasForcedCritical = true;
@@ -938,6 +990,16 @@ async function _rerollHopeDie(message, dieElement) {
 
     const newHopeValue = newRoll.dice[0].total;
     
+    // Ensure Hope dice customization is applied to the rerolled die
+    if (newRoll.dice.length > 0) {
+      newRoll.dice[0].options.flavor = "Hope";
+      try {
+        await DiceCustomizationHelper.applyDiceCustomization(newRoll, ['hope'], 'd12', 'd12', 'd6', 'd6');
+      } catch (error) {
+        console.warn('RollHandler: Failed to apply Hope dice customization to reroll:', error);
+      }
+    }
+    
     // Show 3D dice animation if available
     if (game.dice3d) {
       try {
@@ -993,6 +1055,16 @@ async function _rerollFearDie(message, dieElement) {
     });
 
     const newFearValue = newRoll.dice[0].total;
+    
+    // Ensure Fear dice customization is applied to the rerolled die
+    if (newRoll.dice.length > 0) {
+      newRoll.dice[0].options.flavor = "Fear";
+      try {
+        await DiceCustomizationHelper.applyDiceCustomization(newRoll, ['fear'], 'd12', 'd12', 'd6', 'd6');
+      } catch (error) {
+        console.warn('RollHandler: Failed to apply Fear dice customization to reroll:', error);
+      }
+    }
     
     // Show 3D dice animation if available
     if (game.dice3d) {

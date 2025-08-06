@@ -3,7 +3,7 @@
  * Provides persistent countdown/progress trackers positioned at top center of screen
  */
 
-import { DaggerheartDialogHelper } from './dialog-helper.js';
+import { DaggerheartDialogHelper } from '../helpers/dialog-helper.js';
 
 export class CountdownTracker {
   constructor() {

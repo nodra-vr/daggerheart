@@ -1,14 +1,14 @@
 import { SimpleItemSheet } from "./item-sheet.js";
-import { EntitySheetHelper } from "./helper.js";
-import { ATTRIBUTE_TYPES } from "./constants.js";
+import { EntitySheetHelper } from "../helpers/helper.js";
+import { ATTRIBUTE_TYPES } from "../helpers/constants.js";
 
 export class SimpleWeaponSheet extends SimpleItemSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["daggerheart", "sheet", "item", "weapon"],
       template: "systems/daggerheart/templates/item-sheet-weapon.html",
-      width: 350,
-      height: 650,
+      width: 520,
+      height: 600,
       resizable: true,
       scrollY: [".card-description"],
     });
@@ -56,12 +56,12 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
     html.find('.damage-value-display').on('click', this._onDamageValueClick.bind(this));
   }
 
-  // Damage stuff
+  // Copy damage modifier system methods from actor sheet
   async _onDamageValueClick(event) {
     event.preventDefault();
     const displayElement = event.currentTarget;
     
-    // Get config
+    // Get configuration from data attributes or derive from context
     const config = {
       field: displayElement.dataset.field,
       label: displayElement.dataset.label,
@@ -71,23 +71,24 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
       max: displayElement.dataset.max ? parseInt(displayElement.dataset.max) : null
     };
     
-    // Default label
+    // If no label provided, use a default
     if (!config.label) {
       config.label = 'Weapon Damage';
     }
     
-    // Get damage data
+    // Get the actual damage data using the field path
     let damageData = foundry.utils.getProperty(this.item, config.field);
     
-    // Fix format
+    // Normalize the damage data to structured format
     if (typeof damageData === 'object' && damageData !== null && 'baseValue' in damageData) {
-      // Check corruption
+      // Already structured - but check for corrupted baseValue that might contain flattened formula
       const baseValue = damageData.baseValue || '1d8';
       const modifiers = damageData.modifiers || [];
       
-      // Fix corrupted base
+      // If baseValue contains spaces and we have no modifiers, it might be a flattened formula
+      // that got corrupted - try to extract the real base value
       if (baseValue.includes(' ') && modifiers.length === 0) {
-        // Extract dice
+        // Extract just the first dice part as the real base
         const match = baseValue.match(/^(\d*d\d+)/);
         if (match) {
           damageData.baseValue = match[1];
@@ -96,15 +97,15 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
         }
       }
     } else if (typeof damageData === 'object' && damageData !== null && 'value' in damageData) {
-      // Legacy case
+      // Has .value but missing structure - this is a legacy mixed case
       const displayValue = damageData.value || '1d8';
       damageData = {
-        baseValue: displayValue,
+        baseValue: displayValue, // Treat the existing value as base (might be flattened)
         modifiers: damageData.modifiers || [],
         value: displayValue
       };
     } else {
-      // String case
+      // Simple string/primitive - convert to structure
       const simpleValue = damageData || '1d8';
       damageData = {
         baseValue: simpleValue,
@@ -113,17 +114,17 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
       };
     }
     
-    // Fix modifiers
+    // Ensure modifiers is always an array
     if (!Array.isArray(damageData.modifiers)) {
       damageData.modifiers = [];
     }
     
-    // Show popup
+    // Show the damage modifier popup
     this._showDamageModifierEditPopup(config, damageData, displayElement);
   }
 
   _showDamageModifierEditPopup(config, damageData, displayElement) {
-    // Create popup
+    // Create the damage popup HTML if it doesn't exist
     let overlay = this.element.find('.damage-edit-popup-overlay');
     if (overlay.length === 0) {
       const popupHtml = `

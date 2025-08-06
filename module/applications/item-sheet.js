@@ -1,5 +1,5 @@
-import { EntitySheetHelper } from "./helper.js";
-import {ATTRIBUTE_TYPES} from "./constants.js";
+import { EntitySheetHelper } from "../helpers/helper.js";
+import {ATTRIBUTE_TYPES} from "../helpers/constants.js";
 import { SheetTracker } from "./sheet-tracker.js";
 
 /**

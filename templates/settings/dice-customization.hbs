@@ -1,0 +1,126 @@
+{{#if hasDiceSoNice}}
+    <form class="flexcol">
+        <nav class="sheet-tabs tabs" data-group="primary">
+            {{#each tabs}}
+                <a class="item" data-tab="{{id}}">
+                    <i class="{{icon}}"></i>
+                    <span>{{localize label}}</span>
+                </a>
+            {{/each}}
+        </nav>
+        
+        <section class="sheet-body">
+            {{#each tabs}}
+                <div class="tab" data-group="primary" data-tab="{{id}}">
+                    <div class="form-group">
+                        <label class="form-group-header">{{localize "DAGGERHEART.SETTINGS.DiceCustomization.colorSettings"}}</label>
+                        
+                        <div class="form-fields">
+                            <div class="form-group">
+                                <label for="{{id}}-foreground">{{localize "DAGGERHEART.SETTINGS.DiceCustomization.foreground"}}</label>
+                                <input type="color" id="{{id}}-foreground" name="{{id}}.foreground" 
+                                       value="{{lookup (lookup ../settings id) 'foreground'}}"
+                                       data-tooltip="{{localize 'DAGGERHEART.SETTINGS.DiceCustomization.foregroundTooltip'}}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{id}}-background">{{localize "DAGGERHEART.SETTINGS.DiceCustomization.background"}}</label>
+                                <input type="color" id="{{id}}-background" name="{{id}}.background" 
+                                       value="{{lookup (lookup ../settings id) 'background'}}"
+                                       data-tooltip="{{localize 'DAGGERHEART.SETTINGS.DiceCustomization.backgroundTooltip'}}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{id}}-outline">{{localize "DAGGERHEART.SETTINGS.DiceCustomization.outline"}}</label>
+                                <input type="color" id="{{id}}-outline" name="{{id}}.outline" 
+                                       value="{{lookup (lookup ../settings id) 'outline'}}"
+                                       data-tooltip="{{localize 'DAGGERHEART.SETTINGS.DiceCustomization.outlineTooltip'}}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{id}}-edge">{{localize "DAGGERHEART.SETTINGS.DiceCustomization.edge"}}</label>
+                                <input type="color" id="{{id}}-edge" name="{{id}}.edge" 
+                                       value="{{lookup (lookup ../settings id) 'edge'}}"
+                                       data-tooltip="{{localize 'DAGGERHEART.SETTINGS.DiceCustomization.edgeTooltip'}}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-group-header">{{localize "DAGGERHEART.SETTINGS.DiceCustomization.appearanceSettings"}}</label>
+                        
+                        <div class="form-fields">
+                            <div class="form-group">
+                                <label for="{{id}}-material">{{localize "DAGGERHEART.SETTINGS.DiceCustomization.material"}}</label>
+                                <select id="{{id}}-material" name="{{id}}.material" 
+                                        data-tooltip="{{localize 'DAGGERHEART.SETTINGS.DiceCustomization.materialTooltip'}}">
+                                    {{#each ../availableMaterials}}
+                                        <option value="{{value}}" {{#if (eq value (lookup (lookup ../../settings ../id) 'material'))}}selected{{/if}}>
+                                            {{localize label}}
+                                        </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{id}}-texture">{{localize "DAGGERHEART.SETTINGS.DiceCustomization.texture"}}</label>
+                                <select id="{{id}}-texture" name="{{id}}.texture"
+                                        data-tooltip="{{localize 'DAGGERHEART.SETTINGS.DiceCustomization.textureTooltip'}}">
+                                    {{#each ../availableTextures}}
+                                        <option value="{{value}}" {{#if (eq value (lookup (lookup ../../settings ../id) 'texture'))}}selected{{/if}}>
+                                            {{localize label}}
+                                        </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{id}}-system">{{localize "DAGGERHEART.SETTINGS.DiceCustomization.system"}}</label>
+                                <select id="{{id}}-system" name="{{id}}.system"
+                                        data-tooltip="{{localize 'DAGGERHEART.SETTINGS.DiceCustomization.systemTooltip'}}">
+                                    {{#each ../availableSystems}}
+                                        <option value="{{value}}" {{#if (eq value (lookup (lookup ../../settings ../id) 'system'))}}selected{{/if}}>
+                                            {{localize label}}
+                                        </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </section>
+        
+        <footer class="sheet-footer flexrow">
+            <button type="button" class="dialog-button default" data-action="reset">
+                <i class="fas fa-undo"></i>
+                {{localize "DAGGERHEART.SETTINGS.DiceCustomization.reset"}}
+            </button>
+            <button type="button" class="dialog-button" data-action="close">
+                <i class="fas fa-times"></i>
+                {{localize "DAGGERHEART.SETTINGS.DiceCustomization.cancel"}}
+            </button>
+            <button type="submit" class="dialog-button default">
+                <i class="fas fa-save"></i>
+                {{localize "DAGGERHEART.SETTINGS.DiceCustomization.save"}}
+            </button>
+        </footer>
+    </form>
+{{else}}
+    <div class="form-group">
+        <div class="notification warning">
+            <h4>
+                <i class="fas fa-exclamation-triangle"></i>
+                {{localize "DAGGERHEART.SETTINGS.DiceCustomization.requiresDiceSoNice"}}
+            </h4>
+            <p>{{localize "DAGGERHEART.SETTINGS.DiceCustomization.installDiceSoNice"}}</p>
+            <p>{{localize "DAGGERHEART.SETTINGS.DiceCustomization.diceSoNiceDetails"}}</p>
+        </div>
+        <footer class="sheet-footer">
+            <button type="button" class="dialog-button" data-action="close">
+                <i class="fas fa-times"></i>
+                {{localize "DAGGERHEART.SETTINGS.DiceCustomization.close"}}
+            </button>
+        </footer>
+    </div>
+{{/if}}

@@ -1,4 +1,4 @@
-import { DamageRollDialog } from './damage-roll-dialog.js';
+import { DamageRollDialog } from '../applications/damage-roll-dialog.js';
 
 const undoData = new Map();
 

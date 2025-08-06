@@ -1,5 +1,5 @@
-import { buildItemCardChat } from "./helper.js";
-import { DaggerheartDialogHelper } from "./dialog-helper.js";
+import { buildItemCardChat } from "../helpers/helper.js";
+import { DaggerheartDialogHelper } from "../helpers/dialog-helper.js";
 
 export class HeaderLoadoutBar {
   constructor(actorSheet) {

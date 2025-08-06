@@ -1,12 +1,12 @@
-import { EntitySheetHelper } from "./helper.js";
-import { ATTRIBUTE_TYPES } from "./constants.js";
-import { DaggerheartDialogHelper } from "./dialog-helper.js";
+import { EntitySheetHelper } from "../helpers/helper.js";
+import { ATTRIBUTE_TYPES } from "../helpers/constants.js";
+import { DaggerheartDialogHelper } from "../helpers/dialog-helper.js";
 import { SheetTracker } from "./sheet-tracker.js";
-import { EquipmentHandler } from "./equipmentHandler.js";
-import { EquipmentSystem } from "./equipmentSystem.js";
+import { EquipmentHandler } from "../helpers/equipmentHandler.js";
+import { EquipmentSystem } from "../helpers/equipmentSystem.js";
 import { DomainAbilitySidebar } from "./domain-ability-sidebar.js";
 import { HeaderLoadoutBar } from "./header-loadout-bar.js";
-import { buildItemCardChat } from "./helper.js";
+import { buildItemCardChat } from "../helpers/helper.js";
 
 export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 

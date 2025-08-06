@@ -1,5 +1,5 @@
-import { DaggerheartDialogHelper } from './dialog-helper.js';
-import { rollDamage } from './damage-application.js';
+import { DaggerheartDialogHelper } from '../helpers/dialog-helper.js';
+import { rollDamage } from '../data/damage-application.js';
 
 console.log("Daggerheart | DamageRollDialog module loaded");
 

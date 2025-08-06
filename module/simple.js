@@ -1,25 +1,30 @@
-import { SimpleActor } from "./actor.js";
-import { SimpleItem } from "./item.js";
-import { SimpleItemSheet } from "./item-sheet.js";
-import { SimpleWeaponSheet } from "./weapon-sheet.js";
-import { SimpleArmorSheet } from "./armor-sheet.js";
-import { SimpleActorSheet, NPCActorSheet } from "./actor-sheet.js";
-import { CompanionActorSheet } from "./actor-sheet-companion.js";
-import { EnvironmentActorSheet } from "./actor-sheet-environment.js";
-import { preloadHandlebarsTemplates } from "./templates.js";
-import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, createClearStressMacro, createSpendHopeMacro, createGainHopeMacro, spendStress, clearStress, spendHope, gainHope } from "./spending-system.js";
-import { SimpleToken, SimpleTokenDocument } from "./token.js";
-import { CounterUI } from "./counter-ui.js";
-import { TokenCounterUI } from "./token-counter-ui.js";
-import { CountdownTracker } from "./countdown-tracker.js";
-import { TopBarUI } from "./top-bar-ui.js";
-import { SheetTracker } from "./sheet-tracker.js";
-import { TrackerNotificationBubbles } from "./tracker-notification-bubbles.js";
-import { DaggerheartMigrations } from "./migrations.js";
-import { EquipmentHandler } from "./equipmentHandler.js";
-import { EntitySheetHelper, buildItemCardChat } from "./helper.js";
-import { ModifierManager } from "./modifierManager.js";
-import { ArmorCleanup } from "./armorCleanup.js";
+import { SimpleActor } from "./data/actor.js";
+import { SimpleItem } from "./data/item.js";
+import { SimpleItemSheet } from "./applications/item-sheet.js";
+import { SimpleWeaponSheet } from "./applications/weapon-sheet.js";
+import { SimpleArmorSheet } from "./applications/armor-sheet.js";
+import { SimpleActorSheet, NPCActorSheet } from "./applications/actor-sheet.js";
+import { CompanionActorSheet } from "./applications/actor-sheet-companion.js";
+import { EnvironmentActorSheet } from "./applications/actor-sheet-environment.js";
+import { preloadHandlebarsTemplates } from "./helpers/templates.js";
+import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, createClearStressMacro, createSpendHopeMacro, createGainHopeMacro, spendStress, clearStress, spendHope, gainHope } from "./data/spending-system.js";
+import { SimpleToken, SimpleTokenDocument } from "./data/token.js";
+import { CounterUI } from "./applications/counter-ui.js";
+import { TokenCounterUI } from "./applications/token-counter-ui.js";
+import { CountdownTracker } from "./applications/countdown-tracker.js";
+import { TopBarUI } from "./applications/top-bar-ui.js";
+import { SheetTracker } from "./applications/sheet-tracker.js";
+import { TrackerNotificationBubbles } from "./applications/tracker-notification-bubbles.js";
+import { DaggerheartMigrations } from "./helpers/migrations.js";
+import { EquipmentHandler } from "./helpers/equipmentHandler.js";
+import { EntitySheetHelper, buildItemCardChat } from "./helpers/helper.js";
+import { ModifierManager } from "./helpers/modifierManager.js";
+import { ArmorCleanup } from "./helpers/armorCleanup.js";
+
+// Dice Customization System
+import { DiceAppearanceSettings, getDefaultDiceAppearanceSettings } from "./data/settings/DiceAppearanceSettings.mjs";
+import { DiceCustomizationHelper } from "./helpers/diceCustomization.mjs";
+import { DiceCustomizationSettings } from "./applications/DiceCustomizationSettings.mjs";
 
 // Range Measurement System
 import {
@@ -28,11 +33,11 @@ import {
   DaggerheartTokenRuler,
   DaggerheartTemplateEnricher,
   renderMeasuredTemplate
-} from "./range-measurement.js";
+} from "./data/range-measurement.js";
 
 
-import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './rollHandler.js';
-import { applyDamage, applyHealing, applyDirectDamage, extractRollTotal, rollDamage, rollDamageWithDialog, rollHealing, undoDamageHealing, debugUndoData } from './damage-application.js';
+import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './data/rollHandler.js';
+import { applyDamage, applyHealing, applyDirectDamage, extractRollTotal, rollDamage, rollDamageWithDialog, rollHealing, undoDamageHealing, debugUndoData } from './data/damage-application.js';
 
 function _getTierOfPlay(actor = null, level = null) {
   let characterLevel = level;
@@ -59,38 +64,9 @@ function _getTierOfPlay(actor = null, level = null) {
 Hooks.once("init", async function () {
   console.log(`Initializing Simple Daggerheart System`);
 
-  if (game.dice3d) {
-
-    game.dice3d.addColorset({
-      name: "Hope",
-      category: "Hope Die",
-      description: "Hope",
-      texture: "ice",
-      foreground: "#ffffff",
-      background: "#ffa200",
-      outline: "#000000",
-      edge: "#ff8000",
-      material: "glass",
-      font: "Modesto Condensed",
-      colorset: "custom",
-      system: "standard"
-    });
-
-    game.dice3d.addColorset({
-      name: "Fear",
-      category: "Fear Die",
-      description: "Fear",
-      texture: "ice",
-      foreground: "#b5d5ff",
-      background: "#021280",
-      outline: "#000000",
-      edge: "#210e6b",
-      material: "metal",
-      font: "Modesto Condensed",
-      colorset: "custom",
-      system: "standard"
-    });
-  }
+  // Dice customization now uses preset-based approach - no initialization needed
+  // Client-scoped settings ensure each user has their own dice appearance preferences
+  console.debug('Daggerheart | Dice customization using client-scoped preset-based system');
 
   CONFIG.statusEffects.push({
     id: "hidden",
@@ -155,7 +131,8 @@ Hooks.once("init", async function () {
       debugUndoData: debugUndoData
     },
     getTierOfPlay: _getTierOfPlay,
-    EntitySheetHelper: EntitySheetHelper
+    EntitySheetHelper: EntitySheetHelper,
+    DiceCustomizationHelper: DiceCustomizationHelper
   };
 
   globalThis.daggerheart.EntitySheetHelper = EntitySheetHelper;
@@ -329,7 +306,51 @@ Hooks.once("init", async function () {
     default: false
   });
 
+  // Dice Appearance Customization Settings
+  game.settings.register("daggerheart", "diceAppearance", {
+    name: "DAGGERHEART.SETTINGS.DiceCustomization.name",
+    hint: "DAGGERHEART.SETTINGS.DiceCustomization.hint",
+    scope: "client",
+    config: false, // Hidden from standard config menu since we have a custom UI
+    type: Object,
+    default: getDefaultDiceAppearanceSettings(),
+    onChange: async (value) => {
+      // Validate settings before processing
+      console.debug('Daggerheart | Dice appearance settings changed, validating and re-registering colorsets');
+      
+      try {
+        // Import validation function
+        const { validateDiceAppearanceSettings } = await import("./data/settings/DiceAppearanceSettings.mjs");
+        
+        // Validate the new settings
+        const validatedSettings = validateDiceAppearanceSettings(value);
+        
+        // If validation changed the settings, update them
+        if (JSON.stringify(validatedSettings) !== JSON.stringify(value)) {
+          console.warn('Daggerheart | Settings were corrected during validation, updating stored settings');
+          await game.settings.set("daggerheart", "diceAppearance", validatedSettings);
+          return; // This will trigger onChange again with corrected settings
+        }
+        
+        // Settings have been updated - no additional action needed for preset-based system
+        // Each roll will generate presets on-demand using the new settings
+        console.debug('Daggerheart | Dice appearance settings updated successfully');
+        
+      } catch (error) {
+        console.error('Daggerheart | Failed to process dice appearance settings change:', error);
+        console.warn('Daggerheart | Dice customization may not work properly due to settings error');
+      }
+    }
+  });
 
+  // Register dice customization settings menu
+  game.settings.registerMenu("daggerheart", "diceCustomizationMenu", {
+    name: "DAGGERHEART.SETTINGS.DiceCustomization.menuName",
+    label: "DAGGERHEART.SETTINGS.DiceCustomization.menuLabel",
+    hint: "DAGGERHEART.SETTINGS.DiceCustomization.menuHint",
+    icon: "fas fa-dice",
+    type: DiceCustomizationSettings
+  });
 
   Handlebars.registerHelper('slugify', function (value) {
     return value.slugify({ strict: true });
@@ -435,6 +456,9 @@ Hooks.once("ready", async function () {
   // Initialize tracker notification bubbles
   game.daggerheart.trackerNotificationBubbles = new TrackerNotificationBubbles();
   game.daggerheart.trackerNotificationBubbles.initialize();
+
+  // Dice customization system is now preset-based and client-scoped
+  console.debug('Daggerheart | Dice customization uses client-scoped presets - no initialization required');
 
   // Add event listeners for template buttons in chat
   Hooks.on('renderChatMessage', (message, html, data) => {

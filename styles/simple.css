@@ -2207,6 +2207,399 @@ body.game .app textarea {
     max-width: none;
   }
 }
+/* ====================================
+   DICE CUSTOMIZATION SETTINGS STYLES
+   Used for the 3D dice appearance customization dialog
+   ==================================== */
+/* Main dice customization dialog container */
+#daggerheart-dice-customization {
+  /* Form container */
+  /* Tab navigation */
+  /* Sheet body container */
+  /* Individual tab content */
+  /* Form group containers */
+  /* Form group headers */
+  /* Form fields container */
+  /* Individual form field groups */
+  /* Color input styling */
+  /* Select dropdown styling */
+  /* Footer with buttons */
+  /* Dialog buttons */
+  /* Warning notification for missing Dice So Nice */
+  /* Responsive adjustments */
+}
+#daggerheart-dice-customization .window-content {
+  background: var(--dh-bg-dark);
+  backdrop-filter: var(--dh-blur-sm);
+  color: var(--dh-color-off-white);
+  padding: var(--dh-space-md);
+  border: 1px solid var(--dh-border-purple-light);
+  border-top: none;
+}
+#daggerheart-dice-customization .window-header {
+  background: var(--dh-bg-dark);
+  backdrop-filter: var(--dh-blur-sm);
+  color: var(--dh-color-off-white);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: none;
+  border-radius: 0;
+}
+#daggerheart-dice-customization form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 0;
+}
+#daggerheart-dice-customization .sheet-tabs {
+  border-top: none;
+  border-bottom: 1px solid var(--dh-color-gold);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  position: relative;
+  width: 100%;
+  max-height: 35px;
+  gap: var(--dh-space-lg);
+  margin: 0 0 var(--dh-space-md) 0;
+  padding: 0;
+}
+#daggerheart-dice-customization .sheet-tabs .item {
+  border: none;
+  padding: var(--dh-space-xs) var(--dh-space-md);
+  letter-spacing: 1px;
+  font-size: var(--dh-font-size-sm);
+  box-shadow: none;
+  color: var(--dh-color-off-white);
+  background: none !important;
+  filter: none;
+  text-transform: uppercase;
+  font-weight: var(--dh-font-weight-medium);
+  height: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--dh-space-xs);
+  transition: var(--dh-transition-fast);
+  cursor: pointer;
+  line-height: 35px;
+  text-shadow: none;
+  opacity: 0.7;
+}
+#daggerheart-dice-customization .sheet-tabs .item i {
+  font-size: var(--dh-font-size-base);
+  color: inherit;
+}
+#daggerheart-dice-customization .sheet-tabs .item.active, #daggerheart-dice-customization .sheet-tabs .item:hover {
+  color: var(--dh-color-gold);
+  text-shadow: none;
+  opacity: 1;
+}
+#daggerheart-dice-customization .sheet-tabs .item.active {
+  border-bottom: 2px solid var(--dh-color-gold);
+}
+#daggerheart-dice-customization .sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  /* Custom scrollbar */
+}
+#daggerheart-dice-customization .sheet-body::-webkit-scrollbar {
+  width: 4px;
+}
+#daggerheart-dice-customization .sheet-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+#daggerheart-dice-customization .sheet-body::-webkit-scrollbar-thumb {
+  background: var(--dh-color-gold);
+  border-radius: 2px;
+  opacity: 0.6;
+}
+#daggerheart-dice-customization .tab {
+  display: none;
+  flex-direction: column;
+  gap: var(--dh-space-md);
+  padding: var(--dh-space-sm) 0;
+}
+#daggerheart-dice-customization .tab.active {
+  display: flex;
+}
+#daggerheart-dice-customization .form-group {
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-lg);
+  padding: var(--dh-space-md);
+  transition: var(--dh-transition-fast);
+  display: flex;
+  flex-direction: column;
+}
+#daggerheart-dice-customization .form-group:hover {
+  background: rgba(67, 63, 100, 0.3);
+  border-color: rgba(243, 194, 103, 0.3);
+}
+#daggerheart-dice-customization .form-group-header {
+  color: var(--dh-color-gold);
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-base);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 var(--dh-space-md) 0;
+  display: block;
+  text-align: center;
+  border-bottom: 1px solid var(--dh-color-gold-dark);
+  padding-bottom: var(--dh-space-xs);
+}
+#daggerheart-dice-customization .form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dh-space-sm);
+  align-items: stretch;
+}
+#daggerheart-dice-customization .form-group .form-group {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(109, 103, 149, 0.3);
+  padding: var(--dh-space-sm);
+  margin: 0;
+  flex-direction: row;
+}
+#daggerheart-dice-customization .form-group .form-group:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(243, 194, 103, 0.2);
+}
+#daggerheart-dice-customization .form-group .form-group label {
+  color: var(--dh-color-off-white);
+  font-weight: var(--dh-font-weight-medium);
+  font-size: var(--dh-font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 var(--dh-space-xs) 0;
+  display: block;
+  min-width: 100%;
+}
+#daggerheart-dice-customization input[type=color] {
+  width: 100%;
+  height: 40px;
+  border: 2px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-md);
+  background: var(--dh-bg-input);
+  cursor: pointer;
+  transition: var(--dh-transition-fast);
+  padding: 2px;
+  /* Color picker button styling */
+}
+#daggerheart-dice-customization input[type=color]:hover {
+  border-color: var(--dh-color-gold);
+  transform: scale(1.02);
+}
+#daggerheart-dice-customization input[type=color]:focus {
+  outline: none;
+  border-color: var(--dh-color-gold);
+  box-shadow: var(--dh-shadow-focus);
+}
+#daggerheart-dice-customization input[type=color]::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border: none;
+  border-radius: calc(var(--dh-radius-md) - 2px);
+  overflow: hidden;
+}
+#daggerheart-dice-customization input[type=color]::-webkit-color-swatch {
+  border: none;
+  border-radius: calc(var(--dh-radius-md) - 2px);
+}
+#daggerheart-dice-customization input[type=color]::-moz-color-swatch {
+  border: none;
+  border-radius: calc(var(--dh-radius-md) - 2px);
+}
+#daggerheart-dice-customization select {
+  width: 100%;
+  background: var(--dh-bg-input);
+  border: 1px solid var(--dh-border-purple);
+  border-radius: var(--dh-radius-md);
+  color: var(--dh-color-off-white);
+  font-size: var(--dh-font-size-sm);
+  cursor: pointer;
+  transition: var(--dh-transition-fast);
+}
+#daggerheart-dice-customization select:hover {
+  border-color: var(--dh-color-gold);
+}
+#daggerheart-dice-customization select:focus {
+  outline: none;
+  border-color: var(--dh-color-gold);
+  background: var(--dh-bg-input-focus);
+  box-shadow: var(--dh-shadow-focus);
+}
+#daggerheart-dice-customization select option {
+  background: var(--dh-bg-dark);
+  color: var(--dh-color-off-white);
+  padding: var(--dh-space-xs);
+}
+#daggerheart-dice-customization select option:hover {
+  background: rgba(67, 63, 100, 0.9);
+  color: var(--dh-color-gold);
+}
+#daggerheart-dice-customization select option:checked {
+  background: var(--dh-color-purple-accent);
+  color: var(--dh-color-gold);
+}
+#daggerheart-dice-customization .sheet-footer {
+  display: flex;
+  gap: var(--dh-space-sm);
+  justify-content: flex-end;
+  align-items: center;
+  border-top: 1px solid var(--dh-border-purple-light);
+  flex-shrink: 0;
+  max-height: fit-content;
+}
+#daggerheart-dice-customization .dialog-button {
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  color: var(--dh-color-off-white);
+  transition: var(--dh-transition-fast);
+  border-radius: var(--dh-radius-sm);
+  text-transform: uppercase;
+  padding: var(--dh-space-sm) var(--dh-space-lg);
+  font-weight: var(--dh-font-weight-semibold);
+  font-size: var(--dh-font-size-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dh-space-xs);
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  min-width: 80px;
+}
+#daggerheart-dice-customization .dialog-button i {
+  line-height: 1;
+  vertical-align: middle;
+  font-size: var(--dh-font-size-sm);
+}
+#daggerheart-dice-customization .dialog-button:hover:not(:disabled) {
+  background: rgba(67, 63, 100, 0.8);
+  border-color: var(--dh-color-gold);
+  color: var(--dh-color-gold);
+  transform: translateY(-1px);
+}
+#daggerheart-dice-customization .dialog-button:active {
+  transform: translateY(0);
+}
+#daggerheart-dice-customization .dialog-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(67, 63, 100, 0.2);
+  border-color: #433f64;
+  color: #666;
+}
+#daggerheart-dice-customization .dialog-button.default {
+  background: rgba(243, 194, 103, 0.2);
+  border-color: var(--dh-color-gold);
+  color: var(--dh-color-gold);
+}
+#daggerheart-dice-customization .dialog-button.default:hover:not(:disabled) {
+  background: var(--dh-color-gold);
+  color: var(--dh-color-off-black);
+  box-shadow: var(--dh-shadow-glow);
+}
+#daggerheart-dice-customization .notification {
+  background: var(--dh-bg-section);
+  border: 1px solid var(--dh-border-purple-light);
+  border-radius: var(--dh-radius-lg);
+  padding: var(--dh-space-lg);
+  text-align: center;
+}
+#daggerheart-dice-customization .notification.warning {
+  background: rgba(255, 162, 0, 0.1);
+  border-color: var(--dh-color-gold);
+}
+#daggerheart-dice-customization .notification.warning h4 {
+  color: var(--dh-color-gold);
+  font-size: var(--dh-font-size-lg);
+  font-weight: var(--dh-font-weight-semibold);
+  margin: 0 0 var(--dh-space-md) 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dh-space-sm);
+}
+#daggerheart-dice-customization .notification.warning h4 i {
+  font-size: var(--dh-font-size-xl);
+}
+#daggerheart-dice-customization .notification.warning p {
+  color: var(--dh-color-off-white);
+  font-size: var(--dh-font-size-sm);
+  line-height: 1.5;
+  margin: 0 0 var(--dh-space-sm) 0;
+}
+#daggerheart-dice-customization .notification.warning p:last-child {
+  margin-bottom: 0;
+}
+@media (max-width: 480px) {
+  #daggerheart-dice-customization .window-content {
+    padding: var(--dh-space-sm);
+  }
+  #daggerheart-dice-customization .sheet-tabs {
+    gap: var(--dh-space-sm);
+    flex-wrap: wrap;
+    max-height: none;
+  }
+  #daggerheart-dice-customization .sheet-tabs .item {
+    font-size: var(--dh-font-size-xs);
+    padding: var(--dh-space-xs) var(--dh-space-sm);
+  }
+  #daggerheart-dice-customization .form-group {
+    padding: var(--dh-space-sm);
+  }
+  #daggerheart-dice-customization .sheet-footer {
+    flex-direction: column;
+    gap: var(--dh-space-xs);
+  }
+  #daggerheart-dice-customization .sheet-footer .dialog-button {
+    width: 100%;
+    min-width: none;
+  }
+}
+@media (max-width: 600px) {
+  #daggerheart-dice-customization .sheet-tabs .item {
+    font-size: var(--dh-font-size-xs);
+  }
+  #daggerheart-dice-customization .sheet-tabs .item span {
+    display: none;
+  }
+  #daggerheart-dice-customization .sheet-tabs .item i {
+    font-size: var(--dh-font-size-lg);
+  }
+}
+
+/* Tooltip styling for form elements */
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--dh-bg-dark);
+  color: var(--dh-color-off-white);
+  padding: var(--dh-space-xs) var(--dh-space-sm);
+  border-radius: var(--dh-radius-sm);
+  font-size: var(--dh-font-size-xs);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--dh-transition-fast);
+  z-index: 1000;
+  border: 1px solid var(--dh-border-purple-light);
+  box-shadow: var(--dh-shadow-md);
+  margin-bottom: var(--dh-space-xs);
+}
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
 /* Tooltip Components */
 .daggerheart [data-trait-tooltip] {
   position: relative;
@@ -4997,55 +5390,47 @@ input.trait-effects.resize-ta {
   margin-top: 0.3em;
   margin-bottom: 0.3em;
   z-index: 2;
-
-  input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    border-radius: 5%;
-    border: 2px solid var(--dh-color-gold);
-    background: rgb(11, 10, 19);
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    position: relative;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-
-    &:hover {
-      border-color: var(--dh-color-gold-light);
-      background: rgb(11, 10, 19);
-      transform: scale(1.1);
-    }
-
-    &:checked {
-      background: var(--dh-color-gold);
-      border-color: var(--dh-color-gold-light);
-
-      &::after {
-        content: "✓";
-        position: absolute;
-        top: -10%;
-        left: 25%;
-        /* transform: translate(-50%, -50%); */
-        color: var(--dh-color-off-black);
-        font-size: 12px;
-        font-weight: bold;
-      }
-    }
-  }
+}
+.advancement-toggle input[type=checkbox] {
+  width: 20px;
+  height: 20px;
+  border-radius: 5%;
+  border: 2px solid var(--dh-color-gold);
+  background: rgb(11, 10, 19);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.advancement-toggle input[type=checkbox]:hover {
+  border-color: var(--dh-color-gold-light);
+  background: rgb(11, 10, 19);
+  transform: scale(1.1);
+}
+.advancement-toggle input[type=checkbox]:checked {
+  background: var(--dh-color-gold);
+  border-color: var(--dh-color-gold-light);
+}
+.advancement-toggle input[type=checkbox]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: -10%;
+  left: 25%;
+  /* transform: translate(-50%, -50%); */
+  color: var(--dh-color-off-black);
+  font-size: 12px;
+  font-weight: bold;
 }
 
-.advancement-toggle-paired {
-  input[type="checkbox"] {
-    border: 4px solid var(--dh-color-gold);
-      &:checked {
-            &::after {
-              top: -20%;
-              left: 15%;
-            }
-          }
-    }
+.advancement-toggle-paired input[type=checkbox] {
+  border: 4px solid var(--dh-color-gold);
+}
+.advancement-toggle-paired input[type=checkbox]:checked::after {
+  top: -20%;
+  left: 15%;
 }
 
 .advancement-row {

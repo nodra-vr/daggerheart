@@ -1,5 +1,5 @@
-import { EntitySheetHelper } from "./helper.js";
-import { ModifierManager } from "./modifierManager.js";
+import { EntitySheetHelper } from "../helpers/helper.js";
+import { ModifierManager } from "../helpers/modifierManager.js";
 
 export class SimpleActor extends Actor {
 
