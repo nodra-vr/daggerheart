@@ -2450,7 +2450,8 @@ body.game .app textarea {
   align-items: center;
   border-top: 1px solid var(--dh-border-purple-light);
   flex-shrink: 0;
-  max-height: fit-content;
+  max-height: 5em;
+  padding-top: 0.75em;
 }
 #daggerheart-dice-customization .dialog-button {
   background: var(--dh-bg-section);
