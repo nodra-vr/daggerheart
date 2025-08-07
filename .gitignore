@@ -1,20 +1,13 @@
 ATTRIBUTE_POPUP_SYSTEM.md
-module/roll-macro2.js
 .*
 devtools
 node_modules
 styles/simple - old.css
 styles/src/simple-temporary.scss
 styles/src/testing-layouts.scss
-module/rollHandler-old.js
-module/actor-sheet-old.js
-Quick-Trait-Roll-Macro.js
-Daggerheart-Trait-Roll-Macro.js
 /private
 test-modifier-system.html
 test-migration-validation.html
-.kilocode/mcp.json
 docs/private/glassmorphism-design-system.json
 docs/test-character-level-modifier.js
 docs/test-armor-permanent-modifiers.js
-.vscode/settings.json
