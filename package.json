@@ -4,6 +4,7 @@
   "description": "CSS compiler for the Daggerheart system",
   "scripts": {
     "start": "npm run gulp",
+    "docs": "gulp docs",
     "css": "gulp css",
     "watch": "gulp",
     "gulp": "gulp",

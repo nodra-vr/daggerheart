@@ -1,0 +1,39 @@
+{
+  "version": "1.2.2",
+  "previousVersion": "1.0.0",
+  "groupBy": 0,
+  "expandedFolderItems": [
+    "docs",
+    "docs/Campaign",
+    "docs/Campaign/Altai",
+    "docs/Campaign/Altai/Factions",
+    "docs/Campaign/Altai/Factions/Ember Hand.md",
+    "docs/Campaign/Altai/Factions/Klossian Serpents.md",
+    "docs/Campaign/Altai/Locations",
+    "docs/Campaign/Altai/Locations/Districts",
+    "docs/Campaign/Altai/Locations/Districts/Lanternwalk.md",
+    "docs/Campaign/Altai/Locations/Signmaker's Shop.md",
+    "docs/Campaign/Altai/Locations/Silk Leaf Teahouse.md",
+    "docs/Campaign/Altai/Altai.md",
+    "docs/Eldoria",
+    "docs/Eldoria/Other Places",
+    "docs/Eldoria/Other Places/Cultures",
+    "docs/Eldoria/Other Places/Cultures/Edrin.md",
+    "Port of Hands.md",
+    "docs/Campaign/Altai/Locations/Districts/Saltmire.md",
+    "Weavers' Quarter.md",
+    "docs/Campaign/Altai/Characters",
+    "docs/Campaign/Altai/Characters/Harbormaster Manau.md"
+  ],
+  "expandedFileItems": [],
+  "expandedLinkItems": [],
+  "folderSort": 0,
+  "fileSort": 3,
+  "linkSort": 3,
+  "linkFilter": {
+    "filterString": "",
+    "matchCase": false
+  },
+  "ignoredFolders": [],
+  "consolidateLinks": false
+}
