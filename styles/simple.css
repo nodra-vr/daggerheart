@@ -2572,12 +2572,12 @@ body.game .app textarea {
   }
 }
 
-/* Tooltip styling for form elements */
-[data-tooltip] {
+/* Tooltip styling for form elements - scoped to dice customization dialog */
+#daggerheart-dice-customization [data-tooltip] {
   position: relative;
   cursor: help;
 }
-[data-tooltip]::after {
+#daggerheart-dice-customization [data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
   bottom: 100%;
@@ -2597,7 +2597,7 @@ body.game .app textarea {
   box-shadow: var(--dh-shadow-md);
   margin-bottom: var(--dh-space-xs);
 }
-[data-tooltip]:hover::after {
+#daggerheart-dice-customization [data-tooltip]:hover::after {
   opacity: 1;
 }
 
@@ -6809,6 +6809,9 @@ input.trait-effects.resize-ta {
 .chat-message .roll-flavor-line {
   margin: 0;
 }
+.chat-message .duality-roll-button {
+  margin: 0.25rem 0;
+}
 
 /* Hope and Fear Roll Background Styling */
 .chat-message.dh-hope-roll {
@@ -8760,6 +8763,37 @@ input.trait-effects.resize-ta {
 .measured-template-button:focus {
   outline: 1px solid rgba(243, 194, 103, 0.4);
   outline-offset: 1px;
+}
+
+.duality-roll-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  color: #ffffff;
+  border: 2px solid #718096;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.duality-roll-button:hover {
+  background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+  border-color: #a0aec0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+.duality-roll-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.duality-roll-button i {
+  font-size: 1rem;
+  color: #f7fafc;
 }
 
 .rest-button {

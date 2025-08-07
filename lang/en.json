@@ -98,6 +98,21 @@
   "DAGGERHEART.SETTINGS.DiceCustomization.edge": "Edge Color",
   "DAGGERHEART.SETTINGS.DiceCustomization.material": "Material",
   "DAGGERHEART.SETTINGS.DiceCustomization.texture": "Texture",
+  
+  "DAGGERHEART.CHAT.DR.parseError": "Duality roll command not properly formatted",
+  "DAGGERHEART.CHAT.DR.noCharacter": "No character assigned for duality roll",
+  "DAGGERHEART.CHAT.DR.invalidTrait": "Invalid trait: {trait}",
+  "DAGGERHEART.CHAT.DR.invalidHopeDie": "Invalid Hope die size: {die}",
+  "DAGGERHEART.CHAT.DR.invalidFearDie": "Invalid Fear die size: {die}",
+  "DAGGERHEART.CHAT.DR.invalidAdvantage": "Invalid advantage formula: {formula}",
+  "DAGGERHEART.CHAT.DR.invalidDisadvantage": "Invalid disadvantage formula: {formula}",
+  
+  "DAGGERHEART.TRAITS.AGILITY": "Agility",
+  "DAGGERHEART.TRAITS.STRENGTH": "Strength", 
+  "DAGGERHEART.TRAITS.FINESSE": "Finesse",
+  "DAGGERHEART.TRAITS.INSTINCT": "Instinct",
+  "DAGGERHEART.TRAITS.PRESENCE": "Presence",
+  "DAGGERHEART.TRAITS.KNOWLEDGE": "Knowledge",
   "DAGGERHEART.SETTINGS.DiceCustomization.system": "System",
   
   "DAGGERHEART.SETTINGS.DiceCustomization.foregroundTooltip": "The color of the numbers and text on the dice",

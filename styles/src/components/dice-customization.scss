@@ -422,8 +422,8 @@
     }
 }
 
-/* Tooltip styling for form elements */
-[data-tooltip] {
+/* Tooltip styling for form elements - scoped to dice customization dialog */
+#daggerheart-dice-customization [data-tooltip] {
     position: relative;
     cursor: help;
 

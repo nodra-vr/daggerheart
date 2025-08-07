@@ -39,6 +39,10 @@ import {
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './data/rollHandler.js';
 import { applyDamage, applyHealing, applyDirectDamage, extractRollTotal, rollDamage, rollDamageWithDialog, rollHealing, undoDamageHealing, debugUndoData } from './data/damage-application.js';
 
+// Chat Command System
+import './helpers/chat-commands.js';
+import './enrichers/_module.js';
+
 function _getTierOfPlay(actor = null, level = null) {
   let characterLevel = level;
 

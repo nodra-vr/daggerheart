@@ -7,6 +7,8 @@ import {
   normalizeAdvantageData
 } from '../helpers/advantage-manager.js';
 import { DiceCustomizationHelper } from '../helpers/diceCustomization.mjs';
+import { parseDualityCommand } from '../helpers/command-parser.js';
+import { getTraitValue, getCommandTarget, parseDiceFormula } from '../helpers/command-utils.js';
 
 Hooks.on("diceSoNiceRollStart", (messageId, context) => {
   if (!game.dice3d) return;
@@ -15,6 +17,10 @@ Hooks.on("diceSoNiceRollStart", (messageId, context) => {
   if (!message?.flags?.daggerheart) return;
 
   _ensureDaggerheartColorsets();
+});
+
+Hooks.on("renderChatMessage", (message, html, data) => {
+  _addDualityRollButtonHandlers(html);
 });
 
 Hooks.on("renderChatMessage", (message, html, data) => {
@@ -28,6 +34,8 @@ Hooks.on("renderChatMessage", (message, html, data) => {
   _handleAutomaticFearGain(message);
 
   _addClickableRerollHandlers(html, message);
+
+  _addDualityRollButtonHandlers(html);
 });
 
 async function _handleAutomaticFearGain(message) {
@@ -35,6 +43,12 @@ async function _handleAutomaticFearGain(message) {
   if (!flags) return;
 
   if (game.paused) return;
+
+  if (flags.automationHandled) return;
+
+  const messageAge = Date.now() - message.timestamp;
+  const maxAge = 30000;
+  if (messageAge > maxAge) return;
 
   if (flags.rollType === "fear" || (flags.isDuality && flags.isFear && !flags.reaction)) {
 
@@ -109,6 +123,14 @@ async function _handleAutomaticFearGain(message) {
         speaker: ChatMessage.getSpeaker()
       });
     }
+  }
+
+  try {
+    await message.update({
+      'flags.daggerheart.automationHandled': true
+    });
+  } catch (error) {
+    console.warn("Daggerheart | Failed to mark automation as handled:", error);
   }
 }
 
@@ -300,6 +322,71 @@ function _styleRollEffectText(chatMessage, rollType) {
   }
 }
 
+function _addDualityRollButtonHandlers(html) {
+  html.find('.duality-roll-button, .duality-roll-inline').each((index, button) => {
+    const $button = $(button);
+    const commandData = $button.data('command');
+    const dualityCommand = $button.data('dualityCommand');
+    
+    if (commandData) {
+      $button.off('click').on('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        try {
+          const params = JSON.parse(commandData);
+          await _rollDuality(params);
+        } catch (error) {
+          console.error('Daggerheart | Error executing duality roll button:', error);
+          ui.notifications.error('Failed to execute duality roll');
+        }
+      });
+    } else if (dualityCommand) {
+      $button.off('click').on('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        try {
+          const parsedParams = parseDualityCommand(dualityCommand);
+          if (!parsedParams) {
+            throw new Error('Invalid duality command');
+          }
+          
+          const rollOptions = {
+            hopeDieSize: parsedParams.hope || 'd12',
+            fearDieSize: parsedParams.fear || 'd12',
+            modifier: parsedParams.modifier || 0,
+            advantage: parseDiceFormula(parsedParams.advantage),
+            disadvantage: parseDiceFormula(parsedParams.disadvantage),
+            sendToChat: true,
+            speaker: ChatMessage.getSpeaker(),
+            reaction: parsedParams.reaction || false,
+            messageType: parsedParams.messageType || 'public'
+          };
+          
+          if (parsedParams.trait) {
+            const target = getCommandTarget();
+            if (target) {
+              const traitValue = getTraitValue(target, parsedParams.trait);
+              rollOptions.modifier += traitValue;
+              
+              const traitLabel = game.i18n.localize(`DAGGERHEART.TRAITS.${parsedParams.trait.toUpperCase()}`) || parsedParams.trait;
+              rollOptions.flavor = `<p class="roll-flavor-line"><b>${traitLabel} Check</b></p>`;
+            }
+          }
+          
+          await _rollDuality(rollOptions);
+        } catch (error) {
+          console.error('Daggerheart | Error executing duality roll inline:', error);
+          ui.notifications.error('Failed to execute duality roll');
+        }
+      });
+    }
+  });
+}
+
+
+
 export function _ensureDaggerheartColorsets() {
   // Use the dynamic dice customization system
   // Dice customization now uses preset-based approach - no initialization needed
@@ -357,7 +444,8 @@ export async function _rollHope(options = {}) {
           daggerheart: {
             rollType: "hope",
             dieSize: config.dieSize,
-            modifier: config.modifier
+            modifier: config.modifier,
+            automationHandled: false
           }
         }
       };
@@ -444,7 +532,8 @@ export async function _rollFear(options = {}) {
           daggerheart: {
             rollType: "fear",
             dieSize: config.dieSize,
-            modifier: config.modifier
+            modifier: config.modifier,
+            automationHandled: false
           }
         }
       };
@@ -697,7 +786,8 @@ export async function _rollDuality(options = {}) {
             isFear,
             reaction: config.reaction,
             actorId: speaker.actor, 
-            isDuality: true 
+            isDuality: true,
+            automationHandled: false
           }
         }
       };
@@ -841,7 +931,8 @@ export async function _rollNPC(options = {}) {
             advantage: config.advantage,
             disadvantage: config.disadvantage,
             isCrit,
-            reaction: config.reaction
+            reaction: config.reaction,
+            automationHandled: false
           }
         }
       };
@@ -1553,7 +1644,8 @@ export async function _npcRollWithDialog(config) {
           actorId: actor.id,
           actorType: actor.type,
           isCrit,
-          reaction
+          reaction,
+          automationHandled: false
         }
       }
     };
