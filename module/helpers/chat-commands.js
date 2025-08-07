@@ -1,6 +1,5 @@
-import { parseDualityCommand } from './command-parser.js';
-import { getTraitValue, getCommandTarget, validateCommandParams, parseDiceFormula, createDualityRollLink } from './command-utils.js';
-import { _rollDuality } from '../data/rollHandler.js';
+import { processUnifiedDualityCommand } from './unified-duality-processor.js';
+import { createDualityRollLink } from './command-utils.js';
 
 Hooks.once('ready', () => {
     const originalProcessMessage = ChatLog.prototype.processMessage;
@@ -20,89 +19,9 @@ Hooks.once('ready', () => {
 
 async function processDualityCommand(message) {
     const commandText = message.replace(/^\/dr\s*/, '').trim();
-    
-    console.log('Daggerheart | Processing /dr command:', { message, commandText });
-    
-    if (!commandText) {
-        console.log('Daggerheart | Executing basic duality roll');
-        return await executeBasicDualityRoll();
-    }
-
-    const parsedCommand = parseDualityCommand(commandText);
-    console.log('Daggerheart | Parsed command:', parsedCommand);
-    
-    if (!parsedCommand) {
-        ui.notifications.error(game.i18n.localize('DAGGERHEART.CHAT.DR.parseError'));
-        return;
-    }
-
-    const validationErrors = validateCommandParams(parsedCommand);
-    if (validationErrors.length > 0) {
-        validationErrors.forEach(error => ui.notifications.error(error));
-        return;
-    }
-
-    console.log('Daggerheart | Executing duality roll with params:', parsedCommand);
-    return await executeDualityRollWithParams(parsedCommand);
-}
-
-async function executeBasicDualityRoll() {
-    const target = getCommandTarget();
-    const speaker = target ? ChatMessage.getSpeaker({ actor: target }) : ChatMessage.getSpeaker();
-    
-    return await _rollDuality({
-        sendToChat: true,
-        speaker: speaker
+    return await processUnifiedDualityCommand(commandText, {
+        source: 'chat'
     });
-}
-
-async function executeDualityRollWithParams(params) {
-    const target = getCommandTarget();
-    const speaker = target ? ChatMessage.getSpeaker({ actor: target }) : ChatMessage.getSpeaker();
-    
-    let modifier = 0;
-    let flavor = null;
-
-    if (params.trait && target) {
-        const traitValue = getTraitValue(target, params.trait);
-        modifier = traitValue;
-        
-        const traitLabel = game.i18n.localize(`DAGGERHEART.TRAITS.${params.trait.toUpperCase()}`) || params.trait;
-        flavor = `<p class="roll-flavor-line"><b>${traitLabel} Check</b></p>`;
-    }
-
-    let advantage = 0;
-    let disadvantage = 0;
-
-    if (params.advantage) {
-        if (typeof params.advantage === 'string') {
-            advantage = parseDiceFormula(params.advantage);
-        } else {
-            advantage = params.advantage;
-        }
-    }
-
-    if (params.disadvantage) {
-        if (typeof params.disadvantage === 'string') {
-            disadvantage = parseDiceFormula(params.disadvantage);
-        } else {
-            disadvantage = params.disadvantage;
-        }
-    }
-
-    const rollOptions = {
-        hopeDieSize: params.hope || 'd12',
-        fearDieSize: params.fear || 'd12',
-        modifier: modifier + (params.modifier || 0),
-        advantage: advantage,
-        disadvantage: disadvantage,
-        reaction: params.reaction || false,
-        sendToChat: true,
-        speaker: speaker,
-        flavor: flavor
-    };
-
-    return await _rollDuality(rollOptions);
 }
 
 export function showDualityRollHelp() {
