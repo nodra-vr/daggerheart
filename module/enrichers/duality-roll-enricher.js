@@ -4,7 +4,7 @@ import { parseDualityCommand } from '../helpers/command-parser.js';
 
 export default function DhDualityRollEnricher(match, options) {
     const commandText = match[1];
-    const customLabel = match[2];
+    const customLabel = match[3];
     
     const parsedParams = parseDualityCommand(commandText);
     if (!parsedParams) {
