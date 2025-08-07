@@ -1,6 +1,7 @@
 ATTRIBUTE_POPUP_SYSTEM.md
 module/roll-macro2.js
-
+.*
+devtools
 node_modules
 styles/simple - old.css
 styles/src/simple-temporary.scss
