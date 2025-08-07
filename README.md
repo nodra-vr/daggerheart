@@ -10,3 +10,6 @@ Install the system using this manifest link: `https://raw.githubusercontent.com/
 
 Installation GIF
 ![firefox_g6IBQlJpX5](https://github.com/user-attachments/assets/03e49c6b-756b-4e3e-aca8-cbbd407f88f2)
+
+### License
+This product includes materials from the Daggerheart System Reference Document 1.0, © Critical Role, LLC. under the terms of the Darrington Press Community Gaming (DPCGL) License. More information can be found at https://www.daggerheart.com/. There are no previous modifications by others.
