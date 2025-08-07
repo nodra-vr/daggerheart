@@ -1,6 +1,5 @@
 ATTRIBUTE_POPUP_SYSTEM.md
 module/roll-macro2.js
-*.md
 
 node_modules
 styles/simple - old.css
@@ -14,9 +13,7 @@ Daggerheart-Trait-Roll-Macro.js
 test-modifier-system.html
 test-migration-validation.html
 .kilocode/mcp.json
-.gitignore
 docs/private/glassmorphism-design-system.json
 docs/test-character-level-modifier.js
-.gitignore
 docs/test-armor-permanent-modifiers.js
 .vscode/settings.json
