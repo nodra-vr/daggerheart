@@ -1,9 +1,8 @@
 import { ItemBase } from '../_base/item-base.mjs';
-import { ThresholdsField } from '../_fields/thresholds.mjs';
 import { CombatTierData } from '../_templates/combat-tier.mjs';
 import { ItemTrackerData, ItemLootableData, ItemDescriptionData } from './_templates/_module.mjs';
 
-const { BooleanField, NumberField, StringField } = foundry.data.fields;
+const { BooleanField, NumberField, SchemaField, StringField } = foundry.data.fields;
 
 export default class ArmorData extends ItemBase.mixin(
 	CombatTierData,
@@ -23,7 +22,22 @@ export default class ArmorData extends ItemBase.mixin(
 			}),
 
 			equipped: new BooleanField({ required: true, initial: false }),
-			baseThresholds: new ThresholdsField(),
+			baseThresholds: new SchemaField({
+				major: new NumberField({
+					min: 0,
+					integer: true,
+					required: true,
+					positive: true,
+					initial: 4,
+				}),
+				severe: new NumberField({
+					min: 1,
+					integer: true,
+					required: true,
+					positive: true,
+					initial: 12,
+				}),
+			}),
 		});
 	}
 }
