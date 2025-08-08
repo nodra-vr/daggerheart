@@ -13,7 +13,7 @@ The Roll Handler and Damage System provides:
 * **Undo System** - Comprehensive undo functionality for damage and healing operations
 * **3D Dice Integration** - Full support for Dice So Nice! with custom colorsets
 
-*[Screenshot placeholder: System interface showing roll results and damage application tools]*
+<img width="654" height="712" alt="image" src="https://github.com/user-attachments/assets/aca6ea28-ec87-4925-8ba3-f85593c42ad1" />
 
 ## Roll Handler Features
 
@@ -63,11 +63,16 @@ The system automatically handles resource changes based on roll outcomes:
 * Applies both effects simultaneously
 * Handles permission checking automatically
 
-*[GIF placeholder: Roll outcome automatically updating character resources]*
+![firefox_raBM8oQE4E](https://github.com/user-attachments/assets/ed12d59e-3101-4637-803e-4f44a2dc0e26)
+Fear increase from roll
+![firefox_vUm3JI911V](https://github.com/user-attachments/assets/da0d520c-9201-4f51-9a41-c7d25002ce41)
+hope increase from roll
 
 ### Interactive Dice Rerolling
 
 Players can click on individual Hope or Fear dice to reroll them:
+![firefox_IdRvwjM94q](https://github.com/user-attachments/assets/5453591b-8351-48b5-b7d4-ed5f87897b09)
+
 
 **Reroll Features:**
 
@@ -83,8 +88,6 @@ Players can click on individual Hope or Fear dice to reroll them:
 2. Click on Hope or Fear die in the chat message
 3. Confirm the reroll in the dialog
 4. Watch the new result and automatic resource updates
-
-*[Screenshot placeholder: Clickable dice with reroll interface]*
 
 ### Roll Types and Functions
 
@@ -138,7 +141,7 @@ The system automatically calculates damage based on character thresholds:
 * Tracks armor slot consumption
 * Updates both health and armor values simultaneously
 
-*[Screenshot placeholder: Damage calculation showing threshold breakdown]*
+<img width="651" height="670" alt="image" src="https://github.com/user-attachments/assets/deb85abe-6614-4a47-a403-42846db1d06e" />
 
 ### Damage Application Functions
 
@@ -211,7 +214,7 @@ const success = await undoDamageHealing(undoId);
 debugUndoData(undoId);
 ```
 
-*[Screenshot placeholder: Undo button in chat message]*
+<img width="303" height="185" alt="image" src="https://github.com/user-attachments/assets/4e06b04b-6c8d-4636-a871-c852d1bd6f69" />
 
 ## Advanced Features
 
@@ -270,7 +273,11 @@ The system automatically detects modifiers from:
 * **Active Effects** - Temporary effect modifiers
 * **Manual Modifiers** - Custom modifiers passed to the dialog
 
-*[Screenshot placeholder: Damage roll dialog showing formula editor and modifier selection]*
+<img width="366" height="303" alt="image" src="https://github.com/user-attachments/assets/91375b1d-83dc-4658-9546-e283e6ed71fb" />
+![firefox_3Axyh1pZ18](https://github.com/user-attachments/assets/d8a68184-517e-4e90-b78c-d19cb2fae187)
+<img width="285" height="364" alt="image" src="https://github.com/user-attachments/assets/7f030016-d1af-4084-85ae-fb5e818ff86e" />
+
+
 
 **Advanced Dialog Usage:**
 
@@ -347,7 +354,7 @@ The system creates rich chat messages with:
 * **Undo Integration** - Embedded undo buttons in messages
 * **Status Updates** - Current health and armor status
 
-*[Screenshot placeholder: Rich chat messages showing roll results and damage application]*
+<img width="292" height="643" alt="image" src="https://github.com/user-attachments/assets/eca3cd4b-e27a-4ed4-bc9c-0368df153f4b" />
 
 ### Message Styling
 
@@ -541,8 +548,6 @@ const result = await rollDamageWithDialog(baseFormula, {
 * Shows enabled modifiers in flavor text
 * Includes weapon name and critical indicators
 * Provides context for damage source
-
-*[GIF placeholder: Complete workflow from dialog to damage application]*
 
 **Modifier Priority System:**
 
