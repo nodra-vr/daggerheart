@@ -1,16 +1,9 @@
 ATTRIBUTE_POPUP_SYSTEM.md
 devtools
 node_modules
-styles/simple - old.css
-styles/src/simple-temporary.scss
 styles/src/testing-layouts.scss
 /private
-test-modifier-system.html
-test-migration-validation.html
-docs/private/glassmorphism-design-system.json
-docs/test-character-level-modifier.js
-docs/test-armor-permanent-modifiers.js
-
+.*
 documentation/.obsidian/appearance.json
 documentation/.obsidian/app.json
 documentation/.obsidian/graph.json

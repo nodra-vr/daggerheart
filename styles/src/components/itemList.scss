@@ -10,7 +10,6 @@
   flex-direction: column;
   border: 1px solid #433f64;
   border-radius: .5em;
-  min-height: 3em;
   transition: all 0.2s ease-in-out;
 
   &.is-empty {
@@ -39,7 +38,6 @@
   flex-direction: column;
   border: 1px solid #433f64;
   border-radius: .5em;
-  min-height: 3em;
   transition: all 0.2s ease-in-out;
 
   &.is-empty {
@@ -171,11 +169,30 @@
   border: none;
 }
 
+.daggerheart .category-toggle.disabled,
+.npc .category-toggle.disabled,
+.actor .category-toggle.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 /* Dynamic spacing system for collapsed/expanded sections */
 .daggerheart .tab-category,
 .npc .tab-category,
 .actor .tab-category {
   /* Only apply transitions when explicitly enabled for user interactions */
+}
+
+.daggerheart .tab-category.empty-category,
+.npc .tab-category.empty-category,
+.actor .tab-category.empty-category {
+  margin-bottom: 0.1em;
+}
+
+.daggerheart .tab-category.empty-category .category-toggle,
+.npc .tab-category.empty-category .category-toggle,
+.actor .tab-category.empty-category .category-toggle {
+  display: none;
 }
 
 /* Completely disable all transitions during initialization */
@@ -252,7 +269,7 @@
   overflow: hidden;
   border-radius: .5em;
   width: 100%;
-  padding: 0em 0.5em;
+  padding: 0.25em 0.5em;
   background: rgba(0, 0, 0, 0.2);
 }
 
@@ -286,7 +303,6 @@
   width: 100%;
   padding: 0;
   justify-content: space-between;
-  min-height: 3em;
 }
 
 .daggerheart .actor-list .actor .actor-main-row {
@@ -295,7 +311,6 @@
   width: 100%;
   padding: 0;
   justify-content: space-between;
-  min-height: 3em;
 }
 
 .daggerheart .item-list .item:nth-child(even),

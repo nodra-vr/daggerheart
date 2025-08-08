@@ -46,6 +46,42 @@ export class SimpleActor extends Actor {
 
     EntitySheetHelper.clampResourceValues(this.system.attributes);
 
+    if (this.type === 'character') {
+      const adv = this.system.advancements || {};
+      const prevTotals = adv.totals || { hp: 0, stress: 0, evasion: 0, proficiency: 0 };
+      const newTotals = { hp: 0, stress: 0, evasion: 0, proficiency: 0 };
+
+      const tiers = ['tier2', 'tier3', 'tier4'];
+      for (const tier of tiers) {
+        const t = adv[tier] || {};
+        if (t.hp1) newTotals.hp += 1;
+        if (t.hp2) newTotals.hp += 1;
+        if (t.stress1) newTotals.stress += 1;
+        if (t.stress2) newTotals.stress += 1;
+        if (t.evasion) newTotals.evasion += 1;
+        if (t.proficiency1) newTotals.proficiency += 1;
+        if (t.proficiency2) newTotals.proficiency += 1;
+      }
+
+      const baseEvasion = Math.max(0, parseInt(this.system.defenses?.evasion?.value) || 0);
+      const baseProf = Math.max(1, (parseInt(this.system.proficiency?.value) || 1) - (prevTotals.proficiency || 0));
+
+      this.system.defenses.evasion.value = baseEvasion;
+      this.system.proficiency.value = baseProf + newTotals.proficiency;
+
+      if (this.system.health?.value !== undefined) {
+        this.system.health.value = Math.max(0, Math.min(this.system.health.value, this.system.health.max || 0));
+      }
+      if (this.system.stress?.value !== undefined) {
+        this.system.stress.value = Math.max(0, Math.min(this.system.stress.value, this.system.stress.max || 0));
+      }
+
+      this.system.advancements = {
+        ...adv,
+        totals: newTotals
+      };
+    }
+
     // Ensure character level modifier is applied for characters
     if (this.type === 'character') {
       this._ensureCharacterLevelModifier();

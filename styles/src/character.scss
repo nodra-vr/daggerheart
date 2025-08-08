@@ -62,6 +62,15 @@
   width: 100%;
 }
 
+.defense-group {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 auto;
+}
+
 /* Advancement Section */
 .advancement-section {
   display: flex;
@@ -222,6 +231,7 @@
   border-radius: 15px;
   backdrop-filter: blur(3px);
   width: 100%;
+  padding: .75em 0.25em;
 }
 
 .trait {
@@ -824,12 +834,32 @@ input.trait-effects.resize-ta {
   gap: 0.5em;
   align-items: center;
   margin-bottom: 1em;
+  flex: 1;
+  text-align: center;
 
   > label {
     font-size: 12px;
     text-transform: uppercase;
     color: var(--dh-color-off-white);
     margin-bottom: 0.25em;
+  }
+
+  .resource-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  input {
+    width: 40px;
+    font-size: 16px;
+    font-weight: 700;
+    background: transparent;
+    border: 1px solid #433f64;
+    border-radius: 0.5em;
+    padding: 0.2em;
+    color: white;
+    text-align: center;
   }
 }
 
@@ -942,7 +972,6 @@ input.trait-effects.resize-ta {
   flex-direction: column;
   border: 1px solid #433f64;
   border-radius: 0.5em;
-  min-height: 3em;
   transition: all 0.2s ease-in-out;
 }
 
@@ -1034,4 +1063,40 @@ input.trait-effects.resize-ta {
   text-align: center;
   font-style: italic;
   margin: 0.5em;
+}
+
+.advancement-group {
+  flex: 1;
+  max-width: fit-content;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  label {
+    text-transform: uppercase;
+  }
+}
+.advancement-values {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.advancement-group {
+  .resource-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  input {
+    width: 45px;
+    font-size: 16px;
+    font-weight: 700;
+    background: transparent;
+    border: 1px solid #433f64;
+    border-radius: 0.5em;
+    padding: 0.2em;
+    color: white;
+    text-align: center;
+  }
 }

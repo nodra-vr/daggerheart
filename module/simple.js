@@ -20,6 +20,8 @@ import { EquipmentHandler } from "./helpers/equipmentHandler.js";
 import { EntitySheetHelper, buildItemCardChat } from "./helpers/helper.js";
 import { ModifierManager } from "./helpers/modifierManager.js";
 import { ArmorCleanup } from "./helpers/armorCleanup.js";
+import { EquipmentSystem } from "./helpers/equipmentSystem.js";
+import { SpotlightInitiativeTracker, DaggerheartCombat } from "./applications/spotlight-initiative.js";
 
 // Dice Customization System
 import { DiceAppearanceSettings, getDefaultDiceAppearanceSettings } from "./data/settings/DiceAppearanceSettings.mjs";
@@ -91,11 +93,6 @@ Hooks.once("init", async function () {
     label: "Vulnerable",
     icon: "icons/svg/stoned.svg"
   });
-
-  CONFIG.Combat.initiative = {
-    formula: "1d20",
-    decimals: 2
-  };
 
   game.daggerheart = {
     SimpleActor,
@@ -173,6 +170,7 @@ Hooks.once("init", async function () {
 
   CONFIG.Token.documentClass = SimpleTokenDocument;
   CONFIG.Token.objectClass = SimpleToken;
+  CONFIG.Combat.documentClass = DaggerheartCombat;
 
   CONFIG.Actor.trackableAttributes = CONFIG.Actor.trackableAttributes || {};
   for (const t of ["character", "npc", "companion", "environment"]) {
@@ -451,6 +449,45 @@ Hooks.on("updateItem", async (item, data, options, userId) => {
   }
 });
 
+Hooks.on("updateItem", async (item, data, options, userId) => {
+  try {
+    if (item.type !== "armor") return;
+    const actor = item.parent;
+    if (!actor) return;
+
+    const isEquipped = item.system?.equipped === true;
+    const equippedChanged = data.system?.equipped !== undefined;
+    const armorFieldsChanged = !!(data.system?.baseScore || data.system?.baseThresholds);
+
+    if (equippedChanged) {
+      if (data.system.equipped === true) {
+        await EquipmentSystem._applyArmorModifiers(actor, item);
+      } else {
+        await EquipmentSystem._removeArmorModifiers(actor, item);
+      }
+      return;
+    }
+
+    if (isEquipped && armorFieldsChanged) {
+      await EquipmentSystem._applyArmorModifiers(actor, item);
+    }
+  } catch (e) {
+    console.error("Daggerheart | Armor update handling failed", e);
+  }
+});
+
+Hooks.on("preDeleteItem", async (item, options, userId) => {
+  try {
+    const actor = item.parent;
+    if (!actor) return;
+    if (item.type !== "armor") return;
+    if (item.system?.equipped !== true) return;
+    await EquipmentSystem._removeArmorModifiers(actor, item);
+  } catch (e) {
+    console.error("Daggerheart | Failed armor modifier cleanup on delete", e);
+  }
+});
+
 Hooks.on("hotbarDrop", (bar, data, slot) => {
 
   if (data.type === "Item") {
@@ -481,6 +518,9 @@ Hooks.once("ready", async function () {
   // Initialize tracker notification bubbles
   game.daggerheart.trackerNotificationBubbles = new TrackerNotificationBubbles();
   game.daggerheart.trackerNotificationBubbles.initialize();
+
+  // Initialize spotlight initiative tracker
+  SpotlightInitiativeTracker.initialize();
 
   // Dice customization system is now preset-based and client-scoped
   console.debug('Daggerheart | Dice customization uses client-scoped presets - no initialization required');
@@ -1845,7 +1885,8 @@ function _addDamageApplicationButtons(message, html, flags) {
 
   const sourceActor = game.actors.get(flags.actorId);
 
-  const armorSlotsUI = _getMultiTargetArmorSlotsUI();
+  const targetActorIds = flags.targetActorIds || null;
+  const armorSlotsUI = _getMultiTargetArmorSlotsUI(targetActorIds);
 
   const buttonContainer = `${armorSlotsUI}<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
     <button class="apply-damage-button" data-damage="${damageAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
@@ -1883,7 +1924,8 @@ function _addHealingApplicationButtons(message, html, flags) {
 
   const sourceActor = game.actors.get(flags.actorId);
 
-  const armorSlotsUI = _getMultiTargetArmorSlotsUI();
+  const targetActorIds = flags.targetActorIds || null;
+  const armorSlotsUI = _getMultiTargetArmorSlotsUI(targetActorIds);
 
   const buttonContainer = `${armorSlotsUI}<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
     <button class="apply-healing-button" data-healing="${healingAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
@@ -2072,7 +2114,9 @@ async function _sendItemToChat(item) {
     name: item.name,
     category: item.system.category || '',
     rarity: item.system.rarity || '',
-    description: item.system.description || ''
+    description: item.system.description || '',
+    itemType: item.type,
+    system: item.system
   });
 
   ChatMessage.create({
@@ -2119,34 +2163,39 @@ function _addUndoButtonHandlers(html, flags) {
   });
 }
 
-function _getMultiTargetArmorInfo() {
+function _getMultiTargetArmorInfo(targetActorIds = null) {
   const characterTargets = [];
-  const targets = Array.from(game.user.targets);
-  targets.forEach(token => {
-    if (token.actor?.type === "character") {
-      // Only include if user is GM or owner
-      if (game.user.isGM || token.actor.isOwner) {
-        const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
-        const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
-        const availableSlots = maxSlots - currentSlots;
-        const usableSlots = Math.min(availableSlots, 3);
-        characterTargets.push({
-          actor: token.actor,
-          name: token.actor.name,
-          id: token.actor.id,
-          maxSlots,
-          currentSlots,
-          availableSlots,
-          usableSlots
-        });
-      }
-    }
-  });
+
+  const collectForActor = (actor) => {
+    if (!actor || actor.type !== "character") return;
+    if (!game.user.isGM && !actor.isOwner) return;
+    const maxSlots = parseInt(actor.system.defenses?.["armor-slots"]?.max) || 0;
+    const currentSlots = parseInt(actor.system.defenses?.["armor-slots"]?.value) || 0;
+    const availableSlots = Math.max(0, maxSlots - currentSlots);
+    const usableSlots = Math.min(availableSlots, 3);
+    characterTargets.push({
+      actor,
+      name: actor.name,
+      id: actor.id,
+      maxSlots,
+      currentSlots,
+      availableSlots,
+      usableSlots
+    });
+  };
+
+  if (Array.isArray(targetActorIds) && targetActorIds.length > 0) {
+    targetActorIds.forEach(id => collectForActor(game.actors.get(id)));
+  } else {
+    const targets = Array.from(game.user.targets || []);
+    targets.forEach(token => collectForActor(token.actor));
+  }
+
   return characterTargets;
 }
 
-function _getMultiTargetArmorSlotsUI() {
-  const characterTargets = _getMultiTargetArmorInfo();
+function _getMultiTargetArmorSlotsUI(targetActorIds = null) {
+  const characterTargets = _getMultiTargetArmorInfo(targetActorIds);
 
   if (characterTargets.length === 0) {
     return "";

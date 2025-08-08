@@ -113,10 +113,15 @@
 	display: flex;
 	border-bottom: 1px solid var(--dh-color-gold-dark);
 	font-size: var(--font-size-14);
-	font-weight: 100;
+	font-weight: 400;
 	text-transform: capitalize;
   margin: 0em 0em 0.5rem 0em;
 	justify-content: space-between;
 	align-items: center;
 	text-shadow: none;
+  background: linear-gradient(90deg, var(--dh-color-gold) 0%, #d4af37 100%);
+  padding: 8px 12px;
+	margin: 0 -16px 16px -16px;
+  color: var(--dh-color-dark-blue);
+  border-radius: 5px;
 }

@@ -835,10 +835,16 @@ export async function rollDamageWithDialog(formula, options = {}) {
       weaponSlot: null, // Add weapon slot to determine which weapon's modifiers to show
       isCritical: false,
       damageModifiers: [],
-      availableModifiers: []
+      availableModifiers: [],
+      targetActorIds: null
     };
 
     const config = { ...defaults, ...options };
+
+    if (!config.targetActorIds) {
+      const targets = Array.from(game.user?.targets || []);
+      config.targetActorIds = targets.map(t => t.actor?.id).filter(id => !!id);
+    }
 
     // Get available modifiers from the source actor for the specific weapon slot
     const availableModifiers = config.sourceActor ? _getAvailableModifiers(config.sourceActor, config.weaponSlot) : [];
@@ -865,7 +871,8 @@ export async function rollDamageWithDialog(formula, options = {}) {
       weaponSlot: config.weaponSlot,
       isCritical: config.isCritical,
       damageModifiers: config.damageModifiers,
-      availableModifiers: [...availableModifiers, ...config.availableModifiers]
+      availableModifiers: [...availableModifiers, ...config.availableModifiers],
+      targetActorIds: config.targetActorIds
     });
 
     console.log("Daggerheart | Damage dialog result:", result);
@@ -889,7 +896,8 @@ export async function rollDamage(formula, options = {}) {
     damageData: null,
     proficiency: null,
     source: "manual",
-    showDialog: false
+    showDialog: false,
+    targetActorIds: null
   };
 
   const config = { ...defaults, ...options };
@@ -947,7 +955,8 @@ export async function rollDamage(formula, options = {}) {
             actorId: config.sourceActor?.id || null,
             actorType: config.sourceActor?.type || null,
             damageAmount: roll.total,
-            isManualRoll: true
+            isManualRoll: true,
+            targetActorIds: Array.isArray(config.targetActorIds) ? config.targetActorIds : (Array.from(game.user?.targets || []).map(t => t.actor?.id).filter(id => !!id))
           }
         }
       });

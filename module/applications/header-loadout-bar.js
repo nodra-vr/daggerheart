@@ -173,7 +173,9 @@ export class HeaderLoadoutBar {
       name: item.name,
       category: itemData.category || '',
       rarity: itemData.rarity || '',
-      description: itemData.description || ''
+      description: itemData.description || '',
+      itemType: item.type,
+      system: item.system
     });
     ChatMessage.create({ user: game.user.id, speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: chatCard });
   }
@@ -192,7 +194,9 @@ export class HeaderLoadoutBar {
       category: itemData.category || '',
       rarity: itemData.rarity || '',
       description,
-      extraClasses: 'domain-preview-card'
+      extraClasses: 'domain-preview-card',
+      itemType: item.type,
+      system: item.system
     });
     const hintHtml = `<div class="preview-hint"><i class="fas fa-mouse"></i> Middle-click to pin</div>`;
     const fullHtml = cardHtml + hintHtml;
