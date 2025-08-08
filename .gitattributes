@@ -1,0 +1,16 @@
+# Exclude .gitignore and similar from the generated tarball
+.git*               export-ignore
+# Exclude .github actions
+.github/**          export-ignore
+
+# Exclude documentation and sass files to keep archive size down
+documentation       export-ignore
+documentation/**    export-ignore
+styles/src/**       export-ignore
+styles/src          export-ignore
+*.scss              export-ignore
+
+# There's no reason build things need to be in the releases.
+scripts/release.js  export-ignore
+gulpfile.js         export-ignore
+mkdocs.yml          export-ignore
