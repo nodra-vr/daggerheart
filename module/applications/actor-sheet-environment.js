@@ -67,8 +67,8 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
     html.find('.adversary-control').click(this._onAdversaryControl.bind(this));
     html.find('.category-toggle').click(this._onToggleCategory.bind(this));
 
-    // Initialize category states
     this._initializeCategoryStates(html);
+    this._initializeItemDescriptionStates(html);
 
     // Setup drag listeners for adversary slots
     this._setupAdversaryDragListeners(html);
@@ -138,21 +138,21 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
 
 
   _initializeCategoryStates(html) {
+    const states = this._categoryStates || {};
     const categories = ['actions', 'adversaries'];
     categories.forEach(category => {
       const categoryList = html.find(`.item-list[data-location="${category}"], .adversaries-grid[data-location="${category}"]`);
       const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
       const categoryHeader = html.find(`.category-toggle[data-category="${category}"]`).closest('.tab-category');
 
-      if (this.actor.getFlag('daggerheart', `uiState.categoryStates.${category}`) !== false) {
+      const isOpen = states[category] !== false;
+      if (isOpen) {
         categoryList.removeClass('category-collapsed');
-        categoryHeader.removeClass('section-collapsed');
-        categoryHeader.addClass('section-expanded');
+        categoryHeader.removeClass('section-collapsed').addClass('section-expanded');
         categoryIcon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
       } else {
         categoryList.addClass('category-collapsed');
-        categoryHeader.addClass('section-collapsed');
-        categoryHeader.removeClass('section-expanded');
+        categoryHeader.addClass('section-collapsed').removeClass('section-expanded');
         categoryIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
       }
     });
@@ -160,31 +160,26 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
 
   async _onToggleCategory(event) {
     event.preventDefault();
-    const button = event.currentTarget;
-    const icon = button.querySelector('i');
-    const category = button.dataset.category;
+    const button = $(event.currentTarget);
+    const icon = button.find('i');
+    const category = button.data('category');
     const categoryList = this.element.find(`.item-list[data-location="${category}"], .adversaries-grid[data-location="${category}"]`);
     const categoryHeader = button.closest('.tab-category');
 
+    if (!this._categoryStates) this._categoryStates = {};
     const isCollapsed = categoryList.hasClass('category-collapsed');
-
     if (isCollapsed) {
-      // Expand category
       categoryList.removeClass('category-collapsed');
-      categoryHeader.classList.remove('section-collapsed');
-      categoryHeader.classList.add('section-expanded');
-      icon.classList.remove('fa-chevron-down');
-      icon.classList.add('fa-chevron-up');
-      await this.actor.setFlag('daggerheart', `uiState.categoryStates.${category}`, true);
+      categoryHeader.removeClass('section-collapsed').addClass('section-expanded');
+      icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      this._categoryStates[category] = true;
     } else {
-      // Collapse category
       categoryList.addClass('category-collapsed');
-      categoryHeader.classList.add('section-collapsed');
-      categoryHeader.classList.remove('section-expanded');
-      icon.classList.remove('fa-chevron-up');
-      icon.classList.add('fa-chevron-down');
-      await this.actor.setFlag('daggerheart', `uiState.categoryStates.${category}`, false);
+      categoryHeader.addClass('section-collapsed').removeClass('section-expanded');
+      icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+      this._categoryStates[category] = false;
     }
+    await this._saveUiState();
   }
 
 

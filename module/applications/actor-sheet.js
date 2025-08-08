@@ -177,6 +177,10 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
     }
 
+    this._initializeCategoryStates(html);
+
+    this._initializeItemDescriptionStates(html);
+
     this._updateDynamicSpacing(false);
 
     this._enableTransitions();
@@ -2075,27 +2079,22 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     event.preventDefault();
     const button = $(event.currentTarget);
     const icon = button.find('i');
-    const category = button.data('category'); // Use data-category for NPC
+    const category = button.data('category');
     const dataType = this._getCategoryDataType(category);
-    const categoryList = this.element.find(`.item-list[data-location="${dataType}"]`);
+    const categoryList = this.element.find(`.item-list[data-location="${dataType}"], .adversaries-grid[data-location="${dataType}"]`);
     const categoryHeader = button.closest('.tab-category');
 
-    if (!this._categoryStates) {
-      this._categoryStates = {};
-    }
+    if (!this._categoryStates) this._categoryStates = {};
 
-    if (categoryList.hasClass('category-collapsed')) {
-      // Expand category
+    const isCollapsed = categoryList.hasClass('category-collapsed');
+    if (isCollapsed) {
       categoryList.removeClass('category-collapsed');
-      categoryHeader.removeClass('section-collapsed');
-      categoryHeader.addClass('section-expanded');
+      categoryHeader.removeClass('section-collapsed').addClass('section-expanded');
       icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
       this._categoryStates[category] = true;
     } else {
-      // Collapse category
       categoryList.addClass('category-collapsed');
-      categoryHeader.addClass('section-collapsed');
-      categoryHeader.removeClass('section-expanded');
+      categoryHeader.addClass('section-collapsed').removeClass('section-expanded');
       icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
       this._categoryStates[category] = false;
     }
@@ -2106,6 +2105,38 @@ await game.daggerheart.rollHandler.dualityWithDialog({
   _updateDynamicSpacing(enableTransitions = true) {
 
     return;
+  }
+
+  _initializeCategoryStates(html) {
+    const categories = Object.keys(this._categoryStates || {});
+    categories.forEach(category => {
+      const dataType = this._getCategoryDataType(category);
+      const categoryList = html.find(`.item-list[data-location="${dataType}"], .adversaries-grid[data-location="${dataType}"]`);
+      const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
+      const categoryHeader = html.find(`.category-toggle[data-category="${category}"]`).closest('.tab-category');
+
+      const isOpen = !!this._categoryStates[category];
+      if (isOpen) {
+        categoryList.removeClass('category-collapsed');
+        categoryHeader.removeClass('section-collapsed').addClass('section-expanded');
+        categoryIcon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      } else {
+        categoryList.addClass('category-collapsed');
+        categoryHeader.addClass('section-collapsed').removeClass('section-expanded');
+        categoryIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+      }
+    });
+  }
+
+  _initializeItemDescriptionStates(html) {
+    const states = this._itemDescriptionStates || {};
+    html.find('.item').each((_, el) => {
+      const li = $(el);
+      const id = li.data('itemId');
+      if (!id) return;
+      const isOpen = !!states[id];
+      li.toggleClass('expanded', isOpen);
+    });
   }
 
   _disableTransitions() {
@@ -2136,7 +2167,10 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       'community': 'community',
       'abilities': 'abilities',
       'worn': 'worn',
-      'backpack': 'backpack'
+      'backpack': 'backpack',
+      'passives': 'passives',
+      'actions': 'actions',
+      'adversaries': 'adversaries'
     };
     return mapping[category] || category;
   }
@@ -2148,7 +2182,12 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
     if (!descriptionDiv) return;
 
+    const itemId = li.dataset.itemId;
     li.classList.toggle("expanded");
+    const isExpanded = li.classList.contains('expanded');
+    if (!this._itemDescriptionStates) this._itemDescriptionStates = {};
+    this._itemDescriptionStates[itemId] = isExpanded;
+    await this._saveUiState();
   }
 
   async _onDeathOverlayClick(event) {
@@ -2413,16 +2452,23 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
     this._vaultOpen = uiState.vaultOpen ?? false;
 
-    const keys = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack', 'passives'];
-    const defaults = Object.fromEntries(keys.map(k => [k, false]));
+    const closedByDefault = ['class', 'subclass', 'ancestry', 'community', 'abilities', 'worn', 'backpack', 'passives'];
+    const openByDefault = ['actions', 'adversaries'];
+    const defaults = Object.fromEntries([
+      ...closedByDefault.map(k => [k, false]),
+      ...openByDefault.map(k => [k, true])
+    ]);
     this._categoryStates = Object.assign(defaults, uiState.categoryStates || {});
+
+    this._itemDescriptionStates = uiState.itemDescriptions || {};
   }
 
   async _saveUiState() {
     if (!this.actor) return;
     const data = {
       vaultOpen: this._vaultOpen ?? false,
-      categoryStates: this._categoryStates ?? {}
+      categoryStates: this._categoryStates ?? {},
+      itemDescriptions: this._itemDescriptionStates ?? {}
     };
     try {
       await this.actor.setFlag('daggerheart', 'uiState', data);
@@ -2598,25 +2644,7 @@ export class NPCActorSheet extends SimpleActorSheet {
       textarea.css("height", calcHeight(textarea.val()) + "px");
     });
 
-    // Initialize category states for adversary features
-    const categories = ['backpack', 'passives']; // Add 'passives' for NPC
-    categories.forEach(category => {
-      const categoryList = html.find(`.item-list[data-location="${this._getCategoryDataType(category)}"]`);
-      const categoryIcon = html.find(`.category-toggle[data-category="${category}"] i`);
-      const categoryHeader = html.find(`.category-toggle[data-category="${category}"]`).closest('.tab-category');
-
-      if (this._categoryStates?.[category]) {
-        categoryList.removeClass('category-collapsed');
-        categoryHeader.removeClass('section-collapsed');
-        categoryHeader.addClass('section-expanded');
-        categoryIcon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-      } else {
-        categoryList.addClass('category-collapsed');
-        categoryHeader.addClass('section-collapsed');
-        categoryHeader.removeClass('section-expanded');
-        categoryIcon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-      }
-    });
+    
   }
 
   async _onItemControl(event) {
@@ -2975,13 +3003,7 @@ export class NPCActorSheet extends SimpleActorSheet {
    * @private
    */
   async _onToggleDescription(event) {
-    event.preventDefault();
-    const li = event.currentTarget.closest(".item");
-    const descriptionDiv = li.querySelector(".item-description");
-
-    if (!descriptionDiv) return;
-
-    li.classList.toggle("expanded");
+    return super._onToggleDescription(event);
   }
 
   /**
