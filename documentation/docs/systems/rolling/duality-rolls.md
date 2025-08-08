@@ -17,10 +17,10 @@ You’ll see both dice in chat with a summary of outcomes and any automatic Hope
 - Reaction rolls by adding `reaction=true`
 
 ### Getting started
-1) Select or open your character
-2) Trigger a roll from sheet buttons or use `/dr` in chat
-3) Add options like `trait`, `modifier`, `advantage`, or `disadvantage`
-4) Read the result banner (Critical, Hope, Fear) and apply outcomes
+1. Select or open your character
+2. Trigger a roll from sheet buttons or use `/dr` in chat
+3. Add options like `trait`, `modifier`, `advantage`, or `disadvantage`
+4. Read the result banner (Critical, Hope, Fear) and apply outcomes
 
 ### For power users
 ```javascript

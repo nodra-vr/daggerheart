@@ -6,10 +6,10 @@ title: NPC Rolls
 Roll for NPCs with optional advantage/disadvantage and modifiers.
 
 ### Getting started
-1) Select an NPC token
-2) Trigger an NPC roll via macro or UI control
-3) Add advantage/disadvantage or modifier as needed
-4) Send to chat
+1. Select an NPC token
+2. Trigger an NPC roll via macro or UI control
+3. Add advantage/disadvantage or modifier as needed
+4. Send to chat
 
 ### API
 ```javascript
@@ -31,9 +31,9 @@ await game.daggerheart.rollHandler.rollNPC({
 - Consistent with player roll presentation
 
 ### Typical flow
-1) Select an NPC token
-2) Trigger an NPC roll with options
-3) View result and apply consequences
+1. Select an NPC token
+2. Trigger an NPC roll with options
+3. View result and apply consequences
 
 ### Tips
 - Use macros to repeat common NPC checks

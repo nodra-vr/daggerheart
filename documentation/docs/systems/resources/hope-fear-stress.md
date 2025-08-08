@@ -6,9 +6,9 @@ title: Hope, Fear & Stress
 Hope helps players, Fear helps the GM, Stress marks strain. Rolls automatically adjust these values when appropriate.
 
 ### Getting started
-1) Roll using Duality; outcomes apply resources automatically
-2) Adjust manually with the Token Counter UI
-3) Use resource buttons in chat or text via Resource Enrichment
+1. Roll using Duality; outcomes apply resources automatically
+2. Adjust manually with the Token Counter UI
+3. Use resource buttons in chat or text via Resource Enrichment
 
 ### Automatic from rolls
 - Critical: +1 Hope and clear 1 Stress (characters)

@@ -34,6 +34,7 @@ import {
   DaggerheartTemplateEnricher,
   renderMeasuredTemplate
 } from "./data/range-measurement.js";
+import { initializeHoverDistance } from "./helpers/hover-distance.js";
 
 
 import { _rollHope, _rollFear, _rollDuality, _rollNPC, _checkCritical, _enableForcedCritical, _disableForcedCritical, _isForcedCriticalActive, _quickRoll, _dualityWithDialog, _npcRollWithDialog, _waitFor3dDice } from './data/rollHandler.js';
@@ -468,6 +469,8 @@ Hooks.once("ready", async function () {
   Hooks.on('renderChatMessage', (message, html, data) => {
     html.find('.measured-template-button').on('click', renderMeasuredTemplate);
   });
+
+  initializeHoverDistance();
 
   window.spendFear = async function (amount) {
     if (!game.daggerheart?.counter) {

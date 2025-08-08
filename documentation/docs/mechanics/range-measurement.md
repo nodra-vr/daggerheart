@@ -6,10 +6,10 @@ title: Range Measurement
 Replace numeric rulers with narrative ranges. Distances display as Melee, Very Close, Close, Far, or Very Far based on configurable thresholds.
 
 ### Getting started
-1) Open Game Settings → Configure Settings → Daggerheart
-2) Enable Range Measurement
-3) Set distance thresholds for each category
-4) Use the ruler or place templates to see narrative ranges
+1. Open Game Settings → Configure Settings → Daggerheart
+2. Enable Range Measurement
+3. Set distance thresholds for each category
+4. Use the ruler or place templates to see narrative ranges
 
 ### Settings
 - Enabled toggle

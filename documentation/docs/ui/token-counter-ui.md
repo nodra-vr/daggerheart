@@ -6,9 +6,9 @@ title: Token Counter UI
 Floating UI for HP, Hope, Stress, Armor slots on selected token.
 
 ### Getting started
-1) Select a token on the canvas
-2) Open the Token Counter UI if it isn’t already visible
-3) Use +/- controls for HP, Hope/Stress, and Armor slots
+1. Select a token on the canvas
+2. Open the Token Counter UI if it isn’t already visible
+3. Use +/- controls for HP, Hope/Stress, and Armor slots
 
 ### Controls
 - +/- HP

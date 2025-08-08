@@ -13,12 +13,12 @@ Compact launcher for character abilities with hover previews, pinning, quick-use
 - Edit, delete, or move to vault directly from the sidebar
 
 ### Getting started
-1) Open a character sheet. The sidebar appears on the left edge of the sheet.
-2) Hover an ability to see a preview after a short delay.
-3) Click an ability to post its card to chat.
-4) Middle-click the ability to pin the preview for scrolling and interaction. Middle-click again to unpin.
-5) Use the small colored bubbles to increment or decrement counters.
-6) Drag items onto empty slots to add them to a section.
+1. Open a character sheet. The sidebar appears on the left edge of the sheet.
+2. Hover an ability to see a preview after a short delay.
+3. Click an ability to post its card to chat.
+4. Middle-click the ability to pin the preview for scrolling and interaction. Middle-click again to unpin.
+5. Use the small colored bubbles to increment or decrement counters.
+6. Drag items onto empty slots to add them to a section.
 
 ### Interactions and shortcuts
 - Click ability: creates a chat card for the item

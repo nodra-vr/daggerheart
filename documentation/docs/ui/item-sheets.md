@@ -7,10 +7,10 @@ title: Item Sheets
 - Weapon, Armor (custom sheets)
 
 ### Getting started
-1) Open an item
-2) Use Send to Chat to share a card
-3) Toggle Equip for weapons/armor to affect the actor
-4) Edit attributes and groups for rules text or automation
+1. Open an item
+2. Use Send to Chat to share a card
+3. Toggle Equip for weapons/armor to affect the actor
+4. Edit attributes and groups for rules text or automation
 
 ### Features
 - Card-style display

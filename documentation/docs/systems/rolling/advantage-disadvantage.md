@@ -6,9 +6,9 @@ title: Advantage & Disadvantage
 Advantage and Disadvantage add small dice that lean outcomes in your favor or against you. They cancel each other out before a roll is made.
 
 ### Getting started
-1) Open a roll dialog when available
-2) Add sizes and quantities for Advantage/Disadvantage dice
-3) Confirm the preview shows net dice after cancellation
+1. Open a roll dialog when available
+2. Add sizes and quantities for Advantage/Disadvantage dice
+3. Confirm the preview shows net dice after cancellation
 
 ### When to use
 - Helpful circumstances, teamwork, great positioning → Advantage
@@ -17,8 +17,8 @@ Advantage and Disadvantage add small dice that lean outcomes in your favor or ag
 Add these dice via the roll dialog when prompted, or with chat commands.
 
 ### How cancellation works
-1) Cancel same-size dice first (1d6 adv cancels 1d6 dis)
-2) Any leftover Disadvantage reduces remaining Advantage from smallest sizes upward
+1. Cancel same-size dice first (1d6 adv cancels 1d6 dis)
+2. Any leftover Disadvantage reduces remaining Advantage from smallest sizes upward
 
 ### Net calculation
 - Same sizes cancel pairwise

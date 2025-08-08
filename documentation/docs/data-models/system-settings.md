@@ -10,9 +10,9 @@ title: System Settings
 - `diceAppearance` (custom UI)
 
 ### Getting started
-1) Open Game Settings → Configure Settings
-2) Use the Daggerheart section for world and client options
-3) World settings affect all users; client settings are per-user
+1. Open Game Settings → Configure Settings
+2. Use the Daggerheart section for world and client options
+3. World settings affect all users; client settings are per-user
 
 ### Notes
 - World settings affect all users

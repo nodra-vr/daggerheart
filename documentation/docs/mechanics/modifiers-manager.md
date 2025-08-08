@@ -20,9 +20,9 @@ await game.daggerheart.ModifierManager.addModifierByRef(actor, 'system.strength.
 - Automatic aggregation into rolls and dialogs
 
 ### Typical flows
-1) Add a named modifier to a field path
-2) Toggle it on or off as needed
-3) Rolls and dialogs include enabled modifiers
+1. Add a named modifier to a field path
+2. Toggle it on or off as needed
+3. Rolls and dialogs include enabled modifiers
 
 ### Tips
 - Use clear names for quick identification in dialogs

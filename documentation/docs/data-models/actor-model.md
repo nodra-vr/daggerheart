@@ -21,9 +21,9 @@ Actors store gameplay state including resources, thresholds, defenses, and equip
 - `actor.system[trait].value`
 
 ### Typical flows
-1) Update traits or defenses on the sheet
-2) Equip items to populate `weapon-main` or `weapon-off`
-3) Roll attacks and apply damage with thresholds and armor slots
+1. Update traits or defenses on the sheet
+2. Equip items to populate `weapon-main` or `weapon-off`
+3. Roll attacks and apply damage with thresholds and armor slots
 
 ### Notes
 - Characters track Hope and Stress individually

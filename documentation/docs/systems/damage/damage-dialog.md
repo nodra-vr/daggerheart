@@ -6,16 +6,16 @@ title: Damage Dialog
 An interactive dialog that builds the final damage formula. Choose modifiers, see a live preview, and roll.
 
 ### Getting started
-1) Trigger from an attack card’s Damage button, or open a damage action
-2) Review the base formula and edit if needed
-3) Toggle damage modifiers you want to include
-4) Roll to send results to chat
+1. Trigger from an attack card’s Damage button, or open a damage action
+2. Review the base formula and edit if needed
+3. Toggle damage modifiers you want to include
+4. Roll to send results to chat
 
 ### How to use
-1) Click Damage from the attack message, or open a damage action that shows the dialog
-2) Edit the base formula if needed
-3) Toggle any modifiers you want to include
-4) Roll
+1. Click Damage from the attack message, or open a damage action that shows the dialog
+2. Edit the base formula if needed
+3. Toggle any modifiers you want to include
+4. Roll
 
 ### For power users
 ```javascript

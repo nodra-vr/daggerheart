@@ -9,10 +9,10 @@ title: Actor Sheets
 - Environment: `EnvironmentActorSheet`
 
 ### Getting started
-1) Open an actor and explore tabs: Overview, Abilities, Inventory, etc.
-2) Click roll icons near traits or abilities to send results to chat
-3) Equip weapons/armor to populate `weapon-main` and `weapon-off`
-4) Adjust resources via Token Counter UI or from the sheet
+1. Open an actor and explore tabs: Overview, Abilities, Inventory, etc.
+2. Click roll icons near traits or abilities to send results to chat
+3. Equip weapons/armor to populate `weapon-main` and `weapon-off`
+4. Adjust resources via Token Counter UI or from the sheet
 
 ### Features
 - Clean tabs with quick navigation

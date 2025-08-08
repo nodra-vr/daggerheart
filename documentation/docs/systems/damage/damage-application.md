@@ -7,10 +7,10 @@ Damage and healing apply directly to targeted or selected tokens. Characters use
 
 ### Typical flow (players)
 
-1) Make an attack roll
-2) Click the Damage button that appears on the chat message
-3) Select targets on the canvas
-4) Confirm damage application
+1. Make an attack roll
+2. Click the Damage button that appears on the chat message
+3. Select targets on the canvas
+4. Confirm damage application
 
 
 Armor slots can reduce the HP marked for characters.

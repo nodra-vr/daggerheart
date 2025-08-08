@@ -6,10 +6,10 @@ title: Equipment System
 Manage equipping and unequipping weapons and armor. Equipped items sync to `weapon-main` and `weapon-off` slots on actors and affect rolls and damage.
 
 ### Getting started
-1) Open an item sheet for a weapon or armor
-2) Toggle Equip to place it on your actor
-3) Confirm it appears in `weapon-main` or `weapon-off` on the actor sheet
-4) Roll an attack or damage to apply modifiers
+1. Open an item sheet for a weapon or armor
+2. Toggle Equip to place it on your actor
+3. Confirm it appears in `weapon-main` or `weapon-off` on the actor sheet
+4. Roll an attack or damage to apply modifiers
 
 ### API
 ```javascript
@@ -26,9 +26,9 @@ await EquipmentHandler.equipPrimary(actor, weaponItem);
 - Updates loadout bars and relevant UI elements
 
 ### Typical flows
-1) Equip a weapon on the item sheet
-2) The weapon appears in `weapon-main` or `weapon-off`
-3) Attack rolls use the equipped weapon’s modifiers
+1. Equip a weapon on the item sheet
+2. The weapon appears in `weapon-main` or `weapon-off`
+3. Attack rolls use the equipped weapon’s modifiers
 
 ### Tips
 - Use item sheet actions to equip faster
