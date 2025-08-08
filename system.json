@@ -1,6 +1,6 @@
 {
   "id": "daggerheart",
-  "version": "2.12.8",
+  "version": "2.12.9",
   "title": "Daggerheart",
   "url": "",
   "description": "Unofficial Daggerheart Game System",
@@ -49,6 +49,6 @@
     "verified": "13"
   },
   "manifest": "https://raw.githubusercontent.com/unofficial-daggerheart/daggerheart/master/system.json",
-  "download": "https://github.com/unofficial-daggerheart/daggerheart/archive/refs/tags/v2.12.8.zip",
+  "download": "https://github.com/unofficial-daggerheart/daggerheart/archive/refs/tags/v2.12.9.zip",
   "background": "systems/daggerheart/assets/branding/coverart.webp"
 }
