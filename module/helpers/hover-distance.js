@@ -112,11 +112,48 @@ function handleControlToken() {
   });
 }
 
+function handleHighlight(highlighted) {
+  if (!isEnabled()) {
+    canvas.tokens.placeables.forEach(t => {
+      if (t?.hoverDistanceContainer) t.hoverDistanceContainer.removeChildren();
+      if (t?.tooltip) t.tooltip.visible = true;
+    });
+    return;
+  }
+
+  const origin = getFirstControlledToken();
+  if (!highlighted || !origin) {
+    canvas.tokens.placeables.forEach(t => {
+      if (t?.hoverDistanceContainer) t.hoverDistanceContainer.removeChildren();
+      if (t?.tooltip) t.tooltip.visible = true;
+    });
+    return;
+  }
+
+  canvas.tokens.placeables.forEach(t => {
+    if (t?.id === origin.id) {
+      if (t?.hoverDistanceContainer) t.hoverDistanceContainer.removeChildren();
+      if (t?.tooltip) t.tooltip.visible = true;
+      return;
+    }
+    const distance = measureCenterDistance(origin, t);
+    const label = getLabelForDistance(distance);
+    if (label) {
+      if (t?.tooltip) t.tooltip.visible = false;
+      drawTooltip(t, label);
+    } else {
+      if (t?.hoverDistanceContainer) t.hoverDistanceContainer.removeChildren();
+      if (t?.tooltip) t.tooltip.visible = true;
+    }
+  });
+}
+
 export function initializeHoverDistance() {
   if (isInitialized) return;
   isInitialized = true;
   Hooks.on("hoverToken", handleHover);
   Hooks.on("controlToken", handleControlToken);
+  Hooks.on("highlightObjects", handleHighlight);
 }
 
 
