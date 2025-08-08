@@ -2269,6 +2269,10 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     const categoryList = this.element.find(`.item-list[data-location="${dataType}"], .adversaries-grid[data-location="${dataType}"]`);
     const categoryHeader = button.closest('.tab-category');
 
+    if (button.hasClass('disabled') || categoryList.hasClass('is-empty')) {
+      return;
+    }
+
     if (!this._categoryStates) this._categoryStates = {};
 
     const isCollapsed = categoryList.hasClass('category-collapsed');
@@ -2487,11 +2491,19 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     html.find('.item-list').each((index, element) => {
       const $list = $(element);
       const hasItems = $list.find('.item').length > 0;
+      const location = $list.data('location');
+      const $header = html.find(`.category-toggle[data-category="${location}"]`).closest('.tab-category');
+      const $toggle = $header.find('.category-toggle');
 
       if (hasItems) {
         $list.removeClass('is-empty');
+        $header.removeClass('empty-category');
+        $toggle.removeClass('disabled').removeAttr('aria-disabled');
       } else {
         $list.addClass('is-empty');
+        $list.addClass('category-collapsed');
+        $header.addClass('empty-category section-collapsed').removeClass('section-expanded');
+        $toggle.addClass('disabled').attr('aria-disabled', 'true');
       }
     });
   }
