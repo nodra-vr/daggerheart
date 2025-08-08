@@ -2,42 +2,6 @@ site_name: Unofficial Daggerheart System for FoundryVTT
 short_name: Foundry UDH Sytem Documentaion
 
 docs_dir: documentation/docs
-nav:
-  - Home: index.md
-  - Systems:
-    - Rolling:
-      - Duality Rolls: systems/rolling/duality-rolls.md
-      - Duality Dice Command: Duality Dice Command.md
-      - Advantage & Disadvantage: systems/rolling/advantage-disadvantage.md
-      - NPC Rolls: systems/rolling/npc-rolls.md
-    - Damage:
-      - Damage Application: systems/damage/damage-application.md
-      - Damage Dialog: systems/damage/damage-dialog.md
-    - Resources:
-      - Hope, Fear & Stress: systems/resources/hope-fear-stress.md
-      - Resource Enrichment: systems/resources/resource-enrichment.md
-  - UI:
-    - Actor Sheets: ui/actor-sheets.md
-    - Item Sheets: ui/item-sheets.md
-    - Token Counter: ui/token-counter-ui.md
-    - Top Bar: ui/top-bar-ui.md
-    - Countdown Trackers: ui/countdown-trackers.md
-    - Domain Ability Sidebar: ui/domain-ability-sidebar.md
-    - Hover Distance: ui/hover-distance.md
-  - Mechanics:
-    - Modifiers Manager: Modifiers Manager.md
-    - Equipment System: mechanics/equipment-system.md
-    - Range Measurement: mechanics/range-measurement.md
-    - Dice Customization: mechanics/dice-customization.md
-  - Technical:
-    - Chat Commands: technical/chat-commands.md
-    - Text Enrichers: technical/text-enrichers.md
-    - API Reference: technical/api-reference.md
-    - Macros: technical/macros.md
-  - Data Models:
-    - Actor Model: data-models/actor-model.md
-    - Item Model: data-models/item-model.md
-    - System Settings: data-models/system-settings.md
 extra_css:
   - overrides/assets/stylesheets/custom.css
 

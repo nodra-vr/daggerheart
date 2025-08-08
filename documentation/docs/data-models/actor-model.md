@@ -38,4 +38,4 @@ await actor.update({ 'system.defenses.armor': 1 })
 ### Related
 - [Item Model](./item-model.md)
 - [System Settings](./system-settings.md)
-- [Roll Handler and Damage System](../Roll%20Handler%20and%20Damage%20System.md)
+ 

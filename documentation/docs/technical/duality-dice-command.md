@@ -80,7 +80,8 @@ You can mix and match parameters:
 This feature is inspired by Foundryborne's implementation of the command for their Daggerheart system.
 
 ## Related
-- [Duality Rolls](./systems/rolling/duality-rolls.md)
-- [Advantage & Disadvantage](./systems/rolling/advantage-disadvantage.md)
-- [Hope, Fear & Stress](./systems/resources/hope-fear-stress.md)
-- [Chat Commands (Technical)](./Technical/chat-commands.md)
+- [Duality Rolls](../systems/rolling/duality-rolls.md)
+- [Advantage & Disadvantage](../systems/rolling/advantage-disadvantage.md)
+- [Hope, Fear & Stress](../systems/resources/hope-fear-stress.md)
+- [Chat Commands (Technical)](./chat-commands.md)
+

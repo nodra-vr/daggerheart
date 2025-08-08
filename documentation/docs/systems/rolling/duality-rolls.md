@@ -7,8 +7,7 @@ Duality rolls use a Hope die and a Fear die together. The system labels results 
 
 ### Quick start
 - From your sheet: click a roll button
-- From chat: type `/dr`
-- With options: `[[/dr trait=agility modifier=2]]{Agility Check}`
+- Use the Duality Roll popup to set options, then Roll
 
 You’ll see both dice in chat with a summary of outcomes and any automatic Hope/Stress changes.
 
@@ -18,9 +17,14 @@ You’ll see both dice in chat with a summary of outcomes and any automatic Hope
 
 ### Getting started
 1. Select or open your character
-2. Trigger a roll from sheet buttons or use `/dr` in chat
-3. Add options like `trait`, `modifier`, `advantage`, or `disadvantage`
+2. Click a roll button to open the Duality Roll popup
+3. Configure options like `trait`, `modifier`, `advantage`, or `disadvantage`
 4. Read the result banner (Critical, Hope, Fear) and apply outcomes
+
+### Using the roll popup
+1. Click a roll button on your sheet
+2. In the popup, set trait/modifier and optional advantage/disadvantage or reaction
+3. Press Roll to send results to chat
 
 ### For power users
 ```javascript
@@ -34,17 +38,6 @@ await game.daggerheart.rollHandler.rollDuality({
 });
 ```
 
-### Reading results
-- Critical: highest Hope and lowest Fear alignment
-- Hope: Hope exceeds Fear
-- Fear: Fear exceeds Hope
-
-### Tips
-- Critical: +1 Hope, clear 1 Stress
-- Hope: +1 Hope
-- Fear: GM gains 1 Fear
-- You can add Advantage/Disadvantage in the roll dialog when available.
-
 ### Rerolling dice
 Click Hope or Fear dice in the chat card to reroll that die after a roll.
 ![Rerolling Hope/Fear die](https://github.com/user-attachments/assets/5453591b-8351-48b5-b7d4-ed5f87897b09)
@@ -55,7 +48,7 @@ Rolls post rich chat cards with clickable dice and resource summaries.
 ![Duality roll chat card](https://github.com/user-attachments/assets/eca3cd4b-e27a-4ed4-bc9c-0368df153f4b)
 
 ### Chat command help
-See: [[Duality Dice Command]]. Or use inline: `[[/dr trait=agility modifier=2]]{Agility Check}`.
+See: [Duality Dice Command](../../technical/duality-dice-command.md).
 
 ### Related
 - [Advantage & Disadvantage](../rolling/advantage-disadvantage.md)

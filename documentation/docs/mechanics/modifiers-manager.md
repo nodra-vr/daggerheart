@@ -28,7 +28,7 @@ await game.daggerheart.ModifierManager.addModifierByRef(actor, 'system.strength.
 - Use clear names for quick identification in dialogs
 - Prefer field-path APIs for precise targeting
 ### Related
-- [Modifiers Manager (Guide)](../Modifiers Manager.md)
+- [Modifiers Manager (Guide)](../mechanics/modifiers-manager.md)
 - [Damage Dialog](../systems/damage/damage-dialog.md)
 - [Duality Rolls](../systems/rolling/duality-rolls.md)
 

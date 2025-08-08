@@ -66,6 +66,7 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
 
     html.find('.adversary-control').click(this._onAdversaryControl.bind(this));
     html.find('.category-toggle').click(this._onToggleCategory.bind(this));
+    html.find('.item-name[data-action="toggle-description"]').click(this._onToggleDescription.bind(this));
 
     this._initializeCategoryStates(html);
     this._initializeItemDescriptionStates(html);

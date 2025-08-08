@@ -51,5 +51,5 @@ await game.daggerheart.rollHandler.rollDuality({
 - Favor adding a few larger dice over many tiny dice for readability
 
 ### Chat commands
-- See: [Duality Roll Command](../../Duality Dice Command.md) for adding `advantage`/`disadvantage` in `/dr`
+- See: [Duality Roll Command](../../technical/duality-dice-command.md) for adding `advantage`/`disadvantage` in `/dr`
 

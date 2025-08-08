@@ -2177,6 +2177,8 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
   async _onToggleDescription(event) {
     event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
     const li = event.currentTarget.closest(".item");
     const descriptionDiv = li.querySelector(".item-description");
 
@@ -2471,7 +2473,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       itemDescriptions: this._itemDescriptionStates ?? {}
     };
     try {
-      await this.actor.setFlag('daggerheart', 'uiState', data);
+      await this.actor.update({ 'flags.daggerheart.uiState': data }, { render: false });
     } catch (e) {
       console.error('Failed to save UI state', e);
     }

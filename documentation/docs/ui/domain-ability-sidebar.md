@@ -55,7 +55,6 @@ Compact launcher for character abilities with hover previews, pinning, quick-use
 - Move unused abilities to the vault to declutter the sidebar
 
 ### Related
-- [Duality Roll Command](../Duality Dice Command.md)
-- [Hope, Fear and Stress System](../Hope, Fear and Stress System.md)
-- [Modifier Manager](../Modifiers Manager.md)
-- [Roll Handler and Damage System](../Roll Handler and Damage System.md)
+- [Duality Roll Command](../technical/duality-dice-command.md)
+- [Hope, Fear & Stress](../systems/resources/hope-fear-stress.md)
+- [Modifiers Manager](../mechanics/modifiers-manager.md)
