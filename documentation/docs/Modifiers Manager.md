@@ -26,7 +26,7 @@ These modifiers stay on your character and cannot be easily removed:
 * Character level increases
 * Permanent curses
 
-*[Screenshot placeholder: Character sheet showing both temporary and permanent modifiers]*
+<img width="562" height="685" alt="image" src="https://github.com/user-attachments/assets/8132161a-f700-4a20-9b11-706cc699fded" />
 
 ## Adding Modifiers
 
@@ -37,7 +37,8 @@ You can add modifiers using macros or through the game master. The system will a
 * Show the modifier in your character sheet
 * Update all related numbers
 
-*[GIF placeholder: Adding a modifier and seeing the numbers update]*
+![firefox_vJjTBilafP](https://github.com/user-attachments/assets/570c4f5f-b00b-45ad-b4f4-c7fc71393bcb)
+
 
 ### What Can Be Modified
 You can add modifiers to:
@@ -56,16 +57,14 @@ Your character sheet shows all active modifiers. You can see:
 * How much it changes your stats
 * Whether it is temporary or permanent
 
-*[Screenshot placeholder: Character sheet section showing modifier list]*
-
 ### Turning Modifiers On and Off
 Temporary modifiers can be disabled without removing them completely. This is useful when:
 
 * A spell effect ends but might come back
 * You want to see your base stats
 * Testing different combinations
-
-*[GIF placeholder: Toggling a modifier on and off]*
+  
+![firefox_3qn9yCAtpu](https://github.com/user-attachments/assets/2c5d217e-bb59-45c5-950d-17c193de4a67)
 
 ### Removing Modifiers
 
@@ -93,8 +92,6 @@ When you gain a level:
 2. The "Character Level" modifier updates
 3. This bonus is permanent and cannot be accidentally removed
 
-*[Screenshot placeholder: Before and after level up showing threshold changes]*
-
 ## Creating Your Own Macros
 
 For players and Game Masters who want to automate modifier management, you can create custom macros and scripts. This section shows you how to build your own tools.
@@ -107,8 +104,6 @@ Macros let you:
 * Create spell effect buttons
 * Build custom magic item activators
 * Automate common game mechanics
-
-*[Screenshot placeholder: Macro bar with custom modifier buttons]*
 
 ### Basic Macro Examples
 
@@ -316,8 +311,6 @@ To create a macro button:
 3. Give it a name and icon
 4. Paste your script code
 5. Save and test
-
-*[GIF placeholder: Creating a macro button step by step]*
 
 ### Macro Best Practices
 
