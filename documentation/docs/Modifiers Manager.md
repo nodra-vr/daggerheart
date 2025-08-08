@@ -361,8 +361,6 @@ Game Masters have additional tools to:
 * Manage modifiers for NPCs and monsters
 * Create custom modifier effects
 
-*[Screenshot placeholder: GM interface for managing modifiers]*
-
 ### GM Macro Examples
 
 #### Apply Effect to All Party Members
