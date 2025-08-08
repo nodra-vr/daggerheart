@@ -166,6 +166,18 @@ Hooks.once("init", async function () {
   CONFIG.Token.documentClass = SimpleTokenDocument;
   CONFIG.Token.objectClass = SimpleToken;
 
+  CONFIG.Actor.trackableAttributes = CONFIG.Actor.trackableAttributes || {};
+  for (const t of ["character", "npc", "companion", "environment"]) {
+    CONFIG.Actor.trackableAttributes[t] = CONFIG.Actor.trackableAttributes[t] || {};
+    const existing = CONFIG.Actor.trackableAttributes[t].bar || [];
+    CONFIG.Actor.trackableAttributes[t].bar = Array.from(new Set([
+      ...existing,
+      "barHealth",
+      "barStress",
+      "barArmor"
+    ]));
+  }
+
   // Register custom canvas classes for range measurement
   CONFIG.MeasuredTemplate.objectClass = DaggerheartMeasuredTemplate;
   CONFIG.Canvas.rulerClass = DaggerheartRuler;
@@ -1283,9 +1295,16 @@ Hooks.on("getSceneControlButtons", (controls) => {
 });
 
 Hooks.on("preCreateActor", function (document, data, options, userId) {
+  const type = data.type || document.type;
+  const isCompanion = type === 'companion';
+  const primaryAttr = isCompanion ? 'barStress' : 'barHealth';
+  const secondaryAttr = isCompanion ? 'barHealth' : 'barStress';
+
   document.updateSource({
     "prototypeToken": foundry.utils.mergeObject(document.prototypeToken?.toObject() || {}, {
-      actorLink: data.type === 'character' || data.type === 'companion'
+      actorLink: type === 'character' || type === 'companion',
+      bar1: { attribute: primaryAttr },
+      bar2: { attribute: secondaryAttr }
     })
   });
 });

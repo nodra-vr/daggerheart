@@ -361,12 +361,44 @@ export class SimpleActor extends Actor {
   }
 
   async modifyTokenAttribute(attribute, value, isDelta = false, isBar = true) {
-    const current = foundry.utils.getProperty(this.system, attribute);
-    if ( !isBar || !isDelta || (current?.dtype !== "Resource") ) {
+    if (!isBar) {
       return super.modifyTokenAttribute(attribute, value, isDelta, isBar);
     }
-    const updates = {[`system.${attribute}.value`]: Math.clamped(current.value + value, current.min, current.max)};
-    const allowed = Hooks.call("modifyTokenAttribute", {attribute, value, isDelta, isBar}, updates);
+
+    const updates = {};
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+    if (attribute === "barHealth") {
+      const bar = this.system.barHealth || { value: 0, min: 0, max: this.system.health?.max || 0 };
+      const newBarValue = clamp(isDelta ? bar.value + value : Number(value), bar.min ?? 0, bar.max ?? 0);
+      const maxHealth = this.system.health?.max ?? 0;
+      const minHealth = this.system.health?.min ?? 0;
+      const newHealth = clamp(maxHealth - newBarValue, minHealth, maxHealth);
+      updates["system.health.value"] = newHealth;
+    } else if (attribute === "barStress") {
+      const bar = this.system.barStress || { value: 0, min: 0, max: this.system.stress?.max || 0 };
+      const newBarValue = clamp(isDelta ? bar.value + value : Number(value), bar.min ?? 0, bar.max ?? 0);
+      const maxStress = this.system.stress?.max ?? 0;
+      const minStress = this.system.stress?.min ?? 0;
+      const newStress = clamp(maxStress - newBarValue, minStress, maxStress);
+      updates["system.stress.value"] = newStress;
+    } else if (attribute === "barArmor") {
+      const bar = this.system.barArmor || { value: 0, min: 0, max: this.system.defenses?.armor?.value || 0 };
+      const newBarValue = clamp(isDelta ? bar.value + value : Number(value), bar.min ?? 0, bar.max ?? 0);
+      const armorMax = this.system.defenses?.armor?.value ?? 0;
+      const slotsMin = 0;
+      const slotsMax = armorMax;
+      const newSlotsUsed = clamp(armorMax - newBarValue, slotsMin, slotsMax);
+      updates["system.defenses.armor-slots.value"] = newSlotsUsed;
+    } else {
+      const current = foundry.utils.getProperty(this.system, attribute);
+      if (!isDelta || current?.dtype !== "Resource") {
+        return super.modifyTokenAttribute(attribute, value, isDelta, isBar);
+      }
+      updates[`system.${attribute}.value`] = Math.clamped(current.value + value, current.min, current.max);
+    }
+
+    const allowed = Hooks.call("modifyTokenAttribute", { attribute, value, isDelta, isBar }, updates);
     return allowed !== false ? this.update(updates) : this;
   }
 
