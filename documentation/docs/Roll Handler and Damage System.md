@@ -275,6 +275,7 @@ The system automatically detects modifiers from:
 
 <img width="366" height="303" alt="image" src="https://github.com/user-attachments/assets/91375b1d-83dc-4658-9546-e283e6ed71fb" />
 ![firefox_3Axyh1pZ18](https://github.com/user-attachments/assets/d8a68184-517e-4e90-b78c-d19cb2fae187)
+
 <img width="285" height="364" alt="image" src="https://github.com/user-attachments/assets/7f030016-d1af-4084-85ae-fb5e818ff86e" />
 
 
