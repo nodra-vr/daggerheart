@@ -195,7 +195,6 @@ export class SimpleActor extends Actor {
     data.ins = parseInt(data.instinct?.value) || 0;
     data.pre = parseInt(data.presence?.value) || 0;
     data.kno = parseInt(data.knowledge?.value) || 0;
-    data.exp = parseInt(data.exp?.value) || 0;
 
     data.hp = Math.max(0, parseInt(data.health?.value) || 0);
     data.hp_max = Math.max(1, parseInt(data.health?.max) || 6);

@@ -27,6 +27,7 @@ import { DiceCustomizationHelper } from "./helpers/diceCustomization.mjs";
 import { DiceCustomizationSettings } from "./applications/DiceCustomizationSettings.mjs";
 
 import * as itemData from "./data/item/_module.mjs";
+import * as actorData from "./data/actor/_module.mjs";
 
 // Range Measurement System
 import {
@@ -144,6 +145,7 @@ Hooks.once("init", async function () {
 
   globalThis.daggerheart.EntitySheetHelper = EntitySheetHelper;
 
+  CONFIG.Actor.dataModels = actorData.config;
   CONFIG.Actor.documentClass = SimpleActor;
   CONFIG.Actor.typeLabels = {
     character: "ACTOR.TypeCharacter",
@@ -154,7 +156,6 @@ Hooks.once("init", async function () {
 
   CONFIG.Item.dataModels = itemData.config;
   CONFIG.Item.documentClass = SimpleItem;
-
   CONFIG.Item.typeLabels = {
     item: "ITEM.TypeItem",
     inventory: "ITEM.TypeInventory",
