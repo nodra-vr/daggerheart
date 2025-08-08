@@ -51,6 +51,7 @@ Click Hope or Fear dice in the chat card to reroll that die after a roll.
 
 ### Chat messages
 Rolls post rich chat cards with clickable dice and resource summaries.
+
 ![Duality roll chat card](https://github.com/user-attachments/assets/eca3cd4b-e27a-4ed4-bc9c-0368df153f4b)
 
 ### Chat command help
