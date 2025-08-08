@@ -731,12 +731,19 @@ export class ModifierManager {
    * @private
    */
   static async _updateCharacterLevelModifier(actor, fieldPath, modifierName, level) {
-    const currentData = foundry.utils.getProperty(actor, fieldPath);
+      const currentData = foundry.utils.getProperty(actor, fieldPath);
     
-    if (!currentData) {
-      console.warn(`ModifierManager | Field ${fieldPath} not found on actor ${actor.name}`);
-      return false;
-    }
+      if (!currentData) {
+        const parentPath = fieldPath.endsWith('.value') ? fieldPath.substring(0, fieldPath.lastIndexOf('.')) : fieldPath;
+        const parent = foundry.utils.getProperty(actor, parentPath);
+        if (parent && typeof parent === 'object') {
+          // initialize structure so removal can proceed
+          await actor.update({ [`${parentPath}.modifiers`]: [] });
+        } else {
+          console.warn(`ModifierManager | Field ${fieldPath} not found on actor ${actor.name}`);
+          return false;
+        }
+      }
 
     // Ensure the field has the proper structure
     let structuredData;
@@ -889,12 +896,19 @@ export class ModifierManager {
     try {
       // Find the modifier across all fields
       const commonFields = [
+        'system.agility',
+        'system.finesse',
+        'system.instinct',
+        'system.knowledge',
+        'system.presence',
+        'system.strength',
         'system.agility.value',
         'system.finesse.value',
         'system.instinct.value',
         'system.knowledge.value',
         'system.presence.value',
         'system.strength.value',
+        'system.defenses.evasion',
         'system.weapon-main.to-hit',
         'system.weapon-off.to-hit',
         'system.weapon-main.damage',
@@ -948,12 +962,30 @@ export class ModifierManager {
 
         // Build update data
         const updateData = {};
+        let basePath;
         const isWeaponModifier = fieldPath.includes('weapon-main.') || fieldPath.includes('weapon-off.');
-        const basePath = isWeaponModifier ? fieldPath :
-          (fieldPath.endsWith('.value') ? fieldPath.substring(0, fieldPath.lastIndexOf('.')) : fieldPath);
+        if (isWeaponModifier) {
+          basePath = fieldPath;
+        } else if (fieldPath.endsWith('.value')) {
+          basePath = fieldPath.substring(0, fieldPath.lastIndexOf('.'));
+        } else if (typeof currentData === 'object' && currentData !== null) {
+          basePath = fieldPath;
+        } else {
+          basePath = fieldPath;
+        }
 
         updateData[`${basePath}.modifiers`] = updatedModifiers;
-        updateData[`${basePath}.value`] = newTotalValue;
+        if (basePath.endsWith('.damage') || basePath.includes('damage')) {
+          updateData[`${basePath}.value`] = newTotalValue;
+        } else if (basePath.endsWith('.to-hit') || basePath.includes('to-hit')) {
+          updateData[`${basePath}.value`] = newTotalValue;
+        } else if (basePath.endsWith('.threshold') || basePath.includes('threshold')) {
+          updateData[`${basePath}.value`] = newTotalValue;
+        } else if (basePath.endsWith('.evasion') || basePath.includes('defenses.evasion')) {
+          updateData[`${basePath}.value`] = newTotalValue;
+        } else if (!basePath.endsWith('.value')) {
+          updateData[`${basePath}.value`] = newTotalValue;
+        }
 
         await actor.update(updateData);
         
@@ -990,13 +1022,16 @@ export class ModifierManager {
         'system.knowledge.value',
         'system.presence.value',
         'system.strength.value',
+        'system.health.max',
+        'system.stress.max',
         'system.weapon-main.to-hit',
         'system.weapon-off.to-hit',
         'system.weapon-main.damage',
         'system.weapon-off.damage',
         'system.threshold.major',
         'system.threshold.severe',
-        'system.defenses.armor'
+        'system.defenses.armor',
+        'system.defenses.evasion'
       ];
 
       for (const fieldPath of modifierFields) {

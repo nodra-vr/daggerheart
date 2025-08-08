@@ -712,15 +712,68 @@ export class EntitySheetHelper {
   }
 }
 
-export function buildItemCardChat({ itemId, actorId = "", image, name, category = "", rarity = "", description = "", extraClasses = "" }) {
+export function buildItemCardChat({ itemId, actorId = "", image, name, category = "", rarity = "", description = "", extraClasses = "", itemType = "", system = null }) {
   const classAttr = extraClasses && extraClasses.trim().length ? `item-card-chat ${extraClasses.trim()}` : "item-card-chat";
+
+  const toTitle = v => {
+    if (typeof v !== "string" || !v) return v ?? "";
+    return v.charAt(0).toUpperCase() + v.slice(1);
+  };
+
+  const rangeLabel = v => {
+    switch (v) {
+      case "melee": return "Melee";
+      case "veryClose": return "Very Close";
+      case "close": return "Close";
+      case "far": return "Far";
+      case "veryFar": return "Very Far";
+      default: return toTitle(v);
+    }
+  };
+
+  const tierValue = system && (system.tier ?? "");
+  const subtitleRight = rarity || (tierValue !== "" ? `${tierValue}` : "");
+
+  let statsHtml = "";
+  try {
+    if (system && typeof system === "object") {
+      if (itemType === "weapon") {
+        const trait = system.trait ?? "";
+        const range = system.range ?? "";
+        const damageStruct = system.damage ?? null;
+        const damage = typeof damageStruct === "object" && damageStruct !== null ? (damageStruct.baseValue ?? damageStruct.value ?? "") : (damageStruct ?? "");
+        const damageType = system.damageType ?? "";
+        const chips = [
+          trait ? `<span class="badge"><span class="b-label">Trait</span>${toTitle(trait)}</span>` : "",
+          range ? `<span class="badge"><span class="b-label">Range</span>${rangeLabel(range)}</span>` : "",
+          damage ? `<span class="badge"><span class="b-label">Damage</span>${damage}</span>` : "",
+          damageType ? `<span class="badge"><span class="b-label">Type</span>${toTitle(damageType)}</span>` : ""
+        ].filter(Boolean).join("");
+        if (chips) statsHtml = `<div class="card-badges">${chips}</div>`;
+      } else if (itemType === "armor") {
+        const baseScore = system.baseScore ?? "";
+        const thresholds = system.baseThresholds ?? {};
+        const major = thresholds.major ?? "";
+        const severe = thresholds.severe ?? "";
+        const chips = [
+          baseScore !== "" ? `<span class="badge">Armor ${baseScore}</span>` : "",
+          (major !== "" || severe !== "") ? `<span class="badge"><span class="b-label">Thresholds</span>${major}/${severe}</span>` : ""
+        ].filter(Boolean).join("");
+        if (chips) statsHtml = `<div class="card-badges">${chips}</div>`;
+      }
+    }
+  } catch (e) {
+    statsHtml = "";
+  }
+
   return `
   <div class="${classAttr}" data-item-id="${itemId}" data-actor-id="${actorId}">
       <div class="card-image-container" style="background-image: url('${image}')">
           <div class="card-header-text"><h3>${name}</h3></div>
       </div>
       <div class="card-content">
-          <div class="card-subtitle"><span>${category} - ${rarity}</span></div>
+          <div class="card-subtitle"><span>${category}${subtitleRight ? ` - ${subtitleRight}` : ""}</span></div>
+          ${statsHtml}
           <div class="card-description">
               ${description}
           </div>

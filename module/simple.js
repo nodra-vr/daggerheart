@@ -89,11 +89,6 @@ Hooks.once("init", async function () {
     icon: "icons/svg/stoned.svg"
   });
 
-  CONFIG.Combat.initiative = {
-    formula: "1d20",
-    decimals: 2
-  };
-
   game.daggerheart = {
     SimpleActor,
     createDaggerheartMacro,
@@ -1837,7 +1832,8 @@ function _addDamageApplicationButtons(message, html, flags) {
 
   const sourceActor = game.actors.get(flags.actorId);
 
-  const armorSlotsUI = _getMultiTargetArmorSlotsUI();
+  const targetActorIds = flags.targetActorIds || null;
+  const armorSlotsUI = _getMultiTargetArmorSlotsUI(targetActorIds);
 
   const buttonContainer = `${armorSlotsUI}<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
     <button class="apply-damage-button" data-damage="${damageAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
@@ -1875,7 +1871,8 @@ function _addHealingApplicationButtons(message, html, flags) {
 
   const sourceActor = game.actors.get(flags.actorId);
 
-  const armorSlotsUI = _getMultiTargetArmorSlotsUI();
+  const targetActorIds = flags.targetActorIds || null;
+  const armorSlotsUI = _getMultiTargetArmorSlotsUI(targetActorIds);
 
   const buttonContainer = `${armorSlotsUI}<div class="damage-application-buttons" style="margin-top: 0.5em; display: flex; gap: 0.25em;">
     <button class="apply-healing-button" data-healing="${healingAmount}" data-source-actor-id="${flags.actorId || ''}" style="flex: 1;">
@@ -2064,7 +2061,9 @@ async function _sendItemToChat(item) {
     name: item.name,
     category: item.system.category || '',
     rarity: item.system.rarity || '',
-    description: item.system.description || ''
+    description: item.system.description || '',
+    itemType: item.type,
+    system: item.system
   });
 
   ChatMessage.create({
@@ -2111,34 +2110,39 @@ function _addUndoButtonHandlers(html, flags) {
   });
 }
 
-function _getMultiTargetArmorInfo() {
+function _getMultiTargetArmorInfo(targetActorIds = null) {
   const characterTargets = [];
-  const targets = Array.from(game.user.targets);
-  targets.forEach(token => {
-    if (token.actor?.type === "character") {
-      // Only include if user is GM or owner
-      if (game.user.isGM || token.actor.isOwner) {
-        const maxSlots = parseInt(token.actor.system.defenses?.armor?.value) || 3;
-        const currentSlots = parseInt(token.actor.system.defenses?.["armor-slots"]?.value) || 0;
-        const availableSlots = maxSlots - currentSlots;
-        const usableSlots = Math.min(availableSlots, 3);
-        characterTargets.push({
-          actor: token.actor,
-          name: token.actor.name,
-          id: token.actor.id,
-          maxSlots,
-          currentSlots,
-          availableSlots,
-          usableSlots
-        });
-      }
-    }
-  });
+
+  const collectForActor = (actor) => {
+    if (!actor || actor.type !== "character") return;
+    if (!game.user.isGM && !actor.isOwner) return;
+    const maxSlots = parseInt(actor.system.defenses?.["armor-slots"]?.max) || 0;
+    const currentSlots = parseInt(actor.system.defenses?.["armor-slots"]?.value) || 0;
+    const availableSlots = Math.max(0, maxSlots - currentSlots);
+    const usableSlots = Math.min(availableSlots, 3);
+    characterTargets.push({
+      actor,
+      name: actor.name,
+      id: actor.id,
+      maxSlots,
+      currentSlots,
+      availableSlots,
+      usableSlots
+    });
+  };
+
+  if (Array.isArray(targetActorIds) && targetActorIds.length > 0) {
+    targetActorIds.forEach(id => collectForActor(game.actors.get(id)));
+  } else {
+    const targets = Array.from(game.user.targets || []);
+    targets.forEach(token => collectForActor(token.actor));
+  }
+
   return characterTargets;
 }
 
-function _getMultiTargetArmorSlotsUI() {
-  const characterTargets = _getMultiTargetArmorInfo();
+function _getMultiTargetArmorSlotsUI(targetActorIds = null) {
+  const characterTargets = _getMultiTargetArmorInfo(targetActorIds);
 
   if (characterTargets.length === 0) {
     return "";

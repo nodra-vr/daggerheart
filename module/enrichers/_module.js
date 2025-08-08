@@ -5,7 +5,7 @@ Hooks.once('setup', () => {
     CONFIG.TextEditor.enrichers.unshift({
         pattern: /\[\[\/dr\s?(.*?)\]\]({([^}]+)})?/g,
         enricher: (match, options) => {
-            console.log('Daggerheart | Duality enricher triggered:', { match, options });
+            //console.log('Daggerheart | Duality enricher triggered:', { match, options });
             
             // Only block enricher in chat INPUT contexts, not in rendered chat messages
             const chatInputContext = options?.relativeTo?.closest?.('#chat-form') ||
@@ -14,7 +14,7 @@ Hooks.once('setup', () => {
             
             if (chatInputContext) {
                 // In chat input context, return original text and let the chat command system handle it
-                console.log('Daggerheart | Skipping enricher in chat input context');
+                //console.log('Daggerheart | Skipping enricher in chat input context');
                 return match[0];
             }
             
@@ -22,14 +22,14 @@ Hooks.once('setup', () => {
         }
     });
     
-    console.log('Daggerheart | Registered duality roll enricher at high priority');
+    //console.log('Daggerheart | Registered duality roll enricher at high priority');
 });
 
 function createDualityRollEnricher(match, options) {
     const commandText = match[1] || '';
     const customLabel = match[3];
     
-    console.log('Daggerheart | Creating enricher for:', { commandText, customLabel, fullMatch: match[0] });
+    //console.log('Daggerheart | Creating enricher for:', { commandText, customLabel, fullMatch: match[0] });
     
     const label = customLabel || (commandText.includes('trait=') ? 
         commandText.match(/trait=(\w+)/)?.[1] + ' Check' : 'Duality Roll');
@@ -46,7 +46,7 @@ function createDualityRollEnricher(match, options) {
     const text = document.createTextNode(` ${label}`);
     anchor.appendChild(text);
     
-    console.log('Daggerheart | Created enricher element:', anchor);
+    //('Daggerheart | Created enricher element:', anchor);
     return anchor;
 }
 

@@ -17,7 +17,8 @@ export class DamageRollDialog {
         weaponType = null,
         isCritical = false,
         damageModifiers = [],
-        availableModifiers = []
+        availableModifiers = [],
+        targetActorIds = null
       } = config;
 
       // Parse the base formula to extract dice and static modifiers
@@ -86,7 +87,8 @@ export class DamageRollDialog {
             })
           },
           proficiency: sourceActor?.type === "character" ? 
-            Math.max(1, parseInt(sourceActor.system.proficiency?.value) || 1) : null
+            Math.max(1, parseInt(sourceActor.system.proficiency?.value) || 1) : null,
+          targetActorIds
         });
       }
 

@@ -778,7 +778,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       name: item.name,
       category: itemData.category || '',
       rarity: itemData.rarity || '',
-      description
+      description,
+      itemType: item.type,
+      system: item.system
     }) : \`<div class="item-card-chat">\${item.name}</div>\`;
   
   ChatMessage.create({

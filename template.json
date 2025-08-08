@@ -18,6 +18,70 @@
       "biography": "<h1><strong>Backstory</strong></h1><p></p><hr /><h1>Campaign Notes</h1><p></p>",
       "domains": [],
       "inventory": "",
+      "advancementnotes": "",
+      "advancements": {
+        "tier2": {
+          "traits1": false,
+          "traits2": false,
+          "traits3": false,
+          "traits1Traits": [],
+          "traits2Traits": [],
+          "traits3Traits": [],
+          "hp1": false,
+          "hp2": false,
+          "stress1": false,
+          "stress2": false,
+          "exp": false,
+          "domaincard": false,
+          "evasion": false,
+          "subclass": false,
+          "proficiency1": false,
+          "proficiency2": false,
+          "multiclass1": false,
+          "multiclass2": false
+        },
+        "tier3": {
+          "traits1": false,
+          "traits2": false,
+          "traits3": false,
+          "traits1Traits": [],
+          "traits2Traits": [],
+          "traits3Traits": [],
+          "hp1": false,
+          "hp2": false,
+          "stress1": false,
+          "stress2": false,
+          "exp": false,
+          "domaincard": false,
+          "evasion": false,
+          "subclass": false,
+          "proficiency1": false,
+          "proficiency2": false,
+          "multiclass1": false,
+          "multiclass2": false
+        },
+        "tier4": {
+          "traits1": false,
+          "traits2": false,
+          "traits3": false,
+          "traits1Traits": [],
+          "traits2Traits": [],
+          "traits3Traits": [],
+          "hp1": false,
+          "hp2": false,
+          "stress1": false,
+          "stress2": false,
+          "exp": false,
+          "domaincard": false,
+          "evasion": false,
+          "subclass": false,
+          "proficiency1": false,
+          "proficiency2": false,
+          "multiclass1": false,
+          "multiclass2": false
+        },
+        "totals": { "hp": 0, "stress": 0, "evasion": 0, "proficiency": 0 }
+      },
       "level": {
         "value": 1,
         "min": 1,
@@ -125,36 +189,42 @@
         "value": 0,
         "min": -5,
         "max": 5,
+        "levelled": false,
         "tooltip": "Agility affects speed, nimbleness, and reaction time in challenging scenarios."
       },
       "strength": {
         "value": 0,
         "min": -5,
         "max": 5,
+        "levelled": false,
         "tooltip": "Strength is crucial for physical tasks like breaking, lifting, and resisting."
       },
       "finesse": {
         "value": 0,
         "min": -1,
         "max": 5,
+        "levelled": false,
         "tooltip": "Finesse enables precision and stealth in tasks requiring detailed motor skills."
       },
       "instinct": {
         "value": 0,
         "min": -5,
         "max": 5,
+        "levelled": false,
         "tooltip": "Instinct enhances awareness and intuition for sensing danger and noticing details."
       },
       "presence": {
         "value": 0,
         "min": -5,
         "max": 5,
+        "levelled": false,
         "tooltip": "Presence boosts social influence, intimidation, and attention commanding."
       },
       "knowledge": {
         "value": 0,
         "min": -5,
         "max": 5,
+        "levelled": false,
         "tooltip": "Knowledge covers information retention, pattern recognition, and deduction."
       },
       "exp": {

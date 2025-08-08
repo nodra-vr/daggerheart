@@ -224,7 +224,9 @@ export class DomainAbilitySidebar {
           category: itemData.category || '',
           rarity: itemData.rarity || '',
           description: itemData.description || '',
-          extraClasses: 'domain-preview-card'
+          extraClasses: 'domain-preview-card',
+          itemType: item.type,
+          system: item.system
         });
 
         ChatMessage.create({
@@ -334,7 +336,9 @@ export class DomainAbilitySidebar {
       category: itemData.category || '',
       rarity: itemData.rarity || '',
       description,
-      extraClasses: 'domain-preview-card'
+      extraClasses: 'domain-preview-card',
+      itemType: item.type,
+      system: item.system
     });
 
     const hintHtml = `<div class="preview-hint"><i class="fas fa-mouse"></i> Middle-click to pin</div>`;

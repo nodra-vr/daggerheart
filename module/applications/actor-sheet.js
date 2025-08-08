@@ -15,6 +15,59 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   getPendingRollType() {
     return this._pendingRollType;
   }
+
+  async _promptForUnmarkedTrait() {
+    const traits = [
+      { key: 'agility', label: game.i18n.localize('DAGGERHEART.TRAITS.AGILITY') },
+      { key: 'strength', label: game.i18n.localize('DAGGERHEART.TRAITS.STRENGTH') },
+      { key: 'finesse', label: game.i18n.localize('DAGGERHEART.TRAITS.FINESSE') },
+      { key: 'instinct', label: game.i18n.localize('DAGGERHEART.TRAITS.INSTINCT') },
+      { key: 'presence', label: game.i18n.localize('DAGGERHEART.TRAITS.PRESENCE') },
+      { key: 'knowledge', label: game.i18n.localize('DAGGERHEART.TRAITS.KNOWLEDGE') }
+    ];
+
+    const unmarked = traits.filter(t => !foundry.utils.getProperty(this.actor, `system.${t.key}.levelled`));
+    if (unmarked.length === 0) return null;
+
+    const options = unmarked.map(t => ({ id: t.key, label: t.label, value: t.key }));
+    const result = await DaggerheartDialogHelper.showCheckboxDialog({
+      title: game.i18n.localize('DH.AdvancementGainTraits'),
+      description: '',
+      options,
+      singleSelect: true,
+      confirmLabel: 'Select'
+    });
+
+    if (result && result.selected) return result.selected;
+    return null;
+  }
+
+  async _promptForUnmarkedTraits(maxCount = 2) {
+    const traits = [
+      { key: 'agility', label: game.i18n.localize('DAGGERHEART.TRAITS.AGILITY') },
+      { key: 'strength', label: game.i18n.localize('DAGGERHEART.TRAITS.STRENGTH') },
+      { key: 'finesse', label: game.i18n.localize('DAGGERHEART.TRAITS.FINESSE') },
+      { key: 'instinct', label: game.i18n.localize('DAGGERHEART.TRAITS.INSTINCT') },
+      { key: 'presence', label: game.i18n.localize('DAGGERHEART.TRAITS.PRESENCE') },
+      { key: 'knowledge', label: game.i18n.localize('DAGGERHEART.TRAITS.KNOWLEDGE') }
+    ];
+
+    const unmarked = traits.filter(t => !foundry.utils.getProperty(this.actor, `system.${t.key}.levelled`));
+    if (unmarked.length === 0) return [];
+
+    const options = unmarked.map(t => ({ id: t.key, label: t.label, value: t.key }));
+    const result = await DaggerheartDialogHelper.showCheckboxDialog({
+      title: game.i18n.localize('DH.AdvancementGainTraits'),
+      description: '',
+      options,
+      singleSelect: false,
+      confirmLabel: 'Select'
+    });
+
+    if (!result || !result.selected) return [];
+    const selectedKeys = Object.keys(result.selected).slice(0, maxCount);
+    return selectedKeys;
+  }
   setPendingRollType(newValue) {
     this._pendingRollType = newValue;
   }
@@ -236,6 +289,8 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
       }, false);
     });
 
+    html.find('.advancement-toggle-row input[type="checkbox"]').on('change', this._onAdvancementCheckboxChange.bind(this));
+
     const navGem = html.find('.nav-gem')[0];
     if (navGem) {
       navGem.setAttribute("draggable", true);
@@ -397,6 +452,146 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       textarea.css("height", calcHeight(textarea.val()) + "px");
     });
 
+  }
+
+  async _onAdvancementCheckboxChange(event) {
+    const input = event.currentTarget;
+    const name = input.name || '';
+    const checked = input.checked;
+    try { console.log('AdvancementCheckboxChange', { name, checked }); } catch {}
+
+    if (name.includes('.tier3.proficiency')) {
+      const groupPrefix = name.replace(/\.(proficiency1|proficiency2)$/,'');
+      const other = this.element.find(`input[name^="${groupPrefix}.proficiency"]`).not(input);
+      if (checked) { other.prop('checked', false); try { console.log('Tier3 proficiency exclusivity', { name, unchecked: other.map((i,e)=>e.name).get() }); } catch {} }
+    }
+
+    if (name.match(/\.tier[234]\.traits(1|2|3)$/) && checked) {
+      const traitKeys = await this._promptForUnmarkedTraits(2);
+      try { console.log('Trait selection dialog result', { traitKeys }); } catch {}
+      if (Array.isArray(traitKeys) && traitKeys.length > 0) {
+        const match = name.match(/(tier[234])\.(traits[123])$/);
+        if (match) {
+          const tierKey = match[1];
+          const slotName = match[2];
+          const slotKey = slotName + 'Traits';
+          const prevArray = foundry.utils.getProperty(this.actor, `system.advancements.${tierKey}.${slotKey}`) || [];
+          try { console.log('Traits add start', { tierKey, slotName, prevArray }); } catch {}
+          for (const prevTrait of prevArray) {
+            const prevId = `adv_trait_${tierKey}_${slotName}_${prevTrait}`;
+            try { console.log('Removing previous slot modifier', { prevTrait, prevId }); } catch {}
+            await window.ModifierManager.removeModifierByIdDirect(this.actor, prevId, true);
+            const prevMods = window.ModifierManager.getModifiers(this.actor, `system.${prevTrait}.value`) || [];
+            const prevHasAnyAdvTrait = prevMods.some(m => typeof m.id === 'string' && m.id.startsWith('adv_trait_'));
+            if (!prevHasAnyAdvTrait) {
+              await this.actor.update({ [`system.${prevTrait}.levelled`]: false });
+              this.element.find(`input[name="system.${prevTrait}.levelled"]`).prop('checked', false);
+              try { console.log('Unset trait levelled after removing last adv', { trait: prevTrait }); } catch {}
+            }
+          }
+          const chosen = Array.from(new Set(traitKeys)).slice(0, 2);
+          const update = {};
+          update[`system.advancements.${tierKey}.${slotKey}`] = chosen;
+          await this.actor.update(update);
+          try { console.log('Traits saved to actor', { path: `system.advancements.${tierKey}.${slotKey}`, chosen }); } catch {}
+          for (const t of chosen) {
+            const id = `adv_trait_${tierKey}_${slotName}_${t}`;
+            try { console.log('Adding trait modifier', { trait: t, id }); } catch {}
+            await window.ModifierManager.addModifier(this.actor, `system.${t}.value`, { name: `Advancement: ${t}`, value: 1, permanent: true, id });
+            const levelFlagPath = `system.${t}.levelled`;
+            const current = foundry.utils.getProperty(this.actor, levelFlagPath);
+            if (!current) await this.actor.update({ [levelFlagPath]: true });
+            this.element.find(`input[name="system.${t}.levelled"]`).prop('checked', true);
+          }
+        }
+      } else {
+        input.checked = false;
+        try { console.warn('Trait selection cancelled or empty; reverting checkbox', { name }); } catch {}
+      }
+    }
+
+    if (name.match(/\.tier[234]\.traits(1|2|3)$/) && !checked) {
+      const match = name.match(/(tier[234])\.(traits[123])$/);
+      if (match) {
+        const tierKey = match[1];
+        const slotName = match[2];
+        const slotKey = slotName + 'Traits';
+        const arr = foundry.utils.getProperty(this.actor, `system.advancements.${tierKey}.${slotKey}`) || [];
+        try { console.log('Traits uncheck start', { tierKey, slotName, arr }); } catch {}
+        for (const traitKey of arr) {
+          const id = `adv_trait_${tierKey}_${slotName}_${traitKey}`;
+          try { console.log('Removing trait modifier', { traitKey, id }); } catch {}
+          await window.ModifierManager.removeModifierByIdDirect(this.actor, id, true);
+          const mods = window.ModifierManager.getModifiers(this.actor, `system.${traitKey}.value`) || [];
+          const hasAnyAdvTrait = mods.some(m => typeof m.id === 'string' && m.id.startsWith('adv_trait_'));
+          if (!hasAnyAdvTrait) {
+            await this.actor.update({ [`system.${traitKey}.levelled`]: false });
+            this.element.find(`input[name="system.${traitKey}.levelled"]`).prop('checked', false);
+            try { console.log('Unset trait levelled after full removal', { trait: traitKey }); } catch {}
+          }
+        }
+        const update = {};
+        update[`system.advancements.${tierKey}.${slotKey}`] = [];
+        await this.actor.update(update);
+        try { console.log('Cleared slot trait array', { path: `system.advancements.${tierKey}.${slotKey}` }); } catch {}
+      }
+    }
+
+    const setSibling = (from, to) => {
+      if (name.endsWith(from)) {
+        const other = this.element.find(`input[name="${name.replace(from, to)}"]`);
+        if (other?.length) {
+          other.prop('checked', checked);
+        }
+      }
+    };
+
+    setSibling('.multiclass1', '.multiclass2');
+    setSibling('.multiclass2', '.multiclass1');
+
+    if (name.endsWith('.evasion')) {
+      const tierMatch = name.match(/\.advancements\.(tier[234])\.evasion$/);
+      const slotId = tierMatch ? `adv_evasion_${tierMatch[1]}` : 'adv_evasion';
+      const modifierName = 'Advancement: Evasion';
+      if (checked) {
+        try { console.log('Adding evasion modifier', { slotId }); } catch {}
+        await window.ModifierManager.addModifier(this.actor, 'system.defenses.evasion', { name: modifierName, value: 1, permanent: true, id: slotId });
+      } else {
+        try { console.log('Removing evasion modifier', { slotId }); } catch {}
+        await window.ModifierManager.removeModifierByIdDirect(this.actor, slotId, true);
+      }
+    }
+
+    if (name.match(/\.tier[234]\.hp[12]$/)) {
+      const match = name.match(/(tier[234])\.(hp[12])$/);
+      const tierKey = match[1];
+      const slotName = match[2];
+      const id = `adv_hp_${tierKey}_${slotName}`;
+      if (checked) {
+        try { console.log('Adding HP modifier', { id }); } catch {}
+        await window.ModifierManager.addModifier(this.actor, 'system.health.max', { name: 'Advancement: HP', value: 1, permanent: true, id });
+      } else {
+        try { console.log('Removing HP modifier', { id }); } catch {}
+        await window.ModifierManager.removeModifierByIdDirect(this.actor, id, true);
+      }
+    }
+
+    if (name.match(/\.tier[234]\.stress[12]$/)) {
+      const match = name.match(/(tier[234])\.(stress[12])$/);
+      const tierKey = match[1];
+      const slotName = match[2];
+      const id = `adv_stress_${tierKey}_${slotName}`;
+      if (checked) {
+        try { console.log('Adding Stress modifier', { id }); } catch {}
+        await window.ModifierManager.addModifier(this.actor, 'system.stress.max', { name: 'Advancement: Stress', value: 1, permanent: true, id });
+      } else {
+        try { console.log('Removing Stress modifier', { id }); } catch {}
+        await window.ModifierManager.removeModifierByIdDirect(this.actor, id, true);
+      }
+    }
+
+    await this.submit({ preventClose: true });
+    try { console.log('Advancement submit complete'); } catch {}
   }
 
   close(options) {
@@ -573,7 +768,9 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         name: item.name,
         category: itemData.category || '',
         rarity: itemData.rarity || '',
-        description: itemData.description || ''
+        description: itemData.description || '',
+        itemType: item.type,
+        system: item.system
       });
 
       ChatMessage.create({
