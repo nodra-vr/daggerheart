@@ -15,7 +15,12 @@ When the system detects phrases like:
 
 It automatically creates interactive buttons that users can click to apply the effects immediately.
 
-*[GIF placeholder: Text automatically converting to clickable buttons]*
+![firefox_UOQO55WExw](https://github.com/user-attachments/assets/bb077871-7919-415b-bb58-e02fa82f7bdb)
+
+<img width="356" height="605" alt="image" src="https://github.com/user-attachments/assets/b1b0f511-6df5-46fc-a53c-6bdcde529c3e" />
+Just raw text entered into the card's details
+<img width="818" height="426" alt="image" src="https://github.com/user-attachments/assets/542dac5f-73c1-4f83-99ba-f22c9e21ad38" />
+Automatically transforms the text into clickable/interactable buttons
 
 ### Supported Resource Patterns
 
@@ -48,7 +53,9 @@ The text enricher recognizes these resource types and actions:
 * `use 1 armor slot` → Button to mark 1 armor slot
 * `free 2 armor slots` → Button to restore 2 armor slots
 
-*[Screenshot placeholder: Various resource buttons in different contexts]*
+<img width="254" height="427" alt="image" src="https://github.com/user-attachments/assets/b346cc71-6e7b-44e4-ae57-99ceb5e3ec65" />
+<img width="266" height="457" alt="image" src="https://github.com/user-attachments/assets/07e9ac02-0743-4590-ba75-bdc32d987c88" />
+
 
 ### Pattern Recognition
 
@@ -135,8 +142,6 @@ await adjustArmorSlots(null, 1);  // Mark 1 slot
 // Free armor slots
 await adjustArmorSlots(null, -2); // Free 2 slots
 ```
-
-*[Screenshot placeholder: Macro creation interface with resource examples]*
 
 ## Advanced Macro Examples
 
@@ -244,8 +249,6 @@ The system integrates with core Foundry features:
 * **Permission System** - Respects Foundry's ownership and permission settings
 * **Chat System** - Posts resource changes to chat for transparency
 * **Notification System** - Shows success/error messages to users
-
-*[Screenshot placeholder: System integration examples]*
 
 ## Troubleshooting
 
