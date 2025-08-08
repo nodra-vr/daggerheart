@@ -7,7 +7,7 @@ This directory is an Obsidian vault. Everything in the `./docs` directory will b
 In order to work on the theme locally, you will need to install several things. These instructions assume you have Python 3 installed, as well as pip. They also assume you have node, and have run `npm install` on the parent directory (the root of the `daggerheart` project).
 
 ```
-$ pip install mkdocs mkdocs-material mkdocs-roamlinks-plugin mkdocs-rss-plugin
+$ pip install mkdocs mkdocs-material mkdocs-roamlinks-plugin mkdocs-rss-plugin mkdocs-awesome-nav
 ```
 
 Once that is done, you can start up the docs dev server:

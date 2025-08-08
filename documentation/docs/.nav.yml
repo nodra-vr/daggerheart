@@ -1,0 +1,10 @@
+nav:
+  - Home: index.md
+  - Systems:
+    - Rolling: systems/rolling
+    - Damage: systems/damage
+    - Resources: systems/resources
+  - UI: ui
+  - Mechanics: mechanics
+  - Technical: technical
+  - Data Models: data-models

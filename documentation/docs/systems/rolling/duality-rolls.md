@@ -40,12 +40,11 @@ await game.daggerheart.rollHandler.rollDuality({
 
 ### Rerolling dice
 Click Hope or Fear dice in the chat card to reroll that die after a roll.
-![Rerolling Hope/Fear die](https://github.com/user-attachments/assets/5453591b-8351-48b5-b7d4-ed5f87897b09)
+![[duality-reroll.gif|Rerolling Hope/Fear die]]
 
 ### Chat messages
 Rolls post rich chat cards with clickable dice and resource summaries.
-
-![Duality roll chat card](https://github.com/user-attachments/assets/eca3cd4b-e27a-4ed4-bc9c-0368df153f4b)
+![[duality-roll-chat-card.png|Duality roll chat card]]
 
 ### Chat command help
 See: [Duality Dice Command](../../technical/duality-dice-command.md).

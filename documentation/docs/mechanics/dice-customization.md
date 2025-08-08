@@ -1,7 +1,6 @@
 ---
 title: Dice Customization
 ---
-
 ### Overview
 Customize how Hope, Fear, Advantage, and Disadvantage dice look during rolls. Settings are client-scoped so each user can pick their own style.
 
@@ -35,7 +34,7 @@ Customize how Hope, Fear, Advantage, and Disadvantage dice look during rolls. Se
 - Save a “streaming” preset with bold colors for broadcasts
 
 ### Related
-- [Duality Rolls](../../systems/rolling/duality-rolls.md)
-- [Advantage & Disadvantage](../../systems/rolling/advantage-disadvantage.md)
-- [System Settings](../../data-models/system-settings.md)
+- [[duality-rolls|Duality Rolls]]
+- [[advantage-disadvantage|Advantage & Disadvantage]]
+- [[system-settings|System Settings]]
 
