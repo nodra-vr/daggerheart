@@ -23,7 +23,6 @@ nav:
     - Top Bar: ui/top-bar-ui.md
     - Countdown Trackers: ui/countdown-trackers.md
     - Domain Ability Sidebar: ui/domain-ability-sidebar.md
-    - Tracker Notification Bubbles: ui/tracker-notification-bubbles.md
     - Hover Distance: ui/hover-distance.md
   - Mechanics:
     - Modifiers Manager: Modifiers Manager.md
