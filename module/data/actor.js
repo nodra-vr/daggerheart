@@ -63,13 +63,9 @@ export class SimpleActor extends Actor {
         if (t.proficiency2) newTotals.proficiency += 1;
       }
 
-      const baseHPMax = Math.max(1, (parseInt(this.system.health?.max) || 6) - (prevTotals.hp || 0));
-      const baseStressMax = Math.max(1, (parseInt(this.system.stress?.max) || 6) - (prevTotals.stress || 0));
       const baseEvasion = Math.max(0, parseInt(this.system.defenses?.evasion?.value) || 0);
       const baseProf = Math.max(1, (parseInt(this.system.proficiency?.value) || 1) - (prevTotals.proficiency || 0));
 
-      this.system.health.max = baseHPMax + newTotals.hp;
-      this.system.stress.max = baseStressMax + newTotals.stress;
       this.system.defenses.evasion.value = baseEvasion;
       this.system.proficiency.value = baseProf + newTotals.proficiency;
 

@@ -51,6 +51,7 @@ export class ModifierManager {
       
       // Prepare the modifier
       const modifier = {
+        _id: modifierId,
         id: modifierId,
         name: modifierData.name || 'Modifier',
         value: modifierData.value || (isDamageModifier ? '+1' : 0),
@@ -70,7 +71,7 @@ export class ModifierManager {
         // Already structured - use existing structure
         structuredData = {
           baseValue: currentData.baseValue,
-          modifiers: [...(currentData.modifiers || [])],
+          modifiers: [...(currentData.modifiers || [])].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m })),
           value: currentData.value
         };
       } else if (typeof currentData === 'object' && currentData !== null && 'value' in currentData) {
@@ -78,7 +79,7 @@ export class ModifierManager {
         const currentValue = currentData.value || (isDamageModifier ? '1d8' : 0);
         structuredData = {
           baseValue: currentValue,
-          modifiers: [...(currentData.modifiers || [])],
+          modifiers: [...(currentData.modifiers || [])].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m })),
           value: currentValue
         };
       } else {
@@ -271,7 +272,7 @@ export class ModifierManager {
         return false;
       }
 
-      const updatedModifiers = [...currentData.modifiers];
+      const updatedModifiers = [...currentData.modifiers].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m }));
       updatedModifiers.splice(modifierIndex, 1);
 
       // Recalculate total
@@ -442,7 +443,7 @@ export class ModifierManager {
         return false;
       }
 
-      const updatedModifiers = [...currentData.modifiers];
+      const updatedModifiers = [...currentData.modifiers].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m }));
       updatedModifiers[modifierIndex] = {
         ...updatedModifiers[modifierIndex],
         enabled: enabled
@@ -750,7 +751,7 @@ export class ModifierManager {
     if (typeof currentData === 'object' && currentData !== null && 'baseValue' in currentData) {
       structuredData = {
         baseValue: currentData.baseValue,
-        modifiers: [...(currentData.modifiers || [])],
+        modifiers: [...(currentData.modifiers || [])].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m })),
         value: currentData.value
       };
     } else {
@@ -774,6 +775,7 @@ export class ModifierManager {
     if (existingModifierIndex !== -1) {
       // Update existing modifier
       structuredData.modifiers[existingModifierIndex] = {
+        _id: structuredData.modifiers[existingModifierIndex]?._id || characterLevelModifierId,
         ...structuredData.modifiers[existingModifierIndex],
         id: characterLevelModifierId,
         value: level,
@@ -783,6 +785,7 @@ export class ModifierManager {
     } else {
       // Add new modifier
       const newModifier = {
+        _id: characterLevelModifierId,
         id: characterLevelModifierId,
         name: modifierName,
         value: level,
@@ -840,8 +843,13 @@ export class ModifierManager {
     }
     
     const currentPermanentModifiers = currentData.permanentModifiers || [];
+    const normalizedPermanentModifiers = currentPermanentModifiers.map(pm => ({
+      _id: pm._id || pm.id || this._generateModifierId(),
+      ...pm
+    }));
     
     const permanentModifierEntry = {
+      _id: modifierId,
       id: modifierId,
       name: modifier.name,
       value: modifier.value,
@@ -849,7 +857,7 @@ export class ModifierManager {
       color: modifier.color
     };
 
-    const updatedPermanentModifiers = [...currentPermanentModifiers, permanentModifierEntry];
+    const updatedPermanentModifiers = [...normalizedPermanentModifiers, permanentModifierEntry];
     
     const updatePath = `${fieldPath}.permanentModifiers`;
     await actor.update({
@@ -872,7 +880,11 @@ export class ModifierManager {
     }
     
     const currentPermanentModifiers = currentData.permanentModifiers || [];
-    const updatedPermanentModifiers = currentPermanentModifiers.filter(pm => pm.id !== modifierId);
+    const normalizedPermanentModifiers = currentPermanentModifiers.map(pm => ({
+      _id: pm._id || pm.id || this._generateModifierId(),
+      ...pm
+    }));
+    const updatedPermanentModifiers = normalizedPermanentModifiers.filter(pm => pm.id !== modifierId);
     
     const updatePath = `${fieldPath}.permanentModifiers`;
     await actor.update({
@@ -936,7 +948,7 @@ export class ModifierManager {
           return false;
         }
 
-        const updatedModifiers = [...currentData.modifiers];
+        const updatedModifiers = [...currentData.modifiers].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m }));
         updatedModifiers.splice(modifierIndex, 1);
 
         // If permanent, remove from tracking
@@ -1059,12 +1071,13 @@ export class ModifierManager {
           // Use direct modifier addition instead of going through addModifier to avoid recursion
           const structuredData = {
             baseValue: currentData.baseValue,
-            modifiers: [...(currentData.modifiers || [])],
+            modifiers: [...(currentData.modifiers || [])].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m })),
             value: currentData.value
           };
 
           // Add the permanent modifier directly
           const restoredModifier = {
+            _id: permanentMod.id,
             id: permanentMod.id,
             name: permanentMod.name,
             value: permanentMod.value,

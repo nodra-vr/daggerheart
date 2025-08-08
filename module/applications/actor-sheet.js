@@ -563,31 +563,19 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     }
 
     if (name.match(/\.tier[234]\.hp[12]$/)) {
-      const match = name.match(/(tier[234])\.(hp[12])$/);
-      const tierKey = match[1];
-      const slotName = match[2];
-      const id = `adv_hp_${tierKey}_${slotName}`;
-      if (checked) {
-        try { console.log('Adding HP modifier', { id }); } catch {}
-        await window.ModifierManager.addModifier(this.actor, 'system.health.max', { name: 'Advancement: HP', value: 1, permanent: true, id });
-      } else {
-        try { console.log('Removing HP modifier', { id }); } catch {}
-        await window.ModifierManager.removeModifierByIdDirect(this.actor, id, true);
-      }
+      const currentMax = parseInt(this.actor.system.health?.max) || 6;
+      const delta = checked ? 1 : -1;
+      const newMax = Math.max(1, currentMax + delta);
+      try { console.log('HP max change', { from: currentMax, to: newMax, delta }); } catch {}
+      await this.actor.update({ 'system.health.max': newMax });
     }
 
     if (name.match(/\.tier[234]\.stress[12]$/)) {
-      const match = name.match(/(tier[234])\.(stress[12])$/);
-      const tierKey = match[1];
-      const slotName = match[2];
-      const id = `adv_stress_${tierKey}_${slotName}`;
-      if (checked) {
-        try { console.log('Adding Stress modifier', { id }); } catch {}
-        await window.ModifierManager.addModifier(this.actor, 'system.stress.max', { name: 'Advancement: Stress', value: 1, permanent: true, id });
-      } else {
-        try { console.log('Removing Stress modifier', { id }); } catch {}
-        await window.ModifierManager.removeModifierByIdDirect(this.actor, id, true);
-      }
+      const currentMax = parseInt(this.actor.system.stress?.max) || 6;
+      const delta = checked ? 1 : -1;
+      const newMax = Math.max(1, currentMax + delta);
+      try { console.log('Stress max change', { from: currentMax, to: newMax, delta }); } catch {}
+      await this.actor.update({ 'system.stress.max': newMax });
     }
 
     await this.submit({ preventClose: true });

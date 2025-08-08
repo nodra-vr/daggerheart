@@ -10,7 +10,7 @@ test-migration-validation.html
 docs/private/glassmorphism-design-system.json
 docs/test-character-level-modifier.js
 docs/test-armor-permanent-modifiers.js
-
+.*
 documentation/.obsidian/appearance.json
 documentation/.obsidian/app.json
 documentation/.obsidian/graph.json

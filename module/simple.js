@@ -20,6 +20,8 @@ import { EquipmentHandler } from "./helpers/equipmentHandler.js";
 import { EntitySheetHelper, buildItemCardChat } from "./helpers/helper.js";
 import { ModifierManager } from "./helpers/modifierManager.js";
 import { ArmorCleanup } from "./helpers/armorCleanup.js";
+import { EquipmentSystem } from "./helpers/equipmentSystem.js";
+import { SpotlightInitiativeTracker, DaggerheartCombat } from "./applications/spotlight-initiative.js";
 
 // Dice Customization System
 import { DiceAppearanceSettings, getDefaultDiceAppearanceSettings } from "./data/settings/DiceAppearanceSettings.mjs";
@@ -160,6 +162,7 @@ Hooks.once("init", async function () {
   };
   CONFIG.Token.documentClass = SimpleTokenDocument;
   CONFIG.Token.objectClass = SimpleToken;
+  CONFIG.Combat.documentClass = DaggerheartCombat;
 
   CONFIG.Actor.trackableAttributes = CONFIG.Actor.trackableAttributes || {};
   for (const t of ["character", "npc", "companion", "environment"]) {
@@ -438,6 +441,45 @@ Hooks.on("updateItem", async (item, data, options, userId) => {
   }
 });
 
+Hooks.on("updateItem", async (item, data, options, userId) => {
+  try {
+    if (item.type !== "armor") return;
+    const actor = item.parent;
+    if (!actor) return;
+
+    const isEquipped = item.system?.equipped === true;
+    const equippedChanged = data.system?.equipped !== undefined;
+    const armorFieldsChanged = !!(data.system?.baseScore || data.system?.baseThresholds);
+
+    if (equippedChanged) {
+      if (data.system.equipped === true) {
+        await EquipmentSystem._applyArmorModifiers(actor, item);
+      } else {
+        await EquipmentSystem._removeArmorModifiers(actor, item);
+      }
+      return;
+    }
+
+    if (isEquipped && armorFieldsChanged) {
+      await EquipmentSystem._applyArmorModifiers(actor, item);
+    }
+  } catch (e) {
+    console.error("Daggerheart | Armor update handling failed", e);
+  }
+});
+
+Hooks.on("preDeleteItem", async (item, options, userId) => {
+  try {
+    const actor = item.parent;
+    if (!actor) return;
+    if (item.type !== "armor") return;
+    if (item.system?.equipped !== true) return;
+    await EquipmentSystem._removeArmorModifiers(actor, item);
+  } catch (e) {
+    console.error("Daggerheart | Failed armor modifier cleanup on delete", e);
+  }
+});
+
 Hooks.on("hotbarDrop", (bar, data, slot) => {
 
   if (data.type === "Item") {
@@ -468,6 +510,9 @@ Hooks.once("ready", async function () {
   // Initialize tracker notification bubbles
   game.daggerheart.trackerNotificationBubbles = new TrackerNotificationBubbles();
   game.daggerheart.trackerNotificationBubbles.initialize();
+
+  // Initialize spotlight initiative tracker
+  SpotlightInitiativeTracker.initialize();
 
   // Dice customization system is now preset-based and client-scoped
   console.debug('Daggerheart | Dice customization uses client-scoped presets - no initialization required');
