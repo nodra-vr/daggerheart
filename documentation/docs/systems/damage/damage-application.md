@@ -26,7 +26,7 @@ Priority:
 
 ### Undo
 Made a mistake? Use the Undo button in the damage chat message to revert.
-![Undo damage/healing](https://github.com/user-attachments/assets/4e06b04b-6c8d-4636-a871-c852d1bd6f69)
+![[undo-damage-healing.png]]
 
 ### Death Moves
 When a character reaches the dying state, the sheet shows a death overlay you can click to trigger Death Moves. The dialog guides Blaze of Glory, Avoid Death (with roll and scar handling), and Risk it All with automated chat results.

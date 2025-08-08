@@ -4,9 +4,9 @@ title: Range Measurement
 
 ### Overview
 Replace numeric rulers with narrative ranges. Distances display as Melee, Very Close, Close, Far, or Very Far based on configurable thresholds.
-![firefox_KeSrBeBcCJ](https://github.com/user-attachments/assets/ad36e866-6e7c-4d14-96ac-02fc9c8c6fa1)
+![[range-measurement.gif]]
 
-![firefox_gVzPwcne6r](https://github.com/user-attachments/assets/a9f3ea56-48bc-438b-a83c-1c9d03510249)
+![[movement-path-measurement.gif]]
 
 
 ### Getting started
