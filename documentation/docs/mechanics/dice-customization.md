@@ -37,6 +37,5 @@ Customize how Hope, Fear, Advantage, and Disadvantage dice look during rolls. Se
 ### Related
 - [Duality Rolls](../../systems/rolling/duality-rolls.md)
 - [Advantage & Disadvantage](../../systems/rolling/advantage-disadvantage.md)
-- [Roll Handler and Damage System](../../Roll%20Handler%20and%20Damage%20System.md)
 - [System Settings](../../data-models/system-settings.md)
 

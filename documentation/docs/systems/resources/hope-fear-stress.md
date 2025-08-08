@@ -15,6 +15,11 @@ Hope helps players, Fear helps the GM, Stress marks strain. Rolls automatically 
 - Hope: +1 Hope (characters)
 - Fear: GM gains 1 Fear
 
+### Examples
+![Fear increase from roll](https://github.com/user-attachments/assets/ed12d59e-3101-4637-803e-4f44a2dc0e26)
+
+![Hope increase from roll](https://github.com/user-attachments/assets/da0d520c-9201-4f51-9a41-c7d25002ce41)
+
 ### Manual controls
 - Use the Token Counter UI on the selected token
 - Click resource buttons in chat or item text (see Resource Enrichment)

@@ -18,9 +18,15 @@ Armor slots can reduce the HP marked for characters.
 ### Selecting targets
 - Target tokens (T) to limit who gets affected
 - If no targets, selected tokens are used
+ 
+Priority:
+1. Targeted tokens
+2. Selected tokens
+3. Error if none are found
 
 ### Undo
 Made a mistake? Use the Undo button in the damage chat message to revert.
+![Undo damage/healing](https://github.com/user-attachments/assets/4e06b04b-6c8d-4636-a871-c852d1bd6f69)
 
 ### For power users
 ```javascript
@@ -34,6 +40,7 @@ await undoDamageHealing(undoId);
 - Below Major: 1 HP
 - At/above Major: 2 HP
 - At/above Severe: 3 HP
+![Threshold-based damage](https://github.com/user-attachments/assets/deb85abe-6614-4a47-a403-42846db1d06e)
 
 ### Buttons in chat
 Damage and Undo controls appear directly on attack and damage messages.
@@ -44,11 +51,14 @@ Damage and Undo controls appear directly on attack and damage messages.
 
 ### Related
 - [Damage Dialog](./damage-dialog.md)
-- [Roll Handler and Damage System](../../Roll%20Handler%20and%20Damage%20System.md)
 - [Actor Model](../../data-models/actor-model.md)
 
 ### Integration
 - Weapon and equipment modifiers contribute to final damage
 - Criticals are supported by the damage dialog and flow through to application
+
+### Armor integration
+- Reduces HP marked by the number of armor slots used
+- Tracks slot consumption alongside health changes
 
 

@@ -33,6 +33,11 @@ const result = await game.daggerheart.damageApplication.rollDamageWithDialog('d1
 - Real-time preview of final formula
 - Prevents duplicate modifier application
 
+### Screenshots
+![Damage dialog modifiers](https://github.com/user-attachments/assets/91375b1d-83dc-4658-9546-e283e6ed71fb)
+
+![Damage dialog preview](https://github.com/user-attachments/assets/d8a68184-517e-4e90-b78c-d19cb2fae187)
+
 ### Common uses
 - Weapon attacks that include extra damage options
 - Spells with multiple damage components
