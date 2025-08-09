@@ -66,7 +66,7 @@
 .env-action:hover { border-color: var(--dh-color-gold); background: rgba(243, 194, 103, 0.08); transform: translateY(-1px); }
 .env-action .item-top-row { display: flex; align-items: center; gap: 8px; }
 .env-action img { width: 26px; height: 26px; border-radius: 6px; object-fit: cover; }
-.env-action .item-name { font-size: 13px; font-weight: 600; letter-spacing: .2px; }
+.env-action .item-name { font-size: 13px; font-weight: 600; letter-spacing: .2px; margin: 0; }
 .env-action .item-description { margin-top: 6px; font-size: 12px; opacity: .9; }
 
 .env-adversaries { display: flex; flex-wrap: wrap; gap: 8px; }

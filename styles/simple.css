@@ -4118,6 +4118,7 @@ body.game .app textarea {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.2px;
+  margin: 0;
 }
 
 .env-action .item-description {
