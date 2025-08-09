@@ -117,7 +117,7 @@ export class DaggerheartMeasuredTemplate extends foundry.canvas.placeables.Measu
             return game.i18n.localize('DAGGERHEART.CONFIG.Range.veryFar.name');
         }
 
-        return '';
+        return game.i18n.localize('DAGGERHEART.CONFIG.Range.outOfRange.name');
     }
 }
 

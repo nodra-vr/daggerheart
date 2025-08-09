@@ -59,6 +59,8 @@
   "DAGGERHEART.CONFIG.Range.far.description": "Far range",
   "DAGGERHEART.CONFIG.Range.veryFar.name": "Very Far",
   "DAGGERHEART.CONFIG.Range.veryFar.description": "Very far range",
+  "DAGGERHEART.CONFIG.Range.outOfRange.name": "Out of Range",
+  "DAGGERHEART.CONFIG.Range.outOfRange.description": "Beyond maximum range",
   
   "DAGGERHEART.CONFIG.TemplateTypes.circle": "Circle",
   "DAGGERHEART.CONFIG.TemplateTypes.cone": "Cone",
