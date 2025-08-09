@@ -82,6 +82,10 @@
 	gap: 2em;
 	margin-bottom: 2em;
 	overflow: hidden;
+	display: flex;
+	align-content: center;
+	align-items: center;
+	justify-content: space-around;
 }
 
 /* NPC Defense Section in Header */

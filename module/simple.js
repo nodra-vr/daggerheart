@@ -259,6 +259,15 @@ Hooks.once("init", async function () {
     default: "d4,d6,d8,d10",
   });
 
+  game.settings.register("daggerheart", "experimentalFeatures", {
+    name: "Experimental Features",
+    hint: "Enable in-development UI features",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   // Register range measurement settings
   game.settings.register("daggerheart", "rangeMeasurementEnabled", {
     name: "DAGGERHEART.SETTINGS.RangeMeasurement.enabled",
@@ -513,8 +522,13 @@ Hooks.once("ready", async function () {
   game.daggerheart.countdownTracker = new CountdownTracker();
   await game.daggerheart.countdownTracker.initialize();
 
-  game.daggerheart.topBarUI = new TopBarUI();
-  await game.daggerheart.topBarUI.initialize();
+  if (game.settings.get("daggerheart", "experimentalFeatures")) {
+    game.daggerheart.topBarUI = new TopBarUI();
+    await game.daggerheart.topBarUI.initialize();
+  } else {
+    const wrapper = document.getElementById("top-bar-wrapper");
+    if (wrapper) wrapper.remove();
+  }
 
   Hooks.on('updateActor', async (actor, data) => {
     try {
@@ -541,6 +555,24 @@ Hooks.once("ready", async function () {
   });
 
   initializeHoverDistance();
+
+  Hooks.on("updateSetting", async (setting) => {
+    if (setting.key !== "daggerheart.experimentalFeatures") return;
+    const enabled = setting.value === true;
+    if (enabled) {
+      if (!game.daggerheart.topBarUI) {
+        game.daggerheart.topBarUI = new TopBarUI();
+      }
+      await game.daggerheart.topBarUI.initialize();
+    } else {
+      if (game.daggerheart.topBarUI) {
+        game.daggerheart.topBarUI.cleanupListeners();
+      }
+      const wrapper = document.getElementById("top-bar-wrapper");
+      if (wrapper) wrapper.remove();
+      game.daggerheart.topBarUI = null;
+    }
+  });
 
   window.spendFear = async function (amount) {
     if (!game.daggerheart?.counter) {
