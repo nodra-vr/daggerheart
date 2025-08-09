@@ -6,7 +6,7 @@ This is an unofficial, fan-created FoundryVTT system for the Daggerheart TTRPG. 
 
 ## Wiki & Documentation
 For guides, in-depth docs, and latest updates, visit the wiki: 
-`https://unofficial-daggerheart.github.io/daggerheart/`
+[https://unofficial-daggerheart.github.io/daggerheart/](Wiki)
 
 ## Overview
 A polished, feature-rich implementation of Daggerheart for Foundry VTT, focused on elegant sheets, smart automation, and streamlined play. It brings core mechanics to life with thoughtful UI and powerful tooling that stays out of the way and keeps the table moving.
