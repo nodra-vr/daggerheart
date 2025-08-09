@@ -226,6 +226,9 @@
     border-radius: 0;
     box-shadow: var(--dh-shadow-lg);
     padding: var(--dh-space-xs) var(--dh-space-md);
+    height: auto;
+    max-height: 80vh;
+    overflow-y: auto;
   }
 
   .window-header {
@@ -420,7 +423,7 @@
   }
 
   .trackers-list {
-    max-height: 300px;
+    max-height: 50vh;
     overflow-y: auto;
     border: 1px solid var(--dh-border-purple);
     border-radius: var(--dh-radius-xl);
