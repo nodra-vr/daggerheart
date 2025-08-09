@@ -42,6 +42,13 @@ async function _handleAutomaticFearGain(message) {
   const flags = message.flags?.daggerheart;
   if (!flags) return;
 
+  const isAuthor = message.isAuthor;
+  if (!isAuthor) return;
+
+  game.daggerheart = game.daggerheart || {};
+  game.daggerheart._autoHandled = game.daggerheart._autoHandled || new Set();
+  if (game.daggerheart._autoHandled.has(message.id)) return;
+
   if (game.paused) return;
 
   if (flags.automationHandled) return;
@@ -132,6 +139,8 @@ async function _handleAutomaticFearGain(message) {
   } catch (error) {
     console.warn("Daggerheart | Failed to mark automation as handled:", error);
   }
+
+  game.daggerheart._autoHandled.add(message.id);
 }
 
 async function _requestFearGain(amount, source) {
@@ -461,8 +470,8 @@ export async function _rollHope(options = {}) {
 
       const chatMessage = await ChatMessage.create(chatMessageData);
 
-      if (chatMessage?.id && game.dice3d) {
-        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      if (chatMessage?.id) {
+        await _waitFor3dDice(chatMessage.id);
       }
     } catch (error) {
       console.error("Error creating hope roll chat message:", error);
@@ -549,8 +558,8 @@ export async function _rollFear(options = {}) {
 
       const chatMessage = await ChatMessage.create(chatMessageData);
 
-      if (chatMessage?.id && game.dice3d) {
-        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      if (chatMessage?.id) {
+        await _waitFor3dDice(chatMessage.id);
       }
     } catch (error) {
       console.error("Error creating fear roll chat message:", error);
@@ -803,8 +812,8 @@ export async function _rollDuality(options = {}) {
 
       const chatMessage = await ChatMessage.create(chatMessageData);
 
-      if (chatMessage?.id && game.dice3d) {
-        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      if (chatMessage?.id) {
+        await _waitFor3dDice(chatMessage.id);
       }
     } catch (error) {
       console.error("Error creating duality roll chat message:", error);
@@ -948,8 +957,8 @@ export async function _rollNPC(options = {}) {
 
       const chatMessage = await ChatMessage.create(chatMessageData);
 
-      if (chatMessage?.id && game.dice3d) {
-        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      if (chatMessage?.id) {
+        await _waitFor3dDice(chatMessage.id);
       }
     } catch (error) {
       console.error("Error creating NPC roll chat message:", error);
@@ -1016,8 +1025,8 @@ export async function _quickRoll(dieFormula, options = {}) {
         rolls: [roll]
       });
 
-      if (chatMessage?.id && game.dice3d) {
-        await game.dice3d.waitFor3DAnimationByMessageID(chatMessage.id);
+      if (chatMessage?.id) {
+        await _waitFor3dDice(chatMessage.id);
       }
     } catch (error) {
       console.error("Error creating quick roll chat message:", error);
@@ -1037,10 +1046,15 @@ export async function _quickRoll(dieFormula, options = {}) {
 }
 
 export async function _waitFor3dDice(msgId) {
-  if (game.dice3d){
-    return game.dice3d.waitFor3DAnimationByMessageID(msgId);
+  if (!game.dice3d) return true;
+  try {
+    if (game.messages?.get?.(msgId)) {
+      await game.dice3d.waitFor3DAnimationByMessageID(msgId);
+    }
+  } catch (e) {
+    console.warn('Daggerheart | 3D dice wait skipped:', e);
   }
-  return Promise.resolve(true);
+  return true;
 }
 
 async function _rerollHopeDie(message, dieElement) {
