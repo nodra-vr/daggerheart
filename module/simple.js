@@ -239,6 +239,15 @@ Hooks.once("init", async function () {
     config: false
   });
 
+  game.settings.register("daggerheart", "activeEnvironment", {
+    name: "Active Environment UUID",
+    hint: "Stores the active Environment actor UUID",
+    scope: "world",
+    type: String,
+    default: "",
+    config: false
+  });
+
 
 
   game.settings.register("daggerheart", "advantageDieTypes", {
@@ -506,6 +515,15 @@ Hooks.once("ready", async function () {
 
   game.daggerheart.topBarUI = new TopBarUI();
   await game.daggerheart.topBarUI.initialize();
+
+  Hooks.on('updateActor', async (actor, data) => {
+    try {
+      const active = game.settings.get('daggerheart', 'activeEnvironment');
+      if (active && actor?.uuid === active) {
+        await game.daggerheart.topBarUI?.initialize();
+      }
+    } catch {}
+  });
 
   // Initialize tracker notification bubbles
   game.daggerheart.trackerNotificationBubbles = new TrackerNotificationBubbles();
