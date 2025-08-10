@@ -1,5 +1,7 @@
-import { SimpleActor } from "./data/actor.js";
-import { SimpleItem } from "./data/item.js";
+import { SimpleItem } from "./documents/item.js";
+import { SimpleActor } from "./documents/actor.js";
+import { SimpleToken, SimpleTokenDocument } from "./documents/token.js";
+
 import { SimpleItemSheet } from "./applications/item-sheet.js";
 import { SimpleWeaponSheet } from "./applications/weapon-sheet.js";
 import { SimpleArmorSheet } from "./applications/armor-sheet.js";
@@ -8,7 +10,6 @@ import { CompanionActorSheet } from "./applications/actor-sheet-companion.js";
 import { EnvironmentActorSheet } from "./applications/actor-sheet-environment.js";
 import { preloadHandlebarsTemplates } from "./helpers/templates.js";
 import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, createClearStressMacro, createSpendHopeMacro, createGainHopeMacro, spendStress, clearStress, spendHope, gainHope } from "./data/spending-system.js";
-import { SimpleToken, SimpleTokenDocument } from "./data/token.js";
 import { CounterUI } from "./applications/counter-ui.js";
 import { TokenCounterUI } from "./applications/token-counter-ui.js";
 import { CountdownTracker } from "./applications/countdown-tracker.js";

@@ -18,7 +18,7 @@
       "thumbnail": "https://raw.githubusercontent.com/Unofficial-Daggerheart/daggerheart/refs/tags/v2.12.9/assets/branding/coverart.webp"
     }
   ],
-  "esmodules": ["module/simple.js"],
+  "esmodules": ["module/daggerheart.js"],
   "styles": ["styles/simple.css"],
   "packs": [
     {
