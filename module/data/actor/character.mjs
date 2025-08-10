@@ -32,6 +32,7 @@ import { ActorTrackerData } from './_templates/actor-tracker.mjs';
 import { ActorDefensesData } from './_templates/actor-defenses.mjs';
 import { ActorExperienceData } from './_templates/actor-experience.mjs';
 import { ActorDescriptionData } from './_templates/actor-description.mjs';
+import { ActorAdvancementsData } from './_templates/actor-advancements.mjs';
 
 const { ArrayField, NumberField, ObjectField, SchemaField, StringField } = foundry.data.fields;
 
@@ -39,7 +40,8 @@ export default class CharacterData extends ActorBase.mixin(
 	ActorTrackerData,
 	ActorDefensesData,
 	ActorExperienceData,
-	ActorDescriptionData
+	ActorDescriptionData,
+	ActorAdvancementsData
 ) {
 	static defineSchema() {
 		return this.mergeSchema(super.defineSchema(), {
