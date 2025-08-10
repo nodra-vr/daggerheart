@@ -558,7 +558,7 @@ export class EntitySheetHelper {
 
     // Identify the template Actor types
     const collection = game.collections.get(this.documentName);
-    const templates = collection.filter(a => a.getFlag("daggerheart", "isTemplate"));
+    const templates = collection.filter(a => a.getFlag("daggerheart-unofficial", "isTemplate"));
     if ( templates.length > 0 ) {
       if ( Object.keys(types).length > 0 ) {
         types["---"] = {label: "--- Templates ---", disabled: true};

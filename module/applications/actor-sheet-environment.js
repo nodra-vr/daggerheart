@@ -4,7 +4,7 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["daggerheart", "sheet", "environment"],
-      template: "systems/daggerheart/templates/actor-sheet-environment.html",
+      template: "systems/daggerheart-unofficial/templates/actor-sheet-environment.html",
       width: 750,
       height: 850,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "actions" }],
@@ -29,8 +29,8 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
     }
 
     // Get category states from flags with defaults
-    context.uiState.categoryStates.actions = this.actor.getFlag('daggerheart', 'uiState.categoryStates.actions') !== false;
-    context.uiState.categoryStates.adversaries = this.actor.getFlag('daggerheart', 'uiState.categoryStates.adversaries') !== false;
+    context.uiState.categoryStates.actions = this.actor.getFlag('daggerheart-unofficial', 'uiState.categoryStates.actions') !== false;
+    context.uiState.categoryStates.adversaries = this.actor.getFlag('daggerheart-unofficial', 'uiState.categoryStates.adversaries') !== false;
 
     // Prepare notes HTML for the editor
     context.notesHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.systemData.notes, {

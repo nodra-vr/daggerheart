@@ -277,6 +277,9 @@
 /* Dialog Window Styling - Using global popup styles */
 .daggerheart-dialog .dialog-content {
   padding: var(--dh-space-sm) var(--dh-space-lg);
+  height: auto;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .daggerheart-dialog .window-content {
@@ -286,6 +289,9 @@
   padding: var(--dh-space-md) var(--dh-space-lg) var(--dh-space-lg) var(--dh-space-lg);
   border: 1px solid var(--dh-border-purple-light);
   border-top: none;
+  height: auto;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .daggerheart-dialog.window-app .window-header {

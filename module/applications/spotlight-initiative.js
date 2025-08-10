@@ -11,13 +11,13 @@ export class SpotlightInitiativeTracker {
   
   static _onCreateCombat(combat, options, userId) {
     if (game.user.isGM) {
-      combat.setFlag('daggerheart', 'spotlightRequests', {});
+      combat.setFlag('daggerheart-unofficial', 'spotlightRequests', {});
     }
   }
   
   static _onCombatStart(combat, updateData) {
     if (game.user.isGM) {
-      combat.setFlag('daggerheart', 'spotlightRequests', {});
+      combat.setFlag('daggerheart-unofficial', 'spotlightRequests', {});
     }
   }
   
@@ -63,7 +63,7 @@ export class SpotlightInitiativeTracker {
         giveSpotlightBtn.on('click', () => this._giveSpotlight(combatant));
         initiativeSection.append(giveSpotlightBtn);
         
-        const requests = game.combat.getFlag('daggerheart', 'spotlightRequests') || {};
+        const requests = game.combat.getFlag('daggerheart-unofficial', 'spotlightRequests') || {};
         if (requests[combatantId]) {
           $(el).addClass('spotlight-requested');
           const approveBtn = $(`<button type="button" class="combatant-control approve-spotlight" title="Approve Spotlight Request"><i class="fa-solid fa-check"></i></button>`);
@@ -179,10 +179,10 @@ export class SpotlightInitiativeTracker {
     const combat = game.combat;
     if (!combat) return;
     
-    const requests = combat.getFlag('daggerheart', 'spotlightRequests') || {};
+    const requests = combat.getFlag('daggerheart-unofficial', 'spotlightRequests') || {};
     delete requests[combatant.id];
     
-    await combat.setFlag('daggerheart', 'spotlightRequests', requests);
+    await combat.setFlag('daggerheart-unofficial', 'spotlightRequests', requests);
     
     ui.combatTracker.render();
   }
@@ -194,17 +194,17 @@ export class SpotlightInitiativeTracker {
     if (!combat) return;
     
     if (data.type === 'spotlightRequest') {
-      const requests = combat.getFlag('daggerheart', 'spotlightRequests') || {};
+      const requests = combat.getFlag('daggerheart-unofficial', 'spotlightRequests') || {};
       requests[data.combatantId] = {
         userId: data.userId,
         timestamp: Date.now()
       };
-      await combat.setFlag('daggerheart', 'spotlightRequests', requests);
+      await combat.setFlag('daggerheart-unofficial', 'spotlightRequests', requests);
       ui.combatTracker.render();
     } else if (data.type === 'cancelSpotlightRequest') {
-      const requests = combat.getFlag('daggerheart', 'spotlightRequests') || {};
+      const requests = combat.getFlag('daggerheart-unofficial', 'spotlightRequests') || {};
       delete requests[data.combatantId];
-      await combat.setFlag('daggerheart', 'spotlightRequests', requests);
+      await combat.setFlag('daggerheart-unofficial', 'spotlightRequests', requests);
       ui.combatTracker.render();
     }
   }

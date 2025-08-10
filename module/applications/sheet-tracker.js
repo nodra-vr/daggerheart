@@ -346,7 +346,7 @@ export class SheetTracker {
    * Check if simple adversary sheets are enabled
    */
   _isSimpleAdversaryEnabled() {
-    return game.settings.get("daggerheart", "simpleAdversarySheets");
+    return game.settings.get("daggerheart-unofficial", "simpleAdversarySheets");
   }
 
   /**

@@ -8,8 +8,8 @@ function getFirstControlledToken() {
 }
 
 function isEnabled() {
-  const globalEnabled = game.settings.get("daggerheart", "rangeMeasurementEnabled");
-  const sceneDisabled = canvas?.scene?.getFlag("daggerheart", "disableNarrativeMeasurement") === true;
+  const globalEnabled = game.settings.get("daggerheart-unofficial", "rangeMeasurementEnabled");
+  const sceneDisabled = canvas?.scene?.getFlag("daggerheart-unofficial", "disableNarrativeMeasurement") === true;
   return globalEnabled && !sceneDisabled;
 }
 

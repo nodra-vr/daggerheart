@@ -53,6 +53,13 @@
     overflow-y: hidden;
   }
 
+  .daggerheart-dialog .window-content,
+  .daggerheart-dialog .dialog-content {
+    height: auto;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
   form {
     height: 100%;
   }

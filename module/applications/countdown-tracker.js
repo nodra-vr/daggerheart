@@ -29,7 +29,7 @@ export class CountdownTracker {
     
     // Listen for setting changes
     Hooks.on("updateSetting", (setting) => {
-      if (setting.key === "daggerheart.countdownTrackers") {
+      if (setting.key === "daggerheart-unofficial.countdownTrackers") {
         this.loadTrackers();
         this.updateDisplay();
       }
@@ -41,7 +41,7 @@ export class CountdownTracker {
    */
   async loadTrackers() {
     try {
-      const savedTrackers = game.settings.get("daggerheart", "countdownTrackers");
+      const savedTrackers = game.settings.get("daggerheart-unofficial", "countdownTrackers");
       this.trackers = Array.isArray(savedTrackers) ? savedTrackers : [];
       
       // Validate tracker data
@@ -72,7 +72,7 @@ export class CountdownTracker {
     this.isUpdating = true;
     
     try {
-      await game.settings.set("daggerheart", "countdownTrackers", this.trackers);
+      await game.settings.set("daggerheart-unofficial", "countdownTrackers", this.trackers);
     } catch (error) {
       console.error("Error saving countdown trackers:", error);
     } finally {

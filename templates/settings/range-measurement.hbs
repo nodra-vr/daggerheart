@@ -1,0 +1,47 @@
+<form autocomplete="off">
+  <section class="form-group">
+    <label>{{localize "DAGGERHEART.SETTINGS.RangeMeasurement.enabled"}}</label>
+    <input type="checkbox" name="enabled" {{#if enabled}}checked{{/if}}/>
+  </section>
+
+  <hr/>
+
+  <section class="form-group">
+    <label>{{localize "DAGGERHEART.CONFIG.Range.melee.name"}}</label>
+    <input type="number" name="melee" value="{{melee}}" min="0" step="1"/>
+  </section>
+
+  <section class="form-group">
+    <label>{{localize "DAGGERHEART.CONFIG.Range.veryClose.name"}}</label>
+    <input type="number" name="veryClose" value="{{veryClose}}" min="0" step="1"/>
+  </section>
+
+  <section class="form-group">
+    <label>{{localize "DAGGERHEART.CONFIG.Range.close.name"}}</label>
+    <input type="number" name="close" value="{{close}}" min="0" step="1"/>
+  </section>
+
+  <section class="form-group">
+    <label>{{localize "DAGGERHEART.CONFIG.Range.far.name"}}</label>
+    <input type="number" name="far" value="{{far}}" min="0" step="1"/>
+  </section>
+
+  <section class="form-group">
+    <label>{{localize "DAGGERHEART.CONFIG.Range.veryFar.name"}}</label>
+    <input type="number" name="veryFar" value="{{veryFar}}" min="0" step="1"/>
+  </section>
+
+  <footer class="sheet-footer flexrow">
+    <button type="button" data-action="reset">
+      <i class="fas fa-undo"></i> {{localize "DAGGERHEART.SETTINGS.DiceCustomization.reset"}}
+    </button>
+    <button type="button" data-action="close">
+      <i class="fas fa-times"></i> {{localize "DAGGERHEART.SETTINGS.DiceCustomization.close"}}
+    </button>
+    <button type="submit" class="default">
+      <i class="fas fa-save"></i> {{localize "DAGGERHEART.SETTINGS.DiceCustomization.save"}}
+    </button>
+  </footer>
+</form>
+
+

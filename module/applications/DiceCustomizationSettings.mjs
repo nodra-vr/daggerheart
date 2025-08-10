@@ -7,7 +7,7 @@ export class DiceCustomizationSettings extends FormApplication {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: "daggerheart-dice-customization",
-            template: "systems/daggerheart/templates/settings/dice-customization.hbs",
+            template: "systems/daggerheart-unofficial/templates/settings/dice-customization.hbs",
             title: "DAGGERHEART.SETTINGS.DiceCustomization.title",
             width: 600,
             height: 500,
@@ -127,7 +127,7 @@ export class DiceCustomizationSettings extends FormApplication {
      */
     _getValidatedSettings() {
         try {
-            const rawSettings = game.settings.get('daggerheart', 'diceAppearance');
+            const rawSettings = game.settings.get('daggerheart-unofficial', 'diceAppearance');
             
             if (!rawSettings) {
                 console.debug('DiceCustomizationSettings: No settings found, using defaults');
@@ -211,7 +211,7 @@ export class DiceCustomizationSettings extends FormApplication {
             console.debug('DiceCustomizationSettings: Form data validated successfully');
             
             // Save the settings
-            await game.settings.set('daggerheart', 'diceAppearance', validatedData);
+            await game.settings.set('daggerheart-unofficial', 'diceAppearance', validatedData);
             console.log('DiceCustomizationSettings: Settings saved successfully');
             
             // Clear unsaved changes flag
@@ -267,7 +267,7 @@ export class DiceCustomizationSettings extends FormApplication {
                 throw new Error('Unable to get default settings');
             }
             
-            await game.settings.set('daggerheart', 'diceAppearance', defaultSettings);
+            await game.settings.set('daggerheart-unofficial', 'diceAppearance', defaultSettings);
             console.log('DiceCustomizationSettings: Settings reset to defaults');
             
             // Clear unsaved changes flag
