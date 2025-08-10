@@ -7,7 +7,7 @@ export class DaggerheartMigrations {
   static async migrateDocument(document) {
     let needsUpdate = false;
     const systemData = document.system;
-    const currentVersion = document.getFlag('daggerheart', 'migrationVersion') || "1.0.0";
+    const currentVersion = document.getFlag('daggerheart-unofficial', 'migrationVersion') || "1.0.0";
 
     if (this.compareVersions(currentVersion, this.CURRENT_VERSION) < 0) {
       console.log(`🔄 Migrating ${document.documentName} "${document.name}" from v${currentVersion} to v${this.CURRENT_VERSION}`);
@@ -109,7 +109,7 @@ export class DaggerheartMigrations {
 
       if (needsUpdate) {
 
-        updateData["flags.daggerheart.migrationVersion"] = this.CURRENT_VERSION;
+        updateData["flags.daggerheart-unofficial.migrationVersion"] = this.CURRENT_VERSION;
         await document.update(updateData);
         console.log(`✅ Successfully migrated "${document.name}" to v${this.CURRENT_VERSION}`);
       }

@@ -12,7 +12,7 @@ export class SimpleItemSheet extends foundry.appv1.sheets.ItemSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
           classes: ["daggerheart", "sheet", "item"],
-    template: "systems/daggerheart/templates/item-sheet.html",
+    template: "systems/daggerheart-unofficial/templates/item-sheet.html",
       width: 350,
       height: 550,
       resizable: true,

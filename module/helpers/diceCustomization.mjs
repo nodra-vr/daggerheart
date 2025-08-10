@@ -322,7 +322,7 @@ export class DiceCustomizationHelper {
      */
     static _getValidatedSettings() {
         try {
-            const rawSettings = game.settings.get('daggerheart', 'diceAppearance');
+            const rawSettings = game.settings.get('daggerheart-unofficial', 'diceAppearance');
             
             if (!rawSettings) {
                 console.debug('DiceCustomizationHelper: No dice appearance settings found in game settings');

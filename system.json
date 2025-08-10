@@ -1,7 +1,7 @@
 {
-  "id": "daggerheart",
+  "id": "daggerheart-unofficial",
   "version": "2.13.1",
-  "title": "Daggerheart",
+  "title": "Daggerheart Unofficial",
   "url": "",
   "description": "Unofficial Daggerheart Game System",
   "license": "LICENSE.txt", 
@@ -30,7 +30,7 @@
       "label": "Daggerheart Macros",
       "path": "packs/daggerheart-macros",
       "type": "Macro",
-      "system": "daggerheart",
+        "system": "daggerheart-unofficial",
       "ownership": {
         "PLAYER": "OBSERVER",
         "ASSISTANT": "OWNER"

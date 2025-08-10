@@ -197,7 +197,7 @@ export class SimpleActor extends Actor {
   }
 
   get isTemplate() {
-    return !!this.getFlag("daggerheart", "isTemplate");
+    return !!this.getFlag("daggerheart-unofficial", "isTemplate");
   }
 
   getRollData() {

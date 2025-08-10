@@ -27,6 +27,7 @@ import { SpotlightInitiativeTracker, DaggerheartCombat } from "./applications/sp
 import { DiceAppearanceSettings, getDefaultDiceAppearanceSettings } from "./data/settings/DiceAppearanceSettings.mjs";
 import { DiceCustomizationHelper } from "./helpers/diceCustomization.mjs";
 import { DiceCustomizationSettings } from "./applications/DiceCustomizationSettings.mjs";
+import { RangeMeasurementSettings } from "./applications/RangeMeasurementSettings.mjs";
 
 // Range Measurement System
 import {
@@ -182,38 +183,38 @@ Hooks.once("init", async function () {
   CONFIG.Token.rulerClass = DaggerheartTokenRuler;
 
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.applications.sheets.ActorSheetV2);
-  foundry.documents.collections.Actors.registerSheet("daggerheart", SimpleActorSheet, {
+  foundry.documents.collections.Actors.registerSheet("daggerheart-unofficial", SimpleActorSheet, {
     types: ["character"],
     makeDefault: true,
     label: "SHEET.Actor.character"
   });
-  foundry.documents.collections.Actors.registerSheet("daggerheart", NPCActorSheet, {
+  foundry.documents.collections.Actors.registerSheet("daggerheart-unofficial", NPCActorSheet, {
     types: ["npc"],
     makeDefault: true,
     label: "SHEET.Actor.npc"
   });
-  foundry.documents.collections.Actors.registerSheet("daggerheart", CompanionActorSheet, {
+  foundry.documents.collections.Actors.registerSheet("daggerheart-unofficial", CompanionActorSheet, {
     types: ["companion"],
     makeDefault: true,
     label: "SHEET.Actor.companion"
   });
-  foundry.documents.collections.Actors.registerSheet("daggerheart", EnvironmentActorSheet, {
+  foundry.documents.collections.Actors.registerSheet("daggerheart-unofficial", EnvironmentActorSheet, {
     types: ["environment"],
     makeDefault: true,
     label: "SHEET.Actor.environment"
   });
   foundry.documents.collections.Items.unregisterSheet("core", foundry.applications.sheets.ItemSheetV2);
-  foundry.documents.collections.Items.registerSheet("daggerheart", SimpleItemSheet, {
+  foundry.documents.collections.Items.registerSheet("daggerheart-unofficial", SimpleItemSheet, {
     types: ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass"],
     makeDefault: true,
     label: "SHEET.Item.default"
   });
-  foundry.documents.collections.Items.registerSheet("daggerheart", SimpleWeaponSheet, {
+  foundry.documents.collections.Items.registerSheet("daggerheart-unofficial", SimpleWeaponSheet, {
     types: ["weapon"],
     makeDefault: true,
     label: "SHEET.Item.weapon"
   });
-  foundry.documents.collections.Items.registerSheet("daggerheart", SimpleArmorSheet, {
+  foundry.documents.collections.Items.registerSheet("daggerheart-unofficial", SimpleArmorSheet, {
     types: ["armor"],
     makeDefault: true,
     label: "SHEET.Item.armor"
@@ -221,7 +222,7 @@ Hooks.once("init", async function () {
 
 
 
-  game.settings.register("daggerheart", "counterValue", {
+  game.settings.register("daggerheart-unofficial", "counterValue", {
     name: "Counter Value",
     hint: "The current value of the counter",
     scope: "world",
@@ -230,7 +231,7 @@ Hooks.once("init", async function () {
     config: false
   });
 
-  game.settings.register("daggerheart", "countdownTrackers", {
+  game.settings.register("daggerheart-unofficial", "countdownTrackers", {
     name: "Countdown Trackers",
     hint: "Persistent countdown/progress tracker data",
     scope: "world",
@@ -239,7 +240,7 @@ Hooks.once("init", async function () {
     config: false
   });
 
-  game.settings.register("daggerheart", "activeEnvironment", {
+  game.settings.register("daggerheart-unofficial", "activeEnvironment", {
     name: "Active Environment UUID",
     hint: "Stores the active Environment actor UUID",
     scope: "world",
@@ -250,7 +251,7 @@ Hooks.once("init", async function () {
 
 
 
-  game.settings.register("daggerheart", "advantageDieTypes", {
+  game.settings.register("daggerheart-unofficial", "advantageDieTypes", {
     name: "SETTINGS.AdvantageDieTypesN",
     hint: "SETTINGS.AdvantageDieTypesL",
     scope: "world",
@@ -259,7 +260,7 @@ Hooks.once("init", async function () {
     default: "d4,d6,d8,d10",
   });
 
-  game.settings.register("daggerheart", "experimentalFeatures", {
+  game.settings.register("daggerheart-unofficial", "experimentalFeatures", {
     name: "Experimental Features",
     hint: "Enable in-development UI features",
     scope: "client",
@@ -269,68 +270,68 @@ Hooks.once("init", async function () {
   });
 
   // Register range measurement settings
-  game.settings.register("daggerheart", "rangeMeasurementEnabled", {
+  game.settings.register("daggerheart-unofficial", "rangeMeasurementEnabled", {
     name: "DAGGERHEART.SETTINGS.RangeMeasurement.enabled",
     hint: "Enable narrative range measurement display (scenes using 'mi' or 'km' as units are exempt)",
     scope: "world",
-    config: true,
+    config: false,
     type: Boolean,
     default: true,
     restricted: true
   });
 
-  game.settings.register("daggerheart", "rangeMeasurementMelee", {
+  game.settings.register("daggerheart-unofficial", "rangeMeasurementMelee", {
     name: "DAGGERHEART.CONFIG.Range.melee.name",
     hint: "Distance threshold for Melee range (in grid units)",
     scope: "world",
-    config: true,
+    config: false,
     type: Number,
     default: 5,
     restricted: true
   });
 
-  game.settings.register("daggerheart", "rangeMeasurementVeryClose", {
+  game.settings.register("daggerheart-unofficial", "rangeMeasurementVeryClose", {
     name: "DAGGERHEART.CONFIG.Range.veryClose.name",
     hint: "Distance threshold for Very Close range (in grid units)",
     scope: "world",
-    config: true,
+    config: false,
     type: Number,
     default: 15,
     restricted: true
   });
 
-  game.settings.register("daggerheart", "rangeMeasurementClose", {
+  game.settings.register("daggerheart-unofficial", "rangeMeasurementClose", {
     name: "DAGGERHEART.CONFIG.Range.close.name",
     hint: "Distance threshold for Close range (in grid units)",
     scope: "world",
-    config: true,
+    config: false,
     type: Number,
     default: 30,
     restricted: true
   });
 
-  game.settings.register("daggerheart", "rangeMeasurementFar", {
+  game.settings.register("daggerheart-unofficial", "rangeMeasurementFar", {
     name: "DAGGERHEART.CONFIG.Range.far.name",
     hint: "Distance threshold for Far range (in grid units)",
     scope: "world",
-    config: true,
+    config: false,
     type: Number,
     default: 60,
     restricted: true
   });
 
-  game.settings.register("daggerheart", "rangeMeasurementVeryFar", {
+  game.settings.register("daggerheart-unofficial", "rangeMeasurementVeryFar", {
     name: "DAGGERHEART.CONFIG.Range.veryFar.name",
     hint: "Distance threshold for Very Far range (in grid units)",
     scope: "world",
-    config: true,
+    config: false,
     type: Number,
     default: 120,
     restricted: true
   });
 
   // Simple Adversary Sheets setting
-  game.settings.register("daggerheart", "simpleAdversarySheets", {
+  game.settings.register("daggerheart-unofficial", "simpleAdversarySheets", {
     name: "SETTINGS.SimpleAdversarySheetsN",
     hint: "SETTINGS.SimpleAdversarySheetsL",
     scope: "client",
@@ -340,7 +341,7 @@ Hooks.once("init", async function () {
   });
 
   // Dice Appearance Customization Settings
-  game.settings.register("daggerheart", "diceAppearance", {
+  game.settings.register("daggerheart-unofficial", "diceAppearance", {
     name: "DAGGERHEART.SETTINGS.DiceCustomization.name",
     hint: "DAGGERHEART.SETTINGS.DiceCustomization.hint",
     scope: "client",
@@ -361,7 +362,7 @@ Hooks.once("init", async function () {
         // If validation changed the settings, update them
         if (JSON.stringify(validatedSettings) !== JSON.stringify(value)) {
           console.warn('Daggerheart | Settings were corrected during validation, updating stored settings');
-          await game.settings.set("daggerheart", "diceAppearance", validatedSettings);
+          await game.settings.set("daggerheart-unofficial", "diceAppearance", validatedSettings);
           return; // This will trigger onChange again with corrected settings
         }
         
@@ -377,12 +378,22 @@ Hooks.once("init", async function () {
   });
 
   // Register dice customization settings menu
-  game.settings.registerMenu("daggerheart", "diceCustomizationMenu", {
+  game.settings.registerMenu("daggerheart-unofficial", "diceCustomizationMenu", {
     name: "DAGGERHEART.SETTINGS.DiceCustomization.menuName",
     label: "DAGGERHEART.SETTINGS.DiceCustomization.menuLabel",
     hint: "DAGGERHEART.SETTINGS.DiceCustomization.menuHint",
     icon: "fas fa-dice",
     type: DiceCustomizationSettings
+  });
+
+  // Register range measurement settings menu
+  game.settings.registerMenu("daggerheart-unofficial", "rangeMeasurementMenu", {
+    name: "DAGGERHEART.SETTINGS.RangeMeasurement.title",
+    label: "DAGGERHEART.SETTINGS.RangeMeasurement.menuLabel",
+    hint: "DAGGERHEART.SETTINGS.RangeMeasurement.menuHint",
+    icon: "fas fa-ruler-combined",
+    type: RangeMeasurementSettings,
+    restricted: true
   });
 
   Handlebars.registerHelper('slugify', function (value) {
@@ -522,7 +533,7 @@ Hooks.once("ready", async function () {
   game.daggerheart.countdownTracker = new CountdownTracker();
   await game.daggerheart.countdownTracker.initialize();
 
-  if (game.settings.get("daggerheart", "experimentalFeatures")) {
+  if (game.settings.get("daggerheart-unofficial", "experimentalFeatures")) {
     game.daggerheart.topBarUI = new TopBarUI();
     await game.daggerheart.topBarUI.initialize();
   } else {
@@ -530,9 +541,9 @@ Hooks.once("ready", async function () {
     if (wrapper) wrapper.remove();
   }
 
-  Hooks.on('updateActor', async (actor, data) => {
+    Hooks.on('updateActor', async (actor, data) => {
     try {
-      const active = game.settings.get('daggerheart', 'activeEnvironment');
+        const active = game.settings.get('daggerheart-unofficial', 'activeEnvironment');
       if (active && actor?.uuid === active) {
         await game.daggerheart.topBarUI?.initialize();
       }
@@ -557,7 +568,7 @@ Hooks.once("ready", async function () {
   initializeHoverDistance();
 
   Hooks.on("updateSetting", async (setting) => {
-    if (setting.key !== "daggerheart.experimentalFeatures") return;
+    if (setting.key !== "daggerheart-unofficial.experimentalFeatures") return;
     const enabled = setting.value === true;
     if (enabled) {
       if (!game.daggerheart.topBarUI) {
@@ -970,7 +981,7 @@ Hooks.once("ready", async function () {
 
   // Test function for Simple Adversary Sheets
   window.testSimpleAdversarySheets = function() {
-    const currentSetting = game.settings.get("daggerheart", "simpleAdversarySheets");
+    const currentSetting = game.settings.get("daggerheart-unofficial", "simpleAdversarySheets");
     console.log("Current Simple Adversary Sheets setting:", currentSetting);
     
     const npcs = game.actors.filter(a => a.type === "npc");
@@ -1212,7 +1223,7 @@ Hooks.once("ready", async function () {
     await _cleanupDuplicateMacros();
   }
 
-  game.socket.on("system.daggerheart", async (data) => {
+  game.socket.on("system.daggerheart-unofficial", async (data) => {
 
     if (!game.user.isGM) return;
 
@@ -1224,7 +1235,7 @@ Hooks.once("ready", async function () {
 
           await game.daggerheart.counter.gainFear(data.amount);
 
-          game.socket.emit("system.daggerheart", {
+          game.socket.emit("system.daggerheart-unofficial", {
             type: "fearGainConfirmation",
             amount: data.amount,
             source: data.source,
@@ -1234,7 +1245,7 @@ Hooks.once("ready", async function () {
         } catch (error) {
           console.error("Daggerheart | Error processing fear gain request:", error);
 
-          game.socket.emit("system.daggerheart", {
+          game.socket.emit("system.daggerheart-unofficial", {
             type: "fearGainConfirmation",
             amount: data.amount,
             source: data.source,
@@ -1512,7 +1523,7 @@ Hooks.on("renderChatLog", (app, html, data) => {
 
 Hooks.on("renderChatMessage", (message, html, data) => {
 
-  const flags = message.flags?.daggerheart;
+  const flags = message.flags?.["daggerheart-unofficial"];
   if (!flags) return;
 
   const rollType = flags.rollType;
@@ -2057,7 +2068,7 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
     },
     callback: li => {
       const actor = game.actors.get(li.data("documentId"));
-      actor.setFlag("daggerheart", "isTemplate", true);
+      actor.setFlag("daggerheart-unofficial", "isTemplate", true);
     }
   });
 
@@ -2070,7 +2081,7 @@ Hooks.on("getActorDirectoryEntryContext", (html, options) => {
     },
     callback: li => {
       const actor = game.actors.get(li.data("documentId"));
-      actor.setFlag("daggerheart", "isTemplate", false);
+      actor.setFlag("daggerheart-unofficial", "isTemplate", false);
     }
   });
 });
@@ -2086,7 +2097,7 @@ Hooks.on("getItemDirectoryEntryContext", (html, options) => {
     },
     callback: li => {
       const item = game.items.get(li.data("documentId"));
-      item.setFlag("daggerheart", "isTemplate", true);
+      item.setFlag("daggerheart-unofficial", "isTemplate", true);
     }
   });
 
@@ -2099,7 +2110,7 @@ Hooks.on("getItemDirectoryEntryContext", (html, options) => {
     },
     callback: li => {
       const item = game.items.get(li.data("documentId"));
-      item.setFlag("daggerheart", "isTemplate", false);
+      item.setFlag("daggerheart-unofficial", "isTemplate", false);
     }
   });
 });

@@ -70,6 +70,8 @@
   "DAGGERHEART.CONFIG.TemplateTypes.inFront": "In Front",
   
   "DAGGERHEART.SETTINGS.RangeMeasurement.title": "Measurement Settings",
+  "DAGGERHEART.SETTINGS.RangeMeasurement.menuLabel": "Configure Range Measurement",
+  "DAGGERHEART.SETTINGS.RangeMeasurement.menuHint": "Adjust vague range thresholds and toggle the feature",
   "DAGGERHEART.SETTINGS.RangeMeasurement.enabled": "Enable Measurement",
   "DAGGERHEART.SETTINGS.RangeMeasurement.distances": "Distance Thresholds",
   "DAGGERHEART.SETTINGS.RangeMeasurement.saved": "Range measurement settings saved",

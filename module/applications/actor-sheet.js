@@ -104,7 +104,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["daggerheart", "sheet", "actor"],
-      template: "systems/daggerheart/templates/actor-sheet.html",
+      template: "systems/daggerheart-unofficial/templates/actor-sheet.html",
       width: 690,
       height: 915,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
@@ -124,7 +124,7 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
     EntitySheetHelper.getAttributeData(context.data);
 
     context.systemData = context.data.system;
-    context.settings = {simple: game.settings.get('daggerheart', 'simpleAdversarySheets')}
+    context.settings = {simple: game.settings.get('daggerheart-unofficial', 'simpleAdversarySheets')}
     context.domains = this.actor.system.domains;
     context.dtypes = ATTRIBUTE_TYPES;
 
@@ -2647,7 +2647,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
 
   async _loadUiState() {
     if (!this.actor) return;
-    const uiState = this.actor.getFlag('daggerheart', 'uiState') || {};
+    const uiState = this.actor.getFlag('daggerheart-unofficial', 'uiState') || {};
 
     this._vaultOpen = uiState.vaultOpen ?? false;
 
@@ -2702,11 +2702,11 @@ export class NPCActorSheet extends SimpleActorSheet {
     const width = Math.max(minWidth, Math.min(preferredWidth, maxWidth));
 
     // Determine initial tab based on simple adversary setting
-    const initialTab = game.settings?.get("daggerheart", "simpleAdversarySheets") ? "simple" : "adversary";
+    const initialTab = game.settings?.get("daggerheart-unofficial", "simpleAdversarySheets") ? "simple" : "adversary";
 
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["daggerheart", "sheet", "npc"],
-      template: "systems/daggerheart/templates/actor-sheet-npc.html",
+      template: "systems/daggerheart-unofficial/templates/actor-sheet-npc.html",
       width: width,
       height: height,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: initialTab }],
@@ -2789,7 +2789,7 @@ export class NPCActorSheet extends SimpleActorSheet {
         console.log("SheetTracker initialized successfully for NPC:", this.actor.name);
 
         // Handle simple adversary sheets
-        if (game.settings.get("daggerheart", "simpleAdversarySheets")) {
+       if (game.settings.get("daggerheart-unofficial", "simpleAdversarySheets")) {
           this._activateSimpleAdversaryMode(html);
         }
       } catch (error) {

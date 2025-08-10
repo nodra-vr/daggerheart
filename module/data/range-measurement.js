@@ -72,7 +72,7 @@ export class DaggerheartMeasuredTemplate extends foundry.canvas.placeables.Measu
     _refreshRulerText() {
         super._refreshRulerText();
 
-        const enabled = game.settings.get('daggerheart', 'rangeMeasurementEnabled');
+        const enabled = game.settings.get('daggerheart-unofficial', 'rangeMeasurementEnabled');
         if (enabled) {
             const splitRulerText = this.ruler.text.split(' ');
             if (splitRulerText.length > 0) {
@@ -91,11 +91,11 @@ export class DaggerheartMeasuredTemplate extends foundry.canvas.placeables.Measu
      * @returns {string} The localized range label
      */
     static getDistanceLabel(distance) {
-        const melee = game.settings.get('daggerheart', 'rangeMeasurementMelee');
-        const veryClose = game.settings.get('daggerheart', 'rangeMeasurementVeryClose');
-        const close = game.settings.get('daggerheart', 'rangeMeasurementClose');
-        const far = game.settings.get('daggerheart', 'rangeMeasurementFar');
-        const veryFar = game.settings.get('daggerheart', 'rangeMeasurementVeryFar');
+        const melee = game.settings.get('daggerheart-unofficial', 'rangeMeasurementMelee');
+        const veryClose = game.settings.get('daggerheart-unofficial', 'rangeMeasurementVeryClose');
+        const close = game.settings.get('daggerheart-unofficial', 'rangeMeasurementClose');
+        const far = game.settings.get('daggerheart-unofficial', 'rangeMeasurementFar');
+        const veryFar = game.settings.get('daggerheart-unofficial', 'rangeMeasurementVeryFar');
         if ((canvas.grid.units == 'mi' || canvas.grid.units == 'km' 
             || canvas.grid.units == 'miles' || canvas.grid.units == 'kilometers' 
             || canvas.grid.units == 'miile' || canvas.grid.units == 'kilometer')){
@@ -127,7 +127,7 @@ export class DaggerheartRuler extends foundry.canvas.interaction.Ruler {
         const context = super._getWaypointLabelContext(waypoint, state);
         if (!context) return;
 
-        const enabled = game.settings.get('daggerheart', 'rangeMeasurementEnabled');
+        const enabled = game.settings.get('daggerheart-unofficial', 'rangeMeasurementEnabled');
 
         if (enabled) {
             const distance = DaggerheartMeasuredTemplate.getDistanceLabel(
@@ -149,7 +149,7 @@ export class DaggerheartTokenRuler extends foundry.canvas.placeables.tokens.Toke
         const context = super._getWaypointLabelContext(waypoint, state);
         if (!context) return;
 
-        const enabled = game.settings.get('daggerheart', 'rangeMeasurementEnabled');
+        const enabled = game.settings.get('daggerheart-unofficial', 'rangeMeasurementEnabled');
 
         if (enabled) {
             const distance = DaggerheartMeasuredTemplate.getDistanceLabel(
@@ -232,7 +232,7 @@ export const renderMeasuredTemplate = async (event) => {
             ? 180
             : undefined;
 
-    const baseDistance = game.settings.get('daggerheart', `rangeMeasurement${range.charAt(0).toUpperCase() + range.slice(1)}`);
+    const baseDistance = game.settings.get('daggerheart-unofficial', `rangeMeasurement${range.charAt(0).toUpperCase() + range.slice(1)}`);
     const distance = type === TEMPLATE_TYPES.EMANATION ? baseDistance + 2.5 : baseDistance;
 
     const { width, height } = game.canvas.scene.dimensions;

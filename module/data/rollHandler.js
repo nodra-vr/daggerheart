@@ -14,7 +14,7 @@ Hooks.on("diceSoNiceRollStart", (messageId, context) => {
   if (!game.dice3d) return;
 
   const message = game.messages.get(messageId);
-  if (!message?.flags?.daggerheart) return;
+  if (!message?.flags?.["daggerheart-unofficial"]) return;
 
   _ensureDaggerheartColorsets();
 });
@@ -25,7 +25,7 @@ Hooks.on("renderChatMessage", (message, html, data) => {
 
 Hooks.on("renderChatMessage", (message, html, data) => {
 
-  if (!message.flags?.daggerheart) return;
+  if (!message.flags?.["daggerheart-unofficial"]) return;
 
   _styleDiceTooltips(html);
 
@@ -39,7 +39,7 @@ Hooks.on("renderChatMessage", (message, html, data) => {
 });
 
 async function _handleAutomaticFearGain(message) {
-  const flags = message.flags?.daggerheart;
+  const flags = message.flags?.["daggerheart-unofficial"]; 
   if (!flags) return;
 
   const isAuthor = message.isAuthor;
@@ -134,7 +134,7 @@ async function _handleAutomaticFearGain(message) {
 
   try {
     await message.update({
-      'flags.daggerheart.automationHandled': true
+      'flags.daggerheart-unofficial.automationHandled': true
     });
   } catch (error) {
     console.warn("Daggerheart | Failed to mark automation as handled:", error);
@@ -162,7 +162,7 @@ async function _requestFearGain(amount, source) {
 }
 
 function _sendFearGainRequest(amount, source) {
-  game.socket.emit("system.daggerheart", {
+  game.socket.emit("system.daggerheart-unofficial", {
     type: "requestFearGain",
     amount: amount,
     source: source,
@@ -214,7 +214,7 @@ function _styleDiceTooltips(html) {
 
 function _addClickableRerollHandlers(html, message) {
   // Only add handlers for duality rolls that have both Hope and Fear dice
-  const flags = message.flags?.daggerheart;
+  const flags = message.flags?.["daggerheart-unofficial"]; 
   if (!flags || !flags.isDuality) return;
 
   // Only allow rerolls for the message author or GM
@@ -276,7 +276,7 @@ function _addClickableRerollHandlers(html, message) {
 }
 
 function _styleChatMessageBackground(html, message) {
-  const flags = message.flags?.daggerheart;
+  const flags = message.flags?.["daggerheart-unofficial"];
   if (!flags) return;
 
   const chatMessage = html.hasClass('chat-message') ? html : html.find('.chat-message');
@@ -450,7 +450,7 @@ export async function _rollHope(options = {}) {
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
         rolls: [roll],
         flags: {
-          daggerheart: {
+          'daggerheart-unofficial': {
             rollType: "hope",
             dieSize: config.dieSize,
             modifier: config.modifier,
@@ -538,7 +538,7 @@ export async function _rollFear(options = {}) {
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
         rolls: [roll],
         flags: {
-          daggerheart: {
+          'daggerheart-unofficial': {
             rollType: "fear",
             dieSize: config.dieSize,
             modifier: config.modifier,
@@ -821,7 +821,7 @@ export async function _rollDuality(options = {}) {
     }
 
     if (isCrit && wasForcedCritical) {
-      Hooks.callAll('daggerheart.dualityRollComplete', {
+      Hooks.callAll('daggerheart-unofficial.dualityRollComplete', {
         isCrit: true,
         forcedCritical: true,
         roll: roll
@@ -933,7 +933,7 @@ export async function _rollNPC(options = {}) {
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,
         rolls: [roll],
         flags: {
-          daggerheart: {
+          'daggerheart-unofficial': {
             rollType: "npc",
             dieSize: config.dieSize,
             modifier: config.modifier,
@@ -1513,8 +1513,8 @@ export async function _dualityWithDialog(config) {
       flavor: finalFlavor,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
       rolls: [result.roll],
-      flags: {
-        daggerheart: {
+        flags: {
+          'daggerheart-unofficial': {
           rollType: pendingRollType || "duality", 
           isDuality: true, 
           weaponName: pendingWeaponName,

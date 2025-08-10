@@ -28,7 +28,7 @@ export class CompanionActorSheet extends SimpleActorSheet {
     
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["daggerheart", "sheet", "companion"],
-      template: "systems/daggerheart/templates/actor-sheet-companion.html",
+      template: "systems/daggerheart-unofficial/templates/actor-sheet-companion.html",
       width: width,
       height: height,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "companion"}],

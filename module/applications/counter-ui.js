@@ -13,12 +13,12 @@ export class CounterUI {
    */
   async initialize() {
     // Get the saved counter value and validate it
-    this.count = game.settings.get("daggerheart", "counterValue");
+    this.count = game.settings.get("daggerheart-unofficial", "counterValue");
     
     // Ensure count is a valid number between 0 and 12
     if (isNaN(this.count) || this.count === null || this.count === undefined) {
       this.count = 0;
-      await game.settings.set("daggerheart", "counterValue", 0);
+      await game.settings.set("daggerheart-unofficial", "counterValue", 0);
     } else {
       this.count = Math.max(0, Math.min(12, parseInt(this.count)));
     }
@@ -28,7 +28,7 @@ export class CounterUI {
     
     // Listen for setting changes
     Hooks.on("updateSetting", (setting) => {
-      if (setting.key === "daggerheart.counterValue") {
+      if (setting.key === "daggerheart-unofficial.counterValue") {
         const parsed = parseInt(setting.value);
         this.count = Number.isNaN(parsed) ? 0 : Math.max(0, Math.min(12, parsed));
         this.updateDisplay();
@@ -179,7 +179,7 @@ export class CounterUI {
       this.isUpdating = true;
       try {
         const newCount = this.count + 1;
-        await game.settings.set("daggerheart", "counterValue", newCount);
+        await game.settings.set("daggerheart-unofficial", "counterValue", newCount);
         this.count = newCount;
         this.updateDisplay();
       } finally {
@@ -208,7 +208,7 @@ export class CounterUI {
       this.isUpdating = true;
       try {
         const newCount = this.count - 1;
-        await game.settings.set("daggerheart", "counterValue", newCount);
+        await game.settings.set("daggerheart-unofficial", "counterValue", newCount);
         this.count = newCount;
         this.updateDisplay();
       } finally {
@@ -258,7 +258,7 @@ export class CounterUI {
     this.isUpdating = true;
     try {
       const newCount = Math.max(0, this.count - amount);
-      await game.settings.set("daggerheart", "counterValue", newCount);
+      await game.settings.set("daggerheart-unofficial", "counterValue", newCount);
       this.count = newCount;
       this.updateDisplay();
       
@@ -338,7 +338,7 @@ export class CounterUI {
     try {
       const newCount = Math.min(12, this.count + amount);
       const actualAmount = newCount - this.count;
-      await game.settings.set("daggerheart", "counterValue", newCount);
+      await game.settings.set("daggerheart-unofficial", "counterValue", newCount);
       this.count = newCount;
       this.updateDisplay();
       
@@ -410,7 +410,7 @@ export class CounterUI {
     try {
       const newCount = Math.min(12, this.count + amount);
       const actualAmount = newCount - this.count;
-      await game.settings.set("daggerheart", "counterValue", newCount);
+      await game.settings.set("daggerheart-unofficial", "counterValue", newCount);
       this.count = newCount;
       this.updateDisplay();
       
