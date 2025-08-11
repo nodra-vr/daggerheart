@@ -5,7 +5,8 @@ export class CounterUI {
   constructor() {
     this.element = null;
     this.count = 0;
-    this.isUpdating = false; // Flag to prevent concurrent operations
+    this.isUpdating = false;
+    this.lastKnownCount = 0;
   }
 
   /**
@@ -23,6 +24,8 @@ export class CounterUI {
       this.count = Math.max(0, Math.min(12, parseInt(this.count)));
     }
     
+    this.lastKnownCount = this.count;
+    
     // Render the counter
     await this.render();
     
@@ -32,6 +35,17 @@ export class CounterUI {
         const parsed = parseInt(setting.value);
         this.count = Number.isNaN(parsed) ? 0 : Math.max(0, Math.min(12, parsed));
         this.updateDisplay();
+        
+        if (this.count !== this.lastKnownCount) {
+          this.triggerFearChangeAnimation();
+          this.lastKnownCount = this.count;
+        }
+      }
+    });
+
+    game.socket.on("system.daggerheart-unofficial", (data) => {
+      if (data.type === "fearChanged" && data.userId !== game.user.id) {
+        this.triggerFearChangeAnimation();
       }
     });
   }
@@ -46,7 +60,7 @@ export class CounterUI {
     // Create the counter HTML with inline styles for z-index
     // Only include buttons if the user has permission
     const html = `
-      <div id="counter-ui" class="faded-ui counter-ui" style="position: relative; z-index: 9999;">
+      <div id="counter-ui" class="faded-ui counter-ui fear-tracker" style="position: relative; z-index: 9999;">
         ${canModify ? `
         <button type="button" class="counter-minus" title="Decrease" style="position: relative; z-index: 10000; pointer-events: all;">
           <i class="fas fa-minus"></i>
@@ -465,5 +479,182 @@ export class CounterUI {
       const displayValue = isNaN(this.count) ? 0 : this.count;
       valueElement.textContent = displayValue;
     }
+  }
+
+  triggerFearChangeAnimation() {
+    if (!this.element) {
+      console.warn("Daggerheart | Cannot trigger fear animation - element not found");
+      return;
+    }
+    
+    if (this.element.classList.contains("fear-changed")) {
+      console.log("Daggerheart | Animation already playing, extending duration");
+      this.extendFearAnimation();
+      return;
+    }
+    
+    console.log("Daggerheart | Triggering fear change animation");
+    
+    this.element.style.setProperty("opacity", "1", "important");
+    this.element.classList.add("fear-changed", "hovered");
+    this.addSkullParticles();
+    
+    setTimeout(() => {
+      if (this.element) {
+        this.element.classList.remove("fear-changed", "hovered");
+        this.removeSkullParticles();
+        this.element.style.removeProperty("opacity");
+        console.log("Daggerheart | Fear animation completed");
+      }
+    }, 800);
+    
+    if (game.user.isGM || game.user.hasRole("ASSISTANT")) {
+      game.socket.emit("system.daggerheart-unofficial", {
+        type: "fearChanged",
+        userId: game.user.id,
+        timestamp: Date.now()
+      });
+      console.log("Daggerheart | Emitted fear change socket event");
+    }
+  }
+
+  extendFearAnimation() {
+    if (!this.element) return;
+    
+    this.element.classList.remove("fear-changed", "hovered");
+    this.removeSkullParticles();
+    
+    setTimeout(() => {
+      if (this.element) {
+        this.element.style.setProperty("opacity", "1", "important");
+        this.element.classList.add("fear-changed", "hovered");
+        this.addSkullParticles();
+        
+        setTimeout(() => {
+          if (this.element) {
+            this.element.classList.remove("fear-changed", "hovered");
+            this.removeSkullParticles();
+            this.element.style.removeProperty("opacity");
+            console.log("Daggerheart | Extended fear animation completed");
+          }
+        }, 800);
+      }
+    }, 50);
+  }
+
+    addSkullParticles() {
+    if (!this.element) return;
+    const rect = this.element.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const createOrigin = (size) => {
+      const x = Math.random() * width;
+      const y = Math.random() * height;
+      return { top: y - size / 2, left: x - size / 2 };
+    };
+    const createVector = () => {
+      const angle = Math.random() * 2 * Math.PI;
+      const distance = 80 + Math.random() * 100;
+      const tx = Math.cos(angle) * distance * 0.6;
+      const ty = -distance - 40;
+      return { tx, ty };
+    };
+    const skullParticles = [
+      { class: "skull-particle-1", delay: 0.1, size: 14 },
+      { class: "skull-particle-2", delay: 0.2, size: 18 },
+      { class: "skull-particle-3", delay: 0.3, size: 12 },
+      { class: "skull-particle-4", delay: 0.4, size: 16 },
+      { class: "skull-particle-5", delay: 0.15, size: 15 },
+      { class: "skull-particle-6", delay: 0.25, size: 13 },
+      { class: "skull-particle-7", delay: 0.35, size: 17 },
+      { class: "skull-particle-8", delay: 0.45, size: 11 }
+    ];
+    const smokeParticles = [
+      { class: "smoke-particle-1", delay: 0.1, size: 15 },
+      { class: "smoke-particle-2", delay: 0.2, size: 18 },
+      { class: "smoke-particle-3", delay: 0.3, size: 12 },
+      { class: "smoke-particle-4", delay: 0.25, size: 14 },
+      { class: "smoke-particle-5", delay: 0.4, size: 16 }
+    ];
+    skullParticles.forEach((particle) => {
+      const div = document.createElement("div");
+      div.className = particle.class;
+      div.style.animationDelay = `${particle.delay}s`;
+      div.style.position = "absolute";
+      div.style.zIndex = "10";
+      div.style.pointerEvents = "none";
+      const origin = createOrigin(particle.size);
+      div.style.top = `${origin.top}px`;
+      div.style.left = `${origin.left}px`;
+      const vector = createVector();
+      div.style.setProperty("--tx", `${vector.tx}px`);
+      div.style.setProperty("--ty", `${vector.ty}px`);
+      const duration = 1.6 + Math.random() * 0.2;
+      div.style.animation = `skullFloat ${duration}s ease-out ${particle.delay}s forwards`;
+      const icon = document.createElement("i");
+      icon.className = "fa-duotone fa-skull";
+      icon.style.fontSize = `${particle.size}px`;
+      icon.style.color = "#3b75c2";
+      icon.style.textShadow = "0 0 8px rgba(59, 117, 194, 0.8), 0 0 15px rgba(59, 117, 194, 0.6)";
+      div.appendChild(icon);
+      this.element.appendChild(div);
+    });
+    smokeParticles.forEach((particle) => {
+      const div = document.createElement("div");
+      div.className = particle.class;
+      div.style.animationDelay = `${particle.delay}s`;
+      div.style.position = "absolute";
+      div.style.zIndex = "5";
+      div.style.pointerEvents = "none";
+      const origin = createOrigin(particle.size);
+      div.style.top = `${origin.top}px`;
+      div.style.left = `${origin.left}px`;
+      div.style.width = `${particle.size}px`;
+      div.style.height = `${particle.size}px`;
+      div.style.background = "radial-gradient(circle, rgba(128, 128, 128, 0.8) 0%, transparent 70%)";
+      const vector = createVector();
+      div.style.setProperty("--tx", `${vector.tx}px`);
+      div.style.setProperty("--ty", `${vector.ty}px`);
+      const duration = 1.6 + Math.random() * 0.2;
+      div.style.animation = `smokeFloat ${duration}s ease-out ${particle.delay}s forwards`;
+      this.element.appendChild(div);
+    });
+    this.addSkullAnimations();
+  }
+
+  removeSkullParticles() {
+    if (!this.element) return;
+    
+    const particles = this.element.querySelectorAll(".skull-particle-1, .skull-particle-2, .skull-particle-3, .skull-particle-4, .skull-particle-5, .skull-particle-6, .skull-particle-7, .skull-particle-8, .smoke-particle-1, .smoke-particle-2, .smoke-particle-3, .smoke-particle-4, .smoke-particle-5");
+    particles.forEach(particle => particle.remove());
+    
+    // Remove the injected CSS animations
+    const styleElement = document.getElementById("skull-animations");
+    if (styleElement) {
+      styleElement.remove();
+    }
+  }
+
+  addSkullAnimations() {
+    if (document.getElementById("skull-animations")) return;
+    const style = document.createElement("style");
+    style.id = "skull-animations";
+    style.textContent = `
+      @keyframes skullFloat {
+        0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
+        15% { opacity: 1; transform: translate(calc(var(--tx) * 0.15), calc(var(--ty) * 0.15)) scale(1.3); }
+        40% { opacity: 1; transform: translate(calc(var(--tx) * 0.4), calc(var(--ty) * 0.4)) scale(1.1); }
+        70% { opacity: 0.8; transform: translate(calc(var(--tx) * 0.7), calc(var(--ty) * 0.7)) scale(0.9); }
+        100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.7); }
+      }
+      @keyframes smokeFloat {
+        0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
+        20% { opacity: 0.9; transform: translate(calc(var(--tx) * 0.2), calc(var(--ty) * 0.2)) scale(1.2); }
+        50% { opacity: 0.7; transform: translate(calc(var(--tx) * 0.5), calc(var(--ty) * 0.5)) scale(1.8); }
+        80% { opacity: 0.4; transform: translate(calc(var(--tx) * 0.8), calc(var(--ty) * 0.8)) scale(2.2); }
+        100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(2.8); }
+      }
+    `;
+    document.head.appendChild(style);
   }
 } 

@@ -66,6 +66,7 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
 
     html.find('.adversary-control').click(this._onAdversaryControl.bind(this));
     html.find('.category-toggle').click(this._onToggleCategory.bind(this));
+    html.find('.tab-category').click(this._onCategoryHeaderClick.bind(this));
     html.find('.item-name[data-action="toggle-description"]').click(this._onToggleDescription.bind(this));
 
     this._initializeCategoryStates(html);
@@ -183,6 +184,40 @@ export class EnvironmentActorSheet extends SimpleActorSheet {
     await this._saveUiState();
   }
 
+  async _onCategoryHeaderClick(event) {
+    if (event.target.closest('.category-controls, .item-control')) {
+      return;
+    }
+    
+    const categoryHeader = $(event.currentTarget);
+    const toggleButton = categoryHeader.find('.category-toggle');
+    
+    if (toggleButton.length === 0) return;
+    
+    const category = toggleButton.data('category');
+    if (!category) return;
+    
+    const categoryList = this.element.find(`.item-list[data-location="${category}"], .adversaries-grid[data-location="${category}"]`);
+    
+    if (!this._categoryStates) this._categoryStates = {};
+    
+    const isCollapsed = categoryList.hasClass('category-collapsed');
+    const icon = toggleButton.find('i');
+    
+    if (isCollapsed) {
+      categoryList.removeClass('category-collapsed');
+      categoryHeader.removeClass('section-collapsed').addClass('section-expanded');
+      icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      this._categoryStates[category] = true;
+    } else {
+      categoryList.addClass('category-collapsed');
+      categoryHeader.addClass('section-collapsed').removeClass('section-expanded');
+      icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+      this._categoryStates[category] = false;
+    }
+    
+    await this._saveUiState();
+  }
 
 
   async _onDrop(event) {

@@ -1267,6 +1267,17 @@ Hooks.once("ready", async function () {
     }
   });
 
+  game.socket.on("system.daggerheart-unofficial", (data) => {
+    if (data.type === "fearChanged" && data.userId !== game.user.id) {
+      console.log(`Daggerheart | Received fear change event from user ${data.userId}`);
+      if (game.daggerheart?.counter) {
+        game.daggerheart.counter.triggerFearChangeAnimation();
+      } else {
+        console.warn("Daggerheart | Counter not available for fear change animation");
+      }
+    }
+  });
+
   console.log("Daggerheart | System ready with dynamic weapon resolution");
 });
 

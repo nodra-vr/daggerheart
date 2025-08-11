@@ -275,6 +275,8 @@ export class SimpleActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     html.find('.category-toggle').click(this._onToggleCategory.bind(this));
 
+    html.find('.tab-category').click(this._onCategoryHeaderClick.bind(this));
+
     html.find('.death-overlay').click(this._onDeathOverlayClick.bind(this));
 
     html.find('.rest-button').click(this._onRestClick.bind(this));
@@ -2291,6 +2293,44 @@ await game.daggerheart.rollHandler.dualityWithDialog({
     await this._saveUiState();
   }
 
+  async _onCategoryHeaderClick(event) {
+    if (event.target.closest('.category-controls, .item-control')) {
+      return;
+    }
+    
+    const categoryHeader = $(event.currentTarget);
+    const toggleButton = categoryHeader.find('.category-toggle');
+    
+    if (toggleButton.length === 0) return;
+    
+    const category = toggleButton.data('category');
+    if (!category) return;
+    
+    const dataType = this._getCategoryDataType(category);
+    const categoryList = this.element.find(`.item-list[data-location="${dataType}"], .adversaries-grid[data-location="${dataType}"]`);
+    
+    if (categoryList.hasClass('is-empty')) return;
+    
+    if (!this._categoryStates) this._categoryStates = {};
+    
+    const isCollapsed = categoryList.hasClass('category-collapsed');
+    const icon = toggleButton.find('i');
+    
+    if (isCollapsed) {
+      categoryList.removeClass('category-collapsed');
+      categoryHeader.removeClass('section-collapsed').addClass('section-expanded');
+      icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      this._categoryStates[category] = true;
+    } else {
+      categoryList.addClass('category-collapsed');
+      categoryHeader.addClass('section-collapsed').removeClass('section-expanded');
+      icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+      this._categoryStates[category] = false;
+    }
+    
+    await this._saveUiState();
+  }
+
   _updateDynamicSpacing(enableTransitions = true) {
 
     return;
@@ -2501,9 +2541,13 @@ await game.daggerheart.rollHandler.dualityWithDialog({
         $toggle.removeClass('disabled').removeAttr('aria-disabled');
       } else {
         $list.addClass('is-empty');
-        $list.addClass('category-collapsed');
-        $header.addClass('empty-category section-collapsed').removeClass('section-expanded');
+        $header.addClass('empty-category');
         $toggle.addClass('disabled').attr('aria-disabled', 'true');
+        
+        if (!this._categoryStates || this._categoryStates[location] === undefined) {
+          $list.addClass('category-collapsed');
+          $header.addClass('section-collapsed').removeClass('section-expanded');
+        }
       }
     });
   }
@@ -2670,7 +2714,7 @@ await game.daggerheart.rollHandler.dualityWithDialog({
       itemDescriptions: this._itemDescriptionStates ?? {}
     };
     try {
-      await this.actor.update({ 'flags.daggerheart.uiState': data }, { render: false });
+      await this.actor.update({ 'flags.daggerheart-unofficial.uiState': data }, { render: false });
     } catch (e) {
       console.error('Failed to save UI state', e);
     }
