@@ -78,7 +78,7 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
     
     // Get damage data
     let damageData = foundry.utils.getProperty(this.item, config.field);
-    
+
     // Fix format
     if (typeof damageData === 'object' && damageData !== null && 'baseValue' in damageData) {
       // Check corruption
@@ -105,7 +105,7 @@ export class SimpleWeaponSheet extends SimpleItemSheet {
       };
     } else {
       // String case
-      const simpleValue = damageData || '1d8';
+      const simpleValue = typeof damageData === 'string' ? damageData : '1d8';
       damageData = {
         baseValue: simpleValue,
         modifiers: [],

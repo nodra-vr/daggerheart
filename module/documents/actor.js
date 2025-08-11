@@ -112,6 +112,9 @@ export class SimpleActor extends Actor {
     if (this._characterLevelModifierTimeout) {
       return;
     }
+    // TODO: Why The time out here? It is not determenistic.
+    // TODO: Something is not ready? Then this should not be called.
+    // One the initial openening this causes a rerender, hiding the window.
     this._characterLevelModifierTimeout = setTimeout(() => {
       this._characterLevelModifierTimeout = null;
       this._handleCharacterLevelModifier();
@@ -231,7 +234,6 @@ export class SimpleActor extends Actor {
     data.ins = parseInt(data.instinct?.value) || 0;
     data.pre = parseInt(data.presence?.value) || 0;
     data.kno = parseInt(data.knowledge?.value) || 0;
-    data.exp = parseInt(data.exp?.value) || 0;
 
     data.hp = Math.max(0, parseInt(data.health?.value) || 0);
     data.hp_max = Math.max(1, parseInt(data.health?.max) || 6);
