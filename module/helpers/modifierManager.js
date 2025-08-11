@@ -51,7 +51,6 @@ export class ModifierManager {
       
       // Prepare the modifier
       const modifier = {
-        _id: modifierId,
         id: modifierId,
         name: modifierData.name || 'Modifier',
         value: modifierData.value || (isDamageModifier ? '+1' : 0),
@@ -71,7 +70,7 @@ export class ModifierManager {
         // Already structured - use existing structure
         structuredData = {
           baseValue: currentData.baseValue,
-          modifiers: [...(currentData.modifiers || [])].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m })),
+          modifiers: [...(currentData.modifiers || [])].map(m => ({ id: m?.id || this._generateModifierId(), ...m })),
           value: currentData.value
         };
       } else if (typeof currentData === 'object' && currentData !== null && 'value' in currentData) {
@@ -79,7 +78,7 @@ export class ModifierManager {
         const currentValue = currentData.value || (isDamageModifier ? '1d8' : 0);
         structuredData = {
           baseValue: currentValue,
-          modifiers: [...(currentData.modifiers || [])].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m })),
+          modifiers: [...(currentData.modifiers || [])].map(m => ({ id: m?.id || this._generateModifierId(), ...m })),
           value: currentValue
         };
       } else {
@@ -97,7 +96,9 @@ export class ModifierManager {
 
       // If permanent, track it in the actor's permanent modifiers list
       if (modifier.permanent) {
-        await this._addPermanentModifierTracking(actor, modifierId, fieldPath, modifier);
+        // Extract parentPath from the fieldPath
+        const parentPath = fieldPath.split('.').slice(0, -1).join('.');
+        await this._addPermanentModifierTracking(actor, modifierId, parentPath, modifier);
       }
 
       // Calculate new total value
@@ -272,7 +273,7 @@ export class ModifierManager {
         return false;
       }
 
-      const updatedModifiers = [...currentData.modifiers].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m }));
+      const updatedModifiers = [...currentData.modifiers].map(m => ({ id: m?.id || this._generateModifierId(), ...m }));
       updatedModifiers.splice(modifierIndex, 1);
 
       // Recalculate total
@@ -364,7 +365,6 @@ export class ModifierManager {
    */
   static async removeModifierByName(actorName, fieldPath, modifierName, options = {}) {
     console.warn("ModifierManager | removeModifierByName() is deprecated. Use removeModifierById() or removeModifierByRef() for better reliability. Names are not unique and may cause issues with multiple actors having the same name.");
-    
     const actor = this._findActorByName(actorName, options.searchScope);
     
     if (!actor) {
@@ -443,7 +443,7 @@ export class ModifierManager {
         return false;
       }
 
-      const updatedModifiers = [...currentData.modifiers].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m }));
+      const updatedModifiers = [...currentData.modifiers].map(m => ({ id: m?.id || this._generateModifierId(), ...m }));
       updatedModifiers[modifierIndex] = {
         ...updatedModifiers[modifierIndex],
         enabled: enabled
@@ -701,7 +701,7 @@ export class ModifierManager {
    * @returns {Promise<boolean>} - True if successful, false otherwise
    */
   static async manageCharacterLevelModifier(actor) {
-    if (!actor || actor.type !== 'character') {
+    if (!actor._id || !actor || actor.type !== 'character') {
       return false;
     }
 
@@ -751,7 +751,7 @@ export class ModifierManager {
     if (typeof currentData === 'object' && currentData !== null && 'baseValue' in currentData) {
       structuredData = {
         baseValue: currentData.baseValue,
-        modifiers: [...(currentData.modifiers || [])].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m })),
+        modifiers: [...(currentData.modifiers || [])].map(m => ({ id: m?.id || this._generateModifierId(), ...m })),
         value: currentData.value
       };
     } else {
@@ -775,7 +775,6 @@ export class ModifierManager {
     if (existingModifierIndex !== -1) {
       // Update existing modifier
       structuredData.modifiers[existingModifierIndex] = {
-        _id: structuredData.modifiers[existingModifierIndex]?._id || characterLevelModifierId,
         ...structuredData.modifiers[existingModifierIndex],
         id: characterLevelModifierId,
         value: level,
@@ -785,7 +784,6 @@ export class ModifierManager {
     } else {
       // Add new modifier
       const newModifier = {
-        _id: characterLevelModifierId,
         id: characterLevelModifierId,
         name: modifierName,
         value: level,
@@ -795,8 +793,9 @@ export class ModifierManager {
       
       structuredData.modifiers.push(newModifier);
       
-      // Add to permanent tracking
-      await this._addPermanentModifierTracking(actor, characterLevelModifierId, fieldPath, newModifier);
+      // Add to permanent tracking to the parentPath
+      const parentPath = fieldPath.split('.').slice(0, -1).join('.');
+      await this._addPermanentModifierTracking(actor, characterLevelModifierId, parentPath, newModifier);
     }
 
     // Recalculate total value
@@ -830,26 +829,25 @@ export class ModifierManager {
    * Add permanent modifier tracking to the specific field's permanentModifiers array
    * @param {Actor} actor - The actor
    * @param {string} modifierId - The modifier ID
-   * @param {string} fieldPath - The field path
+   * @param {string} fieldPath - The field root path
    * @param {Object} modifier - The modifier data
    * @returns {Promise<void>}
    * @private
    */
   static async _addPermanentModifierTracking(actor, modifierId, fieldPath, modifier) {
     const currentData = foundry.utils.getProperty(actor, fieldPath);
-    if (!currentData) {
-      console.warn(`⚠️ Field ${fieldPath} not found on actor ${actor.name}`);
+    if (typeof currentData !== "object") {
+      console.warn(`⚠️ Invalid path ${fieldPath} on actor ${actor.name}`);
       return;
     }
     
     const currentPermanentModifiers = currentData.permanentModifiers || [];
     const normalizedPermanentModifiers = currentPermanentModifiers.map(pm => ({
-      _id: pm._id || pm.id || this._generateModifierId(),
+      id: pm.id || this._generateModifierId(),
       ...pm
     }));
     
     const permanentModifierEntry = {
-      _id: modifierId,
       id: modifierId,
       name: modifier.name,
       value: modifier.value,
@@ -860,9 +858,7 @@ export class ModifierManager {
     const updatedPermanentModifiers = [...normalizedPermanentModifiers, permanentModifierEntry];
     
     const updatePath = `${fieldPath}.permanentModifiers`;
-    await actor.update({
-      [updatePath]: updatedPermanentModifiers
-    });
+		await actor.update({[updatePath]: updatedPermanentModifiers});
   }
 
   /**
@@ -881,7 +877,7 @@ export class ModifierManager {
     
     const currentPermanentModifiers = currentData.permanentModifiers || [];
     const normalizedPermanentModifiers = currentPermanentModifiers.map(pm => ({
-      _id: pm._id || pm.id || this._generateModifierId(),
+      id: pm.id || this._generateModifierId(),
       ...pm
     }));
     const updatedPermanentModifiers = normalizedPermanentModifiers.filter(pm => pm.id !== modifierId);
@@ -948,7 +944,7 @@ export class ModifierManager {
           return false;
         }
 
-        const updatedModifiers = [...currentData.modifiers].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m }));
+        const updatedModifiers = [...currentData.modifiers].map(m => ({ id: m?.id || this._generateModifierId(), ...m }));
         updatedModifiers.splice(modifierIndex, 1);
 
         // If permanent, remove from tracking
@@ -1071,13 +1067,12 @@ export class ModifierManager {
           // Use direct modifier addition instead of going through addModifier to avoid recursion
           const structuredData = {
             baseValue: currentData.baseValue,
-            modifiers: [...(currentData.modifiers || [])].map(m => ({ _id: m?._id || m?.id || this._generateModifierId(), ...m })),
+            modifiers: [...(currentData.modifiers || [])].map(m => ({ id: m?.id || this._generateModifierId(), ...m })),
             value: currentData.value
           };
 
           // Add the permanent modifier directly
           const restoredModifier = {
-            _id: permanentMod.id,
             id: permanentMod.id,
             name: permanentMod.name,
             value: permanentMod.value,

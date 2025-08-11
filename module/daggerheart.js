@@ -1,5 +1,7 @@
-import { SimpleActor } from "./data/actor.js";
-import { SimpleItem } from "./data/item.js";
+import { SimpleItem } from "./documents/item.js";
+import { SimpleActor } from "./documents/actor.js";
+import { SimpleToken, SimpleTokenDocument } from "./documents/token.js";
+
 import { SimpleItemSheet } from "./applications/item-sheet.js";
 import { SimpleWeaponSheet } from "./applications/weapon-sheet.js";
 import { SimpleArmorSheet } from "./applications/armor-sheet.js";
@@ -8,7 +10,6 @@ import { CompanionActorSheet } from "./applications/actor-sheet-companion.js";
 import { EnvironmentActorSheet } from "./applications/actor-sheet-environment.js";
 import { preloadHandlebarsTemplates } from "./helpers/templates.js";
 import { createDaggerheartMacro, createSpendFearMacro, createGainFearMacro, createSpendStressMacro, createClearStressMacro, createSpendHopeMacro, createGainHopeMacro, spendStress, clearStress, spendHope, gainHope } from "./data/spending-system.js";
-import { SimpleToken, SimpleTokenDocument } from "./data/token.js";
 import { CounterUI } from "./applications/counter-ui.js";
 import { TokenCounterUI } from "./applications/token-counter-ui.js";
 import { CountdownTracker } from "./applications/countdown-tracker.js";
@@ -29,6 +30,9 @@ import { DiceCustomizationHelper } from "./helpers/diceCustomization.mjs";
 import { DiceCustomizationSettings } from "./applications/DiceCustomizationSettings.mjs";
 import { RangeMeasurementSettings } from "./applications/RangeMeasurementSettings.mjs";
 import { FearParticleSettings } from "./applications/FearParticleSettings.mjs";
+
+import * as itemData from "./data/item/_module.mjs";
+import * as actorData from "./data/actor/_module.mjs";
 
 // Range Measurement System
 import {
@@ -141,6 +145,7 @@ Hooks.once("init", async function () {
 
   globalThis.daggerheart.EntitySheetHelper = EntitySheetHelper;
 
+  CONFIG.Actor.dataModels = actorData.config;
   CONFIG.Actor.documentClass = SimpleActor;
   CONFIG.Actor.typeLabels = {
     character: "ACTOR.TypeCharacter",
@@ -148,6 +153,8 @@ Hooks.once("init", async function () {
     companion: "ACTOR.TypeCompanion",
     environment: "ACTOR.TypeEnvironment"
   };
+
+  CONFIG.Item.dataModels = itemData.config;
   CONFIG.Item.documentClass = SimpleItem;
   CONFIG.Item.typeLabels = {
     item: "ITEM.TypeItem",
@@ -160,8 +167,10 @@ Hooks.once("init", async function () {
     class: "ITEM.TypeClass",
     subclass: "ITEM.TypeSubclass",
     weapon: "ITEM.TypeWeapon",
-    armor: "ITEM.TypeArmor"
+    armor: "ITEM.TypeArmor",
+    passive: "ITEM.TypePassive"
   };
+
   CONFIG.Token.documentClass = SimpleTokenDocument;
   CONFIG.Token.objectClass = SimpleToken;
   CONFIG.Combat.documentClass = DaggerheartCombat;
@@ -207,7 +216,7 @@ Hooks.once("init", async function () {
   });
   foundry.documents.collections.Items.unregisterSheet("core", foundry.applications.sheets.ItemSheetV2);
   foundry.documents.collections.Items.registerSheet("daggerheart-unofficial", SimpleItemSheet, {
-    types: ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass"],
+    types: ["item", "inventory", "worn", "domain", "vault", "ancestry", "community", "class", "subclass", "passive"],
     makeDefault: true,
     label: "SHEET.Item.default"
   });
@@ -1002,21 +1011,21 @@ Hooks.once("ready", async function () {
   window.testSimpleAdversarySheets = function() {
     const currentSetting = game.settings.get("daggerheart-unofficial", "simpleAdversarySheets");
     console.log("Current Simple Adversary Sheets setting:", currentSetting);
-    
+
     const npcs = game.actors.filter(a => a.type === "npc");
     console.log("Found NPCs:", npcs.map(n => n.name));
-    
+
     if (npcs.length === 0) {
       ui.notifications.warn("No NPCs found to test with");
       return;
     }
-    
+
     const testNPC = npcs[0];
     console.log("Testing with NPC:", testNPC.name);
-    
+
     // Try to open the sheet
     testNPC.sheet.render(true);
-    
+
     ui.notifications.info(`Simple Adversary Sheets test completed. Setting is ${currentSetting ? 'enabled' : 'disabled'}.`);
   };
 
@@ -1451,11 +1460,11 @@ Hooks.on("renderChatLog", (app, html, data) => {
     if (!horizontalRollPrivacy.find('[data-action="roll-duality"]').length) {
 
       const horizontalDualityButton = $(`
-        <button type="button" class="ui-control icon fa-solid fa-dice" 
-                data-action="roll-duality" 
+        <button type="button" class="ui-control icon fa-solid fa-dice"
+                data-action="roll-duality"
                 data-roll-mode="duality"
-                aria-pressed="false" 
-                data-tooltip="Roll Duality Dice" 
+                aria-pressed="false"
+                data-tooltip="Roll Duality Dice"
                 aria-label="Roll Duality Dice">
         </button>
       `);
@@ -1479,11 +1488,11 @@ Hooks.on("renderChatLog", (app, html, data) => {
     if (!verticalRollPrivacy.find('[data-action="roll-duality"]').length) {
 
       const verticalDualityButton = $(`
-        <button type="button" class="ui-control icon fa-solid fa-dice" 
-                data-action="roll-duality" 
+        <button type="button" class="ui-control icon fa-solid fa-dice"
+                data-action="roll-duality"
                 data-roll-mode="duality"
-                aria-pressed="false" 
-                data-tooltip="Roll Duality Dice" 
+                aria-pressed="false"
+                data-tooltip="Roll Duality Dice"
                 aria-label="Roll Duality Dice">
         </button>
       `);
@@ -1508,11 +1517,11 @@ Hooks.on("renderChatLog", (app, html, data) => {
 
       if (delayedHorizontalRollPrivacy.length && !delayedHorizontalRollPrivacy.find('[data-action="roll-duality"]').length) {
         const horizontalDualityButton = $(`
-          <button type="button" class="ui-control icon fa-solid fa-dice" 
-                  data-action="roll-duality" 
+          <button type="button" class="ui-control icon fa-solid fa-dice"
+                  data-action="roll-duality"
                   data-roll-mode="duality"
-                  aria-pressed="false" 
-                  data-tooltip="Roll Duality Dice" 
+                  aria-pressed="false"
+                  data-tooltip="Roll Duality Dice"
                   aria-label="Roll Duality Dice">
           </button>
         `);
@@ -1529,11 +1538,11 @@ Hooks.on("renderChatLog", (app, html, data) => {
 
       if (delayedVerticalRollPrivacy.length && !delayedVerticalRollPrivacy.find('[data-action="roll-duality"]').length) {
         const verticalDualityButton = $(`
-          <button type="button" class="ui-control icon fa-solid fa-dice" 
-                  data-action="roll-duality" 
+          <button type="button" class="ui-control icon fa-solid fa-dice"
+                  data-action="roll-duality"
                   data-roll-mode="duality"
-                  aria-pressed="false" 
-                  data-tooltip="Roll Duality Dice" 
+                  aria-pressed="false"
+                  data-tooltip="Roll Duality Dice"
                   aria-label="Roll Duality Dice">
           </button>
         `);

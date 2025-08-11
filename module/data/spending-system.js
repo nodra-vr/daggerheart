@@ -1,5 +1,5 @@
 // Import damage application functions
-import { applyDamage, applyHealing, applyDirectDamage } from './damage-application.js';
+import { applyHealing, applyDirectDamage } from './damage-application.js';
 
 /**
  * Create spendFear macro
