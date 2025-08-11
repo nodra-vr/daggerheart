@@ -1,0 +1,31 @@
+<form autocomplete="off">
+  <div class="form-group">
+    <label>Particle Count</label>
+    <input type="number" name="count" value="{{count}}" min="0" max="50" step="1"/>
+    <p class="notes">How many icon particles to emit per animation</p>
+  </div>
+
+  <div class="form-group">
+    <label>Enable Smoke</label>
+    <input type="checkbox" name="smoke" {{#if smoke}}checked{{/if}}/>
+  </div>
+
+  <div class="form-group">
+    <label>Icon Classes</label>
+    <input type="text" name="icon" value="{{icon}}" placeholder="fa-duotone fa-skull"/>
+    <p class="notes">Font Awesome class list to use for particles</p>
+  </div>
+
+  <div class="form-group">
+    <label>Scale</label>
+    <input type="number" name="scale" value="{{scale}}" step="any" min="0.1" max="4"/>
+  </div>
+
+  <footer class="sheet-footer flexrow">
+    <button type="submit" class="dialog-button default">Save</button>
+    <button type="button" data-action="reset" class="dialog-button">Reset</button>
+    <button type="button" data-action="close" class="dialog-button">Close</button>
+  </footer>
+</form>
+
+

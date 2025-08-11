@@ -28,6 +28,7 @@ import { DiceAppearanceSettings, getDefaultDiceAppearanceSettings } from "./data
 import { DiceCustomizationHelper } from "./helpers/diceCustomization.mjs";
 import { DiceCustomizationSettings } from "./applications/DiceCustomizationSettings.mjs";
 import { RangeMeasurementSettings } from "./applications/RangeMeasurementSettings.mjs";
+import { FearParticleSettings } from "./applications/FearParticleSettings.mjs";
 
 // Range Measurement System
 import {
@@ -270,6 +271,15 @@ Hooks.once("init", async function () {
     default: false
   });
 
+  game.settings.register("daggerheart-unofficial", "fearParticleSettings", {
+    name: "Fear Particle Settings",
+    hint: "Configure fear animation particles per client",
+    scope: "client",
+    config: false,
+    type: Object,
+    default: { count: 8, smoke: true, icon: "fa-duotone fa-skull", scale: 1 }
+  });
+
   // Register range measurement settings
   game.settings.register("daggerheart-unofficial", "rangeMeasurementEnabled", {
     name: "DAGGERHEART.SETTINGS.RangeMeasurement.enabled",
@@ -395,6 +405,14 @@ Hooks.once("init", async function () {
     icon: "fas fa-ruler-combined",
     type: RangeMeasurementSettings,
     restricted: true
+  });
+
+  game.settings.registerMenu("daggerheart-unofficial", "fearParticleMenu", {
+    name: "Fear Particle Settings",
+    label: "Fear Particles",
+    hint: "Configure fear particle count, smoke, icon and scale",
+    icon: "fas fa-skull",
+    type: FearParticleSettings
   });
 
   Handlebars.registerHelper('slugify', function (value) {

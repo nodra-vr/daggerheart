@@ -547,6 +547,12 @@ export class CounterUI {
     const rect = this.element.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
+    const particleSettings = game.settings.get("daggerheart-unofficial", "fearParticleSettings") || {};
+    const particleCount = Math.max(0, Math.min(50, parseInt(particleSettings.count ?? 8)));
+    const smokeEnabled = particleSettings.smoke !== false;
+    const iconClass = particleSettings.icon || "fa-duotone fa-skull";
+    const scaleSetting = parseFloat(particleSettings.scale);
+    const iconScale = Number.isFinite(scaleSetting) ? Math.max(0.25, Math.min(4, scaleSetting)) : 1;
     const createOrigin = (size) => {
       const x = Math.random() * width;
       const y = Math.random() * height;
@@ -559,23 +565,17 @@ export class CounterUI {
       const ty = -distance - 40;
       return { tx, ty };
     };
-    const skullParticles = [
-      { class: "skull-particle-1", delay: 0.1, size: 14 },
-      { class: "skull-particle-2", delay: 0.2, size: 18 },
-      { class: "skull-particle-3", delay: 0.3, size: 12 },
-      { class: "skull-particle-4", delay: 0.4, size: 16 },
-      { class: "skull-particle-5", delay: 0.15, size: 15 },
-      { class: "skull-particle-6", delay: 0.25, size: 13 },
-      { class: "skull-particle-7", delay: 0.35, size: 17 },
-      { class: "skull-particle-8", delay: 0.45, size: 11 }
-    ];
-    const smokeParticles = [
-      { class: "smoke-particle-1", delay: 0.1, size: 15 },
-      { class: "smoke-particle-2", delay: 0.2, size: 18 },
-      { class: "smoke-particle-3", delay: 0.3, size: 12 },
-      { class: "smoke-particle-4", delay: 0.25, size: 14 },
-      { class: "smoke-particle-5", delay: 0.4, size: 16 }
-    ];
+    const skullParticles = Array.from({ length: particleCount }, (_, i) => ({
+      class: `skull-particle-${i + 1}`,
+      delay: 0.1 + Math.random() * 0.4,
+      size: Math.round((11 + Math.random() * 8) * iconScale)
+    }));
+    const smokeCount = smokeEnabled ? Math.max(0, Math.min(40, Math.round(particleCount * 0.6))) : 0;
+    const smokeParticles = Array.from({ length: smokeCount }, (_, i) => ({
+      class: `smoke-particle-${i + 1}`,
+      delay: 0.1 + Math.random() * 0.4,
+      size: Math.round(12 + Math.random() * 8)
+    }));
     skullParticles.forEach((particle) => {
       const div = document.createElement("div");
       div.className = particle.class;
@@ -592,7 +592,7 @@ export class CounterUI {
       const duration = 1.6 + Math.random() * 0.2;
       div.style.animation = `skullFloat ${duration}s ease-out ${particle.delay}s forwards`;
       const icon = document.createElement("i");
-      icon.className = "fa-duotone fa-skull";
+      icon.className = iconClass;
       icon.style.fontSize = `${particle.size}px`;
       icon.style.color = "#3b75c2";
       icon.style.textShadow = "0 0 8px rgba(59, 117, 194, 0.8), 0 0 15px rgba(59, 117, 194, 0.6)";
