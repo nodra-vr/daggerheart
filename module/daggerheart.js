@@ -173,6 +173,7 @@ Hooks.once("init", async function () {
   CONFIG.Token.documentClass = SimpleTokenDocument;
   CONFIG.Token.objectClass = SimpleToken;
   CONFIG.Combat.documentClass = DaggerheartCombat;
+  CONFIG.Combat.fallbackTurnMarker = 'systems/daggerheart-unofficial/assets/spotlight.webp';
 
   CONFIG.Actor.trackableAttributes = CONFIG.Actor.trackableAttributes || {};
   for (const t of ["character", "npc", "companion", "environment"]) {
@@ -1271,6 +1272,17 @@ Hooks.once("ready", async function () {
         console.log(`Daggerheart | Fear gain confirmed: +${data.amount} from ${data.source}`);
       } else {
         console.warn(`Daggerheart | Fear gain failed: ${data.error}`);
+      }
+    }
+  });
+
+  game.socket.on("system.daggerheart-unofficial", (data) => {
+    if (data.type === "fearChanged" && data.userId !== game.user.id) {
+      console.log(`Daggerheart | Received fear change event from user ${data.userId}`);
+      if (game.daggerheart?.counter) {
+        game.daggerheart.counter.triggerFearChangeAnimation();
+      } else {
+        console.warn("Daggerheart | Counter not available for fear change animation");
       }
     }
   });

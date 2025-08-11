@@ -109,6 +109,7 @@ export class SpotlightInitiativeTracker {
     if (currentTurn === -1) return;
     
     await combat.update({ turn: currentTurn });
+
     
     ChatMessage.create({
       content: `<div class="spotlight-message">
@@ -223,11 +224,11 @@ export class DaggerheartCombat extends Combat {
     return 0;
   }
   
-  _updateTurnMarkers() {
-    return;
-  }
+  // _updateTurnMarkers() {
+  //   return;
+  // }
   
-  _refreshTokenHUD(token, isActive) {
-    return;
-  }
+  // _refreshTokenHUD(token, isActive) {
+  //   return;
+  // }
 }

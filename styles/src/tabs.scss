@@ -124,4 +124,11 @@
 	margin: 0 -16px 16px -16px;
   color: var(--dh-color-dark-blue);
   border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(90deg, #d4af37 0%, var(--dh-color-gold) 100%);
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+  }
 }
