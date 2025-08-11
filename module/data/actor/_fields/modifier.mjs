@@ -40,6 +40,42 @@ export class ModifierField extends SchemaField {
  *
  * @property {number} value              // Modified Value.
  * @property {number} baseValue          // Unmodified Value.
+ * @property {boolean} leveled           // Track leveled values.
+ * @property {array} modifiers           // List of modifiers.
+ * @property {array} permanentModifiers  // List of fixed modifiers.
+ */
+export class LeveledModifierField extends SchemaField {
+	constructor(options = {}, schemaOptions = {}) {
+		const fields = {
+			value: new NumberField({
+				min: 0,
+				integer: true,
+				required: true,
+				positive: false,
+				initial: 0,
+			}),
+			baseValue: new NumberField({
+				min: 0,
+				integer: true,
+				required: true,
+				positive: false,
+				initial: 0,
+			}),
+			// TODO Migrate the original typo
+			levelled: new BooleanField({ initial: false }),
+			modifiers: new ArrayField(new ModifierField()),
+			permanentModifiers: new ArrayField(new ModifierField()),
+		};
+		super(fields, schemaOptions);
+	}
+}
+
+/**
+ * Data model to modify number values.
+ * Legacy has number fields with string mods.
+ *
+ * @property {number} value              // Modified Value.
+ * @property {number} baseValue          // Unmodified Value.
  * @property {array} modifiers           // List of modifiers.
  * @property {array} permanentModifiers  // List of fixed modifiers.
  */

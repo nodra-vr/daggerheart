@@ -26,7 +26,7 @@ import { ActorBase } from '../_base/actor-base.mjs';
 
 import { ValueField } from './_fields/value.mjs';
 import { WeaponSlotField } from './_fields/weapon-slot.mjs';
-import { ModifiedNumberField } from './_fields/modifier.mjs';
+import { ModifiedNumberField, LeveledModifierField } from './_fields/modifier.mjs';
 
 import { ActorTrackerData } from './_templates/actor-tracker.mjs';
 import { ActorDefensesData } from './_templates/actor-defenses.mjs';
@@ -74,12 +74,12 @@ export default class CharacterData extends ActorBase.mixin(
 			level: new ValueField({ min: 1, max: 10, value: 1 }),
 			proficiency: new ValueField({ min: 1, max: 10, value: 1 }),
 
-			agility: new ModifiedNumberField({ min: -5, max: 5 }),
-			strength: new ModifiedNumberField({ min: -5, max: 5 }),
-			finesse: new ModifiedNumberField({ min: -5, max: 5 }),
-			instinct: new ModifiedNumberField({ min: -5, max: 5 }),
-			presence: new ModifiedNumberField({ min: -5, max: 5 }),
-			knowledge: new ModifiedNumberField({ min: -5, max: 5 }),
+			agility: new LeveledModifierField({ min: -5, max: 5 }),
+			strength: new LeveledModifierField({ min: -5, max: 5 }),
+			finesse: new LeveledModifierField({ min: -5, max: 5 }),
+			instinct: new LeveledModifierField({ min: -5, max: 5 }),
+			presence: new LeveledModifierField({ min: -5, max: 5 }),
+			knowledge: new LeveledModifierField({ min: -5, max: 5 }),
 
 			'weapon-off': new WeaponSlotField(),
 			'weapon-main': new WeaponSlotField(),
