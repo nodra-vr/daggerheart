@@ -112,6 +112,9 @@ export class SimpleActor extends Actor {
     if (this._characterLevelModifierTimeout) {
       return;
     }
+    // TODO: Why The time out here? It is not determenistic.
+    // TODO: Something is not ready? Then this should not be called.
+    // One the initial openening this causes a rerender, hiding the window.
     this._characterLevelModifierTimeout = setTimeout(() => {
       this._characterLevelModifierTimeout = null;
       this._handleCharacterLevelModifier();
