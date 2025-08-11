@@ -164,6 +164,7 @@ Hooks.once("init", async function () {
   CONFIG.Token.documentClass = SimpleTokenDocument;
   CONFIG.Token.objectClass = SimpleToken;
   CONFIG.Combat.documentClass = DaggerheartCombat;
+  CONFIG.Combat.fallbackTurnMarker = 'systems/daggerheart-unofficial/assets/spotlight.webp';
 
   CONFIG.Actor.trackableAttributes = CONFIG.Actor.trackableAttributes || {};
   for (const t of ["character", "npc", "companion", "environment"]) {
