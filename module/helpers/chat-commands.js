@@ -2,30 +2,30 @@ import { processUnifiedDualityCommand } from './unified-duality-processor.js';
 import { createDualityRollLink } from './command-utils.js';
 
 Hooks.once('ready', () => {
-    const originalProcessMessage = ChatLog.prototype.processMessage;
-    
-    ChatLog.prototype.processMessage = function(message) {
-        const trimmedMessage = message.trim();
-        if (trimmedMessage === '/dr' || trimmedMessage.startsWith('/dr ')) {
-            console.log('Daggerheart | /dr command recognized as valid');
-            processDualityCommand(message);
-            return '';
-        }
-        return originalProcessMessage.call(this, message);
-    };
-    
-    console.log('Daggerheart | Registered /dr as a valid chat command');
+	const originalProcessMessage = ChatLog.prototype.processMessage;
+
+	ChatLog.prototype.processMessage = function (message) {
+		const trimmedMessage = message.trim();
+		if (trimmedMessage === '/dr' || trimmedMessage.startsWith('/dr ')) {
+			console.log('Daggerheart | /dr command recognized as valid');
+			processDualityCommand(message);
+			return '';
+		}
+		return originalProcessMessage.call(this, message);
+	};
+
+	console.log('Daggerheart | Registered /dr as a valid chat command');
 });
 
 async function processDualityCommand(message) {
-    const commandText = message.replace(/^\/dr\s*/, '').trim();
-    return await processUnifiedDualityCommand(commandText, {
-        source: 'chat'
-    });
+	const commandText = message.replace(/^\/dr\s*/, '').trim();
+	return await processUnifiedDualityCommand(commandText, {
+		source: 'chat',
+	});
 }
 
 export function showDualityRollHelp() {
-    const helpText = `
+	const helpText = `
 <div class="daggerheart-help">
 <h3>Duality Roll Commands</h3>
 <p><strong>Chat Command:</strong> <code>/dr [options]</code></p>
@@ -54,9 +54,9 @@ export function showDualityRollHelp() {
 </ul>
 </div>`;
 
-    ChatMessage.create({
-        content: helpText,
-        speaker: ChatMessage.getSpeaker(),
-        type: CONST.CHAT_MESSAGE_TYPES.OOC
-    });
+	ChatMessage.create({
+		content: helpText,
+		speaker: ChatMessage.getSpeaker(),
+		type: CONST.CHAT_MESSAGE_TYPES.OOC,
+	});
 }

@@ -1,81 +1,81 @@
-@use "components/itemList";
+@use 'components/itemList';
 
 /* Character Tab */
 .character-main-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2.5em;
-  padding-bottom: 1em;
-  padding-top: 1em;
-  height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2.5em;
+	padding-bottom: 1em;
+	padding-top: 1em;
+	height: 100%;
 }
 
 .tab.character {
-  padding: 20px;
+	padding: 20px;
 }
 
 .tab.biography .character-main-section {
-  height: 100%;
+	height: 100%;
 }
 
 .character-details {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1em 2em;
-  margin: auto;
-  max-width: 500px;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 1em 2em;
+	margin: auto;
+	max-width: 500px;
 }
 
 .char-detail-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5px;
 
-  label {
-    color: white;
-    text-transform: uppercase;
-    font-size: 0.9em;
-  }
+	label {
+		color: white;
+		text-transform: uppercase;
+		font-size: 0.9em;
+	}
 
-  input {
-    background: transparent;
-    border: 1px solid #433f64;
-    border-radius: 0.5em;
-    padding: 0.25em;
-    color: white;
-    text-align: center;
-    width: 100%;
-  }
+	input {
+		background: transparent;
+		border: 1px solid #433f64;
+		border-radius: 0.5em;
+		padding: 0.25em;
+		color: white;
+		text-align: center;
+		width: 100%;
+	}
 }
 
 /* Defenses */
 .defenses {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 1em;
-  flex-direction: row;
-  align-content: center;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 1em;
+	flex-direction: row;
+	align-content: center;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
 }
 
 .defense-group {
-  display: flex;
-  flex-direction: row;
-  gap: 1em;
-  align-items: center;
-  justify-content: center;
-  flex: 0 1 auto;
+	display: flex;
+	flex-direction: row;
+	gap: 1em;
+	align-items: center;
+	justify-content: center;
+	flex: 0 1 auto;
 }
 
 /* Advancement Section */
 .advancement-section {
-  display: flex;
-  justify-content: center;
-  margin: 1.5em 0;
+	display: flex;
+	justify-content: center;
+	margin: 1.5em 0;
 }
 
 .npc .defenses {
@@ -90,546 +90,547 @@
 
 /* NPC Defense Section in Header */
 .npc .npc-defense-section {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 2em;
-  margin-bottom: 1.5em;
-  width: 100%;
-  
-  .defense {
-    flex: 0 0 auto;
-    
-    input[type="number"] {
-      margin-bottom: 0;
-    }
-    
-    label {
-      margin-top: -15px;
-    }
-  }
-  
-  .threshold-group {
-    flex: 1;
-    margin-bottom: 0;
-    
-    .threshold-values {
-      justify-content: center;
-      align-items: center;
-      gap: 0.75em;
-    }
-    
-    .resource-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.25em;
-      
-      input {
-        margin-bottom: 0;
-      }
-      
-      .trait-effects {
-        margin-top: 0;
-        font-size: 11px;
-      }
-    }
-  }
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 2em;
+	margin-bottom: 1.5em;
+	width: 100%;
+
+	.defense {
+		flex: 0 0 auto;
+
+		input[type='number'] {
+			margin-bottom: 0;
+		}
+
+		label {
+			margin-top: -15px;
+		}
+	}
+
+	.threshold-group {
+		flex: 1;
+		margin-bottom: 0;
+
+		.threshold-values {
+			justify-content: center;
+			align-items: center;
+			gap: 0.75em;
+		}
+
+		.resource-group {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 0.25em;
+
+			input {
+				margin-bottom: 0;
+			}
+
+			.trait-effects {
+				margin-top: 0;
+				font-size: 11px;
+			}
+		}
+	}
 }
 
 .defense {
-  flex: 1;
-  max-width: 4em;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center;
-  justify-content: flex-end;
+	flex: 1;
+	max-width: 4em;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	align-content: center;
+	justify-content: flex-end;
 
-  input[type="number"] {
-    color: black;
-    text-align: center;
-    font-size: 22px;
-    font-weight: 700;
-    padding-bottom: 8px;
-    text-indent: 0px;
-    width: 80px;
-    height: 80px;
-    border: none;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
+	input[type='number'] {
+		color: black;
+		text-align: center;
+		font-size: 22px;
+		font-weight: 700;
+		padding-bottom: 8px;
+		text-indent: 0px;
+		width: 80px;
+		height: 80px;
+		border: none;
+		background-size: contain;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
 
-  input[name="system.defenses.evasion.value"] {
-    background-image: url("icons/Evade BG-2.png");
-  }
+	input[name='system.defenses.evasion.value'] {
+		background-image: url('icons/Evade BG-2.png');
+	}
 
-  input[name="system.defenses.armor.value"] {
-    background-image: url("icons/Shield BG-2.png");
-  }
+	input[name='system.defenses.armor.value'] {
+		background-image: url('icons/Shield BG-2.png');
+	}
 
-  label {
-    margin-top: -15px;
-    position: relative;
-    text-transform: uppercase;
-    font-size: 10px;
-    letter-spacing: 1px;
-    padding: 2px 6px;
-    background: rgb(11, 10, 19);
-    border: 2px solid var(--dh-color-gold);
-    border-radius: 0px 10px;
-    z-index: 1;
-  }
+	label {
+		margin-top: -15px;
+		position: relative;
+		text-transform: uppercase;
+		font-size: 10px;
+		letter-spacing: 1px;
+		padding: 2px 6px;
+		background: rgb(11, 10, 19);
+		border: 2px solid var(--dh-color-gold);
+		border-radius: 0px 10px;
+		z-index: 1;
+	}
 }
 
 .armorslots {
-  flex: 1;
-  max-width: fit-content;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
+	flex: 1;
+	max-width: fit-content;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5px;
 
-  label {
-    text-transform: uppercase;
-  }
+	label {
+		text-transform: uppercase;
+	}
 
-  .values {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-  }
+	.values {
+		display: flex;
+		align-items: center;
+		gap: 3px;
+	}
 
-  .resource-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+	.resource-group {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 
-  input {
-    width: 50px;
-    font-size: 18px;
-    font-weight: 700;
-    background: transparent;
-    border: 1px solid #433f64;
-    border-radius: 0.5em;
-    padding: 0.25em;
-    color: white;
-    text-align: center;
-  }
+	input {
+		width: 50px;
+		font-size: 18px;
+		font-weight: 700;
+		background: transparent;
+		border: 1px solid #433f64;
+		border-radius: 0.5em;
+		padding: 0.25em;
+		color: white;
+		text-align: center;
+	}
 }
 
 /* Traits */
 .traits {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7em;
-  align-items: center;
-  justify-content: center;
-  background: rgb(11, 10, 19, 0.8);
-  border: 1px solid var(--dh-color-gold);
-  border-radius: 15px;
-  backdrop-filter: blur(3px);
-  width: 100%;
-  padding: .75em 0.25em;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.7em;
+	align-items: center;
+	justify-content: center;
+	background: rgb(11, 10, 19, 0.8);
+	border: 1px solid var(--dh-color-gold);
+	border-radius: 15px;
+	backdrop-filter: blur(3px);
+	width: 100%;
+	padding: 0.75em 0.25em;
 }
 
 .trait {
-  flex: 1;
-  min-width: 80px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
+	flex: 1;
+	min-width: 80px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5px;
 
-  input {
-    width: 80px;
-    height: 64px;
-    background: url("icons/Stats BG-2.png") no-repeat;
-    background-size: contain;
-    background-position: center center;
-    border: none;
-    color: black;
-    text-align: center;
-    font-size: 22px;
-    font-weight: 700;
-    padding-bottom: 8px;
-  }
+	input {
+		width: 80px;
+		height: 64px;
+		background: url('icons/Stats BG-2.png') no-repeat;
+		background-size: contain;
+		background-position: center center;
+		border: none;
+		color: black;
+		text-align: center;
+		font-size: 22px;
+		font-weight: 700;
+		padding-bottom: 8px;
+	}
 }
 
 .trait-label-wrapper {
-  margin-bottom: -0.75em;
-  z-index: 1;
+	margin-bottom: -0.75em;
+	z-index: 1;
 
-  label {
-    text-transform: uppercase;
-    font-size: 10px;
-    letter-spacing: 1px;
-    padding: 0.25em 0.25em;
-    background: rgb(11, 10, 19, 0.8);
-    border: 1px solid var(--dh-color-gold);
-    border-radius: 0.5em;
-    z-index: 1;
-    white-space: nowrap;
-    backdrop-filter: blur(3px);
-  }
+	label {
+		text-transform: uppercase;
+		font-size: 10px;
+		letter-spacing: 1px;
+		padding: 0.25em 0.25em;
+		background: rgb(11, 10, 19, 0.8);
+		border: 1px solid var(--dh-color-gold);
+		border-radius: 0.5em;
+		z-index: 1;
+		white-space: nowrap;
+		backdrop-filter: blur(3px);
+	}
 
-  .trait-d12-icon {
-    margin-right: 2px;
-    transition: transform 0.4s ease-in-out;
-    display: inline-block;
-    color: var(--dh-color-gold);
-    font-size: 11px;
-    vertical-align: middle;
-    margin-bottom: 1px;
-  }
+	.trait-d12-icon {
+		margin-right: 2px;
+		transition: transform 0.4s ease-in-out;
+		display: inline-block;
+		color: var(--dh-color-gold);
+		font-size: 11px;
+		vertical-align: middle;
+		margin-bottom: 1px;
+	}
 
-  label:hover .trait-d12-icon {
-    transform: rotate(360deg);
-  }
+	label:hover .trait-d12-icon {
+		transform: rotate(360deg);
+	}
 }
 
 .trait-toggle {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: -1.5em;
-  margin-bottom: 0;
-  z-index: 2;
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: -1.5em;
+	margin-bottom: 0;
+	z-index: 2;
 
-  input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid var(--dh-color-gold);
-    background: rgb(11, 10, 19);
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    position: relative;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+	input[type='checkbox'] {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		border: 2px solid var(--dh-color-gold);
+		background: rgb(11, 10, 19);
+		cursor: pointer;
+		appearance: none;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		position: relative;
+		transition: all 0.2s ease;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 
-    &:hover {
-      border-color: var(--dh-color-gold-light);
-      background: rgb(11, 10, 19);
-      transform: scale(1.1);
-    }
+		&:hover {
+			border-color: var(--dh-color-gold-light);
+			background: rgb(11, 10, 19);
+			transform: scale(1.1);
+		}
 
-    &:checked {
-      background: var(--dh-color-gold);
-      border-color: var(--dh-color-gold-light);
+		&:checked {
+			background: var(--dh-color-gold);
+			border-color: var(--dh-color-gold-light);
 
-      &::after {
-        content: "✓";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: var(--dh-color-off-black);
-        font-size: 12px;
-        font-weight: bold;
-      }
-    }
-  }
+			&::after {
+				content: '✓';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				color: var(--dh-color-off-black);
+				font-size: 12px;
+				font-weight: bold;
+			}
+		}
+	}
 }
 
 .trait-effects {
-  font-size: 12px;
-  display: flex;
-  flex-direction: column;
-  color: #6c6a85;
-  font-weight: lighter;
+	font-size: 12px;
+	display: flex;
+	flex-direction: column;
+	color: #6c6a85;
+	font-weight: lighter;
 }
 
 input.trait-effects.resize-ta {
-  font-size: 12px;
-  border: none;
-  background: none;
-  color: #6c6a85;
-  justify-content: center;
-  align-items: center;
-  word-break: break-word;
-  word-wrap: normal;
+	font-size: 12px;
+	border: none;
+	background: none;
+	color: #6c6a85;
+	justify-content: center;
+	align-items: center;
+	word-break: break-word;
+	word-wrap: normal;
 }
 
 /* NPC Equipment Tab and Adversary Features */
 .npc .tab.equipment,
 .npc .tab.adversary {
-  padding: 20px;
-  
-  .tab-title {
-    margin-top: -0.5rem;
-    margin-bottom: 2em;
-  }
+	padding: 20px;
+
+	.tab-title {
+		margin-top: -0.5rem;
+		margin-bottom: 2em;
+	}
 }
 
 /* Experience */
 .experience-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  width: 97%;
-  margin: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	width: 97%;
+	margin: auto;
 }
 
 .experience-row {
-  display: flex;
-  align-items: center;
-  gap: 1em;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 0.5em 0.5em;
-  border-radius: 5px;
+	display: flex;
+	align-items: center;
+	gap: 1em;
+	background: rgba(0, 0, 0, 0.2);
+	padding: 0.5em 0.5em;
+	border-radius: 5px;
 
-  &:nth-child(even) {
-    background: rgba(141, 120, 151, 0.07);
-  }
+	&:nth-child(even) {
+		background: rgba(141, 120, 151, 0.07);
+	}
 
-  .exp-level input {
-    color: var(--dh-color-off-white);
-    background: none;
-    border: none;
-    font-size: 20px;
-    width: 25px;
-    text-align: center;
-  }
+	.exp-level input {
+		color: var(--dh-color-off-white);
+		background: none;
+		border: none;
+		font-size: 20px;
+		width: 25px;
+		text-align: center;
+	}
 
-  .click-rollable-modifier {
-    width: 2em;
-    font-size: 18px;
-    font-weight: 700;
-    background: transparent;
-    border: 1px solid #433f64;
-    border-radius: 0.5em;
-    padding: 0.25em;
-    color: white;
-    text-align: center;
-  }
+	.click-rollable-modifier {
+		width: 2em;
+		font-size: 18px;
+		font-weight: 700;
+		background: transparent;
+		border: 1px solid #433f64;
+		border-radius: 0.5em;
+		padding: 0.25em;
+		color: white;
+		text-align: center;
+	}
 }
 
 .experience-row-column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 
-  a {
-    font-size: 11px;
-    opacity: 0.6;
-  }
+	a {
+		font-size: 11px;
+		opacity: 0.6;
+	}
 }
 
 .experience-row-column-2 {
-  flex-grow: 1;
+	flex-grow: 1;
 
-  input {
-    text-align: left;
-    height: 30px;
-    background: transparent;
-    border: 1px solid #433f64;
-    border-radius: 0.5em;
-    padding: 0em 0.5em;
-    color: white;
-    width: 100%;
-  }
+	input {
+		text-align: left;
+		height: 30px;
+		background: transparent;
+		border: 1px solid #433f64;
+		border-radius: 0.5em;
+		padding: 0em 0.5em;
+		color: white;
+		width: 100%;
+	}
 }
 
 /* Weapons */
 .weapon-group {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1em;
-  justify-content: center;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1em;
+	justify-content: center;
 }
 
 .weapon-row {
-  flex-direction: column;
-  display: flex;
-  margin-bottom: 5px;
+	flex-direction: column;
+	display: flex;
+	margin-bottom: 5px;
 
-  .weapon-field {
-    display: flex;
-    border: none;
-    background: none;
-    color: white;
-    font-size: 15px;
-    font-weight: 600;
-    padding: 0px;
-    margin: 0px;
-    height: fit-content;
-    
-    &.weapon-field-hidden {
-      display: none;
-    }
-  }
+	.weapon-field {
+		display: flex;
+		border: none;
+		background: none;
+		color: white;
+		font-size: 15px;
+		font-weight: 600;
+		padding: 0px;
+		margin: 0px;
+		height: fit-content;
 
-  input::placeholder {
-    color: rgba(159, 159, 159, 0.4117647059);
-  }
+		&.weapon-field-hidden {
+			display: none;
+		}
+	}
 
-  .weapon-label {
-    font-size: 14px;
-    display: flex;
-    border: none;
-    color: var(--dh-color-off-white) !important;
-    background: none;
-    padding: 2px 25px;
-    padding-top: 3px;
-    justify-content: center;
-    text-align: center;
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%; 
-    margin: auto;
-  }
+	input::placeholder {
+		color: rgba(159, 159, 159, 0.4117647059);
+	}
 
-  .weapon-desc {
-    font-size: 12px;
-    line-height: 12px;
-    border: none;
-    background: none;
-    color: white;
-    font-weight: 400;
-    text-align: center;
-    resize: none;
-    display: flex;
-    width: 100%;
-    overflow: hidden;
-    margin: 0.5em 0em 0em;
-    justify-content: center;
-    align-items: center;
-    word-break: break-word;
-    word-wrap: normal;
+	.weapon-label {
+		font-size: 14px;
+		display: flex;
+		border: none;
+		color: var(--dh-color-off-white) !important;
+		background: none;
+		padding: 2px 25px;
+		padding-top: 3px;
+		justify-content: center;
+		text-align: center;
+		max-width: 200px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 100%;
+		margin: auto;
+	}
 
-    &::placeholder {
-      color: rgba(169, 169, 169, 0.7019607843);
-    }
-  }
+	.weapon-desc {
+		font-size: 12px;
+		line-height: 12px;
+		border: none;
+		background: none;
+		color: white;
+		font-weight: 400;
+		text-align: center;
+		resize: none;
+		display: flex;
+		width: 100%;
+		overflow: hidden;
+		margin: 0.5em 0em 0em;
+		justify-content: center;
+		align-items: center;
+		word-break: break-word;
+		word-wrap: normal;
 
-  .weapon-to-hit, .weapon-damage {
-    display: flex;
-    justify-content: center;
-    flex-wrap: nowrap;
-    align-items: center;
-    height: var(--form-field-height);
-    font-size: 18px;
-    font-weight: 700;
-    border: 1px solid #433f64;
-    border-radius: 0.5em;
-    padding: 0.25em;
-    color: white;
-    text-align: center;
-  }
+		&::placeholder {
+			color: rgba(169, 169, 169, 0.7019607843);
+		}
+	}
 
-  .weapon-to-hit {
-    width: 35px !important;
-  }
+	.weapon-to-hit,
+	.weapon-damage {
+		display: flex;
+		justify-content: center;
+		flex-wrap: nowrap;
+		align-items: center;
+		height: var(--form-field-height);
+		font-size: 18px;
+		font-weight: 700;
+		border: 1px solid #433f64;
+		border-radius: 0.5em;
+		padding: 0.25em;
+		color: white;
+		text-align: center;
+	}
 
-  .weapon-attack-button {
-    background: var(--dh-color-gold);
-    border: none;
-    border-radius: 10px 0 0 10px;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1em;
-    max-width: 35px;
-    margin: 0;
-    transition: all 0.2s ease;
-    font-size: 18px;
+	.weapon-to-hit {
+		width: 35px !important;
+	}
 
-    &:hover {
-      background: rgb(67, 63, 100);
-      transform: scale(1.02);
-      color: var(--dh-color-gold);
-      box-shadow: none;
-    }
+	.weapon-attack-button {
+		background: var(--dh-color-gold);
+		border: none;
+		border-radius: 10px 0 0 10px;
+		color: white;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1em;
+		max-width: 35px;
+		margin: 0;
+		transition: all 0.2s ease;
+		font-size: 18px;
 
-    &:active {
-      transform: scale(0.98);
-    }
+		&:hover {
+			background: rgb(67, 63, 100);
+			transform: scale(1.02);
+			color: var(--dh-color-gold);
+			box-shadow: none;
+		}
 
-    i {
-      color: white;
-      font-size: inherit;
-    }
-    
-    /* Primary weapon styling - blue gradient to match tag */
-    &.primary-weapon {
-      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-      
-      &:hover {
-        background: linear-gradient(135deg, #1d4ed8, #60a5fa);
-        color: white;
-      }
-    }
-    
-    /* Secondary weapon styling - purple gradient to match tag */
-    &.secondary-weapon {
-      background: linear-gradient(135deg, #8a2be2, #9370db);
-      
-      &:hover {
-        background: linear-gradient(135deg, #9333ea, #a855f7);
-        color: white;
-      }
-    }
-  }
+		&:active {
+			transform: scale(0.98);
+		}
 
-  /* Primary weapon field styling */
-  .weapon-to-hit.primary-weapon,
-  .weapon-damage.primary-weapon {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
-  }
-  
-  /* Secondary weapon field styling */
-  .weapon-to-hit.secondary-weapon,
-  .weapon-damage.secondary-weapon {
-    border-color: #9370db;
-    box-shadow: 0 0 0 1px rgba(147, 112, 219, 0.3);
-  }
+		i {
+			color: white;
+			font-size: inherit;
+		}
 
-  .weapon-infobox {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-content: center;
-  }
+		/* Primary weapon styling - blue gradient to match tag */
+		&.primary-weapon {
+			background: linear-gradient(135deg, #1e3a8a, #3b82f6);
 
-  .weapon-infobox-first {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    align-items: flex-start;
-    justify-content: center;
-    flex: 1;
-    min-width: 0;
-    margin-bottom: 0.15em;
-  }
+			&:hover {
+				background: linear-gradient(135deg, #1d4ed8, #60a5fa);
+				color: white;
+			}
+		}
+
+		/* Secondary weapon styling - purple gradient to match tag */
+		&.secondary-weapon {
+			background: linear-gradient(135deg, #8a2be2, #9370db);
+
+			&:hover {
+				background: linear-gradient(135deg, #9333ea, #a855f7);
+				color: white;
+			}
+		}
+	}
+
+	/* Primary weapon field styling */
+	.weapon-to-hit.primary-weapon,
+	.weapon-damage.primary-weapon {
+		border-color: #3b82f6;
+		box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+	}
+
+	/* Secondary weapon field styling */
+	.weapon-to-hit.secondary-weapon,
+	.weapon-damage.secondary-weapon {
+		border-color: #9370db;
+		box-shadow: 0 0 0 1px rgba(147, 112, 219, 0.3);
+	}
+
+	.weapon-infobox {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		align-content: center;
+	}
+
+	.weapon-infobox-first {
+		display: flex;
+		flex-direction: column;
+		align-content: center;
+		align-items: flex-start;
+		justify-content: center;
+		flex: 1;
+		min-width: 0;
+		margin-bottom: 0.15em;
+	}
 }
 
 .npc .weapon-row .weapon-label,
 .companion .weapon-row .weapon-label {
-  font-size: 14px;
-  display: flex;
-  border: none;
-  color: var(--dh-color-off-white) !important;
-  background: none;
-  padding: 2px 25px;
-  padding-top: 3px;
-  justify-content: center;
-  text-transform: uppercase;
+	font-size: 14px;
+	display: flex;
+	border: none;
+	color: var(--dh-color-off-white) !important;
+	background: none;
+	padding: 2px 25px;
+	padding-top: 3px;
+	justify-content: center;
+	text-transform: uppercase;
 }
 
 .weapon-box {
@@ -641,191 +642,197 @@ input.trait-effects.resize-ta {
 	width: 100%;
 	box-sizing: border-box;
 	min-width: 0;
-  display: flex;
+	display: flex;
 }
 
 .weapon-box-inner {
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  align-items: center;
-  justify-content: space-between;
-  flex: 1;
-  padding: .5em
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	align-items: center;
+	justify-content: space-between;
+	flex: 1;
+	padding: 0.5em;
 }
 
 .weapon-roller-box {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: row;
-  gap: 0.5em;
-  flex-shrink: 0;
-  align-items: center;
-  align-items: center;
-  justify-content: space-between;
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	gap: 0.5em;
+	flex-shrink: 0;
+	align-items: center;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .textarea-container {
-  display: flex;
-  width: 100%;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
-  height: fit-content;
+	display: flex;
+	width: 100%;
+	align-content: center;
+	align-items: center;
+	justify-content: center;
+	height: fit-content;
 }
 
 .actor .weapon-damage {
-  width: 4.5em;
+	width: 4.5em;
 }
 
 .npc .weapon-damage,
 .companion .weapon-damage {
-  width: 4.5em;
+	width: 4.5em;
 }
 
 /* Dying/Dead Character Styling */
 .daggerheart.sheet.character.dying .item-bg,
 .daggerheart.sheet.npc.dying .item-bg,
 .daggerheart.sheet.companion.dying .item-bg {
-  filter: saturate(0.3) brightness(0.6) sepia(1) hue-rotate(-10deg);
-  transition: filter 0.3s ease-in-out;
+	filter: saturate(0.3) brightness(0.6) sepia(1) hue-rotate(-10deg);
+	transition: filter 0.3s ease-in-out;
 }
 
 .daggerheart.sheet.character.dying .profile-img,
 .daggerheart.sheet.npc.dying .profile-img,
 .daggerheart.sheet.companion.dying .profile-img {
-  filter: saturate(0.3) brightness(0.7) sepia(1) hue-rotate(-10deg);
-  transition: filter 0.3s ease-in-out;
+	filter: saturate(0.3) brightness(0.7) sepia(1) hue-rotate(-10deg);
+	transition: filter 0.3s ease-in-out;
 }
 
 .portrait-container {
-  position: relative;
+	position: relative;
 }
 
 .death-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.6) 0%, rgba(139, 0, 0, 0.3) 50%, transparent 70%);
-  cursor: pointer;
-  transition: background 0.3s ease;
-  pointer-events: auto;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.6) 0%, rgba(139, 0, 0, 0.3) 50%, transparent 70%);
+	cursor: pointer;
+	transition: background 0.3s ease;
+	pointer-events: auto;
 
-  &:hover {
-    background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.8) 0%, rgba(139, 0, 0, 0.4) 50%, transparent 70%);
-  }
+	&:hover {
+		background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.8) 0%, rgba(139, 0, 0, 0.4) 50%, transparent 70%);
+	}
 
-  .fa-skull {
-    font-size: 3.5rem;
-    color: rgba(255, 255, 255, 0.9);
-    text-shadow: 0 0 20px rgba(139, 0, 0, 0.8), 0 0 40px rgba(139, 0, 0, 0.6);
-    transition: transform 0.3s ease, text-shadow 0.3s ease;
-    position: relative;
-  }
+	.fa-skull {
+		font-size: 3.5rem;
+		color: rgba(255, 255, 255, 0.9);
+		text-shadow:
+			0 0 20px rgba(139, 0, 0, 0.8),
+			0 0 40px rgba(139, 0, 0, 0.6);
+		transition:
+			transform 0.3s ease,
+			text-shadow 0.3s ease;
+		position: relative;
+	}
 
-  &:hover .fa-skull {
-    transform: scale(1.1);
-    text-shadow: 0 0 30px rgb(139, 0, 0), 0 0 60px rgba(139, 0, 0, 0.8);
-  }
+	&:hover .fa-skull {
+		transform: scale(1.1);
+		text-shadow:
+			0 0 30px rgb(139, 0, 0),
+			0 0 60px rgba(139, 0, 0, 0.8);
+	}
 }
 
 .portrait-buttons {
-  display: flex;
-  gap: 0.5em;
-  margin-bottom: -1em;
-  z-index: 10;
+	display: flex;
+	gap: 0.5em;
+	margin-bottom: -1em;
+	z-index: 10;
 }
 
 /* Resource Controls on Actor Sheet */
 .resource-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-  .resource-box {
-    margin: 0 5px;
-    border-radius: 5px;
-    text-align: center;
-  }
+	.resource-box {
+		margin: 0 5px;
+		border-radius: 5px;
+		text-align: center;
+	}
 }
 
 .resource-control {
-  color: var(--dh-color-gold);
-  text-decoration: none;
-  font-size: 0.75em;
-  padding: 0 5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+	color: var(--dh-color-gold);
+	text-decoration: none;
+	font-size: 0.75em;
+	padding: 0 5px;
+	cursor: pointer;
+	transition: all 0.2s ease;
 
-  &:hover {
-    color: var(--dh-color-gold-light);
-    transform: scale(1.2);
-  }
+	&:hover {
+		color: var(--dh-color-gold-light);
+		transform: scale(1.2);
+	}
 }
 
 .resource-label-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5em;
-  margin-top: 0.25em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5em;
+	margin-top: 0.25em;
 
-  label {
-    margin: 0;
-  }
-  [data-trait-tooltip] {
-    box-shadow: none;
-  }
+	label {
+		margin: 0;
+	}
+	[data-trait-tooltip] {
+		box-shadow: none;
+	}
 }
 
 .armor-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  margin-top: -15px;
-  position: relative;
-  z-index: 1;
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	margin-top: -15px;
+	position: relative;
+	z-index: 1;
 }
 
 .defense .armor-controls label {
-  margin-top: 0;
+	margin-top: 0;
 }
 
 .threshold-text {
 	color: #6c6a85;
-  font-size: 0.75em;
-  text-transform: uppercase;
-  opacity: 0.7;
-  text-align: center;
-  line-height: 1.1;
-  margin: 0;
-  padding: 0 2px;
-  width: 35px;
-  height: auto;
-  word-break: break-all;
-  white-space: normal;
-  display: inline-block;
-  margin: 0 0.25em;
-  margin-bottom: 1.33em;
+	font-size: 0.75em;
+	text-transform: uppercase;
+	opacity: 0.7;
+	text-align: center;
+	line-height: 1.1;
+	margin: 0;
+	padding: 0 2px;
+	width: 35px;
+	height: auto;
+	word-break: break-all;
+	white-space: normal;
+	display: inline-block;
+	margin: 0 0.25em;
+	margin-bottom: 1.33em;
 }
 
 .threshold-clickable {
 	cursor: pointer;
 	transition: all 0.2s ease;
 	user-select: none;
-	
+
 	&:hover {
 		color: var(--dh-color-gold-light);
 		opacity: 1;
 		transform: scale(1.1);
 	}
-	
+
 	&:active {
 		transform: scale(0.95);
 	}
@@ -833,274 +840,274 @@ input.trait-effects.resize-ta {
 
 /* Threshold Group */
 .threshold-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  align-items: center;
-  margin-bottom: 1em;
-  flex: 1;
-  text-align: center;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	align-items: center;
+	margin-bottom: 1em;
+	flex: 1;
+	text-align: center;
 
-  > label {
-    font-size: 12px;
-    text-transform: uppercase;
-    color: var(--dh-color-off-white);
-    margin-bottom: 0.25em;
-  }
+	> label {
+		font-size: 12px;
+		text-transform: uppercase;
+		color: var(--dh-color-off-white);
+		margin-bottom: 0.25em;
+	}
 
-  .resource-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+	.resource-group {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 
-  input {
-    width: 40px;
-    font-size: 16px;
-    font-weight: 700;
-    background: transparent;
-    border: 1px solid #433f64;
-    border-radius: 0.5em;
-    padding: 0.2em;
-    color: white;
-    text-align: center;
-  }
+	input {
+		width: 40px;
+		font-size: 16px;
+		font-weight: 700;
+		background: transparent;
+		border: 1px solid #433f64;
+		border-radius: 0.5em;
+		padding: 0.2em;
+		color: white;
+		text-align: center;
+	}
 }
 
 .threshold-values {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  flex-wrap: wrap;
-  justify-content: center;
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 /* Threshold value displays - Updated to work with modifier system */
 .threshold-group .threshold-value-display,
 .threshold-values .threshold-value-display {
-  background: url("icons/DH-Arrow.png") no-repeat center center !important;
-  background-size: contain !important;
-  border: none !important;
-  width: 50px !important;
-  height: 50px !important;
-  font-size: 18px !important;
-  font-weight: 700 !important;
-  color: white !important;
-  text-align: center;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	background: url('icons/DH-Arrow.png') no-repeat center center !important;
+	background-size: contain !important;
+	border: none !important;
+	width: 50px !important;
+	height: 50px !important;
+	font-size: 18px !important;
+	font-weight: 700 !important;
+	color: white !important;
+	text-align: center;
+	cursor: pointer;
+	user-select: none;
+	transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .threshold-group .threshold-value-display:hover,
 .threshold-values .threshold-value-display:hover {
-  transform: scale(1.05);
+	transform: scale(1.05);
 }
 
 .threshold-group .threshold-value-display:active,
 .threshold-values .threshold-value-display:active {
-  transform: scale(0.98);
+	transform: scale(0.98);
 }
 
 /* Legacy support for existing input-based thresholds */
-.threshold-group input[name="system.threshold.major"],
-.threshold-group input[name="system.threshold.severe"] {
-  background: url("icons/DH-Arrow.png") no-repeat center center;
-  background-size: contain;
-  border: none;
-  width: 50px;
-  font-size: 18px;
-  font-weight: 700;
-  color: white;
-  text-align: center;
+.threshold-group input[name='system.threshold.major'],
+.threshold-group input[name='system.threshold.severe'] {
+	background: url('icons/DH-Arrow.png') no-repeat center center;
+	background-size: contain;
+	border: none;
+	width: 50px;
+	font-size: 18px;
+	font-weight: 700;
+	color: white;
+	text-align: center;
 }
 
 .threshold-group .trait-effects {
-  color: #6c6a85;
+	color: #6c6a85;
 }
 
 /* Legacy support for .armorslots */
 .armorslots .trait-effects {
-  color: #6c6a85;
+	color: #6c6a85;
 }
 
 /* Legacy armorslots threshold displays - Updated to work with modifier system */
 .armorslots .threshold-value-display {
-  background: url("icons/DH-Arrow.png") no-repeat center center !important;
-  background-size: contain !important;
-  border: none !important;
-  width: 50px !important;
-  height: 50px !important;
-  font-size: 18px !important;
-  font-weight: 700 !important;
-  color: white !important;
-  text-align: center;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	background: url('icons/DH-Arrow.png') no-repeat center center !important;
+	background-size: contain !important;
+	border: none !important;
+	width: 50px !important;
+	height: 50px !important;
+	font-size: 18px !important;
+	font-weight: 700 !important;
+	color: white !important;
+	text-align: center;
+	cursor: pointer;
+	user-select: none;
+	transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .armorslots .threshold-value-display:hover {
-  transform: scale(1.05);
+	transform: scale(1.05);
 }
 
 .armorslots .threshold-value-display:active {
-  transform: scale(0.98);
+	transform: scale(0.98);
 }
 
 /* Legacy support for existing input-based thresholds */
-.armorslots input[name="system.threshold.major"],
-.armorslots input[name="system.threshold.severe"] {
-  background: url("icons/DH-Arrow.png") no-repeat center center;
-  background-size: contain;
-  border: none;
+.armorslots input[name='system.threshold.major'],
+.armorslots input[name='system.threshold.severe'] {
+	background: url('icons/DH-Arrow.png') no-repeat center center;
+	background-size: contain;
+	border: none;
 }
 
-.actor .charname input[type="text"] {
-  padding: 1px 0px;
+.actor .charname input[type='text'] {
+	padding: 1px 0px;
 }
 
 /* Advancements */
 .advancement-list {
-  list-style: none;
-  margin: 0.5em;
-  padding: 0em;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #433f64;
-  border-radius: 0.5em;
-  transition: all 0.2s ease-in-out;
+	list-style: none;
+	margin: 0.5em;
+	padding: 0em;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid #433f64;
+	border-radius: 0.5em;
+	transition: all 0.2s ease-in-out;
 }
 
 .advancement-toggle {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 0.3em;
-  margin-bottom: 0.3em;
-  z-index: 2;
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	z-index: 2;
 
-  input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    border-radius: 5%;
-    border: 2px solid var(--dh-color-gold);
-    background: rgb(11, 10, 19);
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    position: relative;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+	input[type='checkbox'] {
+		width: 20px;
+		height: 20px;
+		border-radius: 5%;
+		border: 2px solid var(--dh-color-gold);
+		background: rgb(11, 10, 19);
+		cursor: pointer;
+		appearance: none;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		position: relative;
+		transition: all 0.2s ease;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 
-    &:hover {
-      border-color: var(--dh-color-gold-light);
-      background: rgb(11, 10, 19);
-      transform: scale(1.1);
-    }
+		&:hover {
+			border-color: var(--dh-color-gold-light);
+			background: rgb(11, 10, 19);
+			transform: scale(1.1);
+		}
 
-    &:checked {
-      background: var(--dh-color-gold);
-      border-color: var(--dh-color-gold-light);
+		&:checked {
+			background: var(--dh-color-gold);
+			border-color: var(--dh-color-gold-light);
 
-      &::after {
-        content: "✓";
-        position: absolute;
-        top: -10%;
-        left: 25%;
-        /* transform: translate(-50%, -50%); */
-        color: var(--dh-color-off-black);
-        font-size: 12px;
-        font-weight: bold;
-      }
-    }
-  }
+			&::after {
+				content: '✓';
+				position: absolute;
+				top: -10%;
+				left: 25%;
+				/* transform: translate(-50%, -50%); */
+				color: var(--dh-color-off-black);
+				font-size: 12px;
+				font-weight: bold;
+			}
+		}
+	}
 }
 
 .advancement-toggle-paired {
-  input[type="checkbox"] {
-    border: 4px solid var(--dh-color-gold);
-      &:checked {
-            &::after {
-              top: -20%;
-              left: 15%;
-            }
-          }
-    }
+	input[type='checkbox'] {
+		border: 4px solid var(--dh-color-gold);
+		&:checked {
+			&::after {
+				top: -20%;
+				left: 15%;
+			}
+		}
+	}
 }
 
 .advancement-row {
-  display: flex;
-  flex-direction: row;
-  padding: 2px 25px;
-  padding-top: 3px;
-  vertical-align: middle;
-  align-items: center;
+	display: flex;
+	flex-direction: row;
+	padding: 2px 25px;
+	padding-top: 3px;
+	vertical-align: middle;
+	align-items: center;
 }
 
 .advancement-toggle-row {
-  display: flex;
-  flex-direction: row-reverse;
-  vertical-align: middle;
-  align-items: right;
-  width: 20%;
+	display: flex;
+	flex-direction: row-reverse;
+	vertical-align: middle;
+	align-items: right;
+	width: 20%;
 }
 
 .advancement-row-label {
-  width: 80%;
-  display: flex;
-  align-items: center;
+	width: 80%;
+	display: flex;
+	align-items: center;
 }
 
 .level-achievement {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  font-style: italic;
-  margin: 0.5em;
+	display: flex;
+	align-items: center;
+	text-align: center;
+	font-style: italic;
+	margin: 0.5em;
 }
 
 .advancement-group {
-  flex: 1;
-  max-width: fit-content;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  label {
-    text-transform: uppercase;
-  }
+	flex: 1;
+	max-width: fit-content;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5px;
+	label {
+		text-transform: uppercase;
+	}
 }
 .advancement-values {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+	display: flex;
+	align-items: center;
+	gap: 6px;
 }
 .advancement-group {
-  .resource-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  input {
-    width: 45px;
-    font-size: 16px;
-    font-weight: 700;
-    background: transparent;
-    border: 1px solid #433f64;
-    border-radius: 0.5em;
-    padding: 0.2em;
-    color: white;
-    text-align: center;
-  }
+	.resource-group {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	input {
+		width: 45px;
+		font-size: 16px;
+		font-weight: 700;
+		background: transparent;
+		border: 1px solid #433f64;
+		border-radius: 0.5em;
+		padding: 0.2em;
+		color: white;
+		text-align: center;
+	}
 }

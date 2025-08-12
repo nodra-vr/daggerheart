@@ -20,7 +20,6 @@ This will also start the gulp task which watches and builds the css for the docs
 
 ## But how do I actually edit the theme?
 
-The custom css for the documentation lives in  `./documentation/sass/custom.scss`
+The custom css for the documentation lives in `./documentation/sass/custom.scss`
 
 Template overrides should be made in the `./documentation/docs/overrides` directory. For details on how to do that, see the [mkdocs-material documentation](https://squidfunk.github.io/mkdocs-material/customization/). You can find the base files you'll be overriding [here](https://github.com/squidfunk/mkdocs-material/tree/master/src/templates).
-

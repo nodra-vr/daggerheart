@@ -2,58 +2,58 @@
 .daggerheart .item-list,
 .npc .item-list,
 .actor .item-list {
-  list-style: none;
-  margin: .5em;
-  padding: 0em;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #433f64;
-  border-radius: .5em;
-  transition: all 0.2s ease-in-out;
+	list-style: none;
+	margin: 0.5em;
+	padding: 0em;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid #433f64;
+	border-radius: 0.5em;
+	transition: all 0.2s ease-in-out;
 
-  &.is-empty {
-    display: none;
-    min-height: 0;
-    border: none;
-    margin: 0;
-    padding: 0;
-  }
+	&.is-empty {
+		display: none;
+		min-height: 0;
+		border: none;
+		margin: 0;
+		padding: 0;
+	}
 
-  /* General drag-over styles (fallback) */
-  &.drag-over {
-    min-height: 100px;
-    border-color: var(--dh-color-gold);
-    background-color: rgba(0, 0, 0, 0.1);
-  }
+	/* General drag-over styles (fallback) */
+	&.drag-over {
+		min-height: 100px;
+		border-color: var(--dh-color-gold);
+		background-color: rgba(0, 0, 0, 0.1);
+	}
 }
 
 /* Actor list */
 .daggerheart .actor-list {
-  list-style: none;
-  margin: .5em;
-  padding: 0em;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #433f64;
-  border-radius: .5em;
-  transition: all 0.2s ease-in-out;
+	list-style: none;
+	margin: 0.5em;
+	padding: 0em;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid #433f64;
+	border-radius: 0.5em;
+	transition: all 0.2s ease-in-out;
 
-  &.is-empty {
-    display: none;
-    min-height: 0;
-    border: none;
-    margin: 0;
-    padding: 0;
-  }
+	&.is-empty {
+		display: none;
+		min-height: 0;
+		border: none;
+		margin: 0;
+		padding: 0;
+	}
 
-  /* General drag-over styles (fallback) */
-  &.drag-over {
-    min-height: 100px;
-    border-color: var(--dh-color-gold);
-    background-color: rgba(0, 0, 0, 0.1);
-  }
+	/* General drag-over styles (fallback) */
+	&.drag-over {
+		min-height: 100px;
+		border-color: var(--dh-color-gold);
+		background-color: rgba(0, 0, 0, 0.1);
+	}
 }
 
 // TODO: finish refactoring
@@ -65,171 +65,175 @@
 .npc .dragging .item-list.is-empty,
 .actor .item-list.is-empty.drag-over,
 .actor .dragging .item-list.is-empty {
-  display: flex;
-  min-height: 100px;
-  border: 1px dashed var(--dh-color-gold);
-  border-radius: 5px;
-  background-color: rgba(243, 194, 103, 0.1);
-  margin: .5em;
-  opacity: 0.8;
+	display: flex;
+	min-height: 100px;
+	border: 1px dashed var(--dh-color-gold);
+	border-radius: 5px;
+	background-color: rgba(243, 194, 103, 0.1);
+	margin: 0.5em;
+	opacity: 0.8;
 }
 
 /* Visual feedback for populated item lists during drag */
 .daggerheart .item-list:not(.is-empty).drag-over,
 .npc .item-list:not(.is-empty).drag-over,
 .actor .item-list:not(.is-empty).drag-over {
-  border-color: var(--dh-color-gold);
-  border-radius: 5px;
-  background-color: rgba(243, 194, 103, 0.05);
-  box-shadow: 0 0 10px rgba(243, 194, 103, 0.3);
+	border-color: var(--dh-color-gold);
+	border-radius: 5px;
+	background-color: rgba(243, 194, 103, 0.05);
+	box-shadow: 0 0 10px rgba(243, 194, 103, 0.3);
 }
 
 /* Make section headers droppable during drag operations */
 .daggerheart .dragging .tab-category,
 .npc .dragging .tab-category,
 .actor .dragging .tab-category {
-  position: relative;
-  transition: all 0.2s ease-in-out;
-  border-radius: .5em;
-  padding: 0.5em;
-  margin: 0.5em 0;
+	position: relative;
+	transition: all 0.2s ease-in-out;
+	border-radius: 0.5em;
+	padding: 0.5em;
+	margin: 0.5em 0;
 }
 
 .daggerheart .tab-category.drag-over,
 .npc .tab-category.drag-over,
 .actor .tab-category.drag-over {
-  background: linear-gradient(135deg, rgba(30, 30, 36, 0.95) 0%, rgba(50, 50, 60, 0.95) 100%);
-  border: 2px solid var(--dh-color-gold);
-  border-radius: 0.75em;
-  color: var(--dh-color-gold);
-  font-weight: 600;
-  box-shadow: 
-    0 0 20px rgba(243, 194, 103, 0.4),
-    inset 0 0 20px rgba(243, 194, 103, 0.1);
-  transform: scale(1.02);
-  transition: all 0.2s ease-in-out;
-  position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, var(--dh-color-gold), #d4af37, var(--dh-color-gold));
-    border-radius: 0.75em;
-    z-index: -1;
-    opacity: 0.6;
-    animation: dragOverGlow 2s ease-in-out infinite alternate;
-  }
+	background: linear-gradient(135deg, rgba(30, 30, 36, 0.95) 0%, rgba(50, 50, 60, 0.95) 100%);
+	border: 2px solid var(--dh-color-gold);
+	border-radius: 0.75em;
+	color: var(--dh-color-gold);
+	font-weight: 600;
+	box-shadow:
+		0 0 20px rgba(243, 194, 103, 0.4),
+		inset 0 0 20px rgba(243, 194, 103, 0.1);
+	transform: scale(1.02);
+	transition: all 0.2s ease-in-out;
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: -2px;
+		left: -2px;
+		right: -2px;
+		bottom: -2px;
+		background: linear-gradient(45deg, var(--dh-color-gold), #d4af37, var(--dh-color-gold));
+		border-radius: 0.75em;
+		z-index: -1;
+		opacity: 0.6;
+		animation: dragOverGlow 2s ease-in-out infinite alternate;
+	}
 }
 
 @keyframes dragOverGlow {
-  0% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0.8;
-    transform: scale(1.02);
-  }
+	0% {
+		opacity: 0.4;
+		transform: scale(1);
+	}
+	100% {
+		opacity: 0.8;
+		transform: scale(1.02);
+	}
 }
 
 /* Vault animation styles */
-.daggerheart .item-list[data-item-type="vault"],
-.npc .item-list[data-item-type="vault"],
-.actor .item-list[data-item-type="vault"] {
-  max-height: 500px;
-  opacity: 1;
-  /* Rely solely on max-height for the slide-down animation */
-  transform-origin: top;
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
-  overflow: hidden;
+.daggerheart .item-list[data-item-type='vault'],
+.npc .item-list[data-item-type='vault'],
+.actor .item-list[data-item-type='vault'] {
+	max-height: 500px;
+	opacity: 1;
+	/* Rely solely on max-height for the slide-down animation */
+	transform-origin: top;
+	transition:
+		max-height 0.3s ease-out,
+		opacity 0.2s ease-out;
+	overflow: hidden;
 }
 
-.daggerheart .item-list[data-item-type="vault"].vault-collapsed,
-.npc .item-list[data-item-type="vault"].vault-collapsed,
-.actor .item-list[data-item-type="vault"].vault-collapsed {
-  max-height: 0;
-  opacity: 0;
-  /* No transform scaling – height handles the collapse */
-  margin: 0 .5em;
-  padding: 0;
-  border: none;
+.daggerheart .item-list[data-item-type='vault'].vault-collapsed,
+.npc .item-list[data-item-type='vault'].vault-collapsed,
+.actor .item-list[data-item-type='vault'].vault-collapsed {
+	max-height: 0;
+	opacity: 0;
+	/* No transform scaling – height handles the collapse */
+	margin: 0 0.5em;
+	padding: 0;
+	border: none;
 }
 
 /* Category collapsible animation styles */
-.daggerheart .item-list[data-item-type="class"],
-.daggerheart .item-list[data-item-type="subclass"],
-.daggerheart .item-list[data-item-type="ancestry"],
-.daggerheart .item-list[data-item-type="community"],
-.daggerheart .item-list[data-item-type="item"],
-.daggerheart .item-list[data-item-type="worn"],
-.daggerheart .item-list[data-item-type="inventory"],
-.npc .item-list[data-item-type="class"],
-.npc .item-list[data-item-type="subclass"],
-.npc .item-list[data-item-type="ancestry"],
-.npc .item-list[data-item-type="community"],
-.npc .item-list[data-item-type="item"],
-.npc .item-list[data-item-type="worn"],
-.npc .item-list[data-item-type="inventory"],
-.actor .item-list[data-item-type="class"],
-.actor .item-list[data-item-type="subclass"],
-.actor .item-list[data-item-type="ancestry"],
-.actor .item-list[data-item-type="community"],
-.actor .item-list[data-item-type="item"],
-.actor .item-list[data-item-type="worn"],
-.actor .item-list[data-item-type="inventory"] {
-  max-height: 500px;
-  opacity: 1;
-  /* Use only max-height for smoother, single-direction animation */
-  transform-origin: top;
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
-  overflow: hidden;
+.daggerheart .item-list[data-item-type='class'],
+.daggerheart .item-list[data-item-type='subclass'],
+.daggerheart .item-list[data-item-type='ancestry'],
+.daggerheart .item-list[data-item-type='community'],
+.daggerheart .item-list[data-item-type='item'],
+.daggerheart .item-list[data-item-type='worn'],
+.daggerheart .item-list[data-item-type='inventory'],
+.npc .item-list[data-item-type='class'],
+.npc .item-list[data-item-type='subclass'],
+.npc .item-list[data-item-type='ancestry'],
+.npc .item-list[data-item-type='community'],
+.npc .item-list[data-item-type='item'],
+.npc .item-list[data-item-type='worn'],
+.npc .item-list[data-item-type='inventory'],
+.actor .item-list[data-item-type='class'],
+.actor .item-list[data-item-type='subclass'],
+.actor .item-list[data-item-type='ancestry'],
+.actor .item-list[data-item-type='community'],
+.actor .item-list[data-item-type='item'],
+.actor .item-list[data-item-type='worn'],
+.actor .item-list[data-item-type='inventory'] {
+	max-height: 500px;
+	opacity: 1;
+	/* Use only max-height for smoother, single-direction animation */
+	transform-origin: top;
+	transition:
+		max-height 0.3s ease-out,
+		opacity 0.2s ease-out;
+	overflow: hidden;
 }
 
 .daggerheart .item-list.category-collapsed,
 .npc .item-list.category-collapsed,
 .actor .item-list.category-collapsed {
-  max-height: 0;
-  opacity: 0;
-  /* No transform scaling – height handles the collapse */
-  margin: 0;
-  padding: 0;
-  border: none;
+	max-height: 0;
+	opacity: 0;
+	/* No transform scaling – height handles the collapse */
+	margin: 0;
+	padding: 0;
+	border: none;
 }
 
 .daggerheart .category-toggle.disabled,
 .npc .category-toggle.disabled,
 .actor .category-toggle.disabled {
-  pointer-events: none;
-  opacity: 0.6;
+	pointer-events: none;
+	opacity: 0.6;
 }
 
 /* Dynamic spacing system for collapsed/expanded sections */
 .daggerheart .tab-category,
 .npc .tab-category,
 .actor .tab-category {
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
+	cursor: pointer;
+	transition: all 0.2s ease-in-out;
 
-  &:hover {
-    background: linear-gradient(90deg, #d4af37 0%, var(--dh-color-gold) 100%);
-    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
-  }
+	&:hover {
+		background: linear-gradient(90deg, #d4af37 0%, var(--dh-color-gold) 100%);
+		box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+	}
 }
 
 .daggerheart .tab-category.empty-category,
 .npc .tab-category.empty-category,
 .actor .tab-category.empty-category {
-  margin-bottom: 0.1em;
+	margin-bottom: 0.1em;
 }
 
 .daggerheart .tab-category.empty-category .category-toggle,
 .npc .tab-category.empty-category .category-toggle,
 .actor .tab-category.empty-category .category-toggle {
-  display: none;
+	display: none;
 }
 
 /* Completely disable all transitions during initialization */
@@ -239,531 +243,529 @@
 .npc.no-transitions .item-list,
 .actor.no-transitions .tab-category,
 .actor.no-transitions .item-list {
-  transition: none !important;
+	transition: none !important;
 }
 
 /* Enable transitions only when the sheet allows them (user-initiated toggles) */
 .daggerheart.transitions-enabled .tab-category,
 .npc.transitions-enabled .tab-category,
 .actor.transitions-enabled .tab-category {
-  transition: margin-bottom 0.3s ease-in-out;
+	transition: margin-bottom 0.3s ease-in-out;
 }
 
 /* Only the bottom margin changes between collapsed/expanded to keep the header anchored */
 .daggerheart .tab-category.dynamic-collapsed,
 .npc .tab-category.dynamic-collapsed,
 .actor .tab-category.dynamic-collapsed {
-  margin-bottom: 0.05em;
+	margin-bottom: 0.05em;
 }
 
 .daggerheart .tab-category.dynamic-expanded,
 .npc .tab-category.dynamic-expanded,
 .actor .tab-category.dynamic-expanded {
-  margin-bottom: 0.75em;
+	margin-bottom: 0.75em;
 }
 
 /* Fallback: Reduce tab-category spacing when associated section is collapsed (backwards compatibility) */
 .daggerheart .tab-category.section-collapsed:not(.dynamic-collapsed):not(.dynamic-expanded),
 .npc .tab-category.section-collapsed:not(.dynamic-collapsed):not(.dynamic-expanded),
 .actor .tab-category.section-collapsed:not(.dynamic-collapsed):not(.dynamic-expanded) {
-  margin-bottom: 0.1em;
-  margin-top: 0.1em;
-  padding-bottom: 5px;
+	margin-bottom: 0.1em;
+	margin-top: 0.1em;
+	padding-bottom: 5px;
 }
 
 /* Fallback: Ensure normal spacing when expanded (backwards compatibility) */
 .daggerheart .tab-category:not(.section-collapsed):not(.dynamic-collapsed):not(.dynamic-expanded),
 .npc .tab-category:not(.section-collapsed):not(.dynamic-collapsed):not(.dynamic-expanded),
 .actor .tab-category:not(.section-collapsed):not(.dynamic-collapsed):not(.dynamic-expanded) {
-  margin-bottom: 0.75em;
-  padding-bottom: 5px;
+	margin-bottom: 0.75em;
+	padding-bottom: 5px;
 }
 
 /* Category controls styling */
 .daggerheart .category-controls,
 .npc .category-controls,
 .actor .category-controls {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
 }
 
 .daggerheart .vault-controls,
 .npc .vault-controls,
 .actor .vault-controls {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
 }
 
 .daggerheart .item-list .item,
 .npc .item-list .item,
 .actor .item-list .item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25em;
-  align-items: center;
-  overflow: hidden;
-  border-radius: .5em;
-  width: 100%;
-  padding: 0.25em 0.5em;
-  background: rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+	gap: 0.25em;
+	align-items: center;
+	overflow: hidden;
+	border-radius: 0.5em;
+	width: 100%;
+	padding: 0.25em 0.5em;
+	background: rgba(0, 0, 0, 0.2);
 }
 
 .daggerheart .actor-list .actor {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25em;
-  align-items: center;
-  overflow: hidden;
-  border-radius: .5em;
-  width: 100%;
-  padding: 0em 0.5em;
-  background: rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+	gap: 0.25em;
+	align-items: center;
+	overflow: hidden;
+	border-radius: 0.5em;
+	width: 100%;
+	padding: 0em 0.5em;
+	background: rgba(0, 0, 0, 0.2);
 }
 
 .daggerheart .item-list .item.expanded,
 .npc .item-list .item.expanded,
 .actor .item-list .item.expanded {
-  padding-bottom: 0.5em;
+	padding-bottom: 0.5em;
 }
 
 .daggerheart .actor-list .actor.expanded {
-  padding-bottom: 0.5em;
+	padding-bottom: 0.5em;
 }
 
 .daggerheart .item-list .item .item-main-row,
 .npc .item-list .item .item-main-row,
 .actor .item-list .item .item-main-row {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 0;
-  justify-content: space-between;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 0;
+	justify-content: space-between;
 }
 
 .daggerheart .actor-list .actor .actor-main-row {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 0;
-  justify-content: space-between;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 0;
+	justify-content: space-between;
 }
 
 .daggerheart .item-list .item:nth-child(even),
 .npc .item-list .item:nth-child(even),
 .actor .item-list .item:nth-child(even) {
-  background: rgb(141 120 151 / 7%);
+	background: rgb(141 120 151 / 7%);
 }
 
 .daggerheart .actor-list .actor:nth-child(even) {
-  background: rgb(141 120 151 / 7%);
+	background: rgb(141 120 151 / 7%);
 }
 
 .daggerheart .item-list .item .item-description,
 .npc .item-list .item .item-description,
 .actor .item-list .item .item-description {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
-  margin: 0 0.5em;
-  min-width: 100%;
-  border-left: solid 2px var(--dh-color-gold);
-  padding: 0em 1.5em;
+	max-height: 0;
+	opacity: 0;
+	overflow: hidden;
+	transition:
+		max-height 0.3s ease-out,
+		opacity 0.2s ease-out;
+	margin: 0 0.5em;
+	min-width: 100%;
+	border-left: solid 2px var(--dh-color-gold);
+	padding: 0em 1.5em;
 }
 
 .daggerheart .actor-list .actor .actor-description {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
-  margin: 0 0.5em;
-  min-width: 100%;
-  border-left: solid 2px var(--dh-color-gold);
-  padding: 0em 1.5em;
+	max-height: 0;
+	opacity: 0;
+	overflow: hidden;
+	transition:
+		max-height 0.3s ease-out,
+		opacity 0.2s ease-out;
+	margin: 0 0.5em;
+	min-width: 100%;
+	border-left: solid 2px var(--dh-color-gold);
+	padding: 0em 1.5em;
 }
 
-.daggerheart .item-list .item .item-description>*,
-.npc .item-list .item .item-description>*,
-.actor .item-list .item .item-description>* {
-  opacity: 0;
-  transition: opacity 0.2s ease-out 0.1s;
+.daggerheart .item-list .item .item-description > *,
+.npc .item-list .item .item-description > *,
+.actor .item-list .item .item-description > * {
+	opacity: 0;
+	transition: opacity 0.2s ease-out 0.1s;
 }
 
-.daggerheart .actor-list .actor .actor-description>* {
-  opacity: 0;
-  transition: opacity 0.2s ease-out 0.1s;
+.daggerheart .actor-list .actor .actor-description > * {
+	opacity: 0;
+	transition: opacity 0.2s ease-out 0.1s;
 }
 
 .daggerheart .item-list .item.expanded .item-description,
 .npc .item-list .item.expanded .item-description,
 .actor .item-list .item.expanded .item-description {
-  /* Limit the expanded height so huge descriptions don't blow out the sheet */
-  max-height: 200px;
-  overflow-y: auto;
-  /* Allow scrolling once the description exceeds the max height */
-  opacity: 1;
-  padding-top: 0.5em;
+	/* Limit the expanded height so huge descriptions don't blow out the sheet */
+	max-height: 200px;
+	overflow-y: auto;
+	/* Allow scrolling once the description exceeds the max height */
+	opacity: 1;
+	padding-top: 0.5em;
 }
 
 .daggerheart .actor-list .actor.expanded .actor-description {
-  /* Limit the expanded height so huge descriptions don't blow out the sheet */
-  max-height: 200px;
-  overflow-y: auto;
-  /* Allow scrolling once the description exceeds the max height */
-  opacity: 1;
-  padding-top: 0.5em;
+	/* Limit the expanded height so huge descriptions don't blow out the sheet */
+	max-height: 200px;
+	overflow-y: auto;
+	/* Allow scrolling once the description exceeds the max height */
+	opacity: 1;
+	padding-top: 0.5em;
 }
 
-.daggerheart .item-list .item.expanded .item-description>*,
-.npc .item-list .item.expanded .item-description>*,
-.actor .item-list .item.expanded .item-description>* {
-  opacity: 1;
-  height: auto;
-  width: 85%;
+.daggerheart .item-list .item.expanded .item-description > *,
+.npc .item-list .item.expanded .item-description > *,
+.actor .item-list .item.expanded .item-description > * {
+	opacity: 1;
+	height: auto;
+	width: 85%;
 }
 
-.daggerheart .actor-list .actor.expanded .actor-description>* {
-  opacity: 1;
-  height: auto;
-  width: 85%;
+.daggerheart .actor-list .actor.expanded .actor-description > * {
+	opacity: 1;
+	height: auto;
+	width: 85%;
 }
 
 /* Fix image display in item descriptions */
 .daggerheart .item-list .item .item-description img,
 .npc .item-list .item .item-description img,
 .actor .item-list .item .item-description img {
-  max-width: 100%;
-  height: auto;
-  border: 1px solid var(--dh-color-gold);
-  border-radius: 5px;
-  margin: 0.5em 0;
-  display: block;
-  object-fit: contain;
-  max-height: 300px;
-  /* Reasonable maximum height for card images */
+	max-width: 100%;
+	height: auto;
+	border: 1px solid var(--dh-color-gold);
+	border-radius: 5px;
+	margin: 0.5em 0;
+	display: block;
+	object-fit: contain;
+	max-height: 300px;
+	/* Reasonable maximum height for card images */
 }
 
 /* Ensure images in expanded descriptions are properly scaled */
 .daggerheart .item-list .item.expanded .item-description img,
 .npc .item-list .item.expanded .item-description img,
 .actor .item-list .item.expanded .item-description img {
-  transform: none;
-  /* Override any inherited transform that might squish the image */
+	transform: none;
+	/* Override any inherited transform that might squish the image */
 }
 
 .daggerheart .item-list .item .item-top-row,
 .npc .item-list .item .item-top-row,
 .actor .item-list .item .item-top-row {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
+	display: flex;
+	align-items: center;
+	flex-grow: 1;
 }
 
 .daggerheart .actor-list .actor .actor-top-row {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
+	display: flex;
+	align-items: center;
+	flex-grow: 1;
 }
 
 .daggerheart .item-list .item .item-name,
 .npc .item-list .item .item-name,
 .actor .item-list .item .item-name {
-  padding-left: 0.5em;
-  font-size: 0.9em;
-  font-weight: normal;
-  color: var(--dh-color-off-white);
-  margin: 0;
-  cursor: pointer;
+	padding-left: 0.5em;
+	font-size: 0.9em;
+	font-weight: normal;
+	color: var(--dh-color-off-white);
+	margin: 0;
+	cursor: pointer;
 }
 
 .daggerheart .actor-list .actor .actor-name {
-  padding-left: 0.5em;
-  font-size: 0.9em;
-  font-weight: normal;
-  color: var(--dh-color-off-white);
-  margin: 0;
-  cursor: pointer;
+	padding-left: 0.5em;
+	font-size: 0.9em;
+	font-weight: normal;
+	color: var(--dh-color-off-white);
+	margin: 0;
+	cursor: pointer;
 }
 
 .daggerheart .item-list .item .item-name:hover,
 .npc .item-list .item .item-name:hover,
 .actor .item-list .item .item-name:hover {
-  color: var(--dh-color-gold);
+	color: var(--dh-color-gold);
 }
 
 .daggerheart .actor-list .actor .actor-name:hover {
-  color: var(--dh-color-gold);
+	color: var(--dh-color-gold);
 }
 
 /* Weapon slot tags */
 .daggerheart .item-list .item .item-name .weapon-slot-tag,
 .npc .item-list .item .item-name .weapon-slot-tag,
 .actor .item-list .item .item-name .weapon-slot-tag {
-  display: inline-block;
-  font-size: 0.7em;
-  font-weight: 600;
-  padding: 0.2em 0.5em;
-  margin-left: 0.5em;
-  border-radius: 0.75em;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  line-height: 1;
-  vertical-align: middle;
+	display: inline-block;
+	font-size: 0.7em;
+	font-weight: 600;
+	padding: 0.2em 0.5em;
+	margin-left: 0.5em;
+	border-radius: 0.75em;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	line-height: 1;
+	vertical-align: middle;
 
-  &.primary {
-    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-    color: white;
-    border: 1px solid #1d4ed8;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
+	&.primary {
+		background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+		color: white;
+		border: 1px solid #1d4ed8;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	}
 
-  &.secondary {
-    background: linear-gradient(135deg, #8a2be2, #9370db);
-    color: white;
-    border: 1px solid #6a1b9a;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
+	&.secondary {
+		background: linear-gradient(135deg, #8a2be2, #9370db);
+		color: white;
+		border: 1px solid #6a1b9a;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	}
 }
 
 /* Armor slot tags */
 .daggerheart .item-list .item .item-name .armor-slot-tag,
 .npc .item-list .item .item-name .armor-slot-tag,
 .actor .item-list .item .item-name .armor-slot-tag {
-  display: inline-block;
-  font-size: 0.7em;
-  font-weight: 600;
-  padding: 0.2em 0.5em;
-  margin-left: 0.5em;
-  border-radius: 0.75em;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  line-height: 1;
-  vertical-align: middle;
+	display: inline-block;
+	font-size: 0.7em;
+	font-weight: 600;
+	padding: 0.2em 0.5em;
+	margin-left: 0.5em;
+	border-radius: 0.75em;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	line-height: 1;
+	vertical-align: middle;
 
-  &.equipped {
-    background: linear-gradient(135deg, #16a34a, #22c55e);
-    color: white;
-    border: 1px solid #15803d;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
+	&.equipped {
+		background: linear-gradient(135deg, #16a34a, #22c55e);
+		color: white;
+		border: 1px solid #15803d;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	}
 }
 
 /* Category tags */
 .daggerheart .item-list .item .item-name .item-category-tag,
 .npc .item-list .item .item-name .item-category-tag,
 .actor .item-list .item .item-name .item-category-tag {
-  display: inline-block;
-  font-size: 0.75em;
-  font-weight: 500;
-  padding: 0.2em 0.4em;
-  margin-left: 0.4em;
-  border-radius: 0.5em;
-  text-transform: capitalize;
-  letter-spacing: 0.3px;
-  line-height: 1;
-  vertical-align: middle;
-  background:
-    /*linear-gradient(135deg, #4f46e5, #6366f1)*/
-    none;
-  color: white;
-  border: 1px solid
-    /*#3730a3*/
-    #433f64;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	display: inline-block;
+	font-size: 0.75em;
+	font-weight: 500;
+	padding: 0.2em 0.4em;
+	margin-left: 0.4em;
+	border-radius: 0.5em;
+	text-transform: capitalize;
+	letter-spacing: 0.3px;
+	line-height: 1;
+	vertical-align: middle;
+	background:
+    /*linear-gradient(135deg, #4f46e5, #6366f1)*/ none;
+	color: white;
+	border: 1px solid /*#3730a3*/ #433f64;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 /* Rarity tags */
 .daggerheart .item-list .item .item-name .item-rarity-tag,
 .npc .item-list .item .item-name .item-rarity-tag,
 .actor .item-list .item .item-name .item-rarity-tag {
-  display: inline-block;
-  font-size: 0.75em;
-  font-weight: 500;
-  padding: 0.2em 0.4em;
-  margin-left: 0.4em;
-  border-radius: 0.5em;
-  text-transform: capitalize;
-  letter-spacing: 0.3px;
-  line-height: 1;
-  vertical-align: middle;
-  background:
-    /*linear-gradient(135deg, #dc2626, #ef4444)*/
-    none;
-  color: white;
-  border: 1px solid
-    /*#b91c1c*/
-    #433f64;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	display: inline-block;
+	font-size: 0.75em;
+	font-weight: 500;
+	padding: 0.2em 0.4em;
+	margin-left: 0.4em;
+	border-radius: 0.5em;
+	text-transform: capitalize;
+	letter-spacing: 0.3px;
+	line-height: 1;
+	vertical-align: middle;
+	background:
+    /*linear-gradient(135deg, #dc2626, #ef4444)*/ none;
+	color: white;
+	border: 1px solid /*#b91c1c*/ #433f64;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 /* Actor tags for environment sheet */
 .daggerheart .actor-list .actor .actor-name .actor-tier-tag,
 .daggerheart .actor-list .actor .actor-name .actor-category-tag,
 .daggerheart .actor-list .actor .actor-name .actor-type-tag {
-  display: inline-block;
-  font-size: 0.75em;
-  font-weight: 500;
-  padding: 0.2em 0.4em;
-  margin-left: 0.4em;
-  border-radius: 0.5em;
-  text-transform: capitalize;
-  letter-spacing: 0.3px;
-  line-height: 1;
-  vertical-align: middle;
-  background: none;
-  color: white;
-  border: 1px solid #433f64;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	display: inline-block;
+	font-size: 0.75em;
+	font-weight: 500;
+	padding: 0.2em 0.4em;
+	margin-left: 0.4em;
+	border-radius: 0.5em;
+	text-transform: capitalize;
+	letter-spacing: 0.3px;
+	line-height: 1;
+	vertical-align: middle;
+	background: none;
+	color: white;
+	border: 1px solid #433f64;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 /* Item trait tags for environment sheet */
 .daggerheart .item-list .item .item-name .item-trait-tag {
-  display: inline-block;
-  font-size: 0.75em;
-  font-weight: 500;
-  padding: 0.2em 0.4em;
-  margin-left: 0.4em;
-  border-radius: 0.5em;
-  text-transform: capitalize;
-  letter-spacing: 0.3px;
-  line-height: 1;
-  vertical-align: middle;
-  background: none;
-  color: white;
-  border: 1px solid #433f64;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	display: inline-block;
+	font-size: 0.75em;
+	font-weight: 500;
+	padding: 0.2em 0.4em;
+	margin-left: 0.4em;
+	border-radius: 0.5em;
+	text-transform: capitalize;
+	letter-spacing: 0.3px;
+	line-height: 1;
+	vertical-align: middle;
+	background: none;
+	color: white;
+	border: 1px solid #433f64;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .daggerheart .item-list .item img,
 .npc .item-list .item img,
 .actor .item-list .item img {
-  flex: 0 0 24px;
-  margin-right: 5px;
-  border: 1px solid var(--dh-color-gold);
-  border-radius: 0px 10px;
-  width: 100%;
-  height: 25px;
+	flex: 0 0 24px;
+	margin-right: 5px;
+	border: 1px solid var(--dh-color-gold);
+	border-radius: 0px 10px;
+	width: 100%;
+	height: 25px;
 }
 
 .daggerheart .actor-list .actor img {
-  flex: 0 0 24px;
-  margin-right: 5px;
-  border: 1px solid var(--dh-color-gold);
-  border-radius: 0px 10px;
-  width: 100%;
-  height: 25px;
+	flex: 0 0 24px;
+	margin-right: 5px;
+	border: 1px solid var(--dh-color-gold);
+	border-radius: 0px 10px;
+	width: 100%;
+	height: 25px;
 }
 
 .daggerheart .item-list .item-controls,
 .npc .item-list .item-controls,
 .actor .item-list .item-controls {
-  flex: 0 0 36px;
-  display: flex;
-  gap: 5px;
+	flex: 0 0 36px;
+	display: flex;
+	gap: 5px;
 }
 
 .daggerheart .actor-list .actor-controls {
-  flex: 0 0 36px;
-  display: flex;
-  gap: 5px;
+	flex: 0 0 36px;
+	display: flex;
+	gap: 5px;
 }
 
 .daggerheart .item-control,
 .npc .item-control,
 .actor .item-control {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .daggerheart .actor-control {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .daggerheart .vault-content .item-control,
 .npc .vault-content .item-control,
 .actor .vault-content .item-control {
-  display: flex;
+	display: flex;
 }
 
 /* Weapon slot label styling */
 .weapon-slot-label {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  background: var(--color-bg-dark);
-  color: var(--color-text-light);
-  font-size: 8px;
-  font-weight: bold;
-  line-height: 1;
-  padding: 1px 2px;
-  border-radius: 2px;
-  border: 1px solid var(--color-border);
-  min-width: 8px;
-  text-align: center;
+	position: absolute;
+	bottom: -2px;
+	right: -2px;
+	background: var(--color-bg-dark);
+	color: var(--color-text-light);
+	font-size: 8px;
+	font-weight: bold;
+	line-height: 1;
+	padding: 1px 2px;
+	border-radius: 2px;
+	border: 1px solid var(--color-border);
+	min-width: 8px;
+	text-align: center;
 }
 
 .weapon-equip-primary.equipped .weapon-slot-label,
 .weapon-equip-secondary.equipped .weapon-slot-label {
-  background: var(--color-accent);
-  color: var(--color-text-dark);
-  border-color: var(--color-accent);
+	background: var(--color-accent);
+	color: var(--color-text-dark);
+	border-color: var(--color-accent);
 }
 
 /* Adjust weapon button positioning to accommodate labels */
 .weapon-equip-primary,
 .weapon-equip-secondary {
-  position: relative;
-  margin-right: 2px;
+	position: relative;
+	margin-right: 2px;
 }
 
 /* Equipment button styling - equipped state colors */
 .item-control.weapon-equip-primary.equipped,
 .item-control.weapon-equip-secondary.equipped,
 .item-control.armor-equip.equipped {
-  color: var(--dh-color-gold)
+	color: var(--dh-color-gold);
 }
 
 .item-control.weapon-equip-primary.equipped:hover,
 .item-control.weapon-equip-secondary.equipped:hover,
 .item-control.armor-equip.equipped:hover {
-  color: var(--dh-color-gold);
-  scale: 1.1;
+	color: var(--dh-color-gold);
+	scale: 1.1;
 }
 
 /* Unequipped state styling */
 .item-control.weapon-equip-primary:not(.equipped),
 .item-control.weapon-equip-secondary:not(.equipped),
 .item-control.armor-equip:not(.equipped) {
-  color: var(--dh-color-off-white);
+	color: var(--dh-color-off-white);
 }
 
 .item-control.weapon-equip-primary:not(.equipped):hover,
 .item-control.weapon-equip-secondary:not(.equipped):hover,
 .item-control.armor-equip:not(.equipped):hover {
-  color: var(--dh-color-gold);
-  scale: 1.1;
+	color: var(--dh-color-gold);
+	scale: 1.1;
 }
 
 /* Weapon slot tag styling for equipped weapons in item names */
 .weapon-slot-tag {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: bold;
-  padding: 2px 4px;
-  border-radius: 3px;
-  margin-left: 6px;
-  text-transform: uppercase;
+	display: inline-block;
+	font-size: 10px;
+	font-weight: bold;
+	padding: 2px 4px;
+	border-radius: 3px;
+	margin-left: 6px;
+	text-transform: uppercase;
 }
 
 .weapon-slot-tag.primary {
-  background: rgba(var(--color-accent-rgb), 0.2);
-  color: var(--color-accent);
-  border: 1px solid var(--color-accent);
+	background: rgba(var(--color-accent-rgb), 0.2);
+	color: var(--color-accent);
+	border: 1px solid var(--color-accent);
 }
 
 .weapon-slot-tag.secondary {
-  background: rgba(var(--color-secondary-rgb), 0.2);
-  color: var(--color-secondary);
-  border: 1px solid var(--color-secondary);
+	background: rgba(var(--color-secondary-rgb), 0.2);
+	color: var(--color-secondary);
+	border: 1px solid var(--color-secondary);
 }

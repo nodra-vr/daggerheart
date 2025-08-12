@@ -1,107 +1,109 @@
 /* Header Loadout Bar */
 .header-loadout-bar {
-  display: flex;
-  gap: var(--dh-space-sm, 0.5rem);
-  margin-top: var(--dh-space-sm, 0.5rem);
-  z-index: 60;
-  position: relative;
-  pointer-events: auto;
+	display: flex;
+	gap: var(--dh-space-sm, 0.5rem);
+	margin-top: var(--dh-space-sm, 0.5rem);
+	z-index: 60;
+	position: relative;
+	pointer-events: auto;
 }
 
 .loadout-card-slot {
-  position: relative;
-  width: 145px;
-  height: 96px;
-  border-radius: var(--dh-radius-md, 6px);
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0,0,0,0.3));
-  transition: transform 0.2s ease;
-  border: 1px solid var(--dh-color-gold);
+	position: relative;
+	width: 145px;
+	height: 96px;
+	border-radius: var(--dh-radius-md, 6px);
+	overflow: hidden;
+	cursor: pointer;
+	box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
+	transition: transform 0.2s ease;
+	border: 1px solid var(--dh-color-gold);
 }
 
 .loadout-card-slot.empty {
-  border: 2px dashed var(--dh-color-gold, #f3c267);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.3;
-  color: var(--dh-color-gold, #f3c267);
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  border: 1px solid var(--dh-color-gold);
+	border: 2px dashed var(--dh-color-gold, #f3c267);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0.3;
+	color: var(--dh-color-gold, #f3c267);
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	border: 1px solid var(--dh-color-gold);
 
-  /* Disable hover transforms for empty slots */
-  &:hover {
-    transform: none;
-  }
+	/* Disable hover transforms for empty slots */
+	&:hover {
+		transform: none;
+	}
 }
 .loadout-card-slot.empty.drag-over {
-  opacity: 0.6;
+	opacity: 0.6;
 }
 
 .loadout-card-slot img.slot-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  border: none;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	border: none;
 }
 
 .loadout-card-slot .slot-overlay {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.2s ease;
 }
 
 .loadout-card-slot:hover .slot-overlay {
-  opacity: 1;
+	opacity: 1;
 }
 .loadout-card-slot .slot-overlay .slot-control {
-  pointer-events: all;
-  width: 16px;
-  height: 16px;
-  background: rgba(0,0,0,0.6);
-  border-radius: 50%;
-  font-size: 9px;
-  color: var(--dh-color-gold, #f3c267);
-  display:flex;align-items:center;justify-content:center;
+	pointer-events: all;
+	width: 16px;
+	height: 16px;
+	background: rgba(0, 0, 0, 0.6);
+	border-radius: 50%;
+	font-size: 9px;
+	color: var(--dh-color-gold, #f3c267);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 .loadout-card-slot .slot-overlay .slot-control:hover {
-  background: var(--dh-color-gold, #f3c267);
-  color: var(--dh-color-off-black, #0b0a13);
+	background: var(--dh-color-gold, #f3c267);
+	color: var(--dh-color-off-black, #0b0a13);
 }
 
 .loadout-card-slot:hover {
-  transform: scale(1.05);
+	transform: scale(1.05);
 }
 
 .loadout-card-slot .slot-name {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 2px 4px;
-  background: rgba(0, 0, 0, 0.6);
-  color: var(--dh-color-gold, #f3c267);
-  font-size: 0.65rem;
-  text-align: center;
-  opacity: 1;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 2px 4px;
+	background: rgba(0, 0, 0, 0.6);
+	color: var(--dh-color-gold, #f3c267);
+	font-size: 0.65rem;
+	text-align: center;
+	opacity: 1;
+	transition: opacity 0.2s ease;
+	pointer-events: none;
 }
 
 .loadout-card-slot:hover .slot-name {
-  opacity: 1;
+	opacity: 1;
 }
 
 /* push nav tabs down a bit when bar present */
 .sheet-header + nav.sheet-tabs {
-  margin-top: var(--dh-space-md, 0.75rem);
-} 
+	margin-top: var(--dh-space-md, 0.75rem);
+}

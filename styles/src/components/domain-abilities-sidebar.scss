@@ -1,7 +1,6 @@
 /* =========================================
    Domain Abilities Sidebar (left of sheet)
    ========================================= */
-  
 
 .domain-abilities-sidebar {
 	position: absolute;
@@ -15,10 +14,10 @@
 	z-index: 95;
 	pointer-events: auto;
 	background: rgba(11, 10, 19, 0.8392156863);
-  backdrop-filter: blur(5px);
+	backdrop-filter: blur(5px);
 	padding: 1.25em 1em;
 	border: 1px solid var(--dh-color-gold);
-  border-right: none;
+	border-right: none;
 	border-radius: 10px 0px 0px 10px;
 }
 
@@ -34,167 +33,173 @@
 }
 
 .domain-ability-button {
-  position: relative;
-  width: 130px;
-  height: 65px;
-  border-radius: var(--dh-radius-lg, 8px);
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
-  transition: transform 0.2s ease;
-  border: 1px solid var(--dh-color-gold);
+	position: relative;
+	width: 130px;
+	height: 65px;
+	border-radius: var(--dh-radius-lg, 8px);
+	overflow: hidden;
+	cursor: pointer;
+	box-shadow: var(--dh-shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.3));
+	transition: transform 0.2s ease;
+	border: 1px solid var(--dh-color-gold);
 
-  .ability-img {
-    border: none;
-  }
+	.ability-img {
+		border: none;
+	}
 }
 
 .domain-ability-button:hover {
-  transform: scale(1.05);
+	transform: scale(1.05);
 }
 
 .domain-ability-button img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
 }
 
 /* Overlay controls (edit / delete icons) */
 .domain-ability-button .ability-overlay {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  pointer-events: none; /* icons inside will still receive events */
-  opacity: 0;
-  transition: opacity 0.2s ease;
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	pointer-events: none; /* icons inside will still receive events */
+	opacity: 0;
+	transition: opacity 0.2s ease;
 }
 
 .domain-ability-button:hover .ability-overlay {
-  opacity: 1;
+	opacity: 1;
 }
 
 .domain-ability-button .ability-overlay .item-control {
-  pointer-events: all;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--dh-color-gold, #f3c267);
-  font-size: 10px;
-  transition: background 0.2s ease, transform 0.2s ease;
+	pointer-events: all;
+	background: rgba(0, 0, 0, 0.6);
+	border-radius: 50%;
+	width: 18px;
+	height: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--dh-color-gold, #f3c267);
+	font-size: 10px;
+	transition:
+		background 0.2s ease,
+		transform 0.2s ease;
 }
 
 .domain-ability-button .ability-overlay .item-control:hover {
-  background: var(--dh-color-gold, #f3c267);
-  color: var(--dh-color-off-black, #0b0a13);
-  transform: scale(1.1);
+	background: var(--dh-color-gold, #f3c267);
+	color: var(--dh-color-off-black, #0b0a13);
+	transform: scale(1.1);
 }
 
 /* Name label (always visible) */
 .domain-ability-button .ability-name {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 2px 4px;
-  background: rgba(0, 0, 0, 0.6);
-  color: var(--dh-color-gold, #f3c267);
-  font-size: 0.65rem;
-  text-align: center;
-  opacity: 1;
-  pointer-events: none;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 2px 4px;
+	background: rgba(0, 0, 0, 0.6);
+	color: var(--dh-color-gold, #f3c267);
+	font-size: 0.65rem;
+	text-align: center;
+	opacity: 1;
+	pointer-events: none;
 }
 
 .domain-ability-preview {
-  position: fixed;
-  /* very high z-index so it never appears behind other sheet or HUD elements */
-  z-index: 4000;
-  pointer-events: none;
-  opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 0.15s ease, transform 0.15s ease;
+	position: fixed;
+	/* very high z-index so it never appears behind other sheet or HUD elements */
+	z-index: 4000;
+	pointer-events: none;
+	opacity: 0;
+	transform: scale(0.95);
+	transition:
+		opacity 0.15s ease,
+		transform 0.15s ease;
 }
 
 .domain-ability-preview.show {
-  opacity: 1;
-  transform: scale(1);
+	opacity: 1;
+	transform: scale(1);
 }
 
 /* When pinned via middle-click, make the preview interactive */
 .domain-ability-preview.pinned {
-  pointer-events: auto;
+	pointer-events: auto;
 }
 
 /* Ensure preview card has a maximum width */
 .domain-preview-card {
-  max-width: 260px;
-  max-height: 900px;
-  border: 1px solid var(--dh-color-gold, #f3c267);
-  border-radius: var(--dh-radius-lg, 8px);
-  overflow: auto;
-  box-shadow: var(--dh-shadow-lg, 0 6px 12px rgba(0,0,0,0.6));
-  background: rgba(11, 10, 19, 0.95); /* opaque dark backdrop */
+	max-width: 260px;
+	max-height: 900px;
+	border: 1px solid var(--dh-color-gold, #f3c267);
+	border-radius: var(--dh-radius-lg, 8px);
+	overflow: auto;
+	box-shadow: var(--dh-shadow-lg, 0 6px 12px rgba(0, 0, 0, 0.6));
+	background: rgba(11, 10, 19, 0.95); /* opaque dark backdrop */
 }
 
 /* Ensure inner content panels also have solid backdrop */
 .domain-preview-card .card-content {
-  background: transparent; /* inherit from parent but keep no extra transparency */
+	background: transparent; /* inherit from parent but keep no extra transparency */
 }
 
 .domain-ability-slot.empty {
-  width: 130px;
-  height: 65px;
-  border: 2px dashed var(--dh-color-gold, #f3c267);
-  border-radius: var(--dh-radius-lg, 8px);
-  opacity: 0.2;
+	width: 130px;
+	height: 65px;
+	border: 2px dashed var(--dh-color-gold, #f3c267);
+	border-radius: var(--dh-radius-lg, 8px);
+	opacity: 0.2;
 }
 
 .domain-ability-slot.empty.drag-over,
 .domain-abilities-sidebar.drag-over .domain-ability-slot.empty {
-  opacity: 0.6;
-  border-style: solid;
+	opacity: 0.6;
+	border-style: solid;
 }
 
 .preview-hint {
-  margin: 4px 6px 6px;
-  font-size: 0.65rem;
-  font-weight: 400;
-  color: var(--dh-color-gold, #f3c267);
-  text-align: center;
-  opacity: 0.8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+	margin: 4px 6px 6px;
+	font-size: 0.65rem;
+	font-weight: 400;
+	color: var(--dh-color-gold, #f3c267);
+	text-align: center;
+	opacity: 0.8;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
 }
 
 .preview-hint i {
-  font-size: 0.7rem;
-} 
+	font-size: 0.7rem;
+}
 
 .sidebar-separator {
-  width: 120px;
-  height: 1px;
-  background: var(--dh-color-gold, #f3c267);
-  opacity: 0.3;
-  margin: var(--dh-space-xs, 0.25rem) 0;
+	width: 120px;
+	height: 1px;
+	background: var(--dh-color-gold, #f3c267);
+	opacity: 0.3;
+	margin: var(--dh-space-xs, 0.25rem) 0;
 }
 
-.domain-ability-button, .domain-ability-slot.empty {
-  width: 130px;
-  height: 55px;
-  transition: height 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
+.domain-ability-button,
+.domain-ability-slot.empty {
+	width: 130px;
+	height: 55px;
+	transition: height 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
-.domain-ability-button:hover, .domain-ability-button:focus {
-  height: 90px;
+.domain-ability-button:hover,
+.domain-ability-button:focus {
+	height: 90px;
 }
 
 /* =========================================
@@ -202,42 +207,44 @@
    ========================================= */
 
 .tracker-notification-bubbles {
-  position: absolute;
-  top: -12px;
-  right: 4px;
-  display: flex;
-  gap: 4px;
-  z-index: 10;
-  pointer-events: auto;
+	position: absolute;
+	top: -12px;
+	right: 4px;
+	display: flex;
+	gap: 4px;
+	z-index: 10;
+	pointer-events: auto;
 }
 
 .tracker-notification-bubble {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  font-size: 11px;
-  font-weight: bold;
-  color: white;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+	transition:
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+	font-size: 11px;
+	font-weight: bold;
+	color: white;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .tracker-notification-bubble:hover {
-  transform: scale(1.1);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
-  border-color: rgba(255, 255, 255, 0.5);
+	transform: scale(1.1);
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
+	border-color: rgba(255, 255, 255, 0.5);
 }
 
 .tracker-notification-bubble:active {
-  transform: scale(0.95);
+	transform: scale(0.95);
 }
 
 .bubble-value {
-  line-height: 1;
+	line-height: 1;
 }

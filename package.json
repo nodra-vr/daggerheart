@@ -1,37 +1,35 @@
 {
-  "name": "daggerheart",
-  "version": "1.0.0",
-  "description": "CSS compiler for the Daggerheart system",
-  "scripts": {
-    "start": "npm run gulp",
-    "docs": "gulp docs",
-    "css": "gulp css",
-    "watch": "gulp",
-    "gulp": "gulp",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "test": "vitest --run",
-    "test:watch": "vitest",
-    "test:ui": "vitest --ui",
-    "release": "node scripts/release.js",
-    "release:dry": "node scripts/release.js --dry-run",
-    "release:test": "node scripts/release.js 2.11.2 --dry-run"
-  },
-  "browserslist": [
-    "last 3 versions"
-  ],
-  "author": "",
-  "license": "MIT",
-  "private": true,
-  "dependencies": {
-    "gulp": "^5.0.1",
-    "gulp-sass": "^6.0.1",
-    "prettier": "^3.6.2",
-    "sass": "^1.89.2"
-  },
-  "devDependencies": {
-    "@vitest/ui": "^3.2.4",
-    "jsdom": "^26.1.0",
-    "vitest": "^3.2.4"
-  }
+	"name": "daggerheart",
+	"version": "1.0.0",
+	"description": "CSS compiler for the Daggerheart system",
+	"scripts": {
+		"start": "npm run gulp",
+		"docs": "gulp docs",
+		"css": "gulp css",
+		"watch": "gulp",
+		"gulp": "gulp",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"test": "vitest --run",
+		"test:watch": "vitest",
+		"test:ui": "vitest --ui",
+		"release": "node scripts/release.js",
+		"release:dry": "node scripts/release.js --dry-run",
+		"release:test": "node scripts/release.js 2.11.2 --dry-run"
+	},
+	"browserslist": ["last 3 versions"],
+	"author": "",
+	"license": "MIT",
+	"private": true,
+	"dependencies": {
+		"gulp": "^5.0.1",
+		"gulp-sass": "^6.0.1",
+		"prettier": "^3.6.2",
+		"sass": "^1.89.2"
+	},
+	"devDependencies": {
+		"@vitest/ui": "^3.2.4",
+		"jsdom": "^26.1.0",
+		"vitest": "^3.2.4"
+	}
 }

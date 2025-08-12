@@ -3,88 +3,88 @@ import { getTraitValue, getCommandTarget, validateCommandParams, parseDiceFormul
 import { _rollDuality } from '../data/rollHandler.js';
 
 export async function processUnifiedDualityCommand(commandText, options = {}) {
-    console.log('Daggerheart | Processing unified /dr command:', { commandText, options });
-    
-    if (!commandText) {
-        console.log('Daggerheart | Executing basic duality roll');
-        return await executeBasicDualityRoll(options);
-    }
+	console.log('Daggerheart | Processing unified /dr command:', { commandText, options });
 
-    const parsedCommand = parseDualityCommand(commandText);
-    console.log('Daggerheart | Parsed command:', parsedCommand);
-    
-    if (!parsedCommand) {
-        ui.notifications.error(game.i18n.localize('DAGGERHEART.CHAT.DR.parseError'));
-        return;
-    }
+	if (!commandText) {
+		console.log('Daggerheart | Executing basic duality roll');
+		return await executeBasicDualityRoll(options);
+	}
 
-    const validationErrors = validateCommandParams(parsedCommand);
-    if (validationErrors.length > 0) {
-        validationErrors.forEach(error => ui.notifications.error(error));
-        return;
-    }
+	const parsedCommand = parseDualityCommand(commandText);
+	console.log('Daggerheart | Parsed command:', parsedCommand);
 
-    console.log('Daggerheart | Executing duality roll with params:', parsedCommand);
-    return await executeDualityRollWithParams(parsedCommand, options);
+	if (!parsedCommand) {
+		ui.notifications.error(game.i18n.localize('DAGGERHEART.CHAT.DR.parseError'));
+		return;
+	}
+
+	const validationErrors = validateCommandParams(parsedCommand);
+	if (validationErrors.length > 0) {
+		validationErrors.forEach(error => ui.notifications.error(error));
+		return;
+	}
+
+	console.log('Daggerheart | Executing duality roll with params:', parsedCommand);
+	return await executeDualityRollWithParams(parsedCommand, options);
 }
 
 async function executeBasicDualityRoll(options = {}) {
-    const target = getCommandTarget();
-    const speaker = target ? ChatMessage.getSpeaker({ actor: target }) : ChatMessage.getSpeaker();
-    
-    return await _rollDuality({
-        sendToChat: true,
-        speaker: options.speaker || speaker,
-        ...options.rollOptions
-    });
+	const target = getCommandTarget();
+	const speaker = target ? ChatMessage.getSpeaker({ actor: target }) : ChatMessage.getSpeaker();
+
+	return await _rollDuality({
+		sendToChat: true,
+		speaker: options.speaker || speaker,
+		...options.rollOptions,
+	});
 }
 
 async function executeDualityRollWithParams(params, options = {}) {
-    const target = getCommandTarget();
-    const speaker = target ? ChatMessage.getSpeaker({ actor: target }) : ChatMessage.getSpeaker();
-    
-    let modifier = 0;
-    let flavor = null;
+	const target = getCommandTarget();
+	const speaker = target ? ChatMessage.getSpeaker({ actor: target }) : ChatMessage.getSpeaker();
 
-    if (params.trait && target) {
-        const traitValue = getTraitValue(target, params.trait);
-        modifier = traitValue;
-        
-        const traitLabel = game.i18n.localize(`DAGGERHEART.TRAITS.${params.trait.toUpperCase()}`) || params.trait;
-        flavor = `<p class="roll-flavor-line"><b>${traitLabel} Check</b></p>`;
-    }
+	let modifier = 0;
+	let flavor = null;
 
-    let advantage = 0;
-    let disadvantage = 0;
+	if (params.trait && target) {
+		const traitValue = getTraitValue(target, params.trait);
+		modifier = traitValue;
 
-    if (params.advantage) {
-        if (typeof params.advantage === 'string') {
-            advantage = parseDiceFormula(params.advantage);
-        } else {
-            advantage = params.advantage;
-        }
-    }
+		const traitLabel = game.i18n.localize(`DAGGERHEART.TRAITS.${params.trait.toUpperCase()}`) || params.trait;
+		flavor = `<p class="roll-flavor-line"><b>${traitLabel} Check</b></p>`;
+	}
 
-    if (params.disadvantage) {
-        if (typeof params.disadvantage === 'string') {
-            disadvantage = parseDiceFormula(params.disadvantage);
-        } else {
-            disadvantage = params.disadvantage;
-        }
-    }
+	let advantage = 0;
+	let disadvantage = 0;
 
-    const rollOptions = {
-        hopeDieSize: params.hope || 'd12',
-        fearDieSize: params.fear || 'd12',
-        modifier: modifier + (params.modifier || 0),
-        advantage: advantage,
-        disadvantage: disadvantage,
-        reaction: params.reaction || false,
-        sendToChat: true,
-        speaker: options.speaker || speaker,
-        flavor: flavor,
-        ...options.rollOptions
-    };
+	if (params.advantage) {
+		if (typeof params.advantage === 'string') {
+			advantage = parseDiceFormula(params.advantage);
+		} else {
+			advantage = params.advantage;
+		}
+	}
 
-    return await _rollDuality(rollOptions);
+	if (params.disadvantage) {
+		if (typeof params.disadvantage === 'string') {
+			disadvantage = parseDiceFormula(params.disadvantage);
+		} else {
+			disadvantage = params.disadvantage;
+		}
+	}
+
+	const rollOptions = {
+		hopeDieSize: params.hope || 'd12',
+		fearDieSize: params.fear || 'd12',
+		modifier: modifier + (params.modifier || 0),
+		advantage: advantage,
+		disadvantage: disadvantage,
+		reaction: params.reaction || false,
+		sendToChat: true,
+		speaker: options.speaker || speaker,
+		flavor: flavor,
+		...options.rollOptions,
+	};
+
+	return await _rollDuality(rollOptions);
 }

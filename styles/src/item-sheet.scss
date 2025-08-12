@@ -5,12 +5,12 @@
 
 /* Item Sheet Card Structure */
 .daggerheart.sheet.item .item-sheet-card {
-  background: none;
-  border: none;
-  overflow: visible;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
+	background: none;
+	border: none;
+	overflow: visible;
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 /* Image and Title Container */
@@ -28,7 +28,7 @@
 	color: white;
 
 	&::after {
-		content: "";
+		content: '';
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -50,8 +50,8 @@
 	cursor: pointer;
 	transition: all 0.3s ease;
 	z-index: 0;
-  border: none;
-  border-radius: 0;
+	border: none;
+	border-radius: 0;
 }
 
 /* Item Title Styling */
@@ -61,7 +61,7 @@
 
 	.item-title {
 		margin: 0;
-		
+
 		input {
 			background: transparent;
 			border: none;
@@ -90,221 +90,227 @@
 
 /* Item Title Styling */
 .daggerheart.sheet.item .card-header-text {
-  z-index: 1;
-  position: relative;
+	z-index: 1;
+	position: relative;
 
-  .item-title {
-    margin: 0;
-    
-    input {
-      background: transparent;
-      border: none;
-      color: var(--dh-color-gold);
-      font-size: 1.8em;
-      font-weight: bold;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-      width: 100%;
-      padding: 0;
-      height: auto;
-      min-height: fit-content;
+	.item-title {
+		margin: 0;
 
-      &::placeholder {
-        color: rgba(243, 194, 103, 0.6);
-      }
+		input {
+			background: transparent;
+			border: none;
+			color: var(--dh-color-gold);
+			font-size: 1.8em;
+			font-weight: bold;
+			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+			width: 100%;
+			padding: 0;
+			height: auto;
+			min-height: fit-content;
 
-      &:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px var(--dh-color-gold);
-        border-radius: 4px;
-        padding: 2px;
-      }
-    }
-  }
+			&::placeholder {
+				color: rgba(243, 194, 103, 0.6);
+			}
+
+			&:focus {
+				outline: none;
+				box-shadow: 0 0 0 2px var(--dh-color-gold);
+				border-radius: 4px;
+				padding: 2px;
+			}
+		}
+	}
 }
 
 /* Card Content Area */
 .daggerheart.sheet.item .item-card-content {
-  background: rgba(11, 10, 19, 0.8392156863);
-  backdrop-filter: blur(5px);
-  border: 1px solid #6d6795;
-  border-top: none;
-  border-radius: 0 0 10px 10px;
-  padding: 20px;
-  color: var(--dh-color-off-white);
-  flex: 1;
-  overflow: auto;
-  max-height: fit-content;
+	background: rgba(11, 10, 19, 0.8392156863);
+	backdrop-filter: blur(5px);
+	border: 1px solid #6d6795;
+	border-top: none;
+	border-radius: 0 0 10px 10px;
+	padding: 20px;
+	color: var(--dh-color-off-white);
+	flex: 1;
+	overflow: auto;
+	max-height: fit-content;
 }
 
 /* Category and Rarity Section */
 .daggerheart.sheet.item .card-subtitle {
-  border-bottom: 1px solid #433f64;
-  padding-bottom: 10px;
+	border-bottom: 1px solid #433f64;
+	padding-bottom: 10px;
 
-  .category-rarity-inputs {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9em;
+	.category-rarity-inputs {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 0.9em;
 
-    .category-input,
-    .rarity-input {
-      background: rgba(67, 63, 100, 0.3);
-      border: 1px solid #433f64;
-      border-radius: 4px;
-      color: var(--dh-color-gray);
-      padding: 8px 12px;
-      font-size: 0.85em;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.3s ease;
+		.category-input,
+		.rarity-input {
+			background: rgba(67, 63, 100, 0.3);
+			border: 1px solid #433f64;
+			border-radius: 4px;
+			color: var(--dh-color-gray);
+			padding: 8px 12px;
+			font-size: 0.85em;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			transition: all 0.3s ease;
 
-      &::placeholder {
-        color: rgba(170, 170, 170, 0.6);
-      }
+			&::placeholder {
+				color: rgba(170, 170, 170, 0.6);
+			}
 
-      &:focus {
-        outline: none;
-        border-color: var(--dh-color-gold);
-        background: rgba(67, 63, 100, 0.5);
-        color: var(--dh-color-off-white);
-      }
-    }
+			&:focus {
+				outline: none;
+				border-color: var(--dh-color-gold);
+				background: rgba(67, 63, 100, 0.5);
+				color: var(--dh-color-off-white);
+			}
+		}
 
-    .separator {
-      color: var(--dh-color-gray);
-      opacity: 0.8;
-      font-weight: bold;
-    }
-  }
+		.separator {
+			color: var(--dh-color-gray);
+			opacity: 0.8;
+			font-weight: bold;
+		}
+	}
 }
 
 /* Description Editor Section */
 .daggerheart.sheet.item .card-description {
-  height: auto;
+	height: auto;
 
-  .description-editor {
-    min-height: auto;
-    
-    /* ProseMirror Editor Styling */
-    .editor {
-      border: 1px solid #433f64;
-      border-radius: 8px;
-      background: rgba(67, 63, 100, 0.2);
-      height: 25em;
-      
-      .ProseMirror {
-        padding: 15px;
-        min-height: auto;
-        color: var(--dh-color-off-white);
-        line-height: 1.6;
-        font-size: 0.95em;
+	.description-editor {
+		min-height: auto;
 
-        &:focus {
-          outline: none;
-        }
+		/* ProseMirror Editor Styling */
+		.editor {
+			border: 1px solid #433f64;
+			border-radius: 8px;
+			background: rgba(67, 63, 100, 0.2);
+			height: 25em;
 
-        p {
-          margin: 0.8em 0;
+			.ProseMirror {
+				padding: 15px;
+				min-height: auto;
+				color: var(--dh-color-off-white);
+				line-height: 1.6;
+				font-size: 0.95em;
 
-          &:first-child {
-            margin-top: 0;
-          }
+				&:focus {
+					outline: none;
+				}
 
-          &:last-child {
-            margin-bottom: 0;
-          }
-        }
+				p {
+					margin: 0.8em 0;
 
-        /* Style headers in the editor */
-        h1, h2, h3, h4, h5, h6 {
-          color: var(--dh-color-gold) !important;
-          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-          margin: 1em 0 0.5em 0;
+					&:first-child {
+						margin-top: 0;
+					}
 
-          &:first-child {
-            margin-top: 0;
-          }
-        }
+					&:last-child {
+						margin-bottom: 0;
+					}
+				}
 
-        /* Style lists */
-        ul, ol {
-          margin: 0.8em 0;
-          padding-left: 1.5em;
-        }
+				/* Style headers in the editor */
+				h1,
+				h2,
+				h3,
+				h4,
+				h5,
+				h6 {
+					color: var(--dh-color-gold) !important;
+					text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+					margin: 1em 0 0.5em 0;
 
-        /* Style blockquotes */
-        blockquote {
-          border-left: 3px solid var(--dh-color-gold);
-          padding-left: 1em;
-          margin: 1em 0;
-          font-style: italic;
-          opacity: 0.9;
-        }
+					&:first-child {
+						margin-top: 0;
+					}
+				}
 
-        /* Style code */
-        code {
-          background: rgba(0, 0, 0, 0.3);
-          padding: 2px 4px;
-          border-radius: 3px;
-        }
-      }
-    }
+				/* Style lists */
+				ul,
+				ol {
+					margin: 0.8em 0;
+					padding-left: 1.5em;
+				}
 
-    /* Editor Menu Bar */
-    .editor-menu {
-      background: rgba(67, 63, 100, 0.4);
-      border: 1px solid #433f64;
-      border-bottom: none;
-      border-radius: 8px 8px 0 0;
-      padding: 8px;
+				/* Style blockquotes */
+				blockquote {
+					border-left: 3px solid var(--dh-color-gold);
+					padding-left: 1em;
+					margin: 1em 0;
+					font-style: italic;
+					opacity: 0.9;
+				}
 
-      button {
-        background: transparent;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        color: var(--dh-color-gray);
-        padding: 4px 8px;
-        cursor: pointer;
-        transition: all 0.2s ease;
+				/* Style code */
+				code {
+					background: rgba(0, 0, 0, 0.3);
+					padding: 2px 4px;
+					border-radius: 3px;
+				}
+			}
+		}
 
-        &:hover {
-          background: rgba(243, 194, 103, 0.2);
-          color: var(--dh-color-gold);
-          border-color: var(--dh-color-gold);
-        }
+		/* Editor Menu Bar */
+		.editor-menu {
+			background: rgba(67, 63, 100, 0.4);
+			border: 1px solid #433f64;
+			border-bottom: none;
+			border-radius: 8px 8px 0 0;
+			padding: 8px;
 
-        &.active {
-          background: rgba(243, 194, 103, 0.3);
-          color: var(--dh-color-gold);
-          border-color: var(--dh-color-gold);
-        }
-      }
-    }
-  }
+			button {
+				background: transparent;
+				border: 1px solid transparent;
+				border-radius: 4px;
+				color: var(--dh-color-gray);
+				padding: 4px 8px;
+				cursor: pointer;
+				transition: all 0.2s ease;
+
+				&:hover {
+					background: rgba(243, 194, 103, 0.2);
+					color: var(--dh-color-gold);
+					border-color: var(--dh-color-gold);
+				}
+
+				&.active {
+					background: rgba(243, 194, 103, 0.3);
+					color: var(--dh-color-gold);
+					border-color: var(--dh-color-gold);
+				}
+			}
+		}
+	}
 }
 
 /* Window styling to match the card theme */
 .daggerheart.sheet.item .window-content {
-  background: transparent;
-  padding: 0;
-  overflow: visible !important;
-  position: relative;
+	background: transparent;
+	padding: 0;
+	overflow: visible !important;
+	position: relative;
 }
 
 .daggerheart.sheet.item {
-  overflow: visible !important;
+	overflow: visible !important;
 }
 
 .daggerheart.sheet.item .window-header {
-  background: rgba(11, 10, 19, 0.9);
-  border-bottom: 1px solid #6d6795;
-  backdrop-filter: blur(5px);
+	background: rgba(11, 10, 19, 0.9);
+	border-bottom: 1px solid #6d6795;
+	backdrop-filter: blur(5px);
 
-  .window-title {
-    color: var(--dh-color-gold);
-    font-weight: bold;
-  }
+	.window-title {
+		color: var(--dh-color-gold);
+		font-weight: bold;
+	}
 }
 
 /* ============================================
@@ -315,340 +321,337 @@
 .daggerheart.sheet.item,
 .daggerheart.sheet.weapon,
 .daggerheart.sheet.armor {
-  /* All existing item sheet styles automatically apply */
+	/* All existing item sheet styles automatically apply */
 }
 
 /* Weapon and armor-specific field styling */
 .daggerheart.sheet.weapon .weapon-fields,
 .daggerheart.sheet.armor .armor-fields {
-  .card-subtitle {
-    .category-tier-inputs {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.9em;
+	.card-subtitle {
+		.category-tier-inputs {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			font-size: 0.9em;
 
-      .category-input,
-      .tier-input {
-        background: rgba(67, 63, 100, 0.3);
-        border: 1px solid #433f64;
-        border-radius: 4px;
-        color: var(--dh-color-gray);
-        padding: 8px 12px;
-        font-size: 0.85em;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
+			.category-input,
+			.tier-input {
+				background: rgba(67, 63, 100, 0.3);
+				border: 1px solid #433f64;
+				border-radius: 4px;
+				color: var(--dh-color-gray);
+				padding: 8px 12px;
+				font-size: 0.85em;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				transition: all 0.3s ease;
 
-        &::placeholder {
-          color: rgba(170, 170, 170, 0.6);
-        }
+				&::placeholder {
+					color: rgba(170, 170, 170, 0.6);
+				}
 
-        &:focus {
-          outline: none;
-          border-color: var(--dh-color-gold);
-          background: rgba(67, 63, 100, 0.5);
-          color: var(--dh-color-off-white);
-        }
-      }
+				&:focus {
+					outline: none;
+					border-color: var(--dh-color-gold);
+					background: rgba(67, 63, 100, 0.5);
+					color: var(--dh-color-off-white);
+				}
+			}
 
-      .separator {
-        color: var(--dh-color-gray);
-        opacity: 0.8;
-        font-weight: bold;
-      }
-    }
+			.separator {
+				color: var(--dh-color-gray);
+				opacity: 0.8;
+				font-weight: bold;
+			}
+		}
+	}
 
+	.weapon-fields-grid,
+	.armor-fields-grid {
+		margin-bottom: 20px;
+		padding: 15px 0;
+		border-bottom: 1px solid #433f64;
+	}
 
-  }
+	.weapon-top-row,
+	.weapon-bottom-row,
+	.armor-top-row,
+	.armor-bottom-row,
+	.armor-single-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 15px;
+		margin-bottom: 15px;
 
-  .weapon-fields-grid,
-  .armor-fields-grid {
-    margin-bottom: 20px;
-    padding: 15px 0;
-    border-bottom: 1px solid #433f64;
-  }
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
 
-  .weapon-top-row,
-  .weapon-bottom-row,
-  .armor-top-row,
-  .armor-bottom-row,
-  .armor-single-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 15px;
+	.armor-bottom-row {
+		grid-template-columns: 1fr;
+	}
 
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
+	.weapon-dropdown-group,
+	.armor-input-group {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
 
-  .armor-bottom-row {
-    grid-template-columns: 1fr;
-  }
+		label {
+			font-size: 0.8em;
+			color: var(--dh-color-gold);
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			font-weight: bold;
+		}
 
-  .weapon-dropdown-group,
-  .armor-input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+		select,
+		input[type='number'] {
+			background: rgba(67, 63, 100, 0.3);
+			border: 1px solid #433f64;
+			border-radius: 4px;
+			color: var(--dh-color-off-white);
+			padding: 8px 12px;
+			font-size: 0.9em;
+			transition: all 0.3s ease;
 
-    label {
-      font-size: 0.8em;
-      color: var(--dh-color-gold);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: bold;
-    }
+			&::placeholder {
+				color: rgba(170, 170, 170, 0.6);
+			}
 
-    select,
-    input[type="number"] {
-      background: rgba(67, 63, 100, 0.3);
-      border: 1px solid #433f64;
-      border-radius: 4px;
-      color: var(--dh-color-off-white);
-      padding: 8px 12px;
-      font-size: 0.9em;
-      transition: all 0.3s ease;
+			&:focus {
+				outline: none;
+				border-color: var(--dh-color-gold);
+				background: rgba(67, 63, 100, 0.5);
+			}
 
-      &::placeholder {
-        color: rgba(170, 170, 170, 0.6);
-      }
+			&:hover {
+				background: rgba(67, 63, 100, 0.4);
+			}
+		}
 
-      &:focus {
-        outline: none;
-        border-color: var(--dh-color-gold);
-        background: rgba(67, 63, 100, 0.5);
-      }
+		select {
+			padding: 0em 0.5em;
+			cursor: pointer;
 
-      &:hover {
-        background: rgba(67, 63, 100, 0.4);
-      }
-    }
+			option {
+				background: rgba(11, 10, 19, 0.95);
+				color: var(--dh-color-off-white);
+			}
+		}
 
-    select {
-      padding: 0em 0.5em;
-      cursor: pointer;
+		.threshold-inputs {
+			display: flex;
+			align-items: center;
+			gap: 0;
+			position: relative;
 
-      option {
-        background: rgba(11, 10, 19, 0.95);
-        color: var(--dh-color-off-white);
-      }
-    }
+			.threshold-input {
+				flex: 1;
+				min-width: 0;
+				border-radius: 0;
+				border-right: none;
 
-    .threshold-inputs {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      position: relative;
+				&:first-child {
+					border-top-left-radius: 4px;
+					border-bottom-left-radius: 4px;
+				}
 
-      .threshold-input {
-        flex: 1;
-        min-width: 0;
-        border-radius: 0;
-        border-right: none;
+				&:last-child {
+					border-top-right-radius: 4px;
+					border-bottom-right-radius: 4px;
+					border-right: 1px solid #433f64;
+				}
 
-        &:first-child {
-          border-top-left-radius: 4px;
-          border-bottom-left-radius: 4px;
-        }
+				&:focus {
+					z-index: 2;
+					position: relative;
+					border-right: 1px solid var(--dh-color-gold);
+				}
+			}
 
-        &:last-child {
-          border-top-right-radius: 4px;
-          border-bottom-right-radius: 4px;
-          border-right: 1px solid #433f64;
-        }
+			.threshold-separator {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				color: var(--dh-color-gray);
+				font-weight: bold;
+				font-size: 1.1em;
+				opacity: 0.8;
+				user-select: none;
+				z-index: 1;
+				pointer-events: none;
+				background: rgba(67, 63, 100, 0.3);
+				padding: 0 4px;
+			}
 
-        &:focus {
-          z-index: 2;
-          position: relative;
-          border-right: 1px solid var(--dh-color-gold);
-        }
-      }
+			&.unified {
+				background: rgba(67, 63, 100, 0.3);
+				border: 1px solid #433f64;
+				border-radius: 4px;
+				padding: 0;
 
-      .threshold-separator {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        color: var(--dh-color-gray);
-        font-weight: bold;
-        font-size: 1.1em;
-        opacity: 0.8;
-        user-select: none;
-        z-index: 1;
-        pointer-events: none;
-        background: rgba(67, 63, 100, 0.3);
-        padding: 0 4px;
-      }
+				.threshold-input {
+					background: transparent;
+					border: none;
+					border-radius: 0;
 
-      &.unified {
-        background: rgba(67, 63, 100, 0.3);
-        border: 1px solid #433f64;
-        border-radius: 4px;
-        padding: 0;
+					&:focus {
+						background: rgba(67, 63, 100, 0.2);
+						border: none;
+						z-index: 2;
+					}
 
-        .threshold-input {
-          background: transparent;
-          border: none;
-          border-radius: 0;
+					&:hover {
+						background: rgba(67, 63, 100, 0.1);
+					}
+				}
 
-          &:focus {
-            background: rgba(67, 63, 100, 0.2);
-            border: none;
-            z-index: 2;
-          }
+				.threshold-separator {
+					background: transparent;
+				}
 
-          &:hover {
-            background: rgba(67, 63, 100, 0.1);
-          }
-        }
+				&:hover {
+					background: rgba(67, 63, 100, 0.4);
+				}
 
-        .threshold-separator {
-          background: transparent;
-        }
+				&:focus-within {
+					border-color: var(--dh-color-gold);
+					background: rgba(67, 63, 100, 0.5);
+				}
+			}
+		}
+	}
 
-        &:hover {
-          background: rgba(67, 63, 100, 0.4);
-        }
+	.weapon-damage-group {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 
-        &:focus-within {
-          border-color: var(--dh-color-gold);
-          background: rgba(67, 63, 100, 0.5);
-        }
-      }
-    }
-  }
+		label {
+			font-size: 0.8em;
+			color: var(--dh-color-gold);
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			font-weight: bold;
+		}
 
-  .weapon-damage-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+		.weapon-damage-display {
+			background: rgba(243, 194, 103, 0.15);
+			border: 1px solid var(--dh-color-gold);
+			border-radius: 4px;
+			padding: 10px 15px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			font-size: 1.1em;
+			font-weight: bold;
+			color: var(--dh-color-gold);
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+			min-height: 20px;
+			display: flex;
+			align-items: center;
 
-    label {
-      font-size: 0.8em;
-      color: var(--dh-color-gold);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: bold;
-    }
+			&:hover {
+				background: rgba(243, 194, 103, 0.25);
+				transform: translateY(-1px);
+				box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
+			}
 
-    .weapon-damage-display {
-      background: rgba(243, 194, 103, 0.15);
-      border: 1px solid var(--dh-color-gold);
-      border-radius: 4px;
-      padding: 10px 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 1.1em;
-      font-weight: bold;
-      color: var(--dh-color-gold);
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-      min-height: 20px;
-      display: flex;
-      align-items: center;
-
-      &:hover {
-        background: rgba(243, 194, 103, 0.25);
-        transform: translateY(-1px);
-        box-shadow: 0 0 8px rgba(243, 194, 103, 0.4);
-      }
-
-      &:empty::before {
-        content: "1d8";
-        opacity: 0.6;
-      }
-    }
-  }
+			&:empty::before {
+				content: '1d8';
+				opacity: 0.6;
+			}
+		}
+	}
 }
-
 
 /* Weapon toggle equip button styling */
 .daggerheart.sheet.actor .weapon-toggle-equip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  line-height: 16px;
-  color: rgba(255, 255, 255, 0.6);
-  transition: all 0.2s ease;
-  text-decoration: none;
-  border-radius: 2px;
-  margin: 0 2px;
-  
-  &:hover {
-    color: rgba(255, 255, 255, 0.8);
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    transform: scale(1.1);
-  }
-  
-  &.equipped {
-    color: var(--dh-color-gold);
-    text-shadow: 0 0 5px rgba(243, 194, 103, 0.7);
-    
-    &:hover {
-      color: var(--dh-color-gold);
-      text-shadow: 0 0 8px rgba(243, 194, 103, 0.9);
-      transform: scale(1.1);
-    }
-  }
-  
-  i {
-    font-size: 12px;
-    line-height: 1;
-  }
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	line-height: 16px;
+	color: rgba(255, 255, 255, 0.6);
+	transition: all 0.2s ease;
+	text-decoration: none;
+	border-radius: 2px;
+	margin: 0 2px;
+
+	&:hover {
+		color: rgba(255, 255, 255, 0.8);
+		text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+		transform: scale(1.1);
+	}
+
+	&.equipped {
+		color: var(--dh-color-gold);
+		text-shadow: 0 0 5px rgba(243, 194, 103, 0.7);
+
+		&:hover {
+			color: var(--dh-color-gold);
+			text-shadow: 0 0 8px rgba(243, 194, 103, 0.9);
+			transform: scale(1.1);
+		}
+	}
+
+	i {
+		font-size: 12px;
+		line-height: 1;
+	}
 }
 
 /* Responsive adjustments for weapons and armor */
 @media (max-width: 768px) {
-  .daggerheart.sheet.weapon .weapon-fields,
-  .daggerheart.sheet.armor .armor-fields {
-    .weapon-top-row,
-    .weapon-bottom-row,
-    .armor-top-row,
-    .armor-bottom-row,
-    .armor-single-row {
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-  }
+	.daggerheart.sheet.weapon .weapon-fields,
+	.daggerheart.sheet.armor .armor-fields {
+		.weapon-top-row,
+		.weapon-bottom-row,
+		.armor-top-row,
+		.armor-bottom-row,
+		.armor-single-row {
+			grid-template-columns: 1fr;
+			gap: 10px;
+		}
+	}
 }
 
 @media (max-width: 480px) {
-  .daggerheart.sheet.weapon .weapon-fields,
-  .daggerheart.sheet.armor .armor-fields {
-    .card-subtitle .category-tier-inputs {
-      flex-direction: column;
-      gap: 8px;
+	.daggerheart.sheet.weapon .weapon-fields,
+	.daggerheart.sheet.armor .armor-fields {
+		.card-subtitle .category-tier-inputs {
+			flex-direction: column;
+			gap: 8px;
 
-      .separator {
-        display: none;
-      }
-    }
-  }
+			.separator {
+				display: none;
+			}
+		}
+	}
 }
 
 /* Original responsive adjustments */
 @media (max-width: 600px) {
-  .daggerheart.sheet.item .card-image-container {
-    height: 150px;
-    padding: 10px;
-  }
+	.daggerheart.sheet.item .card-image-container {
+		height: 150px;
+		padding: 10px;
+	}
 
-  .daggerheart.sheet.item .card-header-text .item-title input {
-    font-size: 1.4em;
-  }
+	.daggerheart.sheet.item .card-header-text .item-title input {
+		font-size: 1.4em;
+	}
 
-  .daggerheart.sheet.item .item-card-content {
-    padding: 15px;
-  }
+	.daggerheart.sheet.item .item-card-content {
+		padding: 15px;
+	}
 
-  .daggerheart.sheet.item .image-upload-area .profile-img {
-    width: 50px;
-    height: 50px;
-    border: none;
-    border-radius: 0;
-  }
-} 
+	.daggerheart.sheet.item .image-upload-area .profile-img {
+		width: 50px;
+		height: 50px;
+		border: none;
+		border-radius: 0;
+	}
+}

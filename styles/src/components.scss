@@ -4,15 +4,15 @@
 /*  component style partials.
 /* =================================== */
 
-@use "components/counters";
-@use "components/countdown-tracker";
-@use "components/dice-customization";
-@use "components/tooltips";
-@use "components/treasure-tracker";
-@use "components/rollable";
-@use "components/itemList";
-@use "components/domain-abilities-sidebar";
-@use "components/header-loadout-bar";
-@use "components/header-layout";
-@use "components/top-bar";
-@use "components/spotlight-initiative";
+@use 'components/counters';
+@use 'components/countdown-tracker';
+@use 'components/dice-customization';
+@use 'components/tooltips';
+@use 'components/treasure-tracker';
+@use 'components/rollable';
+@use 'components/itemList';
+@use 'components/domain-abilities-sidebar';
+@use 'components/header-loadout-bar';
+@use 'components/header-layout';
+@use 'components/top-bar';
+@use 'components/spotlight-initiative';

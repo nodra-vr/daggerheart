@@ -2,20 +2,20 @@
 
 /* Sheet Sizing */
 .daggerheart.sheet.actor {
-  min-width: 690px;
-  min-height: 600px;
+	min-width: 690px;
+	min-height: 600px;
 }
 
 .daggerheart.sheet.npc,
 .daggerheart.sheet.companion,
 .daggerheart.sheet.environment {
-  min-width: 690px;
-  min-height: 500px;
+	min-width: 690px;
+	min-height: 500px;
 }
 
 .daggerheart.sheet.item {
-  min-width: 350px;
-  min-height: 400px;
+	min-width: 350px;
+	min-height: 400px;
 }
 
 /* Window Content Styling */
@@ -24,17 +24,17 @@
 .npc .window-content,
 .companion .window-content,
 .environment .window-content {
-  background: transparent;
-  background-color: transparent;
-  color: #f0f0e0;
-  border: none;
-  border-radius: 0 0 10px 10px;
-  border-top: none;
-  position: relative;
+	background: transparent;
+	background-color: transparent;
+	color: #f0f0e0;
+	border: none;
+	border-radius: 0 0 10px 10px;
+	border-top: none;
+	position: relative;
 }
 
 .item .window-content {
-  padding: 1em 2em;
+	padding: 1em 2em;
 }
 
 /* Window Header Styling */
@@ -43,122 +43,136 @@
 .companion .window-header,
 .item .window-header,
 .environment .window-header {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  color: #ffffff;
-  cursor: auto;
-  position: relative;
-  text-shadow: none !important;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.75);
-  border-bottom: none;
-  border-radius: 10px 10px 0 0;
-  position: relative;
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	color: #ffffff;
+	cursor: auto;
+	position: relative;
+	text-shadow: none !important;
+	text-shadow: 0 0 4px rgba(0, 0, 0, 0.75);
+	border-bottom: none;
+	border-radius: 10px 10px 0 0;
+	position: relative;
 }
-
-
 
 /* Sheet Backgrounds */
 .actor {
-  background: transparent;
+	background: transparent;
 }
 
 .npc {
-  background: transparent;
+	background: transparent;
 
-  .header-resources-row {
-    margin-left: 0;
-    display: flex;
-    justify-content: space-evenly;
-  }
-  .header-right {
-    height: 100%;
-  }
-  .header-left .profile-img {
-    width: 200px;
-    height: 250px;
-  }
+	.header-resources-row {
+		margin-left: 0;
+		display: flex;
+		justify-content: space-evenly;
+	}
+	.header-right {
+		height: 100%;
+	}
+	.header-left .profile-img {
+		width: 200px;
+		height: 250px;
+	}
 }
 
 .companion {
-  background: transparent;
+	background: transparent;
 }
 
 .environment {
-  background: transparent;
+	background: transparent;
 }
 
-.sheet.actor, .sheet.npc, .sheet.companion, .sheet.item, .sheet.environment {
-  background: rgba(11, 10, 19, 0.8392156863);
-  backdrop-filter: blur(5px);
+.sheet.actor,
+.sheet.npc,
+.sheet.companion,
+.sheet.item,
+.sheet.environment {
+	background: rgba(11, 10, 19, 0.8392156863);
+	backdrop-filter: blur(5px);
 }
 
 /* Input Styling for Sheets */
-.daggerheart .actor input[type=text], .daggerheart .actor input[type=number], .daggerheart .actor input[type=password],
-.daggerheart .actor input[type=date], .daggerheart .actor input[type=time], .daggerheart .actor input[type=search] {
-  color: #f0f0e0;
+.daggerheart .actor input[type='text'],
+.daggerheart .actor input[type='number'],
+.daggerheart .actor input[type='password'],
+.daggerheart .actor input[type='date'],
+.daggerheart .actor input[type='time'],
+.daggerheart .actor input[type='search'] {
+	color: #f0f0e0;
 }
 
-.daggerheart .npc input[type=text], .daggerheart .npc input[type=number], .daggerheart .npc input[type=password],
-.daggerheart .npc input[type=date], .daggerheart .npc input[type=time], .daggerheart .npc input[type=search] {
-  color: #f0f0e0;
+.daggerheart .npc input[type='text'],
+.daggerheart .npc input[type='number'],
+.daggerheart .npc input[type='password'],
+.daggerheart .npc input[type='date'],
+.daggerheart .npc input[type='time'],
+.daggerheart .npc input[type='search'] {
+	color: #f0f0e0;
 }
 
-.daggerheart .companion input[type=text], .daggerheart .companion input[type=number], .daggerheart .companion input[type=password],
-.daggerheart .companion input[type=date], .daggerheart .companion input[type=time], .daggerheart .companion input[type=search] {
-  color: #f0f0e0;
+.daggerheart .companion input[type='text'],
+.daggerheart .companion input[type='number'],
+.daggerheart .companion input[type='password'],
+.daggerheart .companion input[type='date'],
+.daggerheart .companion input[type='time'],
+.daggerheart .companion input[type='search'] {
+	color: #f0f0e0;
 }
 
 /* General Text and Label Styling for Companion Sheets */
 .daggerheart .companion {
-  color: #f0f0e0;
-  
-  label {
-    color: var(--dh-color-off-white);
-  }
-  
-  a {
-    color: var(--dh-color-off-white);
-    
-    &:hover {
-      color: var(--dh-color-gold);
-    }
-  }
-  
-  .trait-effects {
-    color: #6c6a85;
-  }
-  
-  .weapon-label {
-    color: var(--dh-color-off-white) !important;
-  }
-  
-  .charname input {
-    color: var(--dh-color-gold);
-  }
-  
-  .resource-label-controls label {
-    color: var(--dh-color-off-white);
-  }
-  
-  /* Keep evasion defense text black for light background */
-  .defense[data-trait="evasion"] input,
-  .defense[data-trait="evasion"] label,
-  .defense[data-trait="evasion"] {
-    color: var(--dh-color-off-black) !important;
-  }
-    .defense[data-trait="evasion"] label,
-  .defense[data-trait="evasion"] {
-    color: var(--dh-color-off-white) !important;
-  }
+	color: #f0f0e0;
+
+	label {
+		color: var(--dh-color-off-white);
+	}
+
+	a {
+		color: var(--dh-color-off-white);
+
+		&:hover {
+			color: var(--dh-color-gold);
+		}
+	}
+
+	.trait-effects {
+		color: #6c6a85;
+	}
+
+	.weapon-label {
+		color: var(--dh-color-off-white) !important;
+	}
+
+	.charname input {
+		color: var(--dh-color-gold);
+	}
+
+	.resource-label-controls label {
+		color: var(--dh-color-off-white);
+	}
+
+	/* Keep evasion defense text black for light background */
+	.defense[data-trait='evasion'] input,
+	.defense[data-trait='evasion'] label,
+	.defense[data-trait='evasion'] {
+		color: var(--dh-color-off-black) !important;
+	}
+	.defense[data-trait='evasion'] label,
+	.defense[data-trait='evasion'] {
+		color: var(--dh-color-off-white) !important;
+	}
 }
 
 /* NPC Sheet Specific Styling */
 .daggerheart .npc {
-  /* Make evasion defense text white for dark background */
-  .defense[data-defense="evasion"] label {
-    color: var(--dh-color-off-white) !important;
-  }
+	/* Make evasion defense text white for dark background */
+	.defense[data-defense='evasion'] label {
+		color: var(--dh-color-off-white) !important;
+	}
 }
 
 /* Item Sheet Specific Layouts */
@@ -180,83 +194,80 @@
 }
 
 .daggerheart.sheet.item {
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  color: white;
-  text-shadow: 1px 1px 2px black;
-  border-radius: 10px;
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	color: white;
+	text-shadow: 1px 1px 2px black;
+	border-radius: 10px;
 }
 
 .item .sheet-body .tab {
-  height: 100%;
-  overflow: visible;
-  margin: 0px;
-  padding: 0px;
-  width: 100%;
-  padding-top: 0em;
-  padding-bottom: 1.25em;
-  border-top: 1px solid var(--dh-color-gold);
+	height: 100%;
+	overflow: visible;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+	padding-top: 0em;
+	padding-bottom: 1.25em;
+	border-top: 1px solid var(--dh-color-gold);
 }
 
 .item .flexcol {
-  position: relative;
+	position: relative;
 }
 
 .item .sheet-header {
-  position: relative;
-  z-index: 1;
+	position: relative;
+	z-index: 1;
 }
 
 /* Base Sheet Body Layout */
 .daggerheart {
-  .window-content {
-    height: 97%;
-    padding: 5px;
-    overflow-y: hidden;
-  }
+	.window-content {
+		height: 97%;
+		padding: 5px;
+		overflow-y: hidden;
+	}
 
-  form {
-    height: 100%;
-  }
+	form {
+		height: 100%;
+	}
 
-  .sheet-body {
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    align-items: center;
+	.sheet-body {
+		overflow: hidden;
+		display: flex;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
 
-    .tab {
-      height: 100%;
-      overflow-y: auto;
-      overflow-x: hidden;
-      margin: 0px;
-      width: 100%;
-      padding: 1em 5em;
-    }
-  }
+		.tab {
+			height: 100%;
+			overflow-y: auto;
+			overflow-x: hidden;
+			margin: 0px;
+			width: 100%;
+			padding: 1em 5em;
+		}
+	}
 }
 body.game .app {
-  border-radius: 10px;
+	border-radius: 10px;
 
-  img {
-    /* no border on images */
-  }
+	img {
+		/* no border on images */
+	}
 
-  button:hover, button:focus {
-    box-shadow: none;
-  }
+	button:hover,
+	button:focus {
+		box-shadow: none;
+	}
 
-  button {
-    border: 1px solid var(--dh-color-gold);
-  }
+	button {
+		border: 1px solid var(--dh-color-gold);
+	}
 
-  textarea {
-    font-family: var(--font-body);
-    }
-
+	textarea {
+		font-family: var(--font-body);
+	}
 }
-
-
-
