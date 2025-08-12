@@ -14,10 +14,29 @@ function isEnabled() {
 }
 
 function measureCenterDistance(origin, target) {
+  // Get horizontal distance using grid measurement
   const path = [origin.center, target.center];
   const result = canvas.grid.measurePath(path, { gridSpaces: true });
-  const raw = result?.distance ?? 0;
-  return typeof raw?.toNearest === "function" ? raw.toNearest(0.01) : Number(raw);
+  const horizontalDistance = typeof result?.distance?.toNearest === "function" ? 
+    result.distance.toNearest(0.01) : Number(result?.distance ?? 0);
+  
+  // Get elevations
+  const elevation1 = origin.document.elevation || 0;
+  const elevation2 = target.document.elevation || 0;
+  const verticalDistance = Math.abs(elevation1 - elevation2);
+  
+  // If there's no vertical difference, just return horizontal distance
+  if (verticalDistance === 0) {
+    return horizontalDistance;
+  }
+  
+  // Calculate 3D Euclidean distance
+  const totalDistance = Math.sqrt(
+    horizontalDistance * horizontalDistance + 
+    verticalDistance * verticalDistance
+  );
+  
+  return totalDistance;
 }
 
 function getLabelForDistance(distance) {

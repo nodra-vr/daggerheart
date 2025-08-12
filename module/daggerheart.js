@@ -300,6 +300,8 @@ Hooks.once("init", async function () {
     restricted: true
   });
 
+
+
   game.settings.register("daggerheart-unofficial", "rangeMeasurementMelee", {
     name: "DAGGERHEART.CONFIG.Range.melee.name",
     hint: "Distance threshold for Melee range (in grid units)",
@@ -593,7 +595,13 @@ Hooks.once("ready", async function () {
     html.find('.measured-template-button').on('click', renderMeasuredTemplate);
   });
 
+  // Initialize hover distance feature
   initializeHoverDistance();
+  
+  // Register hover distance for debugging and access
+  game.daggerheart.hoverDistance = {
+    initialize: initializeHoverDistance
+  };
 
   Hooks.on("updateSetting", async (setting) => {
     if (setting.key !== "daggerheart-unofficial.experimentalFeatures") return;

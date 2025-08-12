@@ -247,3 +247,203 @@ export const renderMeasuredTemplate = async (event) => {
         fillColor: game.user.color || '#FF0000'
     }]);
 };
+
+// ============================================
+// ADVANCED DISTANCE MEASUREMENT
+// ============================================
+
+/**
+ * Advanced measurement utility for volume-to-volume distance calculation
+ * with vertical distance support and performance optimization
+ */
+export class AdvancedDistanceMeasurement {
+
+    /**
+     * Measure minimum distance between two tokens with advanced options
+     * @param {Token} token1 - First token (origin)
+     * @param {Token} token2 - Second token (target)
+     * @returns {number} Minimum distance between token volumes
+     */
+    static measureMinTokenDistance(token1, token2) {
+        if (!token1 || !token2) return 0;
+
+        const verticalMode = game.settings.get('daggerheart-unofficial', 'hoverDistanceVerticalMode');
+        const complexityThreshold = game.settings.get('daggerheart-unofficial', 'hoverDistanceComplexityThreshold');
+        const roundingMode = game.settings.get('daggerheart-unofficial', 'hoverDistanceRounding');
+
+        const complexity = token1.document.width * token2.document.width + token1.document.height * token2.document.height;
+        
+        let distance;
+        if (complexity > complexityThreshold) {
+            distance = this._measureCenterToCenter(token1, token2, verticalMode);
+        } else {
+            distance = this._measureVolumeToVolume(token1, token2, verticalMode);
+        }
+
+        return this._applyRounding(distance, roundingMode);
+    }
+
+    /**
+     * Simple center-to-center measurement for performance
+     */
+    static _measureCenterToCenter(token1, token2, verticalMode) {
+        const elevation1 = token1.document.elevation || 0;
+        const elevation2 = token2.document.elevation || 0;
+
+        const path = [token1.center, token2.center];
+        
+        let horizontalDistance = 0;
+        try {
+            const result = canvas.grid.measurePath(path, { gridSpaces: true });
+            horizontalDistance = result?.distance ?? 0;
+        } catch (error) {
+            console.warn('Error measuring horizontal distance, using Euclidean fallback:', error);
+            const dx = token1.center.x - token2.center.x;
+            const dy = token1.center.y - token2.center.y;
+            horizontalDistance = Math.sqrt(dx * dx + dy * dy) / canvas.grid.size * canvas.grid.distance;
+        }
+
+        return this._combineDistances(horizontalDistance, elevation1, elevation2, verticalMode);
+    }
+
+    /**
+     * Detailed volume-to-volume measurement
+     */
+    static _measureVolumeToVolume(token1, token2, verticalMode) {
+        const gridSize = canvas.grid.size;
+        const gridDistance = canvas.grid.distance;
+        
+        const points1 = this._sampleTokenPoints(token1);
+        const points2 = this._sampleTokenPoints(token2);
+        
+        let minDistance = Infinity;
+
+        for (const point1 of points1) {
+            for (const point2 of points2) {
+                const path = [point1, point2];
+                
+                let horizontalDistance = 0;
+                try {
+                    const result = canvas.grid.measurePath(path, { gridSpaces: true });
+                    horizontalDistance = result?.distance ?? 0;
+                } catch (error) {
+                    const dx = point1.x - point2.x;
+                    const dy = point1.y - point2.y;
+                    horizontalDistance = Math.sqrt(dx * dx + dy * dy) / gridSize * gridDistance;
+                }
+
+                const combinedDistance = this._combineDistances(
+                    horizontalDistance, 
+                    point1.z || 0, 
+                    point2.z || 0, 
+                    verticalMode
+                );
+
+                minDistance = Math.min(minDistance, combinedDistance);
+            }
+        }
+
+        return minDistance === Infinity ? 0 : minDistance;
+    }
+
+    /**
+     * Sample points across a token's footprint and vertical extent
+     */
+    static _sampleTokenPoints(token) {
+        const document = token.document;
+        const elevation = document.elevation || 0;
+        const losHeight = document.losHeight || 0;
+        const gridSize = canvas.grid.size;
+        const gridDistance = canvas.grid.distance;
+
+        const points = [];
+        
+        const tokenWidth = document.width;
+        const tokenHeight = document.height;
+        
+        const startX = token.x;
+        const startY = token.y;
+        const endX = startX + tokenWidth * gridSize;
+        const endY = startY + tokenHeight * gridSize;
+
+        const xSteps = Math.max(1, tokenWidth);
+        const ySteps = Math.max(1, tokenHeight);
+
+        let zSteps = 1;
+        if (losHeight > 0) {
+            zSteps = Math.max(1, Math.ceil(losHeight / gridDistance));
+        }
+
+        for (let xi = 0; xi <= xSteps; xi++) {
+            for (let yi = 0; yi <= ySteps; yi++) {
+                for (let zi = 0; zi < zSteps; zi++) {
+                    const x = startX + (xi / xSteps) * (endX - startX);
+                    const y = startY + (yi / ySteps) * (endY - startY);
+                    const z = elevation + (zi / Math.max(1, zSteps - 1)) * losHeight;
+                    
+                    points.push({ x, y, z });
+                }
+            }
+        }
+
+        if (points.length === 0) {
+            points.push({ 
+                x: token.center.x, 
+                y: token.center.y, 
+                z: elevation 
+            });
+        }
+
+        return points;
+    }
+
+    /**
+     * Combine horizontal and vertical distances based on mode
+     */
+    static _combineDistances(horizontalDistance, elevation1, elevation2, verticalMode) {
+        const verticalDelta = Math.abs(elevation1 - elevation2);
+
+        switch (verticalMode) {
+            case 'useCoreRuler':
+                try {
+                    const path = [
+                        { x: 0, y: 0, z: elevation1 },
+                        { x: horizontalDistance * canvas.grid.size / canvas.grid.distance, y: 0, z: elevation2 }
+                    ];
+                    const result = canvas.grid.measurePath(path, { gridSpaces: true });
+                    return result?.distance ?? horizontalDistance;
+                } catch (error) {
+                    return Math.sqrt(horizontalDistance * horizontalDistance + verticalDelta * verticalDelta);
+                }
+            
+            case 'euclidean':
+                return Math.sqrt(horizontalDistance * horizontalDistance + verticalDelta * verticalDelta);
+            
+            case 'useHighest':
+                return Math.max(horizontalDistance, verticalDelta);
+            
+            case 'ignore':
+            default:
+                return horizontalDistance;
+        }
+    }
+
+    /**
+     * Apply rounding based on settings
+     */
+    static _applyRounding(distance, roundingMode) {
+        if (!roundingMode || roundingMode <= 0) {
+            return Math.floor(distance);
+        }
+
+        const rounded = Math.round(distance / roundingMode) * roundingMode;
+        return Math.round(rounded * 1000000) / 1000000;
+    }
+
+    /**
+     * Get distance label using existing system
+     */
+    static getDistanceLabel(distance) {
+        return DaggerheartMeasuredTemplate.getDistanceLabel(distance);
+    }
+}
